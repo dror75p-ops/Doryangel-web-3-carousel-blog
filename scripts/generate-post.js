@@ -39,12 +39,29 @@ function formatDate(date) {
   return date.toISOString().split('T')[0];
 }
 
-// Curated search queries per category — keeps brand visual identity consistent
+// Curated search queries — bright, professional, on-brand
+// Themes: office workers on computers / NYC skyscrapers in daylight / handyman work
 const IMAGE_QUERIES = {
-  'Compliance':           ['nyc office building', 'manhattan skyscraper', 'modern building facade'],
-  'Investment':           ['bronx skyline', 'nyc apartment building', 'new york real estate'],
-  'Tenant Relations':     ['apartment interior modern', 'nyc apartment keys', 'urban apartment building'],
-  'Property Management':  ['smart home technology', 'modern building lobby', 'nyc residential building'],
+  'Compliance':           [
+    'business professional reviewing documents bright office',
+    'office worker computer modern bright',
+    'manhattan skyscraper daylight blue sky',
+  ],
+  'Investment':           [
+    'manhattan skyline daylight bright',
+    'businesswoman laptop modern office bright',
+    'nyc skyscrapers blue sky',
+  ],
+  'Tenant Relations':     [
+    'handyman repairing apartment bright',
+    'maintenance worker tools toolbox',
+    'professional plumber working bright',
+  ],
+  'Property Management':  [
+    'handyman fixing apartment bright',
+    'office team working laptops bright',
+    'modern office workers computers daylight',
+  ],
 };
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80';
