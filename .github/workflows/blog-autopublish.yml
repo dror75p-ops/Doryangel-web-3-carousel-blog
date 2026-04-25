@@ -1,0 +1,41 @@
+name: Auto-publish blog post
+
+on:
+  schedule:
+    # Runs every 3 days at 9:00 AM EST (14:00 UTC)
+    - cron: '0 14 */3 * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  generate-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate blog post and send approval email
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: node scripts/generate-post.js
+
+      - name: Commit and push new post
+        run: |
+          git config user.name "DoryAngel Bot"
+          git config user.email "office@doryangel.com"
+          git add content/blog/posts-index.json
+          git commit -m "Auto-publish: new blog post $(date +'%Y-%m-%d')"
+          git push origin main
