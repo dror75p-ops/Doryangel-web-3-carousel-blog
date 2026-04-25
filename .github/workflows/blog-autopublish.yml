@@ -33,9 +33,12 @@ jobs:
         run: node scripts/generate-post.js
 
       - name: Commit and push new post
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git config user.name "DoryAngel Bot"
           git config user.email "office@doryangel.com"
+          git remote set-url origin https://dror75p-ops:${GH_TOKEN}@github.com/dror75p-ops/Doryangel-web-3-carousel-blog.git
           git add content/blog/posts-index.json
           git commit -m "Auto-publish: new blog post $(date +'%Y-%m-%d')"
           git push origin main
