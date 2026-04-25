@@ -87,7 +87,11 @@
     // Featured post
     var featEl = document.createElement('div');
     featEl.className = 'blog-featured';
+    var featImage = featured.image
+      ? '<div class="blog-featured-image" style="background-image:url(\'' + featured.image + '\')"></div>'
+      : '';
     featEl.innerHTML =
+      featImage +
       '<div class="blog-featured-top">' +
         '<div class="blog-featured-cat">' + featured.category + '</div>' +
         '<div class="blog-featured-title">' + featured.title + '</div>' +

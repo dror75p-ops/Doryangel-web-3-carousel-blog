@@ -39,6 +39,39 @@ function formatDate(date) {
   return date.toISOString().split('T')[0];
 }
 
+// Curated search queries per category — keeps brand visual identity consistent
+const IMAGE_QUERIES = {
+  'Compliance':           ['nyc office building', 'manhattan skyscraper', 'modern building facade'],
+  'Investment':           ['bronx skyline', 'nyc apartment building', 'new york real estate'],
+  'Tenant Relations':     ['apartment interior modern', 'nyc apartment keys', 'urban apartment building'],
+  'Property Management':  ['smart home technology', 'modern building lobby', 'nyc residential building'],
+};
+
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80';
+
+async function fetchCoverImage(category) {
+  const queries = IMAGE_QUERIES[category] || IMAGE_QUERIES['Property Management'];
+  const query = queries[Math.floor(Math.random() * queries.length)];
+  console.log(`Searching Unsplash for: "${query}"`);
+
+  try {
+    const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&orientation=landscape&per_page=15&content_filter=high`;
+    const res = await fetch(url, {
+      headers: { 'Authorization': `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}` }
+    });
+    if (!res.ok) throw new Error(`Unsplash returned ${res.status}`);
+    const data = await res.json();
+    if (!data.results || data.results.length === 0) throw new Error('No results');
+
+    // Pick a random image from the top results for variety
+    const photo = data.results[Math.floor(Math.random() * Math.min(data.results.length, 10))];
+    return `${photo.urls.raw}&w=1200&q=80&fit=crop`;
+  } catch (err) {
+    console.warn(`Unsplash failed (${err.message}) — using fallback image`);
+    return FALLBACK_IMAGE;
+  }
+}
+
 async function generatePost(topic) {
   const today = formatDate(new Date());
 
@@ -71,6 +104,9 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code blocks):
   const raw = message.content[0].text.trim();
   const post = JSON.parse(raw);
 
+  // Fetch a matching cover image from Unsplash
+  const image = await fetchCoverImage(post.category);
+
   return {
     slug: generateSlug(post.title),
     title: post.title,
@@ -78,7 +114,7 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code blocks):
     category: post.category,
     author: 'DoryAngel Team',
     excerpt: post.excerpt,
-    image: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80',
+    image: image,
     views: 0,
     score: 0,
     content: post.content,
@@ -101,6 +137,8 @@ async function sendApprovalEmail(post) {
         <div style="padding:24px;border:1px solid #E2E8F0;border-top:none;border-radius:0 0 8px 8px;">
 
           <p style="color:#556070;margin:0 0 20px;">A new blog post has been automatically generated. Review it below and reply to this email with any changes, or simply approve it to publish live.</p>
+
+          <img src="${post.image}" alt="Cover image" style="width:100%;height:auto;border-radius:6px;margin-bottom:20px;display:block;" />
 
           <div style="background:#F4F7FA;border-radius:6px;padding:16px;margin-bottom:20px;">
             <p style="margin:0 0 6px;font-size:12px;color:#8B9BAE;text-transform:uppercase;letter-spacing:1px;">Category</p>

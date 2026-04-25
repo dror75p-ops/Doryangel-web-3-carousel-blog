@@ -558,6 +558,14 @@ section { padding: 96px 40px; }
   cursor: pointer; transition: box-shadow 0.2s;
 }
 .blog-featured:hover { box-shadow: 0 8px 32px rgba(13,30,58,0.13); }
+.blog-featured-image {
+  width: 100%; height: 280px;
+  background-size: cover; background-position: center;
+  border-bottom: 1px solid #dce4ef;
+}
+@media (max-width: 600px) {
+  .blog-featured-image { height: 180px; }
+}
 .blog-featured-top {
   background: linear-gradient(160deg, #EBF3FD 0%, #dce9f8 100%);
   padding: 32px 36px; position: relative;
