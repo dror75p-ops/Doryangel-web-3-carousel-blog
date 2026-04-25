@@ -91,12 +91,21 @@ Requirements:
 - End with a soft call-to-action to book a free consultation at: https://cal.com/dory-angel-management-v5o0ke/30min
 - Include the office contact: 557 Grand Concourse, Bronx, NY · (516) 847-4999 · office@doryangel.com
 
+ALSO write a separate Facebook post version:
+- 100-150 words
+- Hook-first opening (a question, surprising stat, or bold statement)
+- 3-4 short paragraphs with line breaks (NOT one wall of text)
+- Ends with: "👉 Book a free consultation: https://cal.com/dory-angel-management-v5o0ke/30min"
+- Add 4-5 relevant hashtags at the very end like #BronxRealEstate #NYCLandlord #PropertyManagement
+- Friendly but professional tone — written for Facebook feed scrolling
+
 Respond ONLY with valid JSON in this exact format (no markdown, no code blocks):
 {
   "title": "the full article title",
   "category": "one of: Compliance, Investment, Tenant Relations, Property Management",
   "excerpt": "2-sentence summary for the blog index (max 160 chars)",
-  "content": "full markdown content of the article"
+  "content": "full markdown content of the article",
+  "facebookPost": "the Facebook-optimized version with hook, line breaks, CTA, and hashtags"
 }`
     }]
   });
@@ -122,48 +131,59 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code blocks):
 }
 
 async function sendApprovalEmail(post) {
-  // Plain-text preview for easy reading on mobile
-  const preview = post.content.replace(/#{1,6}\s/g, '').replace(/\*\*/g, '').slice(0, 600);
+  const fbPost = post.facebookPost || `${post.title}\n\n${post.excerpt}\n\n👉 Book a free consultation: https://cal.com/dory-angel-management-v5o0ke/30min\n\n#BronxRealEstate #NYCLandlord #PropertyManagement #DoryAngel`;
 
   await resend.emails.send({
     from: 'DoryAngel Blog <onboarding@resend.dev>',
     to: APPROVAL_EMAIL,
-    subject: `📝 New blog draft ready: "${post.title}"`,
+    subject: `📘 Facebook-ready: "${post.title}"`,
     html: `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#1A2740;">
-        <div style="background:#0D1E3A;padding:24px;border-radius:8px 8px 0 0;">
-          <h1 style="color:white;font-size:20px;margin:0;">DoryAngel Blog — New Draft Ready</h1>
+
+        <div style="background:#0D1E3A;padding:20px 24px;border-radius:8px 8px 0 0;">
+          <h1 style="color:white;font-size:18px;margin:0;">📘 Ready to post to Facebook</h1>
+          <p style="color:rgba(255,255,255,0.7);font-size:13px;margin:6px 0 0;">2 long-presses → done</p>
         </div>
-        <div style="padding:24px;border:1px solid #E2E8F0;border-top:none;border-radius:0 0 8px 8px;">
 
-          <p style="color:#556070;margin:0 0 20px;">A new blog post has been automatically generated. Review it below and reply to this email with any changes, or simply approve it to publish live.</p>
+        <div style="padding:20px;border:1px solid #E2E8F0;border-top:none;border-radius:0 0 8px 8px;">
 
-          <img src="${post.image}" alt="Cover image" style="width:100%;height:auto;border-radius:6px;margin-bottom:20px;display:block;" />
+          <!-- ===== STEP 1: SAVE THE IMAGE ===== -->
+          <div style="background:#FFF8E7;border:1px solid #F5D78E;border-radius:8px;padding:14px 16px;margin-bottom:16px;">
+            <p style="margin:0;font-size:13px;color:#8B6F1A;font-weight:700;">📥 STEP 1 — Long-press the image below → "Save image"</p>
+          </div>
+          <img src="${post.image}" alt="Cover image" style="width:100%;height:auto;border-radius:8px;margin-bottom:24px;display:block;" />
 
-          <div style="background:#F4F7FA;border-radius:6px;padding:16px;margin-bottom:20px;">
-            <p style="margin:0 0 6px;font-size:12px;color:#8B9BAE;text-transform:uppercase;letter-spacing:1px;">Category</p>
-            <p style="margin:0;font-weight:700;color:#3A7BDD;">${post.category}</p>
+          <!-- ===== STEP 2: COPY THE TEXT ===== -->
+          <div style="background:#E7F3FF;border:1px solid #8FBCEB;border-radius:8px;padding:14px 16px;margin-bottom:12px;">
+            <p style="margin:0;font-size:13px;color:#1B4F8A;font-weight:700;">📋 STEP 2 — Long-press the box below → "Select all" → "Copy"</p>
           </div>
 
-          <h2 style="font-size:22px;color:#0D1E3A;margin:0 0 12px;">${post.title}</h2>
-          <p style="color:#556070;font-style:italic;margin:0 0 24px;">${post.excerpt}</p>
-
-          <div style="background:#F4F7FA;border-left:4px solid #3A7BDD;padding:16px;border-radius:0 6px 6px 0;margin-bottom:24px;">
-            <p style="margin:0;font-size:14px;color:#556070;line-height:1.7;">${preview}...</p>
+          <div style="background:#F4F7FA;border:2px solid #3A7BDD;border-radius:8px;padding:20px;margin-bottom:24px;">
+            <pre style="white-space:pre-wrap;font-family:Arial,sans-serif;font-size:15px;color:#1A2740;line-height:1.6;margin:0;word-wrap:break-word;">${fbPost}</pre>
           </div>
 
-          <div style="white-space:pre-wrap;font-size:13px;color:#556070;line-height:1.8;background:#fff;border:1px solid #E2E8F0;border-radius:6px;padding:16px;margin-bottom:24px;max-height:400px;overflow-y:auto;">
+          <!-- ===== STEP 3: PASTE TO FACEBOOK ===== -->
+          <div style="background:#E8F8E8;border:1px solid #8FCB8F;border-radius:8px;padding:14px 16px;margin-bottom:32px;">
+            <p style="margin:0;font-size:13px;color:#1B6B1B;font-weight:700;">✅ STEP 3 — Open Facebook → "Create post" → paste text + attach the image</p>
+          </div>
+
+          <hr style="border:none;border-top:1px solid #E2E8F0;margin:32px 0;" />
+
+          <!-- ===== Reference info (collapsed visually) ===== -->
+          <p style="font-size:11px;color:#8B9BAE;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px;">For reference</p>
+          <h2 style="font-size:18px;color:#0D1E3A;margin:0 0 6px;">${post.title}</h2>
+          <p style="color:#3A7BDD;font-size:12px;font-weight:700;margin:0 0 16px;">${post.category} · Published live on doryangel.com</p>
+
+          <details style="margin-bottom:24px;">
+            <summary style="cursor:pointer;color:#3A7BDD;font-size:14px;font-weight:600;padding:8px 0;">Show full blog article ▾</summary>
+            <div style="white-space:pre-wrap;font-size:13px;color:#556070;line-height:1.8;background:#fff;border:1px solid #E2E8F0;border-radius:6px;padding:16px;margin-top:12px;">
 ${post.content}
-          </div>
+            </div>
+          </details>
 
-          <div style="background:#EBF3FD;border-radius:8px;padding:20px;text-align:center;">
-            <p style="margin:0 0 8px;font-size:14px;color:#0D1E3A;font-weight:700;">Want changes?</p>
-            <p style="margin:0;font-size:13px;color:#556070;">Simply reply to this email with your notes and the post will be revised before publishing.</p>
-          </div>
-
-          <p style="margin:24px 0 0;font-size:12px;color:#8B9BAE;text-align:center;">
-            This draft was auto-generated by your DoryAngel blog automation.<br>
-            Scheduled: every 3 days · Next post: in 3 days
+          <p style="margin:24px 0 0;font-size:11px;color:#8B9BAE;text-align:center;">
+            Auto-generated by DoryAngel blog automation<br>
+            Next post: in 3 days
           </p>
         </div>
       </div>
