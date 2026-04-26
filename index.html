@@ -874,13 +874,58 @@ body.variant-dark .audience-card { background: #0F2040; }
   pointer-events: none; z-index: 0;
 }
 
+/* ===== MOTION / ANIMATIONS ===== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes heroDrift {
+  0%, 100% { transform: translate(0, 0); opacity: 1; }
+  50%      { transform: translate(40px, -20px); opacity: 0.85; }
+}
+.reveal { opacity: 0; will-change: opacity, transform; }
+.reveal.is-visible {
+  animation: fadeInUp 800ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.reveal-stagger > * { opacity: 0; will-change: opacity, transform; }
+.reveal-stagger.is-visible > * {
+  animation: fadeInUp 700ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.reveal-stagger.is-visible > *:nth-child(1) { animation-delay: 0ms; }
+.reveal-stagger.is-visible > *:nth-child(2) { animation-delay: 100ms; }
+.reveal-stagger.is-visible > *:nth-child(3) { animation-delay: 200ms; }
+.reveal-stagger.is-visible > *:nth-child(4) { animation-delay: 300ms; }
+.reveal-stagger.is-visible > *:nth-child(5) { animation-delay: 400ms; }
+.reveal-stagger.is-visible > *:nth-child(6) { animation-delay: 500ms; }
+
+/* Hero drifting gradient layer — 30s loop, very subtle */
+.hero-wrap {
+  position: relative;
+  overflow: hidden;
+}
+.hero-wrap::after {
+  content: '';
+  position: absolute; inset: -20%;
+  background: radial-gradient(ellipse 50% 40% at 30% 30%, rgba(58,123,221,0.12) 0%, transparent 60%),
+              radial-gradient(ellipse 40% 30% at 70% 60%, rgba(91,159,234,0.10) 0%, transparent 60%);
+  animation: heroDrift 30s ease-in-out infinite;
+  pointer-events: none; z-index: 0;
+}
+.hero-wrap > * { position: relative; z-index: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-stagger > * { opacity: 1 !important; }
+  .reveal.is-visible, .reveal-stagger.is-visible > * { animation: none !important; }
+  .hero-wrap::after { animation: none !important; }
+}
+
 /* RESPONSIVE */
 @media (max-width: 900px) {
   nav { padding: 8px 16px 0; }
   .nav-links { display: none; }
   .nav-bottom { gap: 10px; padding: 6px 0; }
   .nav-divider { display: none; }
-  .nav-cta { font-size: 12px; padding: 7px 14px; width: auto; align-self: center; }
+  .nav-cta { font-size: 13px; padding: 12px 22px; width: auto; align-self: center; min-height: 44px; display: inline-flex; align-items: center; }
   .hero { grid-template-columns: 1fr; gap: 40px; padding: 90px 24px 48px; }
   .hero h1 { font-size: clamp(32px, 9vw, 44px); }
   .hero-sub { font-size: 16px; }
@@ -890,9 +935,9 @@ body.variant-dark .audience-card { background: #0F2040; }
   .stat-num { font-size: 40px; }
   .stat-label { font-size: 13px; }
   .portal-split { width: 100%; justify-content: center; }
-  .portal-btn { flex: 1; text-align: center; font-size: 13px; padding: 11px 12px; }
+  .portal-btn { flex: 1; text-align: center; font-size: 13px; padding: 14px 12px; min-height: 44px; }
   .hero-actions { flex-direction: column; align-items: center; }
-  .btn-primary, .btn-secondary { font-size: 14px; padding: 12px 20px; }
+  .btn-primary, .btn-secondary { font-size: 14px; padding: 14px 22px; min-height: 44px; }
   .hero-visual { display: none; }
   .audience-grid { grid-template-columns: 1fr 1fr; }
   .pillars-grid { grid-template-columns: 1fr 1fr; }
@@ -902,12 +947,23 @@ body.variant-dark .audience-card { background: #0F2040; }
   .footer-logo-wrap { background: white; display: inline-block; border-radius: 6px; padding: 6px 10px; }
   section { padding: 64px 20px; }
   .trust-bar { gap: 16px; padding: 16px 20px; flex-direction: column; align-items: flex-start; }
+  .blog-tab { padding: 14px 20px; min-height: 44px; }
 }
 @media (max-width: 600px) {
   .audience-grid { grid-template-columns: 1fr; }
   .pillars-grid { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .footer-top { grid-template-columns: 1fr; }
+  .hero { padding: 80px 16px 36px; gap: 28px; }
+  .hero h1 { font-size: clamp(28px, 8vw, 38px); }
+  .hero-sub { font-size: 15px; margin-bottom: 28px; }
+  .hero-stats { margin-top: 28px; }
+  .stat-num { font-size: 30px; }
+  .blog-featured-foot { flex-direction: column; align-items: flex-start; gap: 12px; padding: 16px 24px; }
+  .blog-featured-top { padding: 24px 24px; }
+  .blog-list-item { padding: 16px 18px; gap: 14px; }
+  .blog-list-num { font-size: 28px; width: 32px; }
+  .blog-list-title { font-size: 15px; }
 }
 </style>
 <template id="__bundler_thumbnail" data-bg-color="#F4F8FF">
@@ -961,7 +1017,7 @@ body.variant-dark .audience-card { background: #0F2040; }
 <div class="hero">
   <div class="hero-content">
     <div class="hero-eyebrow">New York City Property Management</div>
-    <h1>Smart Management.<br><em>Real Results.</em></h1>
+    <h1 class="reveal">Smart Management.<br><em>Real Results.</em></h1>
     <p class="hero-sub">High-tech property management solutions at your fingertips. From automated rent collection to real-time portfolio analytics — put New York City's smartest property tools to work for your investment.</p>
     <div class="hero-actions">
       <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" class="btn-primary">
@@ -1044,10 +1100,10 @@ body.variant-dark .audience-card { background: #0F2040; }
 <section class="audience-section" id="services">
   <div class="section-inner">
     <div class="section-label">Who We Serve</div>
-    <h2 class="section-title">Built for every stakeholder<br>in your property ecosystem</h2>
+    <h2 class="section-title reveal">Built for every stakeholder<br>in your property ecosystem</h2>
     <p class="section-sub">Whether you're an owner protecting your investment, a tenant looking for a seamless experience, or a broker building partnerships — we have a path for you.</p>
 
-    <div class="audience-grid">
+    <div class="audience-grid reveal-stagger">
       <!-- Owners -->
       <a href="#pricing" class="audience-card">
         <div class="audience-icon">
@@ -1119,10 +1175,10 @@ body.variant-dark .audience-card { background: #0F2040; }
 <section id="about">
   <div class="section-inner">
     <div class="section-label">Our Approach</div>
-    <h2 class="section-title">Six pillars that protect<br>and grow your investment</h2>
+    <h2 class="section-title reveal">Six pillars that protect<br>and grow your investment</h2>
     <p class="section-sub">We don't manage buildings — we manage outcomes. Every service is built around measurable results for your property.</p>
 
-    <div class="pillars-grid">
+    <div class="pillars-grid reveal-stagger">
       <div class="pillar-item">
         <div class="pillar-num">01</div>
         <h3>Transparent Reporting</h3>
@@ -1172,10 +1228,10 @@ body.variant-dark .audience-card { background: #0F2040; }
 <section id="pricing">
   <div class="section-inner">
     <div class="section-label">Transparent Pricing</div>
-    <h2 class="section-title">Flat-fee management.<br>No surprises.</h2>
+    <h2 class="section-title reveal">Flat-fee management.<br>No surprises.</h2>
     <p class="section-sub">We believe owners deserve clarity. Our flat-fee structure means you always know exactly what you're paying — no percentage games, no hidden fees.</p>
 
-    <div class="pricing-grid">
+    <div class="pricing-grid reveal-stagger">
       <div class="pricing-card">
         <div class="pricing-tier">Starter</div>
         <div class="pricing-price">$99<span>/mo</span></div>
@@ -1229,7 +1285,7 @@ body.variant-dark .audience-card { background: #0F2040; }
 <section class="testimonials-section" id="testimonials">
   <div class="section-inner">
     <div class="section-label">Google Reviews</div>
-    <h2 class="section-title">5.0 Stars across 19 reviews</h2>
+    <h2 class="section-title reveal">5.0 Stars across 19 reviews</h2>
     <p class="section-sub">Real reviews from real clients on Google. See what owners, tenants, and partners say about working with DoryAngel.</p>
 
     <div style="text-align:center">
@@ -1429,7 +1485,7 @@ body.variant-dark .audience-card { background: #0F2040; }
 <section id="faq">
   <div class="section-inner">
     <div class="section-label">FAQ</div>
-    <h2 class="section-title">Frequently asked<br>questions</h2>
+    <h2 class="section-title reveal">Frequently asked<br>questions</h2>
     <p class="section-sub">Everything you need to know about working with DoryAngel. Can't find your answer? <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" style="color:var(--blue)">Book a free consultation</a>.</p>
 
     <div class="faq-categories">
@@ -1513,7 +1569,7 @@ body.variant-dark .audience-card { background: #0F2040; }
 <!-- BLOG SECTION -->
 <section id="blog" class="blog-section-wrap">
   <div class="section-inner">
-    <div class="blog-masthead">
+    <div class="blog-masthead reveal">
       <span class="blog-masthead-label">Property Insights</span>
       <h2 class="blog-masthead-title">Latest from DoryAngel</h2>
       <p class="blog-masthead-sub">Expert guidance for Bronx &amp; NYC property owners</p>
@@ -1526,7 +1582,7 @@ body.variant-dark .audience-card { background: #0F2040; }
 <section class="contact-section" id="contact">
   <div class="section-inner">
     <div class="section-label">Get in Touch</div>
-    <h2 class="section-title">Book your free<br>consultation today</h2>
+    <h2 class="section-title reveal">Book your free<br>consultation today</h2>
 
     <div class="contact-layout">
       <div class="contact-info">
@@ -1897,6 +1953,99 @@ async function handleFormSubmit(e) {
   }
 }
 </script>
+
+<!-- ===== MOTION: scroll reveals, stat counters, carousel auto-scroll ===== -->
+<script>
+(function () {
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hasIO = 'IntersectionObserver' in window;
+
+  var revealEls = document.querySelectorAll('.reveal, .reveal-stagger');
+  if (hasIO && !prefersReduced) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+    revealEls.forEach(function (el) { io.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+  }
+
+  function animateCount(el, finalText) {
+    var match = finalText.match(/(\d+)(.*)/);
+    if (!match) return;
+    var target = parseInt(match[1], 10);
+    var suffix = match[2] || '';
+    var startTime = null;
+    var duration = 1400;
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var t = Math.min((ts - startTime) / duration, 1);
+      var eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = Math.round(target * eased) + suffix;
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  var statNums = document.querySelectorAll('.hero-stats .stat-num');
+  if (hasIO && !prefersReduced && statNums.length) {
+    statNums.forEach(function (el) {
+      el.dataset.final = el.textContent.trim();
+      if (/^\d+/.test(el.dataset.final)) {
+        el.textContent = '0' + (el.dataset.final.match(/\d+(.*)$/)[1] || '');
+      }
+    });
+    var statIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          animateCount(entry.target, entry.target.dataset.final);
+          statIo.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    statNums.forEach(function (el) { statIo.observe(el); });
+  }
+
+  var carousel = document.getElementById('reviewsCarousel');
+  if (carousel && hasIO && !prefersReduced) {
+    var paused = false;
+    var ticker = null;
+    function tick() {
+      if (paused || !carousel.children.length) return;
+      var step = carousel.children[0].offsetWidth + 20;
+      var max = carousel.scrollWidth - carousel.clientWidth;
+      if (carousel.scrollLeft + step > max - 5) {
+        carousel.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        carousel.scrollBy({ left: step, behavior: 'smooth' });
+      }
+    }
+    // Only tick when carousel is on-screen — saves CPU/GPU when scrolled past
+    var visibilityIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting && !ticker) {
+          ticker = setInterval(tick, 5000);
+        } else if (!entry.isIntersecting && ticker) {
+          clearInterval(ticker);
+          ticker = null;
+        }
+      });
+    }, { threshold: 0.2 });
+    visibilityIo.observe(carousel);
+    ['mouseenter', 'touchstart'].forEach(function (ev) {
+      carousel.addEventListener(ev, function () { paused = true; }, { passive: true });
+    });
+    ['mouseleave', 'touchend'].forEach(function (ev) {
+      carousel.addEventListener(ev, function () { paused = false; }, { passive: true });
+    });
+  }
+})();
+</script>
+
 <script src="./blog-loader.js"></script>
 </body>
 </html>
