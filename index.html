@@ -965,6 +965,51 @@ body.variant-dark .audience-card { background: #0F2040; }
   .blog-list-num { font-size: 28px; width: 32px; }
   .blog-list-title { font-size: 15px; }
 }
+
+/* ===== COOKIE CONSENT BANNER ===== */
+#cookie-banner {
+  position: fixed; left: 16px; right: 16px; bottom: 16px;
+  z-index: 9998;
+  background: #0D1E3A;
+  color: white;
+  border-radius: 12px;
+  padding: 18px 22px;
+  box-shadow: 0 10px 40px rgba(13,30,58,0.25);
+  display: none;
+  align-items: center; gap: 16px; flex-wrap: wrap;
+  font-family: 'DM Sans', sans-serif;
+  max-width: 720px;
+  margin: 0 auto;
+  transform: translateY(20px); opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.4s;
+}
+#cookie-banner.visible { display: flex; transform: translateY(0); opacity: 1; }
+#cookie-banner-text {
+  flex: 1; min-width: 200px;
+  font-size: 13px; line-height: 1.55; color: rgba(255,255,255,0.85);
+}
+#cookie-banner-text strong { color: white; font-weight: 600; }
+#cookie-banner-actions { display: flex; gap: 10px; flex-shrink: 0; }
+.cookie-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 600;
+  padding: 10px 18px; border-radius: 8px;
+  cursor: pointer; border: none;
+  transition: background 0.2s, transform 0.1s;
+  min-height: 40px;
+}
+.cookie-btn-accept { background: #3A7BDD; color: white; }
+.cookie-btn-accept:hover { background: #5B9FEA; transform: translateY(-1px); }
+.cookie-btn-reject {
+  background: transparent; color: rgba(255,255,255,0.85);
+  border: 1px solid rgba(255,255,255,0.25);
+}
+.cookie-btn-reject:hover { background: rgba(255,255,255,0.08); color: white; }
+@media (max-width: 600px) {
+  #cookie-banner { padding: 14px 16px; gap: 10px; }
+  #cookie-banner-text { font-size: 12px; }
+  .cookie-btn { font-size: 12px; padding: 9px 14px; flex: 1; }
+}
 </style>
 <template id="__bundler_thumbnail" data-bg-color="#F4F8FF">
   <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
@@ -2047,5 +2092,56 @@ async function handleFormSubmit(e) {
 </script>
 
 <script src="./blog-loader.js"></script>
+
+<!-- ===== COOKIE CONSENT + GOOGLE ANALYTICS ===== -->
+<div id="cookie-banner" role="dialog" aria-label="Cookie consent">
+  <div id="cookie-banner-text">
+    <strong>We value your privacy.</strong> We use cookies to understand how visitors interact with our site so we can improve it. No personal data is sold or shared.
+  </div>
+  <div id="cookie-banner-actions">
+    <button class="cookie-btn cookie-btn-reject" id="cookie-reject">Reject</button>
+    <button class="cookie-btn cookie-btn-accept" id="cookie-accept">Accept</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var GA_ID = 'G-P8QR4VL8NH';
+  var STORAGE_KEY = 'doryangel-cookie-consent';
+
+  function loadGA() {
+    if (window.__gaLoaded) return;
+    window.__gaLoaded = true;
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', GA_ID, { anonymize_ip: true });
+  }
+
+  var banner = document.getElementById('cookie-banner');
+  var consent = null;
+  try { consent = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+
+  if (consent === 'accepted') {
+    loadGA();
+  } else if (consent !== 'rejected') {
+    setTimeout(function () { banner.classList.add('visible'); }, 1200);
+  }
+
+  document.getElementById('cookie-accept').onclick = function () {
+    try { localStorage.setItem(STORAGE_KEY, 'accepted'); } catch (e) {}
+    banner.classList.remove('visible');
+    loadGA();
+  };
+  document.getElementById('cookie-reject').onclick = function () {
+    try { localStorage.setItem(STORAGE_KEY, 'rejected'); } catch (e) {}
+    banner.classList.remove('visible');
+  };
+})();
+</script>
 </body>
 </html>
