@@ -109,12 +109,15 @@ Requirements:
 - Include the office contact: 557 Grand Concourse, Bronx, NY · (516) 847-4999 · office@doryangel.com
 
 ALSO write a separate Facebook post version:
-- 100-150 words
+- 200-280 words — substantive enough to deliver real value, not just a teaser
 - Hook-first opening (a question, surprising stat, or bold statement)
-- 3-4 short paragraphs with line breaks (NOT one wall of text)
-- Ends with: "👉 Book a free consultation: https://cal.com/dory-angel-management-v5o0ke/30min"
-- Add 4-5 relevant hashtags at the very end like #BronxRealEstate #NYCLandlord #PropertyManagement
-- Friendly but professional tone — written for Facebook feed scrolling
+- Include 2-3 concrete bullet-point takeaways using "•" or emoji bullets — these are the meat of the post
+- Use clear line breaks between sections (not one wall of text)
+- Bottom block, in this exact order:
+  1. CTA line: "👉 Book a free consultation: https://cal.com/dory-angel-management-v5o0ke/30min"
+  2. Website link line: "🔗 Read the full article: https://dror75p-ops.github.io/Doryangel-web-3-carousel-blog/"
+  3. 4-5 relevant hashtags like #BronxRealEstate #NYCLandlord #PropertyManagement #DoryAngel
+- Friendly but professional tone — written for Facebook feed scrolling, but informative enough that someone who only reads the post still learns something useful
 
 Respond ONLY with valid JSON in this exact format (no markdown, no code blocks):
 {
