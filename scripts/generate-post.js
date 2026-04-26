@@ -4,7 +4,8 @@ import Anthropic from '@anthropic-ai/sdk';
 import { Resend } from 'resend';
 import { readFileSync, writeFileSync } from 'fs';
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+// max_retries bumped from default 2 → 4 for scheduled CI reliability
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 4 });
 const resend = new Resend(process.env.RESEND_API_KEY);
 const APPROVAL_EMAIL = 'dror75p@gmail.com';
 
@@ -89,51 +90,84 @@ async function fetchCoverImage(category) {
   }
 }
 
-async function generatePost(topic) {
-  const today = formatDate(new Date());
+// Static brand context + writing guide. Lives in `system` (rendered before
+// `messages`) so it can be prompt-cached across the every-3-day cadence.
+// Note: at this prefix size the cache may not activate (Opus 4.7 minimum is
+// 4096 tokens) — the marker is harmless if too small, and starts paying off
+// the moment the system grows.
+const SYSTEM_PROMPT = `You are a content writer for DoryAngel Asset Management, a NYC property management company based at 557 Grand Concourse, Bronx, NY. They offer flat-fee property management starting at $99/month and have served Bronx and NYC owners since 2010.
 
-  const message = await anthropic.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 2048,
-    messages: [{
-      role: 'user',
-      content: `You are a content writer for DoryAngel Asset Management, a NYC property management company based at 557 Grand Concourse, Bronx, NY. They offer flat-fee property management starting at $99/month and have served Bronx and NYC owners since 2010.
+When asked to write a blog post on a topic, produce two pieces of content:
 
-Write a blog post about: "${topic}"
-
-Requirements:
+## 1. Full blog article
 - Target audience: Bronx and NYC property owners looking to hire a property manager
 - Tone: Expert, trustworthy, practical — like advice from a knowledgeable friend
 - Length: 600-800 words
-- End with a soft call-to-action to book a free consultation at: https://cal.com/dory-angel-management-v5o0ke/30min
-- Include the office contact: 557 Grand Concourse, Bronx, NY · (516) 847-4999 · office@doryangel.com
+- Format: Markdown with headings, short paragraphs, and bullet lists where useful
+- End with a soft call-to-action to book a free consultation: https://cal.com/dory-angel-management-v5o0ke/30min
+- Close with the office contact line: 557 Grand Concourse, Bronx, NY · (516) 847-4999 · office@doryangel.com
 
-ALSO write a separate Facebook post version:
+## 2. Facebook-optimized version
 - 200-280 words — substantive enough to deliver real value, not just a teaser
-- Hook-first opening (a question, surprising stat, or bold statement)
-- Include 2-3 concrete bullet-point takeaways using "•" or emoji bullets — these are the meat of the post
-- Use clear line breaks between sections (not one wall of text)
+- Hook-first opening: a question, a surprising stat, or a bold statement
+- Include 2-3 concrete bullet-point takeaways using "•" — these are the meat of the post
+- Clear line breaks between sections (no walls of text)
 - Bottom block, in this exact order:
   1. CTA line: "👉 Book a free consultation: https://cal.com/dory-angel-management-v5o0ke/30min"
   2. Website link line: "🔗 Read the full article: https://dror75p-ops.github.io/Doryangel-web-3-carousel-blog/"
   3. 4-5 relevant hashtags like #BronxRealEstate #NYCLandlord #PropertyManagement #DoryAngel
 - Friendly but professional tone — written for Facebook feed scrolling, but informative enough that someone who only reads the post still learns something useful
 
-Respond ONLY with valid JSON in this exact format (no markdown, no code blocks):
-{
-  "title": "the full article title",
-  "category": "one of: Compliance, Investment, Tenant Relations, Property Management",
-  "excerpt": "2-sentence summary for the blog index (max 160 chars)",
-  "content": "full markdown content of the article",
-  "facebookPost": "the Facebook-optimized version with hook, line breaks, CTA, and hashtags"
-}`
-    }]
+## Other constraints
+- The category must be exactly one of: Compliance, Investment, Tenant Relations, Property Management
+- The excerpt is a 2-sentence summary for the blog index, max 160 characters
+- Title should be specific and useful, not clickbait`;
+
+// Structured output schema — guarantees valid JSON, removes the fragile
+// "respond ONLY with valid JSON" instruction and the JSON.parse failure path.
+const POST_SCHEMA = {
+  type: 'object',
+  properties: {
+    title: { type: 'string' },
+    category: {
+      type: 'string',
+      enum: ['Compliance', 'Investment', 'Tenant Relations', 'Property Management'],
+    },
+    excerpt: { type: 'string' },
+    content: { type: 'string' },
+    facebookPost: { type: 'string' },
+  },
+  required: ['title', 'category', 'excerpt', 'content', 'facebookPost'],
+  additionalProperties: false,
+};
+
+async function generatePost(topic) {
+  const today = formatDate(new Date());
+
+  const message = await anthropic.messages.create({
+    model: 'claude-opus-4-7',
+    max_tokens: 4096,
+    system: [
+      { type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } },
+    ],
+    output_config: {
+      format: { type: 'json_schema', schema: POST_SCHEMA },
+    },
+    messages: [
+      { role: 'user', content: `Write a blog post about: "${topic}"` },
+    ],
   });
 
-  const raw = message.content[0].text.trim();
-  const post = JSON.parse(raw);
+  const textBlock = message.content.find(b => b.type === 'text');
+  const post = JSON.parse(textBlock.text);
 
-  // Fetch a matching cover image from Unsplash
+  console.log(
+    `usage — input: ${message.usage.input_tokens}, ` +
+    `cache_read: ${message.usage.cache_read_input_tokens ?? 0}, ` +
+    `cache_write: ${message.usage.cache_creation_input_tokens ?? 0}, ` +
+    `output: ${message.usage.output_tokens}`
+  );
+
   const image = await fetchCoverImage(post.category);
 
   return {
@@ -143,10 +177,11 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code blocks):
     category: post.category,
     author: 'DoryAngel Team',
     excerpt: post.excerpt,
-    image: image,
+    image,
     views: 0,
     score: 0,
     content: post.content,
+    facebookPost: post.facebookPost,
   };
 }
 
@@ -167,13 +202,11 @@ async function sendApprovalEmail(post) {
 
         <div style="padding:20px;border:1px solid #E2E8F0;border-top:none;border-radius:0 0 8px 8px;">
 
-          <!-- ===== STEP 1: SAVE THE IMAGE ===== -->
           <div style="background:#FFF8E7;border:1px solid #F5D78E;border-radius:8px;padding:14px 16px;margin-bottom:16px;">
             <p style="margin:0;font-size:13px;color:#8B6F1A;font-weight:700;">📥 STEP 1 — Long-press the image below → "Save image"</p>
           </div>
           <img src="${post.image}" alt="Cover image" style="width:100%;height:auto;border-radius:8px;margin-bottom:24px;display:block;" />
 
-          <!-- ===== STEP 2: COPY THE TEXT ===== -->
           <div style="background:#E7F3FF;border:1px solid #8FBCEB;border-radius:8px;padding:14px 16px;margin-bottom:12px;">
             <p style="margin:0;font-size:13px;color:#1B4F8A;font-weight:700;">📋 STEP 2 — Long-press the box below → "Select all" → "Copy"</p>
           </div>
@@ -182,14 +215,12 @@ async function sendApprovalEmail(post) {
             <pre style="white-space:pre-wrap;font-family:Arial,sans-serif;font-size:15px;color:#1A2740;line-height:1.6;margin:0;word-wrap:break-word;">${fbPost}</pre>
           </div>
 
-          <!-- ===== STEP 3: PASTE TO FACEBOOK ===== -->
           <div style="background:#E8F8E8;border:1px solid #8FCB8F;border-radius:8px;padding:14px 16px;margin-bottom:32px;">
             <p style="margin:0;font-size:13px;color:#1B6B1B;font-weight:700;">✅ STEP 3 — Open Facebook → "Create post" → paste text + attach the image</p>
           </div>
 
           <hr style="border:none;border-top:1px solid #E2E8F0;margin:32px 0;" />
 
-          <!-- ===== Reference info (collapsed visually) ===== -->
           <p style="font-size:11px;color:#8B9BAE;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px;">For reference</p>
           <h2 style="font-size:18px;color:#0D1E3A;margin:0 0 6px;">${post.title}</h2>
           <p style="color:#3A7BDD;font-size:12px;font-weight:700;margin:0 0 16px;">${post.category} · Published live on doryangel.com</p>
@@ -212,29 +243,31 @@ ${post.content}
 }
 
 async function main() {
-  // Load existing posts
   const indexPath = './content/blog/posts-index.json';
   const posts = JSON.parse(readFileSync(indexPath, 'utf8'));
 
-  // Pick topic based on how many posts exist
   const topic = pickTopic(posts.length);
   console.log(`Generating post about: "${topic}"`);
 
-  // Generate the post
   const post = await generatePost(topic);
   console.log(`Generated: "${post.title}"`);
 
-  // Add to the top of the posts array
-  posts.unshift(post);
+  // facebookPost is for the email only — strip before persisting
+  const { facebookPost, ...postForIndex } = post;
+  posts.unshift(postForIndex);
   writeFileSync(indexPath, JSON.stringify(posts, null, 2));
   console.log('Added to posts-index.json');
 
-  // Send approval email
   await sendApprovalEmail(post);
   console.log(`Approval email sent to ${APPROVAL_EMAIL}`);
 }
 
 main().catch(err => {
-  console.error('Error:', err.message);
+  if (err instanceof Anthropic.APIError) {
+    console.error(`Anthropic API error ${err.status}: ${err.message}`);
+    if (err.request_id) console.error(`Request ID: ${err.request_id}`);
+  } else {
+    console.error('Error:', err.message);
+  }
   process.exit(1);
 });
