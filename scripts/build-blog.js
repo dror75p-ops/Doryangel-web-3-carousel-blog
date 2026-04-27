@@ -62,7 +62,7 @@ function renderPage(post, related) {
       <h2>Continue reading</h2>
       <div class="related-grid">
         ${related.map(r => `
-          <a href="/Doryangel-web-3-carousel-blog/blog/${r.slug}/" class="related-card">
+          <a href="../${r.slug}/" class="related-card">
             <div class="related-image" style="background-image:url('${escape(r.heroImage)}')"></div>
             <div class="related-body">
               <div class="related-cat">${escape(CATEGORY_LABEL[r.category])}</div>
@@ -258,7 +258,7 @@ footer.post-footer a { color: white; text-decoration: none; }
 <body>
 
 <nav class="post-nav">
-  <a href="/Doryangel-web-3-carousel-blog/#blog" class="back">← All articles</a>
+  <a href="../../#blog" class="back">← All articles</a>
   <a href="${BOOKING_URL}" target="_blank" class="cta">Book Free Consultation</a>
 </nav>
 
