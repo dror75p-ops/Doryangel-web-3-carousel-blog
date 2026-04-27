@@ -4,23 +4,28 @@ import Anthropic from '@anthropic-ai/sdk';
 import { Resend } from 'resend';
 import { readFileSync, writeFileSync } from 'fs';
 
-// max_retries bumped from default 2 → 4 for scheduled CI reliability
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 4 });
 const resend = new Resend(process.env.RESEND_API_KEY);
 const APPROVAL_EMAIL = 'dror75p@gmail.com';
 
-// Rotating topics — each run picks the next one in sequence
+// Data-validated topics — every topic targets a real landlord pain point
+// and is anchored to a specific NYC city (proven to drive more views).
+// Format: title-style + city + category
 const TOPICS = [
-  'NYC local law compliance updates for Bronx landlords',
-  'Bronx rental market trends and investment opportunities',
-  'Tenant screening best practices for NYC property owners',
-  'Good cause eviction law impact on NYC landlords',
-  'Flat-fee vs percentage property management cost comparison',
-  'Preventative maintenance strategies for Bronx buildings',
-  'NYC housing court and eviction process explained for landlords',
-  'How to reduce vacancy rates in Bronx rental properties',
-  'NYC rent stabilization rules every landlord must know',
-  'Technology tools that help NYC property owners save time',
+  { title: '5 Free Tools Every DIY Landlord in the Bronx Needs', category: 'diy-property-management' },
+  { title: 'How to Handle Tenant Complaints Without Losing Your Mind', category: 'diy-property-management' },
+  { title: 'The Top 3 Mistakes Bronx Landlords Make Managing Their Own Properties', category: 'property-management' },
+  { title: 'What to Look for in a Bronx Property Management Company', category: 'property-management' },
+  { title: 'Is Buying a Rental Property in the Bronx Still a Good Investment?', category: 'investments' },
+  { title: 'Why Bronx Landlords Are Switching to Flat-Fee Property Management', category: 'property-management' },
+  { title: 'How Much Does Property Management Cost in the Bronx?', category: 'property-management' },
+  { title: 'Should You Self-Manage or Hire a Property Manager? A Cost Breakdown', category: 'diy-property-management' },
+  { title: "How to Handle a Tenant Who Doesn't Pay Rent in NYC", category: 'diy-property-management' },
+  { title: 'What Bronx Landlords Need to Know About HPD Lead Paint Rules', category: 'property-management' },
+  { title: '4 Signs Your Queens Rental Property Needs Professional Management', category: 'property-management' },
+  { title: 'How Mount Vernon Landlords Can Cut Vacancy Time in Half', category: 'diy-property-management' },
+  { title: 'Yonkers vs Bronx: Which Is the Better Rental Investment in 2026?', category: 'investments' },
+  { title: 'New Rochelle Property Tax Explained for Landlords', category: 'property-management' },
 ];
 
 function pickTopic(postCount) {
@@ -36,39 +41,44 @@ function generateSlug(title) {
     .slice(0, 60);
 }
 
-function formatDate(date) {
-  return date.toISOString().split('T')[0];
+function formatDate(date) { return date.toISOString().split('T')[0]; }
+
+function wordsToMinutes(content) {
+  const words = content.trim().split(/\s+/).length;
+  return Math.max(2, Math.round(words / 220));
 }
 
-// Curated search queries — bright, professional, on-brand
-// Themes: office workers on computers / NYC skyscrapers in daylight / handyman work
+const HASHTAGS_BY_CATEGORY = {
+  'property-management':     ['propertymanagement', 'bronxlandlord', 'nyc', 'flatfee', 'doryangel'],
+  'diy-property-management': ['diylandlord', 'bronxlandlord', 'nyc', 'rentalproperty', 'doryangel'],
+  'investments':             ['realestateinvesting', 'bronx', 'nycrealestate', 'rentalincome', 'doryangel'],
+};
+
 const IMAGE_QUERIES = {
-  'Compliance':           [
+  'property-management': [
     'business professional reviewing documents bright office',
     'office worker computer modern bright',
     'manhattan skyscraper daylight blue sky',
+    'modern nyc office building',
   ],
-  'Investment':           [
-    'manhattan skyline daylight bright',
-    'businesswoman laptop modern office bright',
-    'nyc skyscrapers blue sky',
-  ],
-  'Tenant Relations':     [
+  'diy-property-management': [
     'handyman repairing apartment bright',
     'maintenance worker tools toolbox',
     'professional plumber working bright',
+    'nyc apartment building exterior bright',
   ],
-  'Property Management':  [
-    'handyman fixing apartment bright',
-    'office team working laptops bright',
-    'modern office workers computers daylight',
+  'investments': [
+    'manhattan skyline daylight bright',
+    'businesswoman laptop modern office bright',
+    'nyc skyscrapers blue sky',
+    'bronx residential building daylight',
   ],
 };
 
-const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80';
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1600&q=80';
 
 async function fetchCoverImage(category) {
-  const queries = IMAGE_QUERIES[category] || IMAGE_QUERIES['Property Management'];
+  const queries = IMAGE_QUERIES[category] || IMAGE_QUERIES['property-management'];
   const query = queries[Math.floor(Math.random() * queries.length)];
   console.log(`Searching Unsplash for: "${query}"`);
 
@@ -81,63 +91,52 @@ async function fetchCoverImage(category) {
     const data = await res.json();
     if (!data.results || data.results.length === 0) throw new Error('No results');
 
-    // Pick a random image from the top results for variety
     const photo = data.results[Math.floor(Math.random() * Math.min(data.results.length, 10))];
-    return `${photo.urls.raw}&w=1200&q=80&fit=crop`;
+    return `${photo.urls.raw}&w=1600&q=80&fit=crop`;
   } catch (err) {
     console.warn(`Unsplash failed (${err.message}) — using fallback image`);
     return FALLBACK_IMAGE;
   }
 }
 
-// Static brand context + writing guide. Lives in `system` (rendered before
-// `messages`) so it can be prompt-cached across the every-3-day cadence.
-// Note: at this prefix size the cache may not activate (Opus 4.7 minimum is
-// 4096 tokens) — the marker is harmless if too small, and starts paying off
-// the moment the system grows.
-const SYSTEM_PROMPT = `You are a content writer for DoryAngel Asset Management, a NYC property management company based at 557 Grand Concourse, Bronx, NY. They offer flat-fee property management starting at $99/month and have served Bronx and NYC owners since 2010.
+const SYSTEM_PROMPT = `You are a content writer for DoryAngel LLC, a NYC property management company at 557 Grand Concourse Ave #4123, Bronx NY 10451. They offer flat-fee property management at $99/unit/month and have served Bronx and NYC owners since 2010.
 
-When asked to write a blog post on a topic, produce two pieces of content:
+CRITICAL RULES — what works for our audience (validated by real traffic data):
 
-## 1. Full blog article
-- Target audience: Bronx and NYC property owners looking to hire a property manager
-- Tone: Expert, trustworthy, practical — like advice from a knowledgeable friend
-- Length: 600-800 words
-- Format: Markdown with headings, short paragraphs, and bullet lists where useful
-- End with a soft call-to-action to book a free consultation: https://cal.com/dory-angel-management-v5o0ke/30min
-- Close with the office contact line: 557 Grand Concourse, Bronx, NY · (516) 847-4999 · office@doryangel.com
+1. Title formula: must be either a question OR start with a number ("5 Free Tools...", "Top 3 Mistakes..."). Always include a specific city (Bronx, Queens, Yonkers, Mount Vernon, New Rochelle).
 
-## 2. Facebook-optimized version
-- 200-280 words — substantive enough to deliver real value, not just a teaser
-- Hook-first opening: a question, a surprising stat, or a bold statement
-- Include 2-3 concrete bullet-point takeaways using "•" — these are the meat of the post
-- Clear line breaks between sections (no walls of text)
-- Bottom block, in this exact order:
-  1. CTA line: "👉 Book a free consultation: https://cal.com/dory-angel-management-v5o0ke/30min"
-  2. Website link line: "🔗 Read the full article: https://dror75p-ops.github.io/Doryangel-web-3-carousel-blog/"
-  3. 4-5 relevant hashtags like #BronxRealEstate #NYCLandlord #PropertyManagement #DoryAngel
-- Friendly but professional tone — written for Facebook feed scrolling, but informative enough that someone who only reads the post still learns something useful
+2. Pain-point excerpts: 1-2 sentences focused on a real landlord pain point — money lost, tenant trouble, compliance fines. NOT abstract or marketing-speak.
 
-## Other constraints
-- The category must be exactly one of: Compliance, Investment, Tenant Relations, Property Management
-- The excerpt is a 2-sentence summary for the blog index, max 160 characters
-- Title should be specific and useful, not clickbait`;
+3. Word count: 800-1,200 words for the body content. Below 500 = zero traffic. We need depth.
 
-// Structured output schema — guarantees valid JSON, removes the fragile
-// "respond ONLY with valid JSON" instruction and the JSON.parse failure path.
+4. NYC-specific examples: include at least one specific dollar figure or NYC-specific reference (a law name, neighborhood, court process, etc.) per article. Generic content gets ignored.
+
+5. Tone: Expert, trustworthy, practical — like advice from a knowledgeable friend who knows NYC inside out.
+
+6. Structure: Use markdown headings (h2, h3), short paragraphs (2-3 sentences), bullet lists where useful. Make it scannable.
+
+7. Do NOT include the CTA in the content — the CTA is auto-appended to every post by our system.
+
+When asked to write a post, also produce:
+- An SEO title (max 60 chars including " | DoryAngel" suffix the system adds)
+- An SEO description (max 155 chars, includes a hook + value prop)
+- A descriptive alt text for the hero image (used for accessibility + SEO)
+- A Facebook-optimized version (200-280 words, hook-first, 2-3 bullet takeaways, with the CTA + website link + hashtags at the bottom in the format we specify)
+
+Categories must be exactly one of: property-management, diy-property-management, investments.`;
+
 const POST_SCHEMA = {
   type: 'object',
   properties: {
-    title: { type: 'string' },
-    category: {
-      type: 'string',
-      enum: ['Compliance', 'Investment', 'Tenant Relations', 'Property Management'],
-    },
-    excerpt: { type: 'string' },
-    content: { type: 'string' },
-    facebookPost: { type: 'string' },
+    title:            { type: 'string' },
+    excerpt:          { type: 'string' },
+    content:          { type: 'string' },
+    seoTitleShort:    { type: 'string' },
+    seoDescription:   { type: 'string' },
+    heroImageAlt:     { type: 'string' },
+    facebookPost:     { type: 'string' },
   },
-  required: ['title', 'category', 'excerpt', 'content', 'facebookPost'],
+  required: ['title', 'excerpt', 'content', 'seoTitleShort', 'seoDescription', 'heroImageAlt', 'facebookPost'],
   additionalProperties: false,
 };
 
@@ -153,9 +152,14 @@ async function generatePost(topic) {
     output_config: {
       format: { type: 'json_schema', schema: POST_SCHEMA },
     },
-    messages: [
-      { role: 'user', content: `Write a blog post about: "${topic}"` },
-    ],
+    messages: [{
+      role: 'user',
+      content: `Write a blog post on this topic: "${topic.title}"
+Target category: ${topic.category}
+Year context: 2026
+
+Remember: 800-1,200 words, NYC-specific examples, pain-point focused, scannable structure, no CTA in the content.`,
+    }],
   });
 
   const textBlock = message.content.find(b => b.type === 'text');
@@ -168,25 +172,31 @@ async function generatePost(topic) {
     `output: ${message.usage.output_tokens}`
   );
 
-  const image = await fetchCoverImage(post.category);
+  const heroImage = await fetchCoverImage(topic.category);
+
+  const seoTitle = (post.seoTitleShort + ' | DoryAngel').slice(0, 60);
 
   return {
     slug: generateSlug(post.title),
     title: post.title,
-    date: today,
-    category: post.category,
-    author: 'DoryAngel Team',
+    category: topic.category,
     excerpt: post.excerpt,
-    image,
-    views: 0,
-    score: 0,
+    publishedDate: today,
+    minutesToRead: wordsToMinutes(post.content),
+    heroImage,
+    heroImageAlt: post.heroImageAlt,
+    hashtags: HASHTAGS_BY_CATEGORY[topic.category],
+    featured: false,
+    seoTitle,
+    seoDescription: post.seoDescription.slice(0, 155),
+    author: 'DoryAngel Team',
     content: post.content,
     facebookPost: post.facebookPost,
   };
 }
 
 async function sendApprovalEmail(post) {
-  const fbPost = post.facebookPost || `${post.title}\n\n${post.excerpt}\n\n👉 Book a free consultation: https://cal.com/dory-angel-management-v5o0ke/30min\n\n#BronxRealEstate #NYCLandlord #PropertyManagement #DoryAngel`;
+  const fbPost = post.facebookPost;
 
   await resend.emails.send({
     from: 'DoryAngel Blog <onboarding@resend.dev>',
@@ -194,24 +204,22 @@ async function sendApprovalEmail(post) {
     subject: `📘 Facebook-ready: "${post.title}"`,
     html: `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#1A2740;">
-
-        <div style="background:#0D1E3A;padding:20px 24px;border-radius:8px 8px 0 0;">
+        <div style="background:#0F2847;padding:20px 24px;border-radius:8px 8px 0 0;">
           <h1 style="color:white;font-size:18px;margin:0;">📘 Ready to post to Facebook</h1>
           <p style="color:rgba(255,255,255,0.7);font-size:13px;margin:6px 0 0;">2 long-presses → done</p>
         </div>
-
         <div style="padding:20px;border:1px solid #E2E8F0;border-top:none;border-radius:0 0 8px 8px;">
 
           <div style="background:#FFF8E7;border:1px solid #F5D78E;border-radius:8px;padding:14px 16px;margin-bottom:16px;">
             <p style="margin:0;font-size:13px;color:#8B6F1A;font-weight:700;">📥 STEP 1 — Long-press the image below → "Save image"</p>
           </div>
-          <img src="${post.image}" alt="Cover image" style="width:100%;height:auto;border-radius:8px;margin-bottom:24px;display:block;" />
+          <img src="${post.heroImage}" alt="${post.heroImageAlt}" style="width:100%;height:auto;border-radius:8px;margin-bottom:24px;display:block;" />
 
           <div style="background:#E7F3FF;border:1px solid #8FBCEB;border-radius:8px;padding:14px 16px;margin-bottom:12px;">
             <p style="margin:0;font-size:13px;color:#1B4F8A;font-weight:700;">📋 STEP 2 — Long-press the box below → "Select all" → "Copy"</p>
           </div>
 
-          <div style="background:#F4F7FA;border:2px solid #3A7BDD;border-radius:8px;padding:20px;margin-bottom:24px;">
+          <div style="background:#F4F7FA;border:2px solid #1E5AA8;border-radius:8px;padding:20px;margin-bottom:24px;">
             <pre style="white-space:pre-wrap;font-family:Arial,sans-serif;font-size:15px;color:#1A2740;line-height:1.6;margin:0;word-wrap:break-word;">${fbPost}</pre>
           </div>
 
@@ -222,11 +230,11 @@ async function sendApprovalEmail(post) {
           <hr style="border:none;border-top:1px solid #E2E8F0;margin:32px 0;" />
 
           <p style="font-size:11px;color:#8B9BAE;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px;">For reference</p>
-          <h2 style="font-size:18px;color:#0D1E3A;margin:0 0 6px;">${post.title}</h2>
-          <p style="color:#3A7BDD;font-size:12px;font-weight:700;margin:0 0 16px;">${post.category} · Published live on doryangel.com</p>
+          <h2 style="font-size:18px;color:#0F2847;margin:0 0 6px;">${post.title}</h2>
+          <p style="color:#1E5AA8;font-size:12px;font-weight:700;margin:0 0 16px;">${post.category} · ${post.minutesToRead} min read · Live on doryangel.com</p>
 
           <details style="margin-bottom:24px;">
-            <summary style="cursor:pointer;color:#3A7BDD;font-size:14px;font-weight:600;padding:8px 0;">Show full blog article ▾</summary>
+            <summary style="cursor:pointer;color:#1E5AA8;font-size:14px;font-weight:600;padding:8px 0;">Show full blog article ▾</summary>
             <div style="white-space:pre-wrap;font-size:13px;color:#556070;line-height:1.8;background:#fff;border:1px solid #E2E8F0;border-radius:6px;padding:16px;margin-top:12px;">
 ${post.content}
             </div>
@@ -247,7 +255,7 @@ async function main() {
   const posts = JSON.parse(readFileSync(indexPath, 'utf8'));
 
   const topic = pickTopic(posts.length);
-  console.log(`Generating post about: "${topic}"`);
+  console.log(`Generating post about: "${topic.title}" (${topic.category})`);
 
   const post = await generatePost(topic);
   console.log(`Generated: "${post.title}"`);
