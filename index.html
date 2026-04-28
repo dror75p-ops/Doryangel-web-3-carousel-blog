@@ -1026,6 +1026,19 @@ body.variant-dark .audience-card { background: #0F2040; }
   .hero-wrap::after { animation: none !important; }
 }
 
+/* HAMBURGER BUTTON */
+.hamburger-btn {
+  display: none;
+  align-items: center; justify-content: center;
+  width: 44px; height: 44px;
+  background: #3A7BDD;
+  border: none; border-radius: 8px;
+  cursor: pointer; flex-shrink: 0;
+  transition: background 0.2s;
+}
+.hamburger-btn:hover { background: #2e69c7; }
+.hamburger-btn svg { display: block; pointer-events: none; }
+
 /* RESPONSIVE */
 @media (max-width: 900px) {
   nav { padding: 8px 16px 0; }
@@ -1121,19 +1134,6 @@ body.variant-dark .audience-card { background: #0F2040; }
   #cookie-banner-text { font-size: 12px; }
   .cookie-btn { font-size: 12px; padding: 9px 14px; flex: 1; }
 }
-
-/* HAMBURGER BUTTON */
-.hamburger-btn {
-  display: none;
-  align-items: center; justify-content: center;
-  width: 44px; height: 44px;
-  background: #3A7BDD;
-  border: none; border-radius: 8px;
-  cursor: pointer; flex-shrink: 0;
-  transition: background 0.2s;
-}
-.hamburger-btn:hover { background: #2e69c7; }
-.hamburger-btn svg { display: block; pointer-events: none; }
 
 /* NAV OVERLAY */
 .nav-overlay {
