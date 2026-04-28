@@ -269,25 +269,27 @@ nav {
 }
 .portal-buildium-strip {
   border-top: 1px solid var(--grey-mid); background: var(--off-white);
-  padding: 11px 16px 12px; display: flex; flex-direction: column; gap: 7px;
+  padding: 14px 20px 15px; display: flex; flex-direction: column;
+  align-items: center; gap: 8px; text-align: center;
 }
-.portal-powered-row {
-  display: flex; align-items: center; gap: 8px;
-}
-.portal-buildium-logo {
+.portal-powered-label {
   display: flex; align-items: center; gap: 5px;
-  font-size: 12px; font-weight: 700; color: #3d8c3d; flex-shrink: 0;
+  font-size: 10px; font-weight: 700; color: #3d8c3d;
+  text-transform: uppercase; letter-spacing: 0.6px;
 }
-.portal-trust-text {
-  font-size: 11px; color: var(--grey); line-height: 1.3; flex: 1;
+.portal-owner-headline {
+  font-size: 13px; font-weight: 600; color: var(--navy);
+  line-height: 1.45; margin: 0;
 }
 .portal-chips {
-  display: flex; align-items: center; gap: 0; flex-wrap: wrap;
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 0;
 }
 .portal-chip {
   display: flex; align-items: center; gap: 4px;
   font-size: 11px; color: var(--grey); white-space: nowrap;
 }
+.portal-chip svg { color: var(--blue); flex-shrink: 0; }
 .portal-chip + .portal-chip::before {
   content: '·'; margin: 0 8px; color: var(--grey-mid);
 }
@@ -1183,28 +1185,23 @@ body.variant-dark .audience-card { background: #0F2040; }
           <a href="https://doryangel.managebuilding.com" target="_blank" class="portal-btn">Tenant Portal</a>
         </div>
         <div class="portal-buildium-strip">
-          <div class="portal-powered-row">
-            <div class="portal-buildium-logo">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="18" height="18" rx="3" fill="#5A9B5A"/>
-                <path d="M9 3.5L13.5 8H11V14.5H7V8H4.5L9 3.5Z" fill="white"/>
-              </svg>
-              Buildium
-            </div>
-            <span class="portal-trust-text">Enterprise property management CRM — real-time data, zero paperwork</span>
+          <div class="portal-powered-label">
+            <svg width="14" height="14" viewBox="0 0 18 18" fill="none"><rect width="18" height="18" rx="3" fill="#5A9B5A"/><path d="M9 3.5L13.5 8H11V14.5H7V8H4.5L9 3.5Z" fill="white"/></svg>
+            Powered by Buildium
           </div>
+          <p class="portal-owner-headline">Your income, expenses &amp; maintenance —<br>visible in real time, from any device.</p>
           <div class="portal-chips">
             <span class="portal-chip">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-              Live Owner Dashboard
+              Live Reports
             </span>
             <span class="portal-chip">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-              Auto Rent Collection
+              Auto Payments
             </span>
             <span class="portal-chip">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-              24/7 Maintenance
+              Maintenance Tracking
             </span>
           </div>
         </div>
