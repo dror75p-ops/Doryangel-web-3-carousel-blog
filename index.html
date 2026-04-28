@@ -77,7 +77,7 @@ nav {
 }
 
 /* Rotating headline + trust bar */
-.hero-rotator { display: inline-block; min-width: 1px; }
+.hero-rotator { display: block; min-width: 1px; }
 .hero-rotator.rotating { animation: textFadeOut 350ms ease forwards; }
 .hero-rotator.rotating-in { animation: textFadeIn 450ms ease forwards; }
 .trust-rotator { transition: opacity 350ms ease, transform 350ms ease; }
@@ -1176,7 +1176,7 @@ body.variant-dark .audience-card { background: #0F2040; }
 <div class="hero">
   <div class="hero-content">
     <div class="hero-eyebrow">NYC Property Management — Flat Fee, No Surprises</div>
-    <h1 class="reveal">Stop Overpaying<br>for Property Management.<br><em>$99/Month. Period.</em></h1>
+    <h1 class="reveal"><span class="hero-rotator" id="hero-rotator">Stop Overpaying<br>for Property Management.<br><em>$99/Month. Period.</em></span></h1>
     <p class="hero-sub">Most NYC managers charge 8–10% of your rent — forever. DoryAngel charges a flat $99/month, with automated rent collection, real-time owner reports, and 24/7 maintenance coordination all included.</p>
     <div class="hero-actions">
       <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" class="btn-primary">
@@ -2204,9 +2204,8 @@ async function handleFormSubmit(e) {
 
   var heroRotator = document.getElementById('hero-rotator');
   var heroLines = [
-    'Smart Management.<br><em>Real Results.</em>',
-    'Flat-Fee Property Management.<br><em>No Surprises.</em>',
-    'NYC Owners <em>Trust DoryAngel.</em>',
+    'Stop Overpaying<br>for Property Management.<br><em>$99/Month. Period.</em>',
+    'High-Tech NYC<br>Property Management.<br><em>Smart Tools at Your Fingertips.</em>',
   ];
   if (heroRotator && !prefersReduced) {
     var heroIdx = 0;
@@ -2219,7 +2218,7 @@ async function handleFormSubmit(e) {
         heroRotator.classList.add('rotating-in');
         setTimeout(function () { heroRotator.classList.remove('rotating-in'); }, 500);
       }, 350);
-    }, 5000);
+    }, 4000);
   }
 
   var trustRotator = document.getElementById('trust-rotator');
