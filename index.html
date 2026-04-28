@@ -290,6 +290,11 @@ nav {
   font-size: 11px; color: var(--grey); white-space: nowrap;
 }
 .portal-chip svg { color: var(--blue); flex-shrink: 0; }
+
+/* STAT ICONS */
+.stat-icon { color: var(--blue); display: block; margin: 0 auto 6px; }
+/* PILLAR ICONS */
+.pillar-icon { color: var(--blue); margin-bottom: 10px; display: block; }
 .portal-chip + .portal-chip::before {
   content: '·'; margin: 0 8px; color: var(--grey-mid);
 }
@@ -1170,14 +1175,15 @@ body.variant-dark .audience-card { background: #0F2040; }
 </div>
 <div class="hero">
   <div class="hero-content">
-    <div class="hero-eyebrow">New York City Property Management</div>
-    <h1 class="reveal"><span class="hero-rotator" id="hero-rotator">Smart Management.<br><em>Real Results.</em></span></h1>
-    <p class="hero-sub">High-tech property management solutions at your fingertips. From automated rent collection to real-time portfolio analytics — put New York City's smartest property tools to work for your investment.</p>
+    <div class="hero-eyebrow">NYC Property Management — Flat Fee, No Surprises</div>
+    <h1 class="reveal">Stop Overpaying<br>for Property Management.<br><em>$99/Month. Period.</em></h1>
+    <p class="hero-sub">Most NYC managers charge 8–10% of your rent — forever. DoryAngel charges a flat $99/month, with automated rent collection, real-time owner reports, and 24/7 maintenance coordination all included.</p>
     <div class="hero-actions">
       <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" class="btn-primary">
-        Book Free Consultation
+        Get My Free Property Audit
         <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
       </a>
+      <a href="#pricing" class="btn-secondary">See Pricing Plans</a>
       <div class="portal-card">
         <div class="portal-split">
           <a href="https://doryangel.managebuilding.com" target="_blank" class="portal-btn">Owner Portal</a>
@@ -1210,14 +1216,17 @@ body.variant-dark .audience-card { background: #0F2040; }
     </div>
     <div class="hero-stats">
       <div class="stat-item">
+        <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
         <div class="stat-num">15+</div>
         <div class="stat-label">Years in NYC</div>
       </div>
       <div class="stat-item">
+        <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-4h6v4"/></svg>
         <div class="stat-num">100+</div>
         <div class="stat-label">Properties managed</div>
       </div>
       <div class="stat-item">
+        <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
         <div class="stat-num">24/7</div>
         <div class="stat-label">Support & response</div>
       </div>
@@ -1358,31 +1367,37 @@ body.variant-dark .audience-card { background: #0F2040; }
     <div class="pillars-grid reveal-stagger">
       <div class="pillar-item">
         <div class="pillar-num">01</div>
+        <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         <h3>Transparent Reporting</h3>
         <p>Live owner dashboard with financial reporting, rent tracking, and property metrics — accessible 24/7 from any device.</p>
       </div>
       <div class="pillar-item">
         <div class="pillar-num">02</div>
+        <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
         <h3>Tenant Placement</h3>
         <p>Rigorous screening, broker network exposure, and fast placement. We advertise on all major platforms and keep vacancies short.</p>
       </div>
       <div class="pillar-item">
         <div class="pillar-num">03</div>
+        <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
         <h3>Maintenance & Repairs</h3>
         <p>Vetted vendors, 24/7 emergency response, and centralized purchasing that saves owners 15–30% on supplies and repairs.</p>
       </div>
       <div class="pillar-item">
         <div class="pillar-num">04</div>
+        <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
         <h3>Regulatory Compliance</h3>
         <p>NYC regulations change constantly. Our compliance team proactively monitors code requirements so you never fall behind.</p>
       </div>
       <div class="pillar-item">
         <div class="pillar-num">05</div>
+        <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
         <h3>Financial Management</h3>
         <p>Rent collection, expense tracking, negative cash-flow prevention, and monthly owner disbursements — fully automated.</p>
       </div>
       <div class="pillar-item">
         <div class="pillar-num">06</div>
+        <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 8h.01M12 8h.01M17 8h.01"/></svg>
         <h3>Tech-Powered Operations</h3>
         <p>Our modern software stack gives you real-time visibility, automated workflows, and a digital-first experience across every touchpoint.</p>
       </div>
