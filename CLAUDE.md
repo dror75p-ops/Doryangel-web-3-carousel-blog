@@ -107,11 +107,54 @@
 
 ~$0.02-0.05/post (Opus 4.7), ~$2-3/month total
 
+## Status (as of 2026-04-29)
+
+This repo is now the **primary active design** and will replace the Wix website in the coming days.
+- Hamburger mobile nav is live (merged PRs #11, #12, #13)
+- Auto-publish blog pipeline running every 3 days
+- GitHub Pages live at the URL above; custom domain switch pending
+
+## Improvement roadmap (exposure / SEO)
+
+Priority order for next sessions:
+
+### 1. Custom domain
+- Point doryangel.com → GitHub Pages (CNAME record + Pages settings)
+- Verify doryangel.com in Resend so approval emails go to office@doryangel.com
+- Update canonical URLs and sitemap.xml once domain is live
+
+### 2. Content velocity
+- Import the 10 priority posts from the developer guide (real-traffic-tested topics)
+- Consider bumping auto-publish to every 2 days (change cron in blog-autopublish.yml)
+- Add an `investments` and `diy-property-management` featured post (currently likely missing)
+
+### 3. Technical SEO
+- Submit sitemap to Google Search Console (already verified)
+- Add `LocalBusiness` + `RealEstateAgent` JSON-LD schema to index.html
+- Add breadcrumb JSON-LD to blog post pages
+- Add `hreflang` if Spanish content is ever added (large Bronx audience)
+
+### 4. Conversion / CRO
+- A/B test hero headline: rotating vs. static (measure via GA4 events)
+- Add a lead-capture form or exit-intent popup for free audit CTA
+- Add social proof counters (Google review count, years in business) above the fold
+
+### 5. Performance
+- Compress the base64 logo image in index.html — it is ~80KB inline and delays first paint
+- Add `loading="lazy"` to below-fold images
+- Consider splitting the single 2,400-line index.html into partials built at deploy time
+
+### 6. Off-page / distribution
+- Set up Google Business Profile posts linked to each new blog post
+- Auto-share new posts to LinkedIn / Facebook (extend generate-post.js)
+- Build backlinks: submit to NYC landlord forums, Bronx community boards, BiggerPockets
+
 ## Outstanding / nice-to-have
 
 - Verify doryangel.com in Resend so emails can go to office@doryangel.com directly
 - Import the 10 priority posts from the developer guide (real-traffic-tested topics)
 - Custom domain (doryangel.com) for the new repo if/when ready
+- Compress the base64 logo (largest single byte cost in index.html)
 
 ## Previous versions / reference
 
