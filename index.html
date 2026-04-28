@@ -139,6 +139,7 @@ nav {
   text-transform: uppercase; color: var(--blue);
   margin-bottom: 20px;
   display: flex; align-items: center; justify-content: center; gap: 10px;
+  flex-wrap: wrap;
 }
 .hero-eyebrow::before, .hero-eyebrow::after {
   content: ''; display: block; width: 24px; height: 2px;
@@ -1031,9 +1032,9 @@ body.variant-dark .audience-card { background: #0F2040; }
   .nav-links { display: none; }
   .nav-bottom { gap: 10px; padding: 6px 0; }
   .nav-divider { display: none; }
-  .nav-cta { font-size: 13px; padding: 12px 22px; width: auto; align-self: center; min-height: 44px; display: inline-flex; align-items: center; }
+  .nav-cta { font-size: 13px; padding: 12px 22px; width: auto; max-width: 260px; align-self: center; min-height: 44px; display: inline-flex; align-items: center; }
   .hamburger-btn { display: flex; }
-  .hero { grid-template-columns: 1fr; gap: 40px; padding: 90px 24px 48px; }
+  .hero { grid-template-columns: 1fr; gap: 40px; padding: 100px 24px 48px; }
   .hero h1 { font-size: clamp(32px, 9vw, 44px); }
   .hero-sub { font-size: 16px; }
   .hero-stats { margin-top: 36px; padding-top: 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; text-align: center; border-top: 1px solid var(--grey-mid); }
@@ -1059,11 +1060,12 @@ body.variant-dark .audience-card { background: #0F2040; }
   .blog-tab { padding: 14px 20px; min-height: 44px; }
 }
 @media (max-width: 600px) {
+  .hero-eyebrow::before, .hero-eyebrow::after { display: none; }
   .audience-grid { grid-template-columns: 1fr; }
   .pillars-grid { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .footer-top { grid-template-columns: 1fr; }
-  .hero { padding: 80px 16px 36px; gap: 28px; }
+  .hero { padding: 90px 16px 36px; gap: 28px; }
   .hero h1 { font-size: clamp(28px, 8vw, 38px); }
   .hero-sub { font-size: 15px; margin-bottom: 28px; }
   .hero-stats { margin-top: 28px; }
@@ -1129,7 +1131,6 @@ body.variant-dark .audience-card { background: #0F2040; }
   border: none; border-radius: 8px;
   cursor: pointer; flex-shrink: 0;
   transition: background 0.2s;
-  margin-left: auto;
 }
 .hamburger-btn:hover { background: #2e69c7; }
 .hamburger-btn svg { display: block; pointer-events: none; }
