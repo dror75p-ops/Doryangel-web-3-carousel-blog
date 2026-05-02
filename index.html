@@ -1149,12 +1149,13 @@ body.variant-dark .audience-card { background: #0F2040; }
 .nav-drawer {
   position: fixed; top: 0; right: 0; bottom: 0; z-index: 301;
   width: min(340px, 90vw);
-  background: #3E8FD4;
+  background: #ffffff;
   transform: translateX(100%);
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex; flex-direction: column;
   padding: 20px 24px 32px;
   overflow-y: auto;
+  box-shadow: -4px 0 32px rgba(13,30,58,0.12);
 }
 .nav-drawer.is-open { transform: translateX(0); }
 .drawer-header {
@@ -1165,13 +1166,13 @@ body.variant-dark .audience-card { background: #0F2040; }
 .drawer-close-btn {
   display: flex; align-items: center; justify-content: center;
   width: 40px; height: 40px;
-  background: rgba(255,255,255,0.18);
+  background: #F3F4F6;
   border: none; border-radius: 8px;
-  color: white; cursor: pointer;
+  color: #232323; cursor: pointer;
   transition: background 0.2s; flex-shrink: 0;
 }
-.drawer-close-btn:hover { background: rgba(255,255,255,0.28); }
-.drawer-brand { font-family: 'DM Serif Display', serif; font-size: 18px; color: white; letter-spacing: -0.01em; }
+.drawer-close-btn:hover { background: #E5E7EB; }
+.drawer-brand { font-family: 'DM Serif Display', serif; font-size: 18px; color: #0D1E3A; letter-spacing: -0.01em; }
 .drawer-links {
   list-style: none;
   margin: 24px 0 0;
@@ -1181,33 +1182,33 @@ body.variant-dark .audience-card { background: #0F2040; }
 .drawer-links a {
   display: block;
   font-size: 20px; font-weight: 700;
-  color: rgba(255,255,255,0.92); text-decoration: none;
+  color: #0D1E3A; text-decoration: none;
   padding: 12px 14px; border-radius: 8px;
   transition: background 0.2s, color 0.2s;
   letter-spacing: -0.01em;
 }
-.drawer-links a:hover, .drawer-links a:active { background: rgba(255,255,255,0.18); color: #fff; }
-.drawer-sep { height: 1px; background: rgba(255,255,255,0.22); margin: 20px 0; }
+.drawer-links a:hover, .drawer-links a:active { background: #EAF4FB; color: #3E8FD4; }
+.drawer-sep { height: 1px; background: #E5E7EB; margin: 20px 0; }
 .drawer-ctas { display: flex; flex-direction: column; gap: 10px; }
 .drawer-cta-book {
   display: block; text-align: center;
-  background: #ffffff; color: #1A5FA8;
+  background: #3E8FD4; color: #ffffff;
   padding: 14px 20px; border-radius: 8px;
   font-size: 15px; font-weight: 700;
   text-decoration: none; letter-spacing: 0.01em;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s;
 }
-.drawer-cta-book:hover { background: #EAF4FB; color: #1A5FA8; }
+.drawer-cta-book:hover { background: #2B7FC4; color: #fff; }
 .drawer-cta-portal {
   display: block; text-align: center;
-  background: transparent; color: rgba(255,255,255,0.92);
+  background: transparent; color: #3E8FD4;
   padding: 13px 20px; border-radius: 8px;
   font-size: 15px; font-weight: 600;
   text-decoration: none; letter-spacing: 0.01em;
-  border: 1.5px solid rgba(255,255,255,0.45);
+  border: 1.5px solid #3E8FD4;
   transition: border-color 0.2s, background 0.2s, color 0.2s;
 }
-.drawer-cta-portal:hover { border-color: #fff; background: rgba(255,255,255,0.15); color: #fff; }
+.drawer-cta-portal:hover { background: #EAF4FB; }
 @media (prefers-reduced-motion: reduce) {
   .nav-drawer { transition: none !important; }
 }
@@ -1385,8 +1386,8 @@ body.variant-dark .audience-card { background: #0F2040; }
     <span class="drawer-brand">DoryAngel</span>
     <button class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close menu">
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-        <line x1="2" y1="2" x2="16" y2="16" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
-        <line x1="16" y1="2" x2="2" y2="16" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="2" y1="2" x2="16" y2="16" stroke="#232323" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="16" y1="2" x2="2" y2="16" stroke="#232323" stroke-width="2.2" stroke-linecap="round"/>
       </svg>
     </button>
   </div>
@@ -1401,15 +1402,15 @@ body.variant-dark .audience-card { background: #0F2040; }
   </ul>
   <div class="drawer-sep"></div>
   <div style="padding: 0 24px 8px;">
-    <p style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin:0 0 10px;">Free Tools</p>
-    <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:10px 0;text-decoration:none;color:#fff;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.15);">
-      <span style="width:8px;height:8px;border-radius:50%;background:#fff;opacity:0.85;flex-shrink:0;display:inline-block;"></span> Preventive Maintenance &amp; Compliance
+    <p style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#3E8FD4;margin:0 0 10px;">Dror Angel Automation Tools</p>
+    <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:10px 0;text-decoration:none;color:#0D1E3A;font-size:14px;font-weight:500;border-bottom:1px solid #F3F4F6;">
+      <span style="width:8px;height:8px;border-radius:50%;background:#3E8FD4;flex-shrink:0;display:inline-block;"></span> Preventive Maintenance &amp; Compliance
     </a>
-    <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:10px 0;text-decoration:none;color:#fff;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.15);">
-      <span style="width:8px;height:8px;border-radius:50%;background:#fff;opacity:0.85;flex-shrink:0;display:inline-block;"></span> Owner &amp; Tenant Portal (Buildium)
+    <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:10px 0;text-decoration:none;color:#0D1E3A;font-size:14px;font-weight:500;border-bottom:1px solid #F3F4F6;">
+      <span style="width:8px;height:8px;border-radius:50%;background:#3E8FD4;flex-shrink:0;display:inline-block;"></span> Owner &amp; Tenant Portal (Buildium)
     </a>
-    <span style="display:flex;align-items:center;gap:10px;padding:10px 0;color:rgba(255,255,255,0.35);font-size:13px;">
-      <span style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);flex-shrink:0;display:inline-block;"></span> More tools coming soon&hellip;
+    <span style="display:flex;align-items:center;gap:10px;padding:10px 0;color:#9CA3AF;font-size:13px;">
+      <span style="width:8px;height:8px;border-radius:50%;background:#E5E7EB;flex-shrink:0;display:inline-block;"></span> More tools coming soon&hellip;
     </span>
   </div>
   <div class="drawer-sep"></div>
@@ -1655,6 +1656,19 @@ body.variant-dark .audience-card { background: #0F2040; }
         <h3>Tech-Powered Operations</h3>
         <p>Our modern software stack gives you real-time visibility, automated workflows, and a digital-first experience across every touchpoint.</p>
       </div>
+    </div>
+
+    <!-- FREE TOOL CALLOUT -->
+    <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;background:#EAF4FB;border:1.5px solid #B3D4EF;border-radius:12px;padding:24px 28px;margin-top:40px;">
+      <div style="flex:1;min-width:200px;">
+        <p style="font-size:10px;font-weight:700;color:#3E8FD4;text-transform:uppercase;letter-spacing:0.1em;margin:0 0 6px;">Free Tool — Pillar 04</p>
+        <h4 style="font-size:17px;font-weight:700;color:#0D1E3A;margin:0 0 6px;line-height:1.3;">Dror Angel Preventive Maintenance &amp; Compliance Calendar</h4>
+        <p style="font-size:13px;color:#6B7280;margin:0;line-height:1.55;">47 HPD, DOB &amp; FDNY tasks with penalty amounts — free monthly email for Bronx landlords. No sign-up fee.</p>
+      </div>
+      <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;background:#3E8FD4;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:700;white-space:nowrap;flex-shrink:0;">
+        Open Free Tool
+        <svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </a>
     </div>
 
     <div style="text-align:center;margin-top:48px;padding-top:40px;border-top:1px solid var(--grey-mid)">
