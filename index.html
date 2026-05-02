@@ -1212,6 +1212,40 @@ body.variant-dark .audience-card { background: #0F2040; }
   .nav-drawer { transition: none !important; }
 }
 
+/* ── TOOLS NAV DROPDOWN ── */
+.nav-has-dropdown { position: relative; }
+.nav-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 40px rgba(13,30,58,0.14);
+  padding: 20px;
+  min-width: 290px;
+  z-index: 300;
+  border: 1px solid #E5E7EB;
+}
+.nav-has-dropdown:hover .nav-dropdown { display: block; }
+.nav-dd-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.13em;
+  text-transform: uppercase; color: #9CA3AF; margin: 0 0 8px 4px;
+}
+.nav-dd-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: 8px;
+  text-decoration: none; color: #232323;
+  font-size: 13.5px; font-weight: 500; transition: background .15s;
+}
+.nav-dd-link:hover { background: #F3F4F6; color: #232323; }
+.dd-dot { width: 8px; height: 8px; border-radius: 50%; background: #3E8FD4; flex-shrink: 0; }
+.dd-dot-soon { background: #D1D5DB; }
+.nav-dd-sep { border: none; border-top: 1px solid #E5E7EB; margin: 12px 0; }
+.nav-dd-soon { display: flex; align-items: center; gap: 10px; padding: 8px 10px; color: #9CA3AF; font-size: 13px; cursor: default; }
+.nav-dd-tag { font-size: 9px; font-weight: 700; background: #FEF3C7; color: #92400E; padding: 2px 7px; border-radius: 4px; margin-left: auto; letter-spacing: 0.06em; }
+
 /* ── AUTOMATION TOOLS ── */
 .tools-grid {
   display: grid;
@@ -1291,7 +1325,23 @@ body.variant-dark .audience-card { background: #0F2040; }
       <li><a href="#testimonials">Reviews</a></li>
       <li><a href="#faq">FAQ</a></li>
       <li><a href="#blog">Blog</a></li>
-      <li><a href="#tools">Tools</a></li>
+      <li class="nav-has-dropdown">
+        <a href="#tools">Tools &#9662;</a>
+        <div class="nav-dropdown">
+          <p class="nav-dd-label">Free Now</p>
+          <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" class="nav-dd-link">
+            <span class="dd-dot"></span> NYC Compliance Calendar
+          </a>
+          <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" class="nav-dd-link">
+            <span class="dd-dot"></span> Tenant Portal (Buildium)
+          </a>
+          <hr class="nav-dd-sep">
+          <p class="nav-dd-label">Coming Soon</p>
+          <span class="nav-dd-soon"><span class="dd-dot dd-dot-soon"></span> Maintenance Request Tracker <span class="nav-dd-tag">Soon</span></span>
+          <span class="nav-dd-soon"><span class="dd-dot dd-dot-soon"></span> Lease Renewal Automation <span class="nav-dd-tag">Soon</span></span>
+          <span class="nav-dd-soon"><span class="dd-dot dd-dot-soon"></span> Vendor Management Portal <span class="nav-dd-tag">Soon</span></span>
+        </div>
+      </li>
       <li><a href="#contact">Contact</a></li>
         <li><a href="https://share.google/FcmXTN7BpxR9m3XoZ" target="_blank" rel="noopener" style="color:var(--blue);font-weight:600;">⬇ Brochure</a></li>
       <li><a href="https://doryangel.managebuilding.com" target="_blank">Tenant Portal</a></li>
@@ -1331,6 +1381,19 @@ body.variant-dark .audience-card { background: #0F2040; }
     <li><a href="#blog">Blog</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
+  <div class="drawer-sep"></div>
+  <div style="padding: 0 24px 8px;">
+    <p style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#9CA3AF;margin:0 0 10px;">Free Tools</p>
+    <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:10px 0;text-decoration:none;color:#fff;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.08);">
+      <span style="width:8px;height:8px;border-radius:50%;background:#3E8FD4;flex-shrink:0;display:inline-block;"></span> NYC Compliance Calendar
+    </a>
+    <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:10px 0;text-decoration:none;color:#fff;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.08);">
+      <span style="width:8px;height:8px;border-radius:50%;background:#3E8FD4;flex-shrink:0;display:inline-block;"></span> Tenant Portal (Buildium)
+    </a>
+    <span style="display:flex;align-items:center;gap:10px;padding:10px 0;color:rgba(255,255,255,0.35);font-size:13px;">
+      <span style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);flex-shrink:0;display:inline-block;"></span> More tools coming soon&hellip;
+    </span>
+  </div>
   <div class="drawer-sep"></div>
   <div class="drawer-ctas">
     <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" rel="noopener" class="drawer-cta-book">Book Free Consultation</a>
