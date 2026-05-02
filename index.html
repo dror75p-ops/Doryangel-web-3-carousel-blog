@@ -1149,7 +1149,7 @@ body.variant-dark .audience-card { background: #0F2040; }
 .nav-drawer {
   position: fixed; top: 0; right: 0; bottom: 0; z-index: 301;
   width: min(340px, 90vw);
-  background: #0D1E3A;
+  background: #3E8FD4;
   transform: translateX(100%);
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex; flex-direction: column;
@@ -1165,12 +1165,12 @@ body.variant-dark .audience-card { background: #0F2040; }
 .drawer-close-btn {
   display: flex; align-items: center; justify-content: center;
   width: 40px; height: 40px;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.18);
   border: none; border-radius: 8px;
   color: white; cursor: pointer;
   transition: background 0.2s; flex-shrink: 0;
 }
-.drawer-close-btn:hover { background: rgba(255,255,255,0.15); }
+.drawer-close-btn:hover { background: rgba(255,255,255,0.28); }
 .drawer-brand { font-family: 'DM Serif Display', serif; font-size: 18px; color: white; letter-spacing: -0.01em; }
 .drawer-links {
   list-style: none;
@@ -1181,36 +1181,48 @@ body.variant-dark .audience-card { background: #0F2040; }
 .drawer-links a {
   display: block;
   font-size: 20px; font-weight: 700;
-  color: rgba(255,255,255,0.88); text-decoration: none;
+  color: rgba(255,255,255,0.92); text-decoration: none;
   padding: 12px 14px; border-radius: 8px;
   transition: background 0.2s, color 0.2s;
   letter-spacing: -0.01em;
 }
-.drawer-links a:hover, .drawer-links a:active { background: #3A7BDD; color: #fff; }
-.drawer-sep { height: 1px; background: rgba(255,255,255,0.12); margin: 20px 0; }
+.drawer-links a:hover, .drawer-links a:active { background: rgba(255,255,255,0.18); color: #fff; }
+.drawer-sep { height: 1px; background: rgba(255,255,255,0.22); margin: 20px 0; }
 .drawer-ctas { display: flex; flex-direction: column; gap: 10px; }
 .drawer-cta-book {
   display: block; text-align: center;
-  background: #3A7BDD; color: white;
+  background: #ffffff; color: #1A5FA8;
   padding: 14px 20px; border-radius: 8px;
   font-size: 15px; font-weight: 700;
   text-decoration: none; letter-spacing: 0.01em;
-  transition: background 0.2s;
+  transition: background 0.2s, color 0.2s;
 }
-.drawer-cta-book:hover { background: #2e69c7; color: white; }
+.drawer-cta-book:hover { background: #EAF4FB; color: #1A5FA8; }
 .drawer-cta-portal {
   display: block; text-align: center;
-  background: transparent; color: rgba(255,255,255,0.85);
+  background: transparent; color: rgba(255,255,255,0.92);
   padding: 13px 20px; border-radius: 8px;
   font-size: 15px; font-weight: 600;
   text-decoration: none; letter-spacing: 0.01em;
-  border: 1.5px solid rgba(255,255,255,0.25);
+  border: 1.5px solid rgba(255,255,255,0.45);
   transition: border-color 0.2s, background 0.2s, color 0.2s;
 }
-.drawer-cta-portal:hover { border-color: #3A7BDD; background: rgba(58,123,221,0.15); color: white; }
+.drawer-cta-portal:hover { border-color: #fff; background: rgba(255,255,255,0.15); color: #fff; }
 @media (prefers-reduced-motion: reduce) {
   .nav-drawer { transition: none !important; }
 }
+
+/* ── ANNOUNCE BAR ── */
+.announce-bar {
+  background: #3E8FD4; color: #fff;
+  text-align: center; padding: 9px 20px;
+  font-size: 13px; font-weight: 500;
+  position: relative; z-index: 299;
+  line-height: 1.5;
+}
+.announce-bar strong { font-weight: 700; }
+.announce-bar a { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+.announce-bar a:hover { opacity: 0.85; }
 
 /* ── TOOLS NAV DROPDOWN ── */
 .nav-has-dropdown { position: relative; }
@@ -1313,6 +1325,12 @@ body.variant-dark .audience-card { background: #0F2040; }
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <body>
 
+<!-- ANNOUNCE BAR -->
+<div class="announce-bar">
+  <strong>New Free Tool:</strong>
+  <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener">Preventive Maintenance &amp; Compliance Calendar for NYC Landlords &rarr;</a>
+</div>
+
 <!-- NAV -->
 <nav>
   <a href="#" class="nav-logo">
@@ -1330,10 +1348,10 @@ body.variant-dark .audience-card { background: #0F2040; }
         <div class="nav-dropdown">
           <p class="nav-dd-label">Free Now</p>
           <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" class="nav-dd-link">
-            <span class="dd-dot"></span> NYC Compliance Calendar
+            <span class="dd-dot"></span> Preventive Maintenance &amp; Compliance
           </a>
           <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" class="nav-dd-link">
-            <span class="dd-dot"></span> Tenant Portal (Buildium)
+            <span class="dd-dot"></span> Owner &amp; Tenant Portal (Buildium)
           </a>
           <hr class="nav-dd-sep">
           <p class="nav-dd-label">Coming Soon</p>
@@ -1383,12 +1401,12 @@ body.variant-dark .audience-card { background: #0F2040; }
   </ul>
   <div class="drawer-sep"></div>
   <div style="padding: 0 24px 8px;">
-    <p style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#9CA3AF;margin:0 0 10px;">Free Tools</p>
-    <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:10px 0;text-decoration:none;color:#fff;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.08);">
-      <span style="width:8px;height:8px;border-radius:50%;background:#3E8FD4;flex-shrink:0;display:inline-block;"></span> NYC Compliance Calendar
+    <p style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin:0 0 10px;">Free Tools</p>
+    <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:10px 0;text-decoration:none;color:#fff;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.15);">
+      <span style="width:8px;height:8px;border-radius:50%;background:#fff;opacity:0.85;flex-shrink:0;display:inline-block;"></span> Preventive Maintenance &amp; Compliance
     </a>
-    <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:10px 0;text-decoration:none;color:#fff;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.08);">
-      <span style="width:8px;height:8px;border-radius:50%;background:#3E8FD4;flex-shrink:0;display:inline-block;"></span> Tenant Portal (Buildium)
+    <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:10px 0;text-decoration:none;color:#fff;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.15);">
+      <span style="width:8px;height:8px;border-radius:50%;background:#fff;opacity:0.85;flex-shrink:0;display:inline-block;"></span> Owner &amp; Tenant Portal (Buildium)
     </a>
     <span style="display:flex;align-items:center;gap:10px;padding:10px 0;color:rgba(255,255,255,0.35);font-size:13px;">
       <span style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);flex-shrink:0;display:inline-block;"></span> More tools coming soon&hellip;
@@ -1722,9 +1740,9 @@ body.variant-dark .audience-card { background: #0F2040; }
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="24" height="24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
         </div>
         <span class="tool-tag">Free Tool</span>
-        <h3>NYC Compliance Calendar</h3>
-        <p>47 preventive maintenance tasks &amp; HPD regulations — delivered to your inbox on the 1st of every month. Built for Bronx property owners. The current month's tasks are always free, no sign-up needed.</p>
-        <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" class="btn-primary" style="margin-top:8px;width:fit-content;">Get Free Calendar &rarr;</a>
+        <h3>Preventive Maintenance &amp; Compliance</h3>
+        <p>47 HPD, DOB &amp; FDNY compliance tasks — with penalty amounts and seasonal checklists — delivered to your inbox on the 1st of every month. Built for Bronx property owners.</p>
+        <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" class="btn-primary" style="margin-top:8px;width:fit-content;">Open Free Tool &rarr;</a>
       </div>
 
       <div class="tool-card">
@@ -2180,10 +2198,10 @@ body.variant-dark .audience-card { background: #0F2040; }
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Automation Tools</h4>
+        <h4>Free Tools</h4>
         <ul>
-          <li><a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank">Compliance Calendar</a></li>
-          <li><a href="https://doryangel.managebuilding.com" target="_blank">Buildium Portal</a></li>
+          <li><a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank">Preventive Maintenance &amp; Compliance</a></li>
+          <li><a href="https://doryangel.managebuilding.com" target="_blank">Owner &amp; Tenant Portal (Buildium)</a></li>
         </ul>
       </div>
       <div class="footer-col">
