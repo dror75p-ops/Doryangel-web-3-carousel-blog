@@ -130,7 +130,7 @@ nav {
   border-bottom: 1px solid var(--grey-mid);
 }
 .hero {
-  padding: 160px 40px 100px;
+  padding: 190px 40px 110px;
   max-width: 1200px; margin: 0 auto;
   display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
 }
@@ -154,7 +154,8 @@ nav {
   text-wrap: pretty;
 }
 .hero h1 em {
-  font-style: italic; color: var(--blue);
+  font-style: normal; font-weight: 900; color: #0D1E3A;
+  position: relative;
 }
 .hero-sub {
   font-size: 18px; color: var(--text-muted);
@@ -1160,8 +1161,8 @@ body.variant-dark .audience-card { background: #0F2040; }
 .nav-drawer.is-open { transform: translateX(0); }
 .drawer-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 14px;
+  border-bottom: 1px solid #E5E7EB;
 }
 .drawer-close-btn {
   display: flex; align-items: center; justify-content: center;
@@ -1172,23 +1173,41 @@ body.variant-dark .audience-card { background: #0F2040; }
   transition: background 0.2s; flex-shrink: 0;
 }
 .drawer-close-btn:hover { background: #E5E7EB; }
-.drawer-brand { font-family: 'DM Serif Display', serif; font-size: 18px; color: #0D1E3A; letter-spacing: -0.01em; }
+.drawer-logo-wrap { display: flex; flex-direction: column; gap: 2px; }
+.drawer-logo-wrap img { height: 32px; object-fit: contain; }
+.drawer-logo-slogan { font-size: 10px; color: #8B9BAE; font-weight: 500; letter-spacing: 0.04em; margin-top: 2px; }
 .drawer-links {
   list-style: none;
-  margin: 24px 0 0;
-  display: flex; flex-direction: column; gap: 2px;
-  flex: 1;
+  margin: 16px 0 0;
+  display: flex; flex-direction: column; gap: 1px;
 }
 .drawer-links a {
   display: block;
-  font-size: 20px; font-weight: 700;
+  font-size: 16px; font-weight: 600;
   color: #0D1E3A; text-decoration: none;
-  padding: 12px 14px; border-radius: 8px;
+  padding: 9px 12px; border-radius: 7px;
   transition: background 0.2s, color 0.2s;
   letter-spacing: -0.01em;
 }
 .drawer-links a:hover, .drawer-links a:active { background: #EAF4FB; color: #3E8FD4; }
-.drawer-sep { height: 1px; background: #E5E7EB; margin: 20px 0; }
+.drawer-sep { height: 1px; background: #E5E7EB; margin: 14px 0; }
+.drawer-tool-card {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px; border-radius: 9px;
+  border: 1.5px solid #E5E7EB; background: #F9FAFB;
+  text-decoration: none; margin-bottom: 8px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.drawer-tool-card:hover { border-color: #3E8FD4; background: #EAF4FB; }
+.drawer-tool-card-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.drawer-tool-card-body { flex: 1; min-width: 0; }
+.drawer-tool-card-title { font-size: 13px; font-weight: 700; color: #0D1E3A; line-height: 1.3; }
+.drawer-tool-card-sub { font-size: 11px; color: #8B9BAE; margin-top: 1px; }
+.drawer-tool-card-arrow { color: #B0BEC8; flex-shrink: 0; }
 .drawer-ctas { display: flex; flex-direction: column; gap: 10px; }
 .drawer-cta-book {
   display: block; text-align: center;
@@ -1215,13 +1234,14 @@ body.variant-dark .audience-card { background: #0F2040; }
 
 /* ── ANNOUNCE BAR ── */
 .announce-bar {
-  background: #3E8FD4; color: #fff;
+  background: #0D1E3A; color: #fff;
   text-align: center; padding: 9px 20px;
   font-size: 13px; font-weight: 500;
   position: fixed; top: 0; left: 0; right: 0;
   z-index: 302;
   line-height: 1.5;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: background 0.4s ease;
 }
 .announce-bar strong { font-weight: 700; }
 .announce-bar a { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
@@ -1264,11 +1284,11 @@ body.variant-dark .audience-card { background: #0F2040; }
 /* ── AUTOMATION TOOLS ── */
 .tools-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 24px;
   margin-top: 40px;
+  max-width: 680px;
 }
-@media(max-width:700px){ .tools-grid { grid-template-columns: 1fr; } }
 .tool-card {
   background: #fff;
   border: 1.5px solid var(--grey-mid);
@@ -1349,7 +1369,7 @@ body.variant-dark .audience-card { background: #0F2040; }
       <li class="nav-has-dropdown">
         <a href="#tools">Tools &#9662;</a>
         <div class="nav-dropdown">
-          <p class="nav-dd-label">Dror Angel Property Automation</p>
+          <p class="nav-dd-label">Doryangel Property Automation</p>
           <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" class="nav-dd-link">
             <span class="dd-dot"></span> Preventive Maintenance &amp; Compliance
           </a>
@@ -1384,7 +1404,10 @@ body.variant-dark .audience-card { background: #0F2040; }
 <!-- NAV DRAWER -->
 <div class="nav-drawer" id="navDrawer" role="dialog" aria-label="Navigation menu" aria-modal="true">
   <div class="drawer-header">
-    <span class="drawer-brand">DoryAngel</span>
+    <div class="drawer-logo-wrap">
+      <img id="drawer-logo" src="" alt="DoryAngel" />
+      <span class="drawer-logo-slogan">Enhance Asset Value</span>
+    </div>
     <button class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close menu">
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
         <line x1="2" y1="2" x2="16" y2="16" stroke="#232323" stroke-width="2.2" stroke-linecap="round"/>
@@ -1402,17 +1425,37 @@ body.variant-dark .audience-card { background: #0F2040; }
     <li><a href="#contact">Contact</a></li>
   </ul>
   <div class="drawer-sep"></div>
-  <div style="padding: 0 24px 8px;">
-    <p style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#3E8FD4;margin:0 0 10px;">Dror Angel Automation Tools</p>
-    <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:10px 0;text-decoration:none;color:#0D1E3A;font-size:14px;font-weight:500;border-bottom:1px solid #F3F4F6;">
-      <span style="width:8px;height:8px;border-radius:50%;background:#3E8FD4;flex-shrink:0;display:inline-block;"></span> Preventive Maintenance &amp; Compliance
+  <div style="padding: 0 0 8px;">
+    <p style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#3E8FD4;margin:0 0 10px;">Doryangel Automation Tools</p>
+    <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" class="drawer-tool-card">
+      <div class="drawer-tool-card-icon" style="background:#EAF4FB;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#3E8FD4" stroke-width="1.8" width="20" height="20"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
+      </div>
+      <div class="drawer-tool-card-body">
+        <div class="drawer-tool-card-title">Preventive Maintenance &amp; Compliance</div>
+        <div class="drawer-tool-card-sub">Free monthly calendar for NYC landlords</div>
+      </div>
+      <svg class="drawer-tool-card-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M5 8h6M9 5l3 3-3 3"/></svg>
     </a>
-    <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:10px 0;text-decoration:none;color:#0D1E3A;font-size:14px;font-weight:500;border-bottom:1px solid #F3F4F6;">
-      <span style="width:8px;height:8px;border-radius:50%;background:#3E8FD4;flex-shrink:0;display:inline-block;"></span> Owner &amp; Tenant Portal (Buildium)
+    <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" class="drawer-tool-card">
+      <div class="drawer-tool-card-icon" style="background:#F0FDF4;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="1.8" width="20" height="20"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 00-2 2v2h12V5a2 2 0 00-2-2z"/><path d="M12 12v4M10 14h4"/></svg>
+      </div>
+      <div class="drawer-tool-card-body">
+        <div class="drawer-tool-card-title">Owner &amp; Tenant Portal</div>
+        <div class="drawer-tool-card-sub">Powered by Buildium · 24/7 access</div>
+      </div>
+      <svg class="drawer-tool-card-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M5 8h6M9 5l3 3-3 3"/></svg>
     </a>
-    <span style="display:flex;align-items:center;gap:10px;padding:10px 0;color:#9CA3AF;font-size:13px;">
-      <span style="width:8px;height:8px;border-radius:50%;background:#E5E7EB;flex-shrink:0;display:inline-block;"></span> More tools coming soon&hellip;
-    </span>
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 14px;border-radius:9px;background:#F9FAFB;border:1.5px dashed #E5E7EB;">
+      <div style="width:36px;height:36px;border-radius:8px;background:#F3F4F6;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" stroke-width="1.8" width="20" height="20"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:#9CA3AF;">More tools coming soon</div>
+        <div style="font-size:11px;color:#C1C9D4;">Maintenance Tracker · Lease Renewal · Vendor Portal</div>
+      </div>
+    </div>
   </div>
   <div class="drawer-sep"></div>
   <div class="drawer-ctas">
@@ -1659,17 +1702,35 @@ body.variant-dark .audience-card { background: #0F2040; }
       </div>
     </div>
 
-    <!-- FREE TOOL CALLOUT -->
-    <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;background:#EAF4FB;border:1.5px solid #B3D4EF;border-radius:12px;padding:24px 28px;margin-top:40px;">
-      <div style="flex:1;min-width:200px;">
-        <p style="font-size:10px;font-weight:700;color:#3E8FD4;text-transform:uppercase;letter-spacing:0.1em;margin:0 0 6px;">Free Tool — Pillar 04</p>
-        <h4 style="font-size:17px;font-weight:700;color:#0D1E3A;margin:0 0 6px;line-height:1.3;">Dror Angel Preventive Maintenance &amp; Compliance Calendar</h4>
-        <p style="font-size:13px;color:#6B7280;margin:0;line-height:1.55;">47 HPD, DOB &amp; FDNY tasks with penalty amounts — free monthly email for Bronx landlords. No sign-up fee.</p>
+    <!-- TOOL CALLOUTS -->
+    <div style="display:flex;flex-direction:column;gap:16px;margin-top:40px;">
+
+      <!-- Preventive Maintenance Tool -->
+      <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;background:#EAF4FB;border:1.5px solid #B3D4EF;border-radius:12px;padding:24px 28px;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:10px;font-weight:700;color:#3E8FD4;text-transform:uppercase;letter-spacing:0.1em;margin:0 0 6px;">Free Tool — Pillar 04</p>
+          <h4 style="font-size:17px;font-weight:700;color:#0D1E3A;margin:0 0 6px;line-height:1.3;">Doryangel Preventive Maintenance &amp; Compliance Calendar</h4>
+          <p style="font-size:13px;color:#6B7280;margin:0;line-height:1.55;">47 HPD, DOB &amp; FDNY tasks with penalty amounts — free monthly email for Bronx landlords. No sign-up fee.</p>
+        </div>
+        <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;background:#3E8FD4;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:700;white-space:nowrap;flex-shrink:0;">
+          Open Free Tool
+          <svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+        </a>
       </div>
-      <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;background:#3E8FD4;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:700;white-space:nowrap;flex-shrink:0;">
-        Open Free Tool
-        <svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-      </a>
+
+      <!-- Owner & Tenant Portal -->
+      <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:12px;padding:24px 28px;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:10px;font-weight:700;color:#16A34A;text-transform:uppercase;letter-spacing:0.1em;margin:0 0 6px;">Owner &amp; Tenant Tool — Pillar 06</p>
+          <h4 style="font-size:17px;font-weight:700;color:#0D1E3A;margin:0 0 6px;line-height:1.3;">Owner &amp; Tenant Portal — Powered by Buildium</h4>
+          <p style="font-size:13px;color:#6B7280;margin:0;line-height:1.55;">Access your live dashboard, pay rent online, submit maintenance requests, and view lease documents — 24/7 from any device.</p>
+        </div>
+        <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;background:#0D1E3A;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:700;white-space:nowrap;flex-shrink:0;">
+          Open Portal
+          <svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+        </a>
+      </div>
+
     </div>
 
     <div style="text-align:center;margin-top:48px;padding-top:40px;border-top:1px solid var(--grey-mid)">
@@ -1746,7 +1807,7 @@ body.variant-dark .audience-card { background: #0F2040; }
 <section id="tools" style="background:var(--grey-light);">
   <div class="section-inner">
     <div class="section-label">Free Resources</div>
-    <h2 class="section-title reveal">Dror Angel Property Automation Tools</h2>
+    <h2 class="section-title reveal">Doryangel Property Automation Tools</h2>
     <p class="section-sub">Free property management tools built specifically for Bronx and NYC landlords. No subscription, no credit card.</p>
     <div class="tools-grid">
 
@@ -2213,7 +2274,7 @@ body.variant-dark .audience-card { background: #0F2040; }
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Dror Angel Property Automation</h4>
+        <h4>Doryangel Property Automation</h4>
         <ul>
           <li><a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank">Preventive Maintenance &amp; Compliance</a></li>
           <li><a href="https://doryangel.managebuilding.com" target="_blank">Owner &amp; Tenant Portal (Buildium)</a></li>
@@ -2514,6 +2575,7 @@ async function handleFormSubmit(e) {
   var heroLines = [
     'Stop Overpaying<br>for Property Management.<br><em>$99/Month. Period.</em>',
     'High-Tech NYC<br>Property Management.<br><em>Smart Tools at Your Fingertips.</em>',
+    'Automate Your<br>Compliance &amp; Operations.<br><em>Built for NYC Landlords.</em>',
   ];
   if (heroRotator && !prefersReduced) {
     var heroIdx = 0;
@@ -2654,6 +2716,10 @@ async function handleFormSubmit(e) {
 
 <script>
 (function () {
+  var drawerLogoImg = document.getElementById('drawer-logo');
+  var navLogoImg = document.querySelector('.nav-logo img');
+  if (drawerLogoImg && navLogoImg) { drawerLogoImg.src = navLogoImg.src; }
+
   var btn = document.getElementById('hamburgerBtn');
   var overlay = document.getElementById('navOverlay');
   var drawer = document.getElementById('navDrawer');
