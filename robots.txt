@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://dror75p-ops.github.io/Doryangel-web-3-carousel-blog/sitemap.xml
+Sitemap: https://doryangel.com/sitemap.xml
