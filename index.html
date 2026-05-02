@@ -1211,6 +1211,48 @@ body.variant-dark .audience-card { background: #0F2040; }
 @media (prefers-reduced-motion: reduce) {
   .nav-drawer { transition: none !important; }
 }
+
+/* ── AUTOMATION TOOLS ── */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 40px;
+}
+@media(max-width:700px){ .tools-grid { grid-template-columns: 1fr; } }
+.tool-card {
+  background: #fff;
+  border: 1.5px solid var(--grey-mid);
+  border-radius: 12px;
+  padding: 32px 28px;
+  display: flex; flex-direction: column; gap: 12px;
+  box-shadow: 0 2px 12px rgba(13,31,92,.06);
+  transition: box-shadow .2s, border-color .2s;
+}
+.tool-card:hover { box-shadow: 0 6px 24px rgba(13,31,92,.1); border-color: var(--blue); }
+.tool-card-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: var(--blue-dim, #EEF2FD);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.tool-card-icon svg { color: var(--blue); }
+.tool-card h3 {
+  font-size: 18px; font-weight: 700;
+  color: var(--navy); line-height: 1.3; margin: 0;
+}
+.tool-card p {
+  font-size: 14px; color: var(--text-muted);
+  line-height: 1.65; margin: 0; flex: 1;
+}
+.tool-card .tool-tag {
+  display: inline-block;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--blue); background: var(--blue-dim, #EEF2FD);
+  padding: 3px 10px; border-radius: 100px;
+  width: fit-content;
+}
 </style>
 <template id="__bundler_thumbnail" data-bg-color="#F4F8FF">
   <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
@@ -1249,6 +1291,7 @@ body.variant-dark .audience-card { background: #0F2040; }
       <li><a href="#testimonials">Reviews</a></li>
       <li><a href="#faq">FAQ</a></li>
       <li><a href="#blog">Blog</a></li>
+      <li><a href="#tools">Tools</a></li>
       <li><a href="#contact">Contact</a></li>
         <li><a href="https://share.google/FcmXTN7BpxR9m3XoZ" target="_blank" rel="noopener" style="color:var(--blue);font-weight:600;">⬇ Brochure</a></li>
       <li><a href="https://doryangel.managebuilding.com" target="_blank">Tenant Portal</a></li>
@@ -1600,6 +1643,38 @@ body.variant-dark .audience-card { background: #0F2040; }
       </div>
     </div>
     <p style="text-align:center;font-size:13px;color:var(--text-muted);margin-top:32px">All plans include a free onboarding consultation. No long-term contracts required.</p>
+  </div>
+</section>
+
+<!-- AUTOMATION TOOLS -->
+<section id="tools" style="background:var(--grey-light);">
+  <div class="section-inner">
+    <div class="section-label">Free Resources</div>
+    <h2 class="section-title reveal">Doryangel Automation Tools</h2>
+    <p class="section-sub">Free property management tools built specifically for Bronx and NYC landlords. No subscription, no credit card.</p>
+    <div class="tools-grid">
+
+      <div class="tool-card">
+        <div class="tool-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="24" height="24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
+        </div>
+        <span class="tool-tag">Free Tool</span>
+        <h3>NYC Compliance Calendar</h3>
+        <p>47 preventive maintenance tasks &amp; HPD regulations — delivered to your inbox on the 1st of every month. Built for Bronx property owners. The current month's tasks are always free, no sign-up needed.</p>
+        <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" class="btn-primary" style="margin-top:8px;width:fit-content;">Get Free Calendar &rarr;</a>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="24" height="24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 00-2 2v2h12V5a2 2 0 00-2-2z"/><path d="M12 12v4M10 14h4"/></svg>
+        </div>
+        <span class="tool-tag">Powered by Buildium</span>
+        <h3>Owner &amp; Tenant Portal</h3>
+        <p>Access your live owner dashboard, pay rent online, submit maintenance requests, and view your lease documents — all in one place. Available 24/7 from any device.</p>
+        <a href="https://doryangel.managebuilding.com" target="_blank" class="btn-secondary" style="margin-top:8px;width:fit-content;">Open Portal &rarr;</a>
+      </div>
+
+    </div>
   </div>
 </section>
 
@@ -2039,6 +2114,13 @@ body.variant-dark .audience-card { background: #0F2040; }
           <li><a href="#services">Brokers</a></li>
           <li><a href="#contact">Vendors</a></li>
           <li><a href="#contact">Virtual PM</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Automation Tools</h4>
+        <ul>
+          <li><a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank">Compliance Calendar</a></li>
+          <li><a href="https://doryangel.managebuilding.com" target="_blank">Buildium Portal</a></li>
         </ul>
       </div>
       <div class="footer-col">
