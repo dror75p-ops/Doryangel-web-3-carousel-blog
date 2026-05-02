@@ -1237,19 +1237,20 @@ body.variant-dark .audience-card { background: #0F2040; }
 .drawer-logo-slogan { font-size: 10px; color: #8B9BAE; font-weight: 500; letter-spacing: 0.04em; margin-top: 2px; }
 .drawer-links {
   list-style: none;
-  margin: 12px 0 0;
+  margin: 10px 0 0;
   display: flex; flex-direction: column; gap: 0;
 }
 .drawer-links a {
   display: block;
-  font-size: 15px; font-weight: 600;
+  font-size: 14px; font-weight: 600;
   color: #0D1E3A; text-decoration: none;
-  padding: 7px 10px; border-radius: 7px;
-  transition: background 0.2s, color 0.2s;
-  letter-spacing: -0.01em;
+  padding: 6px 10px; border-radius: 7px;
+  transition: background 0.15s, color 0.15s;
+  letter-spacing: -0.01em; line-height: 1.4;
 }
-.drawer-links a:hover, .drawer-links a:active { background: #EAF4FB; color: #3E8FD4; }
-.drawer-sep { height: 1px; background: #E5E7EB; margin: 10px 0; }
+.drawer-links a:active { background: #EAF4FB; color: #3E8FD4; }
+@media (hover: hover) { .drawer-links a:hover { background: #EAF4FB; color: #3E8FD4; } }
+.drawer-sep { height: 1px; background: #E5E7EB; margin: 8px 0; }
 .drawer-tool-card {
   display: flex; align-items: center; gap: 12px;
   padding: 11px 14px; border-radius: 9px;
@@ -2887,7 +2888,7 @@ async function handleFormSubmit(e) {
 (function(d){
   var s = d.createElement("script");
   s.setAttribute("data-account", "YOUR_ACCOUNT_ID");
-  s.setAttribute("data-position", "3");
+  s.setAttribute("data-position", "2");
   s.setAttribute("data-color", "#0D1E3A");
   s.setAttribute("data-size", "small");
   s.setAttribute("src", "https://cdn.userway.org/widget.js");
