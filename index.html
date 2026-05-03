@@ -1407,8 +1407,8 @@ body.variant-dark .audience-card { background: #0F2040; }
 .sticky-call:hover { background: #3A7BDD; color: #fff; animation: none; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(58,123,221,0.32); }
 @media (prefers-reduced-motion: reduce) { .sticky-call { animation: none; } }
 
-/* Hide UserWay's own floating button — we use our nav button instead */
-#userwayAccessibilityIcon { display: none !important; }
+/* Park UserWay's own button off-screen so we can trigger it programmatically */
+#userwayAccessibilityIcon { position: fixed !important; left: -9999px !important; top: -9999px !important; }
 </style>
 <template id="__bundler_thumbnail" data-bg-color="#F4F8FF">
   <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
@@ -1475,13 +1475,13 @@ body.variant-dark .audience-card { background: #0F2040; }
       <li><a href="https://share.google/FcmXTN7BpxR9m3XoZ" target="_blank" rel="noopener">Brochure</a></li>
     </ul>
     <div class="nav-divider"></div>
-    <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" class="nav-cta">Book Free Consultation</a>
-    <button class="a11y-nav-btn" aria-label="Accessibility options" onclick="if(window.UserWay)window.UserWay.openWidget();else alert('Accessibility widget loading...')">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" aria-hidden="true">
-        <circle cx="12" cy="5" r="2"/>
-        <path d="M12 7v6m0 0l-3 5m3-5l3 5M9 12H6m6 0h3"/>
+    <button class="a11y-nav-btn" aria-label="Accessibility options" onclick="var uw=document.getElementById('userwayAccessibilityIcon');if(uw)uw.click();">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+        <circle cx="12" cy="4.5" r="2"/>
+        <path d="M12 8c-1.1 0-2 .9-2 2v4h-2.5a1 1 0 0 0 0 2H10v1l-1.8 3.6a1 1 0 1 0 1.8.9L12 19l2 3.5a1 1 0 1 0 1.8-.9L14 18v-1h2.5a1 1 0 0 0 0-2H14v-4c0-1.1-.9-2-2-2z" fill="white"/>
       </svg>
     </button>
+    <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" class="nav-cta">Book Free Consultation</a>
     <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer">
       <svg width="22" height="16" viewBox="0 0 22 16" fill="none" aria-hidden="true">
         <rect y="0" width="22" height="2.5" rx="1.25" fill="white"/>
