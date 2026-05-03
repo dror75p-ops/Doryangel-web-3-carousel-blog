@@ -1103,10 +1103,10 @@ body.variant-dark .audience-card { background: #0F2040; }
 @media (max-width: 900px) {
   nav { padding: 8px 16px 0; }
   .nav-links { display: none; }
-  .nav-bottom { gap: 10px; padding: 6px 0; }
+  .nav-bottom { gap: 8px; padding: 6px 0; flex-wrap: nowrap; }
   .nav-divider { display: none; }
-  .nav-cta { font-size: 13px; padding: 12px 22px; width: auto; max-width: 260px; align-self: center; min-height: 44px; display: inline-flex; align-items: center; }
-  .hamburger-btn, .a11y-nav-btn { display: flex; }
+  .nav-cta { flex: 1; min-width: 0; font-size: 13px; padding: 10px 14px; width: auto; max-width: none; align-self: center; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; text-align: center; }
+  .hamburger-btn, .a11y-nav-btn { display: flex; flex-shrink: 0; width: 44px; height: 44px; }
   .hero-eyebrow { display: none; }
   .hero { grid-template-columns: 1fr; gap: 40px; padding: 172px 24px 48px; }
   .hero h1 { font-size: clamp(32px, 9vw, 44px); }
