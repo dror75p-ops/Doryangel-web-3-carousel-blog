@@ -1401,24 +1401,18 @@ body.variant-dark .audience-card { background: #0F2040; }
 }
 .sticky-call:hover { background: #3A7BDD; color: #fff; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(58,123,221,0.32); }
 
-/* UserWay icon — right side, stacked above SMS button */
+/* UserWay icon — stacked above SMS button on right */
 #userwayAccessibilityIcon {
   position: fixed !important;
   bottom: 88px !important; right: 24px !important;
   left: auto !important; top: auto !important;
   background: transparent !important;
+  background-color: transparent !important;
   border: 2px solid #3A7BDD !important;
   box-shadow: 0 4px 16px rgba(58,123,221,0.18) !important;
   width: 52px !important; height: 52px !important;
   border-radius: 12px !important;
   z-index: 499 !important;
-}
-/* Hide all other UserWay wrapper/container elements */
-[id^="userway"]:not(#userwayAccessibilityIcon),
-[id*="userway"]:not(#userwayAccessibilityIcon),
-[class*="userway"]:not(#userwayAccessibilityIcon),
-[class*="uw-"]:not(#userwayAccessibilityIcon) {
-  display: none !important;
 }
 </style>
 <template id="__bundler_thumbnail" data-bg-color="#F4F8FF">
@@ -2897,9 +2891,9 @@ async function handleFormSubmit(e) {
 (function(d){
   var s = d.createElement("script");
   s.setAttribute("data-account", "lKWv8TGXed");
-  s.setAttribute("data-position", "2");
+  s.setAttribute("data-position", "4");
   s.setAttribute("data-size", "small");
-  s.setAttribute("data-color", "#0D1E3A");
+  s.setAttribute("data-color", "#3A7BDD");
   s.setAttribute("data-mobile", true);
   s.setAttribute("src", "https://cdn.userway.org/widget.js");
   (d.body || d.head).appendChild(s);
