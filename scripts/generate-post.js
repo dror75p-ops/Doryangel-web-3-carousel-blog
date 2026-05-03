@@ -8,10 +8,8 @@ const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetr
 const resend = new Resend(process.env.RESEND_API_KEY);
 const APPROVAL_EMAIL = 'dror75p@gmail.com';
 
-// Data-validated topics — every topic targets a real landlord pain point
-// and is anchored to a specific NYC city (proven to drive more views).
-// Format: title-style + city + category
-const TOPICS = [
+// Fallback topics used if AI topic selection fails
+const FALLBACK_TOPICS = [
   { title: '5 Free Tools Every DIY Landlord in the Bronx Needs', category: 'diy-property-management' },
   { title: 'How to Handle Tenant Complaints Without Losing Your Mind', category: 'diy-property-management' },
   { title: 'The Top 3 Mistakes Bronx Landlords Make Managing Their Own Properties', category: 'property-management' },
@@ -28,8 +26,50 @@ const TOPICS = [
   { title: 'New Rochelle Property Tax Explained for Landlords', category: 'property-management' },
 ];
 
-function pickTopic(postCount) {
-  return TOPICS[postCount % TOPICS.length];
+function getSeason(month) {
+  if (month >= 3 && month <= 5) return 'spring';
+  if (month >= 6 && month <= 8) return 'summer';
+  if (month >= 9 && month <= 11) return 'fall';
+  return 'winter';
+}
+
+async function pickTopicWithAI(existingPosts) {
+  const today = formatDate(new Date());
+  const season = getSeason(new Date().getMonth() + 1);
+  const recentTitles = existingPosts.slice(0, 10).map(p => `- ${p.title}`).join('\n') || 'None yet';
+
+  try {
+    const response = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 256,
+      messages: [{
+        role: 'user',
+        content: `Today is ${today} (${season}). Suggest one blog post topic for NYC landlords.
+
+Recent posts to avoid repeating:
+${recentTitles}
+
+Rules:
+- Title must include a specific NYC area (Bronx, Queens, Yonkers, Mount Vernon, New Rochelle, or Manhattan)
+- Title must be a question OR start with a number
+- Address a real landlord pain point; use seasonal relevance where fitting
+- Category must be exactly one of: property-management, diy-property-management, investments
+
+Reply ONLY with valid JSON: {"title": "...", "category": "..."}`,
+      }],
+    });
+
+    const text = response.content.find(b => b.type === 'text')?.text ?? '';
+    const match = text.match(/\{[\s\S]*?\}/);
+    if (match) {
+      const parsed = JSON.parse(match[0]);
+      if (parsed.title && parsed.category) return parsed;
+    }
+  } catch (err) {
+    console.warn(`AI topic selection failed (${err.message}) — using fallback`);
+  }
+
+  return FALLBACK_TOPICS[existingPosts.length % FALLBACK_TOPICS.length];
 }
 
 function generateSlug(title) {
@@ -254,7 +294,7 @@ async function main() {
   const indexPath = './content/blog/posts-index.json';
   const posts = JSON.parse(readFileSync(indexPath, 'utf8'));
 
-  const topic = pickTopic(posts.length);
+  const topic = await pickTopicWithAI(posts);
   console.log(`Generating post about: "${topic.title}" (${topic.category})`);
 
   const post = await generatePost(topic);
