@@ -1389,6 +1389,10 @@ body.variant-dark .audience-card { background: #0F2040; }
 }
 
 /* ── FLOATING ACTION BUTTONS ── */
+@keyframes floatBtn {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
 .sticky-call {
   position: fixed; bottom: 24px; right: 24px; z-index: 500;
   width: 52px; height: 52px; border-radius: 12px;
@@ -1397,9 +1401,11 @@ body.variant-dark .audience-card { background: #0F2040; }
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 4px 16px rgba(58,123,221,0.18);
   text-decoration: none;
-  transition: transform 0.2s, background 0.2s, color 0.2s, box-shadow 0.2s;
+  animation: floatBtn 3s ease-in-out infinite;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 }
-.sticky-call:hover { background: #3A7BDD; color: #fff; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(58,123,221,0.32); }
+.sticky-call:hover { background: #3A7BDD; color: #fff; animation: none; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(58,123,221,0.32); }
+@media (prefers-reduced-motion: reduce) { .sticky-call { animation: none; } }
 
 /* UserWay icon — stacked above SMS button on right */
 #userwayAccessibilityIcon {
@@ -1413,7 +1419,9 @@ body.variant-dark .audience-card { background: #0F2040; }
   width: 52px !important; height: 52px !important;
   border-radius: 12px !important;
   z-index: 499 !important;
+  animation: floatBtn 3s ease-in-out infinite 1.5s !important;
 }
+@media (prefers-reduced-motion: reduce) { #userwayAccessibilityIcon { animation: none !important; } }
 </style>
 <template id="__bundler_thumbnail" data-bg-color="#F4F8FF">
   <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
@@ -2891,7 +2899,7 @@ async function handleFormSubmit(e) {
 (function(d){
   var s = d.createElement("script");
   s.setAttribute("data-account", "lKWv8TGXed");
-  s.setAttribute("data-position", "4");
+  s.setAttribute("data-position", "2");
   s.setAttribute("data-size", "small");
   s.setAttribute("data-color", "#3A7BDD");
   s.setAttribute("data-mobile", true);
