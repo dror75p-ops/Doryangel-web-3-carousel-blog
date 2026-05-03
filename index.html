@@ -2903,5 +2903,104 @@ async function handleFormSubmit(e) {
 })(document)
 </script>
 
+<!-- LOGO + HAMBURGER PROMO FLIP -->
+<script>
+(function () {
+  var logoLink = document.querySelector('a.nav-logo');
+  var hamBtn   = document.getElementById('hamburgerBtn');
+  if (!logoLink || !hamBtn) return;
+
+  var PROMO_URL = 'https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/';
+  var PROMOS = [
+    'Check our new tools',
+    'Automate your compliance',
+    'Doryangel Automation'
+  ];
+
+  var origLogoHTML  = logoLink.innerHTML;
+  var origHref      = logoLink.getAttribute('href');
+  var origHamHTML   = hamBtn.innerHTML;
+  var origHamLabel  = hamBtn.getAttribute('aria-label');
+
+  var promoIdx = 0, isFlipped = false;
+  var HALF = 360, SHOW = 5500;
+
+  /* Invisible click-catcher overlay on hamburger while promo is active */
+  var overlay = document.createElement('a');
+  overlay.href = PROMO_URL;
+  overlay.target = '_blank';
+  overlay.rel = 'noopener noreferrer';
+  overlay.style.cssText = 'position:absolute;inset:0;border-radius:8px;z-index:5;display:none;cursor:pointer';
+  overlay.addEventListener('click', function (e) { e.stopPropagation(); });
+  hamBtn.style.position = 'relative';
+  hamBtn.appendChild(overlay);
+
+  function scaleSwap(el, newHTML, afterFn) {
+    el.style.transformOrigin = 'center';
+    el.style.transition = 'transform ' + HALF + 'ms cubic-bezier(0.4,0,1,1)';
+    el.style.transform = 'scaleX(0)';
+    setTimeout(function () {
+      el.innerHTML = newHTML;
+      if (afterFn) afterFn();
+      el.style.transition = 'transform ' + HALF + 'ms cubic-bezier(0,0,0.6,1)';
+      el.style.transform = 'scaleX(1)';
+    }, HALF + 10);
+  }
+
+  function promoLogoHTML(msg) {
+    return '<span style="display:inline-flex;align-items:center;gap:8px;font-family:\'DM Sans\',sans-serif;' +
+      'font-size:13px;font-weight:700;color:#3A7BDD;white-space:nowrap;letter-spacing:0.01em;line-height:1">' +
+      '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0">' +
+      '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>' +
+      msg + ' →</span>';
+  }
+
+  var arrowSVG = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" ' +
+    'stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+    '<path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+
+  function showPromo() {
+    if (isFlipped) return;
+    isFlipped = true;
+    var msg = PROMOS[promoIdx++ % PROMOS.length];
+
+    /* Flip logo to promo */
+    scaleSwap(logoLink, promoLogoHTML(msg), function () {
+      logoLink.href   = PROMO_URL;
+      logoLink.target = '_blank';
+      logoLink.rel    = 'noopener noreferrer';
+    });
+
+    /* Flip hamburger to arrow, show overlay */
+    scaleSwap(hamBtn, arrowSVG, function () {
+      hamBtn.appendChild(overlay);
+      overlay.style.display = 'block';
+      hamBtn.setAttribute('aria-label', 'Visit Doryangel Automation tools');
+    });
+
+    /* Flip back after SHOW ms */
+    setTimeout(function () {
+      scaleSwap(logoLink, origLogoHTML, function () {
+        logoLink.href = origHref;
+        logoLink.removeAttribute('target');
+        logoLink.removeAttribute('rel');
+      });
+      scaleSwap(hamBtn, origHamHTML, function () {
+        overlay.style.display = 'none';
+        hamBtn.appendChild(overlay);
+        hamBtn.setAttribute('aria-label', origHamLabel);
+      });
+      setTimeout(function () { isFlipped = false; }, HALF * 2 + 100);
+    }, SHOW);
+  }
+
+  /* First flip 8 s after load, then every 22 s */
+  setTimeout(function () {
+    showPromo();
+    setInterval(showPromo, 22000);
+  }, 8000);
+})();
+</script>
+
 </body>
 </html>
