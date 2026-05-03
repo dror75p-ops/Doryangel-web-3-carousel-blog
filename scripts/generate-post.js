@@ -308,6 +308,29 @@ async function main() {
 
   await sendApprovalEmail(post);
   console.log(`Approval email sent to ${APPROVAL_EMAIL}`);
+
+  await notifyDigestSubscribers(postForIndex);
+}
+
+async function notifyDigestSubscribers(post) {
+  const DIGEST_WEBHOOK = 'https://hook.eu1.make.com/wxmjj64ih7wvw4di4dyop4cwy8e75qj8';
+  try {
+    const res = await fetch(DIGEST_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        category: post.category,
+        title: post.title,
+        slug: post.slug,
+        excerpt: post.excerpt,
+        publishedDate: post.publishedDate,
+      }),
+    });
+    if (res.ok) console.log('Digest webhook triggered — subscribers will be notified');
+    else console.warn(`Digest webhook returned ${res.status}`);
+  } catch (err) {
+    console.warn(`Digest webhook failed (${err.message}) — subscribers not notified`);
+  }
 }
 
 main().catch(err => {
