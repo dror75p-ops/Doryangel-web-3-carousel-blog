@@ -1413,15 +1413,19 @@ body.variant-dark .audience-card { background: #0F2040; }
 }
 @media (prefers-reduced-motion: reduce) { .sticky-call::before { animation: none; } }
 
-/* Force UserWay widget to bottom-left with matching style */
-#userwayAccessibilityIcon {
+/* Force UserWay to bottom-left — broad selector coverage */
+#userwayAccessibilityIcon,
+[id^="userway"], [id*="userway"],
+[class*="userway"], [class*="uw-"] {
+  position: fixed !important;
   bottom: 28px !important; left: 24px !important;
   right: auto !important; top: auto !important;
-  background: #fff !important;
+  background: #ffffff !important;
   border: 2px solid #3A7BDD !important;
   box-shadow: 0 4px 16px rgba(58,123,221,0.18) !important;
-  color: #3A7BDD !important;
   width: 52px !important; height: 52px !important;
+  border-radius: 50% !important;
+  z-index: 499 !important;
 }
 </style>
 <template id="__bundler_thumbnail" data-bg-color="#F4F8FF">
@@ -1458,7 +1462,7 @@ body.variant-dark .audience-card { background: #0F2040; }
 <!-- NAV -->
 <nav>
   <a href="/" class="nav-logo">
-    <img src="/assets/logo.jpg" alt="DoryAngel">
+    <img src="assets/logo.jpg" alt="DoryAngel">
   </a>
   <div class="nav-bottom">
     <ul class="nav-links">
@@ -2365,7 +2369,7 @@ body.variant-dark .audience-card { background: #0F2040; }
       <div>
         <div class="footer-logo">
           <div class="footer-logo-wrap">
-            <img src="/assets/logo.jpg" alt="DoryAngel">
+            <img src="assets/logo.jpg" alt="DoryAngel">
           </div>
         </div>
         <p class="footer-desc" style="color:rgba(255,255,255,0.65)">Professional property management in New York City since 2010. Enhancing asset value through technology and trusted service.</p>
