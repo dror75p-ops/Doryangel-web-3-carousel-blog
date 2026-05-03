@@ -1087,7 +1087,7 @@ body.variant-dark .audience-card { background: #0F2040; }
 }
 
 /* HAMBURGER BUTTON */
-.hamburger-btn {
+.hamburger-btn, .a11y-nav-btn {
   display: none;
   align-items: center; justify-content: center;
   width: 44px; height: 44px;
@@ -1096,8 +1096,8 @@ body.variant-dark .audience-card { background: #0F2040; }
   cursor: pointer; flex-shrink: 0;
   transition: background 0.2s;
 }
-.hamburger-btn:hover { background: #2e69c7; }
-.hamburger-btn svg { display: block; pointer-events: none; }
+.hamburger-btn:hover, .a11y-nav-btn:hover { background: #2e69c7; }
+.hamburger-btn svg, .a11y-nav-btn svg { display: block; pointer-events: none; }
 
 /* RESPONSIVE */
 @media (max-width: 900px) {
@@ -1106,7 +1106,7 @@ body.variant-dark .audience-card { background: #0F2040; }
   .nav-bottom { gap: 10px; padding: 6px 0; }
   .nav-divider { display: none; }
   .nav-cta { font-size: 13px; padding: 12px 22px; width: auto; max-width: 260px; align-self: center; min-height: 44px; display: inline-flex; align-items: center; }
-  .hamburger-btn { display: flex; }
+  .hamburger-btn, .a11y-nav-btn { display: flex; }
   .hero-eyebrow { display: none; }
   .hero { grid-template-columns: 1fr; gap: 40px; padding: 172px 24px 48px; }
   .hero h1 { font-size: clamp(32px, 9vw, 44px); }
@@ -1407,21 +1407,8 @@ body.variant-dark .audience-card { background: #0F2040; }
 .sticky-call:hover { background: #3A7BDD; color: #fff; animation: none; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(58,123,221,0.32); }
 @media (prefers-reduced-motion: reduce) { .sticky-call { animation: none; } }
 
-/* UserWay icon — stacked above SMS button on right */
-#userwayAccessibilityIcon {
-  position: fixed !important;
-  bottom: 88px !important; right: 24px !important;
-  left: auto !important; top: auto !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  border: 2px solid #3A7BDD !important;
-  box-shadow: 0 4px 16px rgba(58,123,221,0.18) !important;
-  width: 52px !important; height: 52px !important;
-  border-radius: 12px !important;
-  z-index: 499 !important;
-  animation: floatBtn 3s ease-in-out infinite 1.5s !important;
-}
-@media (prefers-reduced-motion: reduce) { #userwayAccessibilityIcon { animation: none !important; } }
+/* Hide UserWay's own floating button — we use our nav button instead */
+#userwayAccessibilityIcon { display: none !important; }
 </style>
 <template id="__bundler_thumbnail" data-bg-color="#F4F8FF">
   <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
@@ -1489,6 +1476,12 @@ body.variant-dark .audience-card { background: #0F2040; }
     </ul>
     <div class="nav-divider"></div>
     <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" class="nav-cta">Book Free Consultation</a>
+    <button class="a11y-nav-btn" aria-label="Accessibility options" onclick="if(window.UserWay)window.UserWay.openWidget();else alert('Accessibility widget loading...')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" aria-hidden="true">
+        <circle cx="12" cy="5" r="2"/>
+        <path d="M12 7v6m0 0l-3 5m3-5l3 5M9 12H6m6 0h3"/>
+      </svg>
+    </button>
     <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer">
       <svg width="22" height="16" viewBox="0 0 22 16" fill="none" aria-hidden="true">
         <rect y="0" width="22" height="2.5" rx="1.25" fill="white"/>
