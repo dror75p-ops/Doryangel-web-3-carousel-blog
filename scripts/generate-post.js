@@ -203,7 +203,13 @@ Remember: 800-1,200 words, NYC-specific examples, pain-point focused, scannable 
   });
 
   const textBlock = message.content.find(b => b.type === 'text');
-  const post = JSON.parse(textBlock.text);
+  if (!textBlock) throw new Error('No text block in Claude response');
+  let post;
+  try {
+    post = JSON.parse(textBlock.text);
+  } catch (e) {
+    throw new Error(`Claude returned invalid JSON: ${textBlock.text.slice(0, 200)}`);
+  }
 
   console.log(
     `usage — input: ${message.usage.input_tokens}, ` +
