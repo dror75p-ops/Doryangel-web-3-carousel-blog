@@ -1407,6 +1407,21 @@ body.variant-dark .audience-card { background: #0F2040; }
 .sticky-call:hover { background: #3A7BDD; color: #fff; animation: none; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(58,123,221,0.32); }
 .sticky-call-label { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) { .sticky-call { animation: none; } }
+.sticky-ai-call {
+  position: fixed; bottom: 88px; right: 20px; z-index: 500;
+  height: 52px; padding: 0 18px 0 14px; border-radius: 12px;
+  background: #0F2847; color: #fff;
+  border: 2px solid #0F2847;
+  display: flex; align-items: center; gap: 9px;
+  box-shadow: 0 4px 16px rgba(15,40,71,0.25);
+  text-decoration: none; white-space: nowrap;
+  animation: floatBtn 3s ease-in-out 0.6s infinite;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.sticky-ai-call:hover { background: #1E5AA8; border-color: #1E5AA8; animation: none; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(30,90,168,0.32); }
+.sticky-ai-call-label { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; }
+@media (min-width: 768px) { .sticky-ai-call { display: none; } }
+@media (prefers-reduced-motion: reduce) { .sticky-ai-call { animation: none; } }
 
 /* Park UserWay's own button off-screen so we can trigger it programmatically */
 #userwayAccessibilityIcon { position: fixed !important; left: -9999px !important; top: -9999px !important; }
@@ -2919,6 +2934,13 @@ async function handleFormSubmit(e) {
   });
 })();
 </script>
+<!-- AI CALL BUTTON — mobile only, connects to Retell AI channel -->
+<a href="tel:+15167743249" class="sticky-ai-call" aria-label="Call DoryAngel AI agent">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="22" height="22" aria-hidden="true" style="flex-shrink:0">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.24 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012.18 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.55-.55a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/>
+  </svg>
+  <span class="sticky-ai-call-label">Call AI</span>
+</a>
 <!-- STICKY SMS BUTTON -->
 <a href="sms:+15168474999" class="sticky-call" aria-label="Text DoryAngel (516) 847-4999">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="22" height="22" aria-hidden="true" style="flex-shrink:0">
