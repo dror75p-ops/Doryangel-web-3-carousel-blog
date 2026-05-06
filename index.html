@@ -1417,66 +1417,57 @@ body.variant-dark .audience-card { background: #0F2040; }
 /* Outer host constraint — harmless on desktop, prevents stray overflow on mobile */
 retell-chat-web-component { display: block; max-width: 100vw; box-sizing: border-box; }
 
-/* Custom popup bubble — appears next to the robot icon every 5 s */
+/* Custom popup bubble — floats above the robot icon, pulses every 5 s.
+   Anchored to right:10px so it can NEVER overflow the right edge;
+   max-width ensures it won't overflow the left edge either.
+   border-radius: 16px 16px 0 16px gives the speech-bubble tail at
+   bottom-right, pointing down toward the robot button below. */
 #retell-bubble {
   position: fixed;
-  bottom: 22px;
-  right: 82px;            /* sits to the left of the robot button (right:20px + ~56px wide) */
+  bottom: 92px;           /* robot button ≈ bottom:20px + height 56px + 16px gap */
+  right: 10px;
   z-index: 9990;
-  max-width: min(220px, calc(100vw - 100px));
-  background: #EBF3FD;
-  border: 1.5px solid rgba(30,90,168,0.28);
-  border-radius: 14px;
-  padding: 12px 28px 12px 14px;  /* right padding leaves room for × */
-  box-shadow: 0 4px 22px rgba(15,40,71,0.14);
+  max-width: min(230px, calc(100vw - 20px));
+  background: #0F2847;
+  border-radius: 16px 16px 0 16px;
+  padding: 13px 32px 13px 16px;
+  box-shadow: 0 6px 28px rgba(15,40,71,0.32);
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
   line-height: 1.5;
-  color: #0F2847;
+  color: #fff;
   opacity: 0;
-  transform: translateX(6px);
-  transition: opacity 0.32s ease, transform 0.32s ease;
+  transform: translateY(8px) scale(0.96);
+  transition: opacity 0.28s ease, transform 0.28s ease;
   pointer-events: none;
   cursor: pointer;
 }
 #retell-bubble.vis {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateY(0) scale(1);
   pointer-events: auto;
 }
-/* Arrow pointing right → toward the robot button */
-#retell-bubble::before {
-  content: '';
-  position: absolute;
-  right: -10px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 9px solid transparent;
-  border-left-color: rgba(30,90,168,0.28);
+#retell-bubble strong {
+  display: block;
+  margin-bottom: 3px;
+  color: #5B9FEA;
+  font-size: 13px;
 }
-#retell-bubble::after {
-  content: '';
-  position: absolute;
-  right: -8px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 8px solid transparent;
-  border-left-color: #EBF3FD;
-}
-/* Dismiss × */
 #retell-bubble-close {
   position: absolute;
-  top: 7px;
-  right: 9px;
+  top: 8px;
+  right: 10px;
   background: none;
   border: none;
   cursor: pointer;
-  color: #1E5AA8;
-  font-size: 13px;
+  color: rgba(255,255,255,0.55);
+  font-size: 12px;
   font-weight: 700;
   line-height: 1;
-  padding: 2px 3px;
+  padding: 3px 4px;
+  transition: color 0.15s;
 }
+#retell-bubble-close:hover { color: #fff; }
 @media (prefers-reduced-motion: reduce) { #retell-bubble { transition: none; } }
 </style>
 <template id="__bundler_thumbnail" data-bg-color="#F4F8FF">
@@ -3122,11 +3113,11 @@ async function handleFormSubmit(e) {
 
 
 
-<!-- Custom chat popup bubble — cycles every 5 s next to the Retell robot icon -->
+<!-- Custom chat popup bubble — pulses above the robot icon every 5 s -->
 <div id="retell-bubble" role="status" aria-live="polite" aria-label="Chat with Hailey">
   <button id="retell-bubble-close" aria-label="Dismiss">✕</button>
-  <strong>Got a question?</strong><br>
-  Ask Hailey — our AI is available 24/7.
+  <strong>Got a question?</strong>
+  Ask Hailey — our AI, available 24/7.
 </div>
 
 <script>
