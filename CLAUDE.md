@@ -102,6 +102,54 @@
 - **Unsplash** (`UNSPLASH_ACCESS_KEY` secret): per-category curated queries for cover images
 - **GitHub** (`GH_TOKEN` secret): the bot's token for committing to main; needs `repo` + `workflow` scopes
 - **Google Analytics 4** (`G-P8QR4VL8NH`): in `index.html`, gated by cookie consent
+- **Retell AI + Make.com lead capture**: see section below
+
+## Retell AI lead capture
+
+AI phone agent "Hailey" ("Doryangel web chat lead") is reachable via the mobile "Call AI" button (`tel:+15167743249`). When a call ends, Retell fires a webhook to Make.com which logs the lead to Google Sheets and emails the owner.
+
+### Architecture
+
+```
+Retell AI call ends / analyzed
+  → webhook POST to Make.com
+  → filter: call_ended OR call_analyzed only (call_started is dropped)
+  → Google Sheets: append row to "DoryAngel Chat Leads" spreadsheet
+  → Gmail: notify dror75p@gmail.com
+```
+
+### Make.com scenario
+
+- **Name**: DoryAngel Chat — New Leads (scenario ID 5578524)
+- **Webhook URL**: `https://hook.eu1.make.com/ii1kuc8ba6gk3yvs506ggrnutp6iwz4h`
+- **Google Sheets**: spreadsheet ID `1druOTrJhRVhrbAPrGBWD8HtMNkxy-h-PiJcYEhGsuHk`, tab `Sheet1`
+- **Both connections**: `office@doryangel.com` Google account
+
+### Sheet columns (A–O)
+
+| Col | Field | Source |
+|-----|-------|--------|
+| A | Timestamp | `{{now}}` |
+| B | caller_role | dynamic variable |
+| C | full_name | dynamic variable |
+| D | callback_phone | dynamic variable |
+| E | email_address | dynamic variable |
+| F | property_address | dynamic variable |
+| G | unit_details | dynamic variable |
+| H | is_occupied | dynamic variable |
+| I | current_mgmt | dynamic variable |
+| J | is_urgent | dynamic variable |
+| K | appointment_set | dynamic variable |
+| L | chosen_slot | dynamic variable |
+| M | chat_summary | call_analysis |
+| N | chat_successful | call_analysis |
+| O | user_sentiment | call_analysis |
+
+### Notes
+
+- Both `call_ended` and `call_analyzed` events pass the filter → **each call writes 2 rows and sends 2 emails**. The `call_ended` row has empty analysis columns (M–O); the `call_analyzed` row fills them in.
+- Retell webhook events configured: `call_started`, `call_ended`, `call_analyzed` (started is dropped by filter)
+- Column offset bug fixed 2026-05-06: mapper keys corrected from 1-indexed to 0-indexed so Timestamp lands in column A
 
 ## Cost (per blog post)
 
