@@ -2969,76 +2969,62 @@ async function handleFormSubmit(e) {
 <script>
 (function () {
   var retellEl = null;
+  var SKIP = { 'custom-chat-pill': 1, 'userwayAccessibilityIcon': 1, 'cookie-banner': 1 };
 
-  /* Skip-list for our own fixed elements */
-  var SKIP_IDS = { 'custom-chat-pill': 1, 'userwayAccessibilityIcon': 1, 'cookie-banner': 1 };
-  var SKIP_CLASSES = ['sticky-ai-call', 'sticky-chat-pill'];
-
-  function isOurs(el) {
-    if (SKIP_IDS[el.id]) return true;
-    for (var i = 0; i < SKIP_CLASSES.length; i++) {
-      if (el.classList.contains(SKIP_CLASSES[i])) return true;
-    }
-    return false;
-  }
-
-  /* Hide Retell's default robot button; keep it in DOM so .click() still works */
-  function hideRetellButton() {
+  function findRetellEl() {
     var els = document.body.children;
     for (var i = els.length - 1; i >= 0; i--) {
       var el = els[i];
-      var tag = el.tagName.toLowerCase();
-      if (tag === 'script' || tag === 'style' || tag === 'noscript' || tag === 'template') continue;
-      if (isOurs(el)) continue;
-      var cs = window.getComputedStyle(el);
-      if (cs.position === 'fixed') {
-        retellEl = el;
-        el.style.setProperty('opacity', '0', 'important');
-        el.style.setProperty('pointer-events', 'none', 'important');
-        return true;
-      }
+      var t = el.tagName.toLowerCase();
+      if (t === 'script' || t === 'style' || t === 'noscript' || t === 'template') continue;
+      if (SKIP[el.id]) continue;
+      if (el.classList.contains('sticky-ai-call') || el.classList.contains('sticky-chat-pill')) continue;
+      if (window.getComputedStyle(el).position === 'fixed') return el;
     }
-    return false;
+    return null;
+  }
+
+  function setupRetell() {
+    retellEl = findRetellEl();
+    if (!retellEl) return false;
+    /* Tuck the robot button behind our pill — same coords, lower z-index */
+    retellEl.style.setProperty('bottom', '24px', 'important');
+    retellEl.style.setProperty('right', '20px', 'important');
+    retellEl.style.setProperty('z-index', '9999', 'important');
+    return true;
   }
 
   function openRetell() {
-    /* Try stored reference first */
-    if (retellEl) {
-      /* Briefly restore so click lands in the right spot, then re-hide */
-      retellEl.style.removeProperty('opacity');
-      retellEl.style.removeProperty('pointer-events');
-      retellEl.click();
-      setTimeout(function () {
-        /* Only re-hide if chat panel is NOT open */
-        var panelOpen = document.querySelector('[class*="retell"][class*="open"], [class*="retell"][aria-hidden="false"]');
-        if (!panelOpen) {
-          retellEl.style.setProperty('opacity', '0', 'important');
-          retellEl.style.setProperty('pointer-events', 'none', 'important');
-        }
-      }, 300);
-      return;
+    if (!retellEl) return;
+    /* 1. Custom element method (web component public API) */
+    if (typeof retellEl.open === 'function') { retellEl.open(); return; }
+    if (typeof retellEl.toggle === 'function') { retellEl.toggle(); return; }
+    if (typeof retellEl.openChat === 'function') { retellEl.openChat(); return; }
+    /* 2. Button inside open shadow DOM */
+    if (retellEl.shadowRoot) {
+      var sBtn = retellEl.shadowRoot.querySelector('button, [role="button"]');
+      if (sBtn) { sBtn.click(); return; }
     }
-    /* Fallback: find any remaining fixed element */
-    var all = document.querySelectorAll('button, [role="button"]');
-    for (var i = 0; i < all.length; i++) {
-      if (all[i].id === 'custom-chat-pill') continue;
-      if (window.getComputedStyle(all[i]).position === 'fixed') { all[i].click(); return; }
-    }
+    /* 3. Regular child button (no shadow DOM) */
+    var cBtn = retellEl.querySelector('button, [role="button"]');
+    if (cBtn) { cBtn.click(); return; }
+    /* 4. Simulate pointer event at element centre */
+    var r = retellEl.getBoundingClientRect();
+    var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    retellEl.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, clientX: cx, clientY: cy }));
+    retellEl.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: cx, clientY: cy }));
   }
 
-  /* Wire pill click immediately */
   document.addEventListener('DOMContentLoaded', function () {
     var pill = document.getElementById('custom-chat-pill');
     if (pill) pill.addEventListener('click', openRetell);
   });
 
-  /* Retell module initialises asynchronously — wait for full load + buffer */
   window.addEventListener('load', function () {
     setTimeout(function () {
-      if (!hideRetellButton()) {
-        /* Still not found — watch for it */
+      if (!setupRetell()) {
         var obs = new MutationObserver(function () {
-          if (hideRetellButton()) obs.disconnect();
+          if (setupRetell()) obs.disconnect();
         });
         obs.observe(document.body, { childList: true });
       }
