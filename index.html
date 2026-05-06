@@ -1393,22 +1393,9 @@ body.variant-dark .audience-card { background: #0F2040; }
   0%, 100% { transform: translateY(0); }
   50%       { transform: translateY(-6px); }
 }
-/* Chat pill — visual only; Retell's transparent button sits on top */
-.sticky-chat-pill {
-  position: fixed; bottom: 24px; right: 20px; z-index: 10001;
-  height: 52px; padding: 0 18px 0 14px; border-radius: 12px;
-  background: #0F2847; color: #fff;
-  border: 2px solid #0F2847;
-  display: flex; align-items: center; gap: 9px;
-  box-shadow: 0 4px 16px rgba(15,40,71,0.25);
-  white-space: nowrap; pointer-events: none;
-  animation: floatBtn 3s ease-in-out infinite;
-  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700;
-}
-@media (prefers-reduced-motion: reduce) { .sticky-chat-pill { animation: none; } }
-/* Call pill — mobile only, stacked above the chat pill */
+/* Call pill — mobile only; Retell robot button sits below at its default position */
 .sticky-ai-call {
-  position: fixed; bottom: 88px; right: 20px; z-index: 10001;
+  position: fixed; bottom: 88px; right: 20px; z-index: 500;
   height: 52px; padding: 0 18px 0 14px; border-radius: 12px;
   background: #0F2847; color: #fff;
   border: 2px solid #0F2847;
@@ -2955,61 +2942,6 @@ async function handleFormSubmit(e) {
   </svg>
   <span class="sticky-ai-call-label">Call us 24/7</span>
 </a>
-<!-- CHAT PILL — visual only; Retell's transparent button sits on top and handles clicks -->
-<div id="custom-chat-pill" class="sticky-chat-pill" aria-hidden="true">
-  <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true" style="flex-shrink:0">
-    <rect x="2" y="7" width="20" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
-    <circle cx="9" cy="13.5" r="1.5"/>
-    <circle cx="15" cy="13.5" r="1.5"/>
-    <path d="M12 7V4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <circle cx="12" cy="3" r="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
-  </svg>
-  Chat with us 24/7
-</div>
-
-<!-- RETELL OVERLAY — makes Retell's button cover our pill so taps reach it natively -->
-<script>
-(function () {
-  function overlayRetell() {
-    var pill = document.getElementById('custom-chat-pill');
-    if (!pill) return false;
-    var SKIP = { 'custom-chat-pill': 1, 'userwayAccessibilityIcon': 1, 'cookie-banner': 1 };
-    var els = document.body.children;
-    for (var i = els.length - 1; i >= 0; i--) {
-      var el = els[i];
-      var t = el.tagName.toLowerCase();
-      if (t === 'script' || t === 'style' || t === 'noscript' || t === 'template') continue;
-      if (SKIP[el.id]) continue;
-      if (el.classList.contains('sticky-ai-call') || el.classList.contains('sticky-chat-pill')) continue;
-      if (window.getComputedStyle(el).position === 'fixed') {
-        /* Stretch Retell's element to cover our pill exactly, make it transparent */
-        var r = pill.getBoundingClientRect();
-        el.style.setProperty('position', 'fixed', 'important');
-        el.style.setProperty('bottom', '24px', 'important');
-        el.style.setProperty('right', '20px', 'important');
-        el.style.setProperty('width', Math.ceil(r.width) + 'px', 'important');
-        el.style.setProperty('height', '52px', 'important');
-        el.style.setProperty('opacity', '0', 'important');
-        el.style.setProperty('z-index', '10002', 'important'); /* above pill */
-        el.style.setProperty('cursor', 'pointer', 'important');
-        return true;
-      }
-    }
-    return false;
-  }
-
-  window.addEventListener('load', function () {
-    setTimeout(function () {
-      if (!overlayRetell()) {
-        var obs = new MutationObserver(function () {
-          if (overlayRetell()) obs.disconnect();
-        });
-        obs.observe(document.body, { childList: true });
-      }
-    }, 1200);
-  });
-})();
-</script>
 <!-- USERWAY ACCESSIBILITY WIDGET -->
 <script>
 (function(d){
