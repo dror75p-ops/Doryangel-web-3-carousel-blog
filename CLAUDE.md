@@ -106,14 +106,38 @@
 
 ## Retell AI lead capture
 
-AI phone agent "Hailey" ("Doryangel web chat lead") is reachable via the mobile "Call AI" button (`tel:+15167743249`). When a call ends, Retell fires a webhook to Make.com which logs the lead to Google Sheets and emails the owner.
+AI **web chat** agent "Hailey" ("Doryangel web chat lead", agent ID `agent_88fd2bc14215e7210629dfafda`) is embedded on the website via the Retell chat widget. When a chat ends and is analyzed, Retell fires a `chat_analyzed` webhook to Make.com which logs the lead to Google Sheets and emails the owner.
+
+The mobile "Call AI" button (`tel:+15167743249`) is a separate voice channel and is NOT connected to this Make.com scenario.
+
+### Retell chat widget (index.html)
+
+Embedded just before `</body>`:
+```html
+<!-- Retell AI Chat Widget — Hailey lead capture -->
+<script
+  id="retell-widget"
+  src="https://dashboard.retellai.com/retell-widget.js"
+  type="module"
+  data-public-key="public_key_274f92a0516ded273d147"
+  data-agent-id="agent_88fd2bc14215e7210629dfafda"
+  data-title="Chat with Hailey"
+  data-color="#1E5AA8"
+  data-bot-name="Hailey"
+  data-popup-message="Hi! I'm Hailey — ask me anything about DoryAngel's property management."
+  data-show-ai-popup="true"
+  data-show-ai-popup-time="8"
+></script>
+```
+
+**Important**: Retell simulation mode does NOT fire webhooks. Only real chat sessions (widget on the live site) fire real `chat_analyzed` webhooks.
 
 ### Architecture
 
 ```
-Retell AI call ends / analyzed
-  → webhook POST to Make.com
-  → filter: call_ended OR call_analyzed only (call_started is dropped)
+Retell chat ends + analyzed
+  → webhook POST to Make.com (event_type = "chat_analyzed")
+  → filter: chat_analyzed only (chat_started and chat_ended are dropped)
   → Google Sheets: append row to "DoryAngel Chat Leads" spreadsheet
   → Gmail: notify dror75p@gmail.com
 ```
@@ -127,35 +151,42 @@ Retell AI call ends / analyzed
 
 ### Sheet columns (A–O)
 
-All 14 lead fields are configured in Retell as **Post-Chat Data Extraction**, so they all live at `call.call_analysis.custom_analysis_data.{field}` — not at `retell_llm_dynamic_variables.{field}`.
+All 14 lead fields are configured in Retell as **Post-Chat Data Extraction**. For a **chat agent**, the correct Make.com path is `{{1.chat.chat_analysis.custom_analysis_data.FIELD}}` — NOT `call.call_analysis.*`.
 
-| Col | Field | Retell path |
-|-----|-------|-------------|
+| Col | Field | Make.com expression |
+|-----|-------|---------------------|
 | A | Timestamp | `{{now}}` |
-| B | caller_role | `custom_analysis_data.caller_role` |
-| C | full_name | `custom_analysis_data.full_name` |
-| D | callback_phone | `custom_analysis_data.callback_phone` |
-| E | email_address | `custom_analysis_data.email_address` |
-| F | property_address | `custom_analysis_data.property_address` |
-| G | unit_details | `custom_analysis_data.unit_details` |
-| H | is_occupied | `custom_analysis_data.is_occupied` |
-| I | current_mgmt | `custom_analysis_data.current_mgmt` |
-| J | is_urgent | `custom_analysis_data.is_urgent` |
-| K | appointment_set | `custom_analysis_data.appointment_set` |
-| L | chosen_slot | `custom_analysis_data.chosen_slot` |
-| M | chat_summary | `custom_analysis_data.chat_summary` |
-| N | chat_successful | `custom_analysis_data.chat_successful` |
-| O | user_sentiment | `custom_analysis_data.user_sentiment` |
+| B | caller_role | `{{1.chat.chat_analysis.custom_analysis_data.caller_role}}` |
+| C | full_name | `{{1.chat.chat_analysis.custom_analysis_data.full_name}}` |
+| D | callback_phone | `{{1.chat.chat_analysis.custom_analysis_data.callback_phone}}` |
+| E | email_address | `{{1.chat.chat_analysis.custom_analysis_data.email_address}}` |
+| F | property_address | `{{1.chat.chat_analysis.custom_analysis_data.property_address}}` |
+| G | unit_details | `{{1.chat.chat_analysis.custom_analysis_data.unit_details}}` |
+| H | is_occupied | `{{1.chat.chat_analysis.custom_analysis_data.is_occupied}}` |
+| I | current_mgmt | `{{1.chat.chat_analysis.custom_analysis_data.current_mgmt}}` |
+| J | is_urgent | `{{1.chat.chat_analysis.custom_analysis_data.is_urgent}}` |
+| K | appointment_set | `{{1.chat.chat_analysis.custom_analysis_data.appointment_set}}` |
+| L | chosen_slot | `{{1.chat.chat_analysis.custom_analysis_data.chosen_slot}}` |
+| M | chat_summary | `{{1.chat.chat_analysis.custom_analysis_data.chat_summary}}` |
+| N | chat_successful | `{{1.chat.chat_analysis.custom_analysis_data.chat_successful}}` |
+| O | user_sentiment | `{{1.chat.chat_analysis.custom_analysis_data.user_sentiment}}` |
 
 ### Filter
 
-Only `call_analyzed` events trigger the pipeline (`call_started` and `call_ended` are dropped). This guarantees one row per call with all post-chat extraction fields populated.
+Only `chat_analyzed` events trigger the pipeline (`chat_started` and `chat_ended` are dropped). This guarantees one row per chat with all post-chat extraction fields populated.
+
+### Gmail notification
+
+- **To**: `dror75p@gmail.com`
+- **Subject**: `New Chat Lead — {{1.chat.chat_analysis.custom_analysis_data.full_name}} ({{1.chat.chat_analysis.custom_analysis_data.caller_role}})`
 
 ### History of bugs fixed 2026-05-06
 
 1. **Column offset**: mapper keys were 1-indexed instead of 0-indexed, so Timestamp landed in column B and everything was shifted right. Fixed.
-2. **Wrong data source path**: 11 of 14 fields were being read from `retell_llm_dynamic_variables.*` — but the Retell agent extracts them via Post-Chat Data Extraction, which lives at `call_analysis.custom_analysis_data.*`. The wrong-path fields wrote blanks. Fixed.
-3. **Duplicate rows**: Filter previously passed both `call_ended` and `call_analyzed`, generating 2 rows per call. Now `call_analyzed` only.
+2. **Wrong data source path**: Fields were being read from `retell_llm_dynamic_variables.*` — but this agent uses Post-Chat Data Extraction, which writes to `custom_analysis_data.*`. Fixed.
+3. **Duplicate rows**: Filter passed both `call_ended` and `call_analyzed`, creating 2 rows per chat. Fixed: `chat_analyzed` only.
+4. **Wrong event name**: Filter used `call_analyzed` but chat agents fire `chat_analyzed`. Fixed.
+5. **Wrong payload root key**: Make.com paths used `1.call.call_analysis.*` but chat agent payloads use `1.chat.chat_analysis.*`. Confirmed via 4-path debug email test — Path A (`chat.chat_analysis`) had all real data. Fixed.
 
 ## Cost (per blog post)
 
