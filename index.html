@@ -1393,22 +1393,24 @@ body.variant-dark .audience-card { background: #0F2040; }
   0%, 100% { transform: translateY(0); }
   50%       { transform: translateY(-6px); }
 }
-.sticky-call {
-  position: fixed; bottom: 24px; right: 20px; z-index: 500;
+/* Chat pill — triggers Retell widget, sits at bottom-right */
+.sticky-chat-pill {
+  position: fixed; bottom: 24px; right: 20px; z-index: 10001;
   height: 52px; padding: 0 18px 0 14px; border-radius: 12px;
-  background: #fff; color: #3A7BDD;
-  border: 2px solid #3A7BDD;
+  background: #0F2847; color: #fff;
+  border: 2px solid #0F2847;
   display: flex; align-items: center; gap: 9px;
-  box-shadow: 0 4px 16px rgba(58,123,221,0.18);
-  text-decoration: none; white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(15,40,71,0.25);
+  white-space: nowrap; cursor: pointer;
   animation: floatBtn 3s ease-in-out infinite;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
 }
-.sticky-call:hover { background: #3A7BDD; color: #fff; animation: none; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(58,123,221,0.32); }
-.sticky-call-label { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; }
-@media (prefers-reduced-motion: reduce) { .sticky-call { animation: none; } }
+.sticky-chat-pill:hover { background: #1E5AA8; border-color: #1E5AA8; animation: none; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(30,90,168,0.32); }
+@media (prefers-reduced-motion: reduce) { .sticky-chat-pill { animation: none; } }
+/* Call pill — mobile only, stacked above the chat pill */
 .sticky-ai-call {
-  position: fixed; bottom: 88px; right: 20px; z-index: 500;
+  position: fixed; bottom: 92px; right: 20px; z-index: 10001;
   height: 52px; padding: 0 18px 0 14px; border-radius: 12px;
   background: #0F2847; color: #fff;
   border: 2px solid #0F2847;
@@ -1456,10 +1458,10 @@ body.variant-dark .audience-card { background: #0F2040; }
   type="module"
   data-public-key="public_key_274f92a0516ded273d147"
   data-agent-id="agent_88fd2bc14215e7210629dfafda"
-  data-title="Chat with Hailey"
+  data-title="Chat with Us"
   data-color="#1E5AA8"
-  data-bot-name="Hailey"
-  data-popup-message="Hi! I'm Hailey — ask me anything about DoryAngel's property management."
+  data-bot-name="DoryAngel Team"
+  data-popup-message="Got a question? Our team is available 24/7 — get instant answers on pricing, management services &amp; availability."
   data-show-ai-popup="true"
   data-show-ai-popup-time="8"
 ></script>
@@ -2948,21 +2950,48 @@ async function handleFormSubmit(e) {
   });
 })();
 </script>
-<!-- AI CALL BUTTON — mobile only, connects to Retell AI channel -->
-<a href="tel:+15167743249" class="sticky-ai-call" aria-label="Call DoryAngel AI agent">
+<!-- CALL BUTTON — mobile only, connects to Retell voice channel -->
+<a href="tel:+15167743249" class="sticky-ai-call" aria-label="Call DoryAngel 24/7">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="22" height="22" aria-hidden="true" style="flex-shrink:0">
     <path stroke-linecap="round" stroke-linejoin="round" d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.24 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012.18 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.55-.55a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/>
   </svg>
-  <span class="sticky-ai-call-label">Call AI</span>
+  <span class="sticky-ai-call-label">Call us 24/7</span>
 </a>
-<!-- STICKY SMS BUTTON -->
-<a href="sms:+15168474999" class="sticky-call" aria-label="Text DoryAngel (516) 847-4999">
+<!-- CHAT BUTTON — triggers Retell AI chat widget -->
+<button id="custom-chat-pill" class="sticky-chat-pill" aria-label="Chat with DoryAngel team 24/7">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="22" height="22" aria-hidden="true" style="flex-shrink:0">
-    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+    <path stroke-linecap="round" stroke-linejoin="round" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
   </svg>
-  <span class="sticky-call-label">Chat with us</span>
-</a>
+  Chat with us 24/7
+</button>
 
+<!-- CHAT PILL → RETELL WIDGET TRIGGER -->
+<script>
+(function () {
+  function openRetell() {
+    // Method 1: Retell custom element with shadow DOM
+    var host = document.querySelector('retell-chat-widget');
+    if (host) {
+      if (host.shadowRoot) {
+        var shadowBtn = host.shadowRoot.querySelector('button');
+        if (shadowBtn) { shadowBtn.click(); return; }
+      }
+      host.click();
+      return;
+    }
+    // Method 2: any element with retell in class/id
+    var candidates = document.querySelectorAll('[class*="retell" i] button, [id*="retell" i] button');
+    if (candidates.length) { candidates[candidates.length - 1].click(); return; }
+    // Method 3: global API (Retell may expose on window)
+    if (window.retellWebClient && window.retellWebClient.open) { window.retellWebClient.open(); }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var pill = document.getElementById('custom-chat-pill');
+    if (pill) pill.addEventListener('click', openRetell);
+  });
+})();
+</script>
 <!-- USERWAY ACCESSIBILITY WIDGET -->
 <script>
 (function(d){
