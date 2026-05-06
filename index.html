@@ -1412,6 +1412,15 @@ body.variant-dark .audience-card { background: #0F2040; }
 
 /* Park UserWay's own button off-screen so we can trigger it programmatically */
 #userwayAccessibilityIcon { position: fixed !important; left: -9999px !important; top: -9999px !important; }
+
+/* ── RETELL CHAT WIDGET — MOBILE VIEWPORT FIX ──
+   The widget renders in a shadow DOM so the JS patch below handles the inner
+   panel, but the host element itself also needs to be constrained. */
+retell-chat-web-component {
+  display: block;
+  max-width: 100vw;
+  box-sizing: border-box;
+}
 </style>
 <template id="__bundler_thumbnail" data-bg-color="#F4F8FF">
   <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
@@ -3052,6 +3061,47 @@ async function handleFormSubmit(e) {
     showPromo();
     setInterval(showPromo, 22000);
   }, 8000);
+})();
+</script>
+
+
+<script>
+/* Fix Retell chat panel overflow on narrow mobile viewports.
+   The widget's chat panel is inside a shadow DOM so normal CSS can't reach it.
+   We inject a <style> directly into the shadow root once the component is ready. */
+(function () {
+  var FIX_ID = 'da-retell-vp-fix';
+  /* On mobile: constrain every direct-child div of the host (covers both the
+     floating trigger button and the chat panel), then fix the input row.
+     right:6px keeps content 6 px from the viewport edge on both sides when
+     combined with max-width:calc(100vw - 12px). */
+  var CSS =
+    '@media(max-width:768px){' +
+    ':host>div{' +
+      'max-width:calc(100vw - 12px)!important;' +
+      'right:6px!important;' +
+      'box-sizing:border-box!important;' +
+    '}' +
+    'input,textarea,[contenteditable="true"]{' +
+      'max-width:100%!important;min-width:0!important;width:100%!important;' +
+    '}' +
+    '}';
+
+  function inject() {
+    var host = document.querySelector('retell-chat-web-component');
+    if (!host || !host.shadowRoot || host.shadowRoot.getElementById(FIX_ID)) return;
+    var s = document.createElement('style');
+    s.id = FIX_ID;
+    s.textContent = CSS;
+    host.shadowRoot.appendChild(s);
+  }
+
+  /* Try on initial load (widget may not be ready yet) */
+  [600, 1500, 3500].forEach(function (t) { setTimeout(inject, t); });
+  /* Re-apply whenever user interacts — the panel mounts on first click */
+  document.addEventListener('click', function () { setTimeout(inject, 120); }, true);
+  /* Watch for the shadow root to be populated */
+  new MutationObserver(inject).observe(document.body, { childList: true, subtree: true });
 })();
 </script>
 
