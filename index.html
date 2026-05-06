@@ -1393,7 +1393,7 @@ body.variant-dark .audience-card { background: #0F2040; }
   0%, 100% { transform: translateY(0); }
   50%       { transform: translateY(-6px); }
 }
-/* Chat pill — triggers Retell widget, sits at bottom-right */
+/* Chat pill — visual only; Retell's transparent button sits on top */
 .sticky-chat-pill {
   position: fixed; bottom: 24px; right: 20px; z-index: 10001;
   height: 52px; padding: 0 18px 0 14px; border-radius: 12px;
@@ -1401,16 +1401,14 @@ body.variant-dark .audience-card { background: #0F2040; }
   border: 2px solid #0F2847;
   display: flex; align-items: center; gap: 9px;
   box-shadow: 0 4px 16px rgba(15,40,71,0.25);
-  white-space: nowrap; cursor: pointer;
+  white-space: nowrap; pointer-events: none;
   animation: floatBtn 3s ease-in-out infinite;
-  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
   font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700;
 }
-.sticky-chat-pill:hover { background: #1E5AA8; border-color: #1E5AA8; animation: none; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(30,90,168,0.32); }
 @media (prefers-reduced-motion: reduce) { .sticky-chat-pill { animation: none; } }
 /* Call pill — mobile only, stacked above the chat pill */
 .sticky-ai-call {
-  position: fixed; bottom: 92px; right: 20px; z-index: 10001;
+  position: fixed; bottom: 88px; right: 20px; z-index: 10001;
   height: 52px; padding: 0 18px 0 14px; border-radius: 12px;
   background: #0F2847; color: #fff;
   border: 2px solid #0F2847;
@@ -2957,21 +2955,25 @@ async function handleFormSubmit(e) {
   </svg>
   <span class="sticky-ai-call-label">Call us 24/7</span>
 </a>
-<!-- CHAT BUTTON — triggers Retell AI chat widget -->
-<button id="custom-chat-pill" class="sticky-chat-pill" aria-label="Chat with DoryAngel team 24/7">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="22" height="22" aria-hidden="true" style="flex-shrink:0">
-    <path stroke-linecap="round" stroke-linejoin="round" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+<!-- CHAT PILL — visual only; Retell's transparent button sits on top and handles clicks -->
+<div id="custom-chat-pill" class="sticky-chat-pill" aria-hidden="true">
+  <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true" style="flex-shrink:0">
+    <rect x="2" y="7" width="20" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+    <circle cx="9" cy="13.5" r="1.5"/>
+    <circle cx="15" cy="13.5" r="1.5"/>
+    <path d="M12 7V4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="12" cy="3" r="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
   </svg>
   Chat with us 24/7
-</button>
+</div>
 
-<!-- CHAT PILL → RETELL WIDGET TRIGGER -->
+<!-- RETELL OVERLAY — makes Retell's button cover our pill so taps reach it natively -->
 <script>
 (function () {
-  var retellEl = null;
-  var SKIP = { 'custom-chat-pill': 1, 'userwayAccessibilityIcon': 1, 'cookie-banner': 1 };
-
-  function findRetellEl() {
+  function overlayRetell() {
+    var pill = document.getElementById('custom-chat-pill');
+    if (!pill) return false;
+    var SKIP = { 'custom-chat-pill': 1, 'userwayAccessibilityIcon': 1, 'cookie-banner': 1 };
     var els = document.body.children;
     for (var i = els.length - 1; i >= 0; i--) {
       var el = els[i];
@@ -2979,52 +2981,28 @@ async function handleFormSubmit(e) {
       if (t === 'script' || t === 'style' || t === 'noscript' || t === 'template') continue;
       if (SKIP[el.id]) continue;
       if (el.classList.contains('sticky-ai-call') || el.classList.contains('sticky-chat-pill')) continue;
-      if (window.getComputedStyle(el).position === 'fixed') return el;
+      if (window.getComputedStyle(el).position === 'fixed') {
+        /* Stretch Retell's element to cover our pill exactly, make it transparent */
+        var r = pill.getBoundingClientRect();
+        el.style.setProperty('position', 'fixed', 'important');
+        el.style.setProperty('bottom', '24px', 'important');
+        el.style.setProperty('right', '20px', 'important');
+        el.style.setProperty('width', Math.ceil(r.width) + 'px', 'important');
+        el.style.setProperty('height', '52px', 'important');
+        el.style.setProperty('opacity', '0', 'important');
+        el.style.setProperty('z-index', '10002', 'important'); /* above pill */
+        el.style.setProperty('cursor', 'pointer', 'important');
+        return true;
+      }
     }
-    return null;
+    return false;
   }
-
-  function setupRetell() {
-    retellEl = findRetellEl();
-    if (!retellEl) return false;
-    /* Tuck the robot button behind our pill — same coords, lower z-index */
-    retellEl.style.setProperty('bottom', '24px', 'important');
-    retellEl.style.setProperty('right', '20px', 'important');
-    retellEl.style.setProperty('z-index', '9999', 'important');
-    return true;
-  }
-
-  function openRetell() {
-    if (!retellEl) return;
-    /* 1. Custom element method (web component public API) */
-    if (typeof retellEl.open === 'function') { retellEl.open(); return; }
-    if (typeof retellEl.toggle === 'function') { retellEl.toggle(); return; }
-    if (typeof retellEl.openChat === 'function') { retellEl.openChat(); return; }
-    /* 2. Button inside open shadow DOM */
-    if (retellEl.shadowRoot) {
-      var sBtn = retellEl.shadowRoot.querySelector('button, [role="button"]');
-      if (sBtn) { sBtn.click(); return; }
-    }
-    /* 3. Regular child button (no shadow DOM) */
-    var cBtn = retellEl.querySelector('button, [role="button"]');
-    if (cBtn) { cBtn.click(); return; }
-    /* 4. Simulate pointer event at element centre */
-    var r = retellEl.getBoundingClientRect();
-    var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-    retellEl.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, clientX: cx, clientY: cy }));
-    retellEl.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: cx, clientY: cy }));
-  }
-
-  document.addEventListener('DOMContentLoaded', function () {
-    var pill = document.getElementById('custom-chat-pill');
-    if (pill) pill.addEventListener('click', openRetell);
-  });
 
   window.addEventListener('load', function () {
     setTimeout(function () {
-      if (!setupRetell()) {
+      if (!overlayRetell()) {
         var obs = new MutationObserver(function () {
-          if (setupRetell()) obs.disconnect();
+          if (overlayRetell()) obs.disconnect();
         });
         obs.observe(document.body, { childList: true });
       }
