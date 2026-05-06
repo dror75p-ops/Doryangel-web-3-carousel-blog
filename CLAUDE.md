@@ -127,29 +127,35 @@ Retell AI call ends / analyzed
 
 ### Sheet columns (A–O)
 
-| Col | Field | Source |
-|-----|-------|--------|
+All 14 lead fields are configured in Retell as **Post-Chat Data Extraction**, so they all live at `call.call_analysis.custom_analysis_data.{field}` — not at `retell_llm_dynamic_variables.{field}`.
+
+| Col | Field | Retell path |
+|-----|-------|-------------|
 | A | Timestamp | `{{now}}` |
-| B | caller_role | dynamic variable |
-| C | full_name | dynamic variable |
-| D | callback_phone | dynamic variable |
-| E | email_address | dynamic variable |
-| F | property_address | dynamic variable |
-| G | unit_details | dynamic variable |
-| H | is_occupied | dynamic variable |
-| I | current_mgmt | dynamic variable |
-| J | is_urgent | dynamic variable |
-| K | appointment_set | dynamic variable |
-| L | chosen_slot | dynamic variable |
-| M | chat_summary | call_analysis |
-| N | chat_successful | call_analysis |
-| O | user_sentiment | call_analysis |
+| B | caller_role | `custom_analysis_data.caller_role` |
+| C | full_name | `custom_analysis_data.full_name` |
+| D | callback_phone | `custom_analysis_data.callback_phone` |
+| E | email_address | `custom_analysis_data.email_address` |
+| F | property_address | `custom_analysis_data.property_address` |
+| G | unit_details | `custom_analysis_data.unit_details` |
+| H | is_occupied | `custom_analysis_data.is_occupied` |
+| I | current_mgmt | `custom_analysis_data.current_mgmt` |
+| J | is_urgent | `custom_analysis_data.is_urgent` |
+| K | appointment_set | `custom_analysis_data.appointment_set` |
+| L | chosen_slot | `custom_analysis_data.chosen_slot` |
+| M | chat_summary | `custom_analysis_data.chat_summary` |
+| N | chat_successful | `custom_analysis_data.chat_successful` |
+| O | user_sentiment | `custom_analysis_data.user_sentiment` |
 
-### Notes
+### Filter
 
-- Both `call_ended` and `call_analyzed` events pass the filter → **each call writes 2 rows and sends 2 emails**. The `call_ended` row has empty analysis columns (M–O); the `call_analyzed` row fills them in.
-- Retell webhook events configured: `call_started`, `call_ended`, `call_analyzed` (started is dropped by filter)
-- Column offset bug fixed 2026-05-06: mapper keys corrected from 1-indexed to 0-indexed so Timestamp lands in column A
+Only `call_analyzed` events trigger the pipeline (`call_started` and `call_ended` are dropped). This guarantees one row per call with all post-chat extraction fields populated.
+
+### History of bugs fixed 2026-05-06
+
+1. **Column offset**: mapper keys were 1-indexed instead of 0-indexed, so Timestamp landed in column B and everything was shifted right. Fixed.
+2. **Wrong data source path**: 11 of 14 fields were being read from `retell_llm_dynamic_variables.*` — but the Retell agent extracts them via Post-Chat Data Extraction, which lives at `call_analysis.custom_analysis_data.*`. The wrong-path fields wrote blanks. Fixed.
+3. **Duplicate rows**: Filter previously passed both `call_ended` and `call_analyzed`, generating 2 rows per call. Now `call_analyzed` only.
 
 ## Cost (per blog post)
 
