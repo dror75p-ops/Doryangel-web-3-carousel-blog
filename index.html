@@ -1413,14 +1413,71 @@ body.variant-dark .audience-card { background: #0F2040; }
 /* Park UserWay's own button off-screen so we can trigger it programmatically */
 #userwayAccessibilityIcon { position: fixed !important; left: -9999px !important; top: -9999px !important; }
 
-/* ── RETELL CHAT WIDGET — MOBILE VIEWPORT FIX ──
-   The widget renders in a shadow DOM so the JS patch below handles the inner
-   panel, but the host element itself also needs to be constrained. */
-retell-chat-web-component {
-  display: block;
-  max-width: 100vw;
-  box-sizing: border-box;
+/* ── RETELL CHAT WIDGET ── */
+/* Outer host constraint — harmless on desktop, prevents stray overflow on mobile */
+retell-chat-web-component { display: block; max-width: 100vw; box-sizing: border-box; }
+
+/* Custom popup bubble — appears next to the robot icon every 5 s */
+#retell-bubble {
+  position: fixed;
+  bottom: 22px;
+  right: 82px;            /* sits to the left of the robot button (right:20px + ~56px wide) */
+  z-index: 9990;
+  max-width: min(220px, calc(100vw - 100px));
+  background: #EBF3FD;
+  border: 1.5px solid rgba(30,90,168,0.28);
+  border-radius: 14px;
+  padding: 12px 28px 12px 14px;  /* right padding leaves room for × */
+  box-shadow: 0 4px 22px rgba(15,40,71,0.14);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #0F2847;
+  opacity: 0;
+  transform: translateX(6px);
+  transition: opacity 0.32s ease, transform 0.32s ease;
+  pointer-events: none;
+  cursor: pointer;
 }
+#retell-bubble.vis {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+/* Arrow pointing right → toward the robot button */
+#retell-bubble::before {
+  content: '';
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 9px solid transparent;
+  border-left-color: rgba(30,90,168,0.28);
+}
+#retell-bubble::after {
+  content: '';
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 8px solid transparent;
+  border-left-color: #EBF3FD;
+}
+/* Dismiss × */
+#retell-bubble-close {
+  position: absolute;
+  top: 7px;
+  right: 9px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #1E5AA8;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 2px 3px;
+}
+@media (prefers-reduced-motion: reduce) { #retell-bubble { transition: none; } }
 </style>
 <template id="__bundler_thumbnail" data-bg-color="#F4F8FF">
   <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
@@ -1456,8 +1513,7 @@ retell-chat-web-component {
   data-color="#1E5AA8"
   data-bot-name="DoryAngel Team"
   data-popup-message="Got a question? Our team is available 24/7 — get instant answers on pricing, management services &amp; availability."
-  data-show-ai-popup="true"
-  data-show-ai-popup-time="8"
+  data-show-ai-popup="false"
 ></script>
 <body>
 
@@ -3065,43 +3121,76 @@ async function handleFormSubmit(e) {
 </script>
 
 
-<script>
-/* Fix Retell chat panel overflow on narrow mobile viewports.
-   The widget's chat panel is inside a shadow DOM so normal CSS can't reach it.
-   We inject a <style> directly into the shadow root once the component is ready. */
-(function () {
-  var FIX_ID = 'da-retell-vp-fix';
-  /* On mobile: constrain every direct-child div of the host (covers both the
-     floating trigger button and the chat panel), then fix the input row.
-     right:6px keeps content 6 px from the viewport edge on both sides when
-     combined with max-width:calc(100vw - 12px). */
-  var CSS =
-    '@media(max-width:768px){' +
-    ':host>div{' +
-      'max-width:calc(100vw - 12px)!important;' +
-      'right:6px!important;' +
-      'box-sizing:border-box!important;' +
-    '}' +
-    'input,textarea,[contenteditable="true"]{' +
-      'max-width:100%!important;min-width:0!important;width:100%!important;' +
-    '}' +
-    '}';
 
-  function inject() {
+<!-- Custom chat popup bubble — cycles every 5 s next to the Retell robot icon -->
+<div id="retell-bubble" role="status" aria-live="polite" aria-label="Chat with Hailey">
+  <button id="retell-bubble-close" aria-label="Dismiss">✕</button>
+  <strong>Got a question?</strong><br>
+  Ask Hailey — our AI is available 24/7.
+</div>
+
+<script>
+/* Cycling popup bubble — appears next to the robot icon, fades every 5 s */
+(function () {
+  var bubble  = document.getElementById('retell-bubble');
+  var closeEl = document.getElementById('retell-bubble-close');
+  if (!bubble) return;
+
+  var dismissed = false;
+  var SHOW   = 3400;   /* visible for 3.4 s out of every 5 s */
+  var PERIOD = 5000;
+
+  /* Dismiss button */
+  closeEl && closeEl.addEventListener('click', function (e) {
+    e.stopPropagation();
+    dismissed = true;
+    bubble.classList.remove('vis');
+  });
+
+  /* Clicking the bubble opens the Retell chat panel */
+  bubble.addEventListener('click', function () {
+    bubble.classList.remove('vis');
     var host = document.querySelector('retell-chat-web-component');
-    if (!host || !host.shadowRoot || host.shadowRoot.getElementById(FIX_ID)) return;
-    var s = document.createElement('style');
-    s.id = FIX_ID;
-    s.textContent = CSS;
-    host.shadowRoot.appendChild(s);
+    if (!host || !host.shadowRoot) return;
+    var btn = host.shadowRoot.querySelector('button');
+    if (btn) btn.click();
+  });
+
+  function pulse() {
+    if (dismissed) return;
+    bubble.classList.add('vis');
+    setTimeout(function () { bubble.classList.remove('vis'); }, SHOW);
   }
 
-  /* Try on initial load (widget may not be ready yet) */
-  [600, 1500, 3500].forEach(function (t) { setTimeout(inject, t); });
-  /* Re-apply whenever user interacts — the panel mounts on first click */
-  document.addEventListener('click', function () { setTimeout(inject, 120); }, true);
-  /* Watch for the shadow root to be populated */
-  new MutationObserver(inject).observe(document.body, { childList: true, subtree: true });
+  /* First pulse 2 s after load, then every 5 s */
+  setTimeout(function () { pulse(); setInterval(pulse, PERIOD); }, 2000);
+})();
+
+/* Fix Retell chat PANEL overflow when it opens (targets large panels only) */
+(function () {
+  function fixPanel() {
+    var host = document.querySelector('retell-chat-web-component');
+    if (!host || !host.shadowRoot) return;
+    var vw = window.innerWidth;
+    host.shadowRoot.querySelectorAll('div').forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (!r.width || r.width < 200 || r.width >= vw * 0.99) return;
+      if (r.right > vw - 4) {
+        el.style.setProperty('right',      '8px', 'important');
+        el.style.setProperty('max-width',  (vw - 16) + 'px', 'important');
+        el.style.setProperty('box-sizing', 'border-box', 'important');
+      }
+      if (r.left < 4) {
+        el.style.setProperty('left',  '8px', 'important');
+        el.style.setProperty('right', 'auto', 'important');
+      }
+    });
+  }
+  [600, 1800].forEach(function (t) { setTimeout(fixPanel, t); });
+  document.addEventListener('click', function () {
+    setTimeout(fixPanel, 200);
+    setTimeout(fixPanel, 700);
+  }, true);
 })();
 </script>
 
