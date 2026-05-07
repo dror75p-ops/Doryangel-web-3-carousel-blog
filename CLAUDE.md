@@ -173,12 +173,39 @@ All 14 lead fields are configured in Retell as **Post-Chat Data Extraction**. Fo
 
 ### Filter
 
-Only `chat_analyzed` events trigger the pipeline (`chat_started` and `chat_ended` are dropped). This guarantees one row per chat with all post-chat extraction fields populated.
+The filter uses OR logic across 4 condition groups (Make.com: outer array = OR, inner array = AND).
+A chat passes only if `event = chat_analyzed` AND at least one lead field is non-empty:
+
+```
+(event=chat_analyzed AND length(callback_phone) > 0)
+OR (event=chat_analyzed AND length(email_address) > 0)
+OR (event=chat_analyzed AND length(unit_details) > 0)
+OR (event=chat_analyzed AND length(property_address) > 0)
+```
+
+**Why this approach:**
+- `chat_started` and `chat_ended` events are dropped (small payloads, no analysis data)
+- Empty chats (user opens widget, says nothing, closes) fire `chat_analyzed` but ALL text fields are empty strings — these are blocked
+- Real chats where any lead data was captured pass through
+- `chat_summary`, `chat_successful`, `user_sentiment` are **always empty** — Retell does not populate these fields reliably for this agent; do NOT filter on them
+
+**Make.com filter operators that work:**
+- `text:equal` ✓
+- `text:notequal` ✓ (use with caution — avoid comparing against `""` empty string, use `length()` instead)
+- `text:contain` / `text:notcontain` ✓
+- `number:greater` ✓ (works with `{{length(...)}}` expressions in the `a` field)
+- `text:isnotempty` ✗ — NOT a valid Make.com operator, causes the whole condition group to silently fail (evaluates false, blocks everything)
 
 ### Gmail notification
 
 - **To**: `dror75p@gmail.com`
 - **Subject**: `New Chat Lead — {{1.chat.chat_analysis.custom_analysis_data.full_name}} ({{1.chat.chat_analysis.custom_analysis_data.caller_role}})`
+
+### History of bugs fixed 2026-05-07
+
+6. **Spam emails from empty chats**: Retell fires `chat_analyzed` even when a visitor opens the widget and immediately closes it without typing. All text fields come back as empty strings `""` and booleans as `false`. Fixed: filter on `length(callback_phone/email_address/unit_details/property_address) > 0` using OR logic — only chats where real lead data was extracted trigger the pipeline.
+7. **Retell data structure clarification**: For empty chats, fields are empty strings (NOT `"other"`, NOT `"No user input..."`). The "other" value only appears if Retell's AI explicitly sets it. `chat_summary`, `chat_successful`, `user_sentiment` are always empty for this agent regardless of chat content — do not rely on them for filtering.
+8. **`text:isnotempty` is not a valid Make.com filter operator**: Using it silently makes the entire condition group evaluate to false, blocking ALL events. Use `number:greater` with `{{length(...)}}` to check for non-empty strings.
 
 ### History of bugs fixed 2026-05-06
 
