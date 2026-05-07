@@ -3197,18 +3197,33 @@ async function handleFormSubmit(e) {
   });
 })();
 
-/* Fix Retell chat PANEL overflow when it opens (targets large panels only) */
+/* Fix Retell chat PANEL overflow — including the send button on mobile */
 (function () {
+  var _cssInjected = false;
+
   function fixPanel() {
     var host = document.querySelector('retell-chat-web-component');
     if (!host || !host.shadowRoot) return;
     var vw = window.innerWidth;
-    host.shadowRoot.querySelectorAll('div').forEach(function (el) {
+
+    /* One-time: inject box-sizing reset into shadow DOM so padding never
+       causes elements to exceed their container width */
+    if (!_cssInjected && !host.shadowRoot.querySelector('#dcy-fix')) {
+      var s = document.createElement('style');
+      s.id = 'dcy-fix';
+      s.textContent = '* { box-sizing: border-box !important; }';
+      host.shadowRoot.appendChild(s);
+      _cssInjected = true;
+    }
+
+    /* Clamp any div, button, or input whose right edge exceeds the viewport.
+       No minimum-width filter so the send button (~60 px) is included. */
+    host.shadowRoot.querySelectorAll('div, button, input').forEach(function (el) {
       var r = el.getBoundingClientRect();
-      if (!r.width || r.width < 200 || r.width >= vw * 0.99) return;
+      if (!r.width || r.width >= vw * 0.99) return;
       if (r.right > vw - 4) {
         el.style.setProperty('right',      '8px', 'important');
-        el.style.setProperty('max-width',  (vw - 16) + 'px', 'important');
+        el.style.setProperty('max-width',  (vw - Math.max(r.left, 0) - 8) + 'px', 'important');
         el.style.setProperty('box-sizing', 'border-box', 'important');
       }
       if (r.left < 4) {
@@ -3217,6 +3232,7 @@ async function handleFormSubmit(e) {
       }
     });
   }
+
   [600, 1800].forEach(function (t) { setTimeout(fixPanel, t); });
   document.addEventListener('click', function () {
     setTimeout(fixPanel, 200);
