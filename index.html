@@ -1500,9 +1500,9 @@ retell-chat-web-component { display: block; max-width: 100vw; box-sizing: border
   type="module"
   data-public-key="public_key_274f92a0516ded273d147"
   data-agent-id="agent_88fd2bc14215e7210629dfafda"
-  data-title="Chat with Us"
+  data-title="Chat with Hailey"
   data-color="#1E5AA8"
-  data-bot-name="DoryAngel Team"
+  data-bot-name="Hailey"
   data-popup-message="Got a question? Our team is available 24/7 — get instant answers on pricing, management services &amp; availability."
   data-show-ai-popup="false"
 ></script>
@@ -3197,28 +3197,68 @@ async function handleFormSubmit(e) {
   });
 })();
 
-/* Fix Retell chat PANEL overflow — including the send button on mobile */
+/* Retell chat panel: overflow fix + FAB hide + placeholder polish */
 (function () {
   var _cssInjected = false;
+  var _placeholderSet = false;
+
+  function isPanelOpen(shadowRoot) {
+    var open = false;
+    shadowRoot.querySelectorAll('div').forEach(function (el) {
+      if (open) return;
+      var r = el.getBoundingClientRect();
+      if (r.height > 300 && r.width > 150 && r.top >= 0 && r.top < window.innerHeight) open = true;
+    });
+    return open;
+  }
+
+  function syncFab(shadowRoot) {
+    var panelOpen = isPanelOpen(shadowRoot);
+
+    /* Hide/show the Retell robot FAB while the panel is open so it
+       doesn't overlap the input bar on mobile */
+    shadowRoot.querySelectorAll('button').forEach(function (btn) {
+      var cs = window.getComputedStyle(btn);
+      var r  = btn.getBoundingClientRect();
+      if (cs.position === 'fixed' && r.bottom > window.innerHeight * 0.6) {
+        btn.style.transition = 'opacity 0.25s';
+        btn.style.opacity      = panelOpen ? '0' : '';
+        btn.style.pointerEvents = panelOpen ? 'none' : '';
+      }
+    });
+
+    /* Also suppress our custom bubble while the panel is open */
+    var bubble = document.getElementById('retell-bubble');
+    if (bubble) {
+      if (panelOpen) bubble.classList.remove('vis');
+      bubble.style.visibility = panelOpen ? 'hidden' : '';
+    }
+  }
 
   function fixPanel() {
     var host = document.querySelector('retell-chat-web-component');
     if (!host || !host.shadowRoot) return;
+    var sr = host.shadowRoot;
     var vw = window.innerWidth;
 
-    /* One-time: inject box-sizing reset into shadow DOM so padding never
-       causes elements to exceed their container width */
-    if (!_cssInjected && !host.shadowRoot.querySelector('#dcy-fix')) {
+    /* One-time: box-sizing reset so padding never causes elements to
+       exceed their container width */
+    if (!_cssInjected && !sr.querySelector('#dcy-fix')) {
       var s = document.createElement('style');
       s.id = 'dcy-fix';
       s.textContent = '* { box-sizing: border-box !important; }';
-      host.shadowRoot.appendChild(s);
+      sr.appendChild(s);
       _cssInjected = true;
     }
 
-    /* Clamp any div, button, or input whose right edge exceeds the viewport.
-       No minimum-width filter so the send button (~60 px) is included. */
-    host.shadowRoot.querySelectorAll('div, button, input').forEach(function (el) {
+    /* One-time: friendlier placeholder text */
+    if (!_placeholderSet) {
+      var inp = sr.querySelector('input[type="text"], input:not([type]), textarea');
+      if (inp) { inp.placeholder = 'Hi! Type your question here…'; _placeholderSet = true; }
+    }
+
+    /* Clamp any div, button, or input whose right edge exceeds viewport */
+    sr.querySelectorAll('div, button, input').forEach(function (el) {
       var r = el.getBoundingClientRect();
       if (!r.width || r.width >= vw * 0.99) return;
       if (r.right > vw - 4) {
@@ -3231,6 +3271,8 @@ async function handleFormSubmit(e) {
         el.style.setProperty('right', 'auto', 'important');
       }
     });
+
+    syncFab(sr);
   }
 
   [600, 1800].forEach(function (t) { setTimeout(fixPanel, t); });
