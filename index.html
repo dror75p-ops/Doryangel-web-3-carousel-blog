@@ -3127,20 +3127,48 @@ async function handleFormSubmit(e) {
   var closeEl = document.getElementById('retell-bubble-close');
   if (!bubble) return;
 
-  var dismissed = false;
-  var SHOW   = 3400;   /* visible for 3.4 s out of every 5 s */
+  var DISMISS_KEY   = '_dcy_bubble_dismissed';
+  var SESSIONS_KEY  = '_dcy_chat_sessions';
+  var MAX_SESSIONS  = 5;    /* max chat sessions per hour */
+  var SESSION_WINDOW = 3600000; /* 1 hour in ms */
+  var SHOW   = 3400;
   var PERIOD = 5000;
+
+  /* Persist dismiss across page loads */
+  var dismissed = false;
+  try { dismissed = !!localStorage.getItem(DISMISS_KEY); } catch (e) {}
+
+  /* Rate-limit: returns false if user has exceeded MAX_SESSIONS in the last hour */
+  function chatAllowed() {
+    try {
+      var now = Date.now();
+      var log = JSON.parse(localStorage.getItem(SESSIONS_KEY) || '[]');
+      log = log.filter(function (t) { return now - t < SESSION_WINDOW; });
+      if (log.length >= MAX_SESSIONS) return false;
+      log.push(now);
+      localStorage.setItem(SESSIONS_KEY, JSON.stringify(log));
+      return true;
+    } catch (e) { return true; }
+  }
+
+  /* Debounce: ignore clicks within 3 s of the last one */
+  var chatBlocked = false;
 
   /* Dismiss button */
   closeEl && closeEl.addEventListener('click', function (e) {
     e.stopPropagation();
     dismissed = true;
     bubble.classList.remove('vis');
+    try { localStorage.setItem(DISMISS_KEY, '1'); } catch (e) {}
   });
 
   /* Clicking the bubble opens the Retell chat panel */
   bubble.addEventListener('click', function () {
     bubble.classList.remove('vis');
+    if (chatBlocked) return;
+    if (!chatAllowed()) return;
+    chatBlocked = true;
+    setTimeout(function () { chatBlocked = false; }, 3000);
     var host = document.querySelector('retell-chat-web-component');
     if (!host || !host.shadowRoot) return;
     var btn = host.shadowRoot.querySelector('button');
@@ -3155,6 +3183,18 @@ async function handleFormSubmit(e) {
 
   /* First pulse 2 s after load, then every 5 s */
   setTimeout(function () { pulse(); setInterval(pulse, PERIOD); }, 2000);
+})();
+
+/* Debounce the call button — prevents accidental rapid re-taps on mobile */
+(function () {
+  var callBtn = document.querySelector('.sticky-ai-call');
+  if (!callBtn) return;
+  var blocked = false;
+  callBtn.addEventListener('click', function (e) {
+    if (blocked) { e.preventDefault(); return; }
+    blocked = true;
+    setTimeout(function () { blocked = false; }, 5000);
+  });
 })();
 
 /* Fix Retell chat PANEL overflow when it opens (targets large panels only) */
