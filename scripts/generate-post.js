@@ -11,19 +11,19 @@ const APPROVAL_EMAIL = 'dror75p@gmail.com';
 // Fallback topics used if AI topic selection fails
 const FALLBACK_TOPICS = [
   { title: '5 Free Tools Every DIY Landlord in the Bronx Needs', category: 'diy-property-management' },
-  { title: 'How to Handle Tenant Complaints Without Losing Your Mind', category: 'diy-property-management' },
   { title: 'The Top 3 Mistakes Bronx Landlords Make Managing Their Own Properties', category: 'property-management' },
   { title: 'What to Look for in a Bronx Property Management Company', category: 'property-management' },
   { title: 'Is Buying a Rental Property in the Bronx Still a Good Investment?', category: 'investments' },
   { title: 'Why Bronx Landlords Are Switching to Flat-Fee Property Management', category: 'property-management' },
   { title: 'How Much Does Property Management Cost in the Bronx?', category: 'property-management' },
-  { title: 'Should You Self-Manage or Hire a Property Manager? A Cost Breakdown', category: 'diy-property-management' },
-  { title: "How to Handle a Tenant Who Doesn't Pay Rent in NYC", category: 'diy-property-management' },
+  { title: 'Should Bronx Landlords Self-Manage or Hire a Property Manager?', category: 'diy-property-management' },
+  { title: "How to Handle a Tenant Who Doesn't Pay Rent in the Bronx", category: 'diy-property-management' },
   { title: 'What Bronx Landlords Need to Know About HPD Lead Paint Rules', category: 'property-management' },
-  { title: '4 Signs Your Queens Rental Property Needs Professional Management', category: 'property-management' },
-  { title: 'How Mount Vernon Landlords Can Cut Vacancy Time in Half', category: 'diy-property-management' },
-  { title: 'Yonkers vs Bronx: Which Is the Better Rental Investment in 2026?', category: 'investments' },
-  { title: 'New Rochelle Property Tax Explained for Landlords', category: 'property-management' },
+  { title: '4 Signs Your Bronx Rental Property Needs Professional Management', category: 'property-management' },
+  { title: 'How Bronx Landlords Can Cut Vacancy Time in Half', category: 'diy-property-management' },
+  { title: 'The Bronx Landlord Guide to NYC Housing Court in 2026', category: 'diy-property-management' },
+  { title: '3 Bronx Neighborhoods With the Best Rental ROI in 2026', category: 'investments' },
+  { title: 'How to Screen Tenants the Right Way in the Bronx', category: 'property-management' },
 ];
 
 function getSeason(month) {
@@ -44,13 +44,13 @@ async function pickTopicWithAI(existingPosts) {
       max_tokens: 256,
       messages: [{
         role: 'user',
-        content: `Today is ${today} (${season}). Suggest one blog post topic for NYC landlords.
+        content: `Today is ${today} (${season}). Suggest one blog post topic for Bronx landlords.
 
 Recent posts to avoid repeating:
 ${recentTitles}
 
 Rules:
-- Title must include a specific NYC area (Bronx, Queens, Yonkers, Mount Vernon, New Rochelle, or Manhattan)
+- Title MUST reference the Bronx specifically — no other NYC borough or city
 - Title must be a question OR start with a number
 - Address a real landlord pain point; use seasonal relevance where fitting
 - Category must be exactly one of: property-management, diy-property-management, investments
@@ -143,7 +143,7 @@ const SYSTEM_PROMPT = `You are a content writer for DoryAngel LLC, a NYC propert
 
 CRITICAL RULES — what works for our audience (validated by real traffic data):
 
-1. Title formula: must be either a question OR start with a number ("5 Free Tools...", "Top 3 Mistakes..."). Always include a specific city (Bronx, Queens, Yonkers, Mount Vernon, New Rochelle).
+1. Title formula: must be either a question OR start with a number ("5 Free Tools...", "Top 3 Mistakes..."). Always reference the Bronx specifically — no other borough or city.
 
 2. Pain-point excerpts: 1-2 sentences focused on a real landlord pain point — money lost, tenant trouble, compliance fines. NOT abstract or marketing-speak.
 
