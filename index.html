@@ -311,11 +311,12 @@ nav.bar-hidden { top: 0; }
 
 /* PORTAL CARD — unified border wraps buttons + Buildium strip */
 .portal-card {
-  border: 2px solid var(--grey-mid); border-radius: 8px;
+  border: 1.5px solid var(--grey-mid); border-radius: 8px;
   overflow: hidden; background: white;
-  transition: border-color 0.2s;
+  opacity: 0.82;
+  transition: border-color 0.2s, opacity 0.2s;
 }
-.portal-card:hover { border-color: var(--blue); }
+.portal-card:hover { border-color: var(--blue); opacity: 1; }
 .portal-split {
   display: flex; align-items: center;
   background: white;
@@ -332,8 +333,13 @@ nav.bar-hidden { top: 0; }
 }
 .portal-buildium-strip {
   border-top: 1px solid var(--grey-mid); background: var(--off-white);
-  padding: 14px 20px 15px; display: flex; flex-direction: column;
+  display: flex; flex-direction: column;
   align-items: center; gap: 8px; text-align: center;
+  max-height: 0; overflow: hidden; padding: 0 20px; opacity: 0;
+  transition: max-height 0.25s ease, opacity 0.25s ease, padding 0.25s ease;
+}
+.portal-card:hover .portal-buildium-strip {
+  max-height: 140px; opacity: 1; padding: 14px 20px 15px;
 }
 .portal-powered-label {
   display: flex; align-items: center; gap: 5px;
@@ -1465,8 +1471,9 @@ retell-chat-web-component {
 
 <!-- ANNOUNCE BAR -->
 <div class="announce-bar">
-  <strong>New Free Tool:</strong>
-  <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener">Preventive Maintenance &amp; Compliance Calendar for NYC Landlords &rarr;</a>
+  <strong>NYC Landlords:</strong>
+  Save $3,000–$8,000/year vs. percentage-based managers.
+  <a href="#contact">Get your free property audit &rarr;</a>
 </div>
 
 <!-- NAV -->
@@ -1617,7 +1624,9 @@ retell-chat-web-component {
         <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
       </a>
       <a href="#pricing" class="btn-secondary">See Pricing Plans</a>
-      <div class="portal-card">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <span style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);">Existing clients</span>
+        <div class="portal-card">
         <div class="portal-split">
           <a href="https://doryangel.managebuilding.com" target="_blank" class="portal-btn">Owner Portal</a>
           <div class="portal-divider"></div>
@@ -1645,6 +1654,7 @@ retell-chat-web-component {
           </div>
         </div>
       </div>
+      </div><!-- /existing clients wrapper -->
 
     </div>
     <div class="hero-stats">
@@ -2184,7 +2194,46 @@ retell-chat-web-component {
     </div>
 
     <div class="reviews-cta">
-      <a href="https://share.google/tTIEyy7qxx4bKm1Zo" target="_blank">View all 19 reviews on Google ↗</a>
+      <div style="margin-top:40px;padding:36px 40px;background:rgba(255,255,255,0.06);
+                  border:1px solid rgba(255,255,255,0.12);border-radius:14px;
+                  max-width:620px;margin-left:auto;margin-right:auto;">
+        <p style="font-family:'DM Serif Display',serif;font-size:22px;color:#fff;
+                  margin-bottom:8px;line-height:1.35;">
+          Ready to stop managing and start earning?
+        </p>
+        <p style="font-size:14px;color:rgba(255,255,255,0.65);margin-bottom:24px;line-height:1.6;">
+          Join 100+ NYC property owners who handed off the headaches. No long-term contracts.
+        </p>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+          <a href="#contact"
+             style="display:inline-flex;align-items:center;gap:8px;
+                    background:#3A7BDD;color:#fff;
+                    padding:14px 28px;border-radius:8px;
+                    font-size:15px;font-weight:700;text-decoration:none;
+                    transition:background 0.2s,transform 0.15s;"
+             onmouseover="this.style.background='#2966C4';this.style.transform='translateY(-2px)'"
+             onmouseout="this.style.background='#3A7BDD';this.style.transform='none'">
+            Get My Free Property Audit
+            <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+              <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+          </a>
+          <a href="https://share.google/tTIEyy7qxx4bKm1Zo" target="_blank"
+             style="display:inline-flex;align-items:center;gap:8px;
+                    background:transparent;color:#fff;
+                    border:1.5px solid rgba(255,255,255,0.3);
+                    padding:14px 24px;border-radius:8px;
+                    font-size:14px;font-weight:600;text-decoration:none;
+                    transition:border-color 0.2s,background 0.2s;"
+             onmouseover="this.style.borderColor='rgba(255,255,255,0.7)';this.style.background='rgba(255,255,255,0.07)'"
+             onmouseout="this.style.borderColor='rgba(255,255,255,0.3)';this.style.background='transparent'">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            View all 19 Google reviews
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -2347,8 +2396,15 @@ retell-chat-web-component {
             <div class="contact-detail-label">Headquarters</div>
             <div class="contact-detail-val">557 Grand Concourse, Bronx, NY</div>
         </div>
-        <a href="https://www.facebook.com/DoryAngelPM" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;margin-top:16px;color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.65)'">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        <a href="https://www.facebook.com/DoryAngelPM" target="_blank" rel="noopener"
+           style="display:inline-flex;align-items:center;gap:10px;margin-top:24px;
+                  background:#EBF3FD;border:1px solid #C7DCF7;border-radius:8px;
+                  padding:10px 16px;text-decoration:none;
+                  color:#0D1E3A;font-size:13px;font-weight:600;
+                  transition:background 0.2s,border-color 0.2s;"
+           onmouseover="this.style.background='#D6EBFF';this.style.borderColor='#3A7BDD'"
+           onmouseout="this.style.background='#EBF3FD';this.style.borderColor='#C7DCF7'">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
           Follow us on Facebook
         </a>
         </div>
