@@ -414,8 +414,17 @@ section { padding: 96px 40px; }
   padding: 32px 28px; border: 1px solid var(--grey-mid);
   transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
   cursor: pointer; text-decoration: none; color: inherit;
-  display: block;
+  display: block; overflow: hidden;
 }
+.audience-card-photo {
+  margin: -32px -28px 24px;
+  height: 180px; border-radius: var(--radius) var(--radius) 0 0; overflow: hidden;
+}
+.audience-card-photo img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;
+  transition: transform 0.4s ease;
+}
+.audience-card:hover .audience-card-photo img { transform: scale(1.04); }
 .audience-card:hover {
   transform: translateY(-4px); box-shadow: var(--shadow-lg);
   border-color: var(--blue);
@@ -1735,6 +1744,9 @@ retell-chat-web-component {
     <div class="audience-grid reveal-stagger">
       <!-- Owners -->
       <a href="#pricing" class="audience-card">
+        <div class="audience-card-photo">
+          <img src="./assets/photo-owners-handshake.jpg" alt="Property owners closing a deal with their DoryAngel manager" loading="lazy">
+        </div>
         <div class="audience-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
@@ -1806,6 +1818,19 @@ retell-chat-web-component {
     <div class="section-label">Our Approach</div>
     <h2 class="section-title reveal">Six pillars that protect<br>and grow your investment</h2>
     <p class="section-sub">We don't manage buildings — we manage outcomes. Every service is built around measurable results for your property.</p>
+
+    <div style="display:flex;gap:48px;align-items:center;margin-bottom:56px;flex-wrap:wrap;">
+      <div style="flex:0 0 360px;max-width:100%;">
+        <img src="./assets/photo-owner-tablet.jpg"
+             alt="Property owner reviewing their portfolio on a tablet"
+             loading="lazy"
+             style="width:100%;border-radius:16px;box-shadow:var(--shadow-lg);display:block;object-fit:cover;">
+      </div>
+      <div style="flex:1;min-width:240px;">
+        <p style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--navy);line-height:1.4;margin-bottom:20px;">"We don't just manage properties — we protect your investment, so you can focus on what matters."</p>
+        <p style="font-size:15px;color:var(--text-muted);line-height:1.7;">Our six-pillar approach covers everything from compliance to cash flow, giving Bronx and NYC property owners complete peace of mind — and their time back.</p>
+      </div>
+    </div>
 
     <div class="pillars-grid reveal-stagger">
       <div class="pillar-item">
@@ -2357,6 +2382,10 @@ retell-chat-web-component {
 
     <div class="contact-layout">
       <div class="contact-info">
+        <img src="./assets/photo-contact-professional.jpg"
+             alt="DoryAngel property management professional ready to help"
+             loading="lazy"
+             style="width:100%;height:220px;object-fit:cover;object-position:center top;border-radius:12px;margin-bottom:28px;display:block;">
         <h3>Let's talk about your property</h3>
         <p>Whether you're looking to hand off management, explore our flat-fee plans, or just have questions — our team is ready to help. No pressure, no commitment.</p>
 
