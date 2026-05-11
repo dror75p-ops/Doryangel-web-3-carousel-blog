@@ -58,7 +58,7 @@
 
 ## Blog architecture (current)
 
-- **3 categories**: `property-management`, `diy-property-management`, `investments`
+- **4 categories**: `property-management`, `diy-property-management`, `investments`, `property-automation`
 - **Per-post URLs**: `/blog/[slug]/index.html` — Google-indexable
 - **SEO per post**: `<title>`, meta description, canonical, Open Graph, Twitter Card, JSON-LD BlogPosting schema
 - **Featured post** flag on JSON for the larger card on the index
@@ -71,7 +71,7 @@
 {
   "slug": "...",
   "title": "...",                  // question OR numbered, with city anchor
-  "category": "property-management | diy-property-management | investments",
+  "category": "property-management | diy-property-management | investments | property-automation",
   "excerpt": "...",                // pain-point focused, 1-2 sentences
   "publishedDate": "2026-04-27",   // ISO date
   "minutesToRead": 5,
