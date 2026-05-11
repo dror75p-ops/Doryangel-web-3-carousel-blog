@@ -24,8 +24,9 @@
     'property-management':       'Property Management',
     'diy-property-management':   'DIY Property Management',
     'investments':               'Investments',
+    'property-automation':       'Property Automation',
   };
-  var TABS = ['all', 'property-management', 'diy-property-management', 'investments'];
+  var TABS = ['all', 'property-management', 'diy-property-management', 'investments', 'property-automation'];
   var activeCategory = 'all';
 
   var BASE = './blog/';

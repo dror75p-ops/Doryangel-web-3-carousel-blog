@@ -24,6 +24,11 @@ const FALLBACK_TOPICS = [
   { title: 'The Bronx Landlord Guide to NYC Housing Court in 2026', category: 'diy-property-management' },
   { title: '3 Bronx Neighborhoods With the Best Rental ROI in 2026', category: 'investments' },
   { title: 'How to Screen Tenants the Right Way in the Bronx', category: 'property-management' },
+  { title: '5 Smart Sensors Every Bronx Landlord Should Install in 2026', category: 'property-automation' },
+  { title: 'How AI Security Cameras Are Reducing Vacancy Crimes in NYC Rental Buildings', category: 'property-automation' },
+  { title: 'Can a Bronx Landlord Automate Rent Collection with Smart Tech?', category: 'property-automation' },
+  { title: '3 IoT Devices That Pay for Themselves in Your Bronx Rental Property', category: 'property-automation' },
+  { title: 'How Bronx Landlords Are Using Smart Locks to Cut Vacancy Turnaround Time', category: 'property-automation' },
 ];
 
 function getSeason(month) {
@@ -53,7 +58,7 @@ Rules:
 - Title MUST reference the Bronx specifically — no other NYC borough or city
 - Title must be a question OR start with a number
 - Address a real landlord pain point; use seasonal relevance where fitting
-- Category must be exactly one of: property-management, diy-property-management, investments
+- Category must be exactly one of: property-management, diy-property-management, investments, property-automation
 
 Reply ONLY with valid JSON: {"title": "...", "category": "..."}`,
       }],
@@ -92,6 +97,7 @@ const HASHTAGS_BY_CATEGORY = {
   'property-management':     ['propertymanagement', 'bronxlandlord', 'nyc', 'flatfee', 'doryangel'],
   'diy-property-management': ['diylandlord', 'bronxlandlord', 'nyc', 'rentalproperty', 'doryangel'],
   'investments':             ['realestateinvesting', 'bronx', 'nycrealestate', 'rentalincome', 'doryangel'],
+  'property-automation':     ['smartproperty', 'proptech', 'bronxlandlord', 'IoT', 'doryangel'],
 };
 
 const IMAGE_QUERIES = {
@@ -112,6 +118,12 @@ const IMAGE_QUERIES = {
     'businesswoman laptop modern office bright',
     'nyc skyscrapers blue sky',
     'bronx residential building daylight',
+  ],
+  'property-automation': [
+    'smart home technology modern apartment',
+    'security camera building surveillance',
+    'IoT smart sensor home device',
+    'property technology digital dashboard screen',
   ],
 };
 
@@ -163,7 +175,7 @@ When asked to write a post, also produce:
 - A descriptive alt text for the hero image (used for accessibility + SEO)
 - A Facebook-optimized version (200-280 words, hook-first, 2-3 bullet takeaways, with the CTA + website link + hashtags at the bottom in the format we specify)
 
-Categories must be exactly one of: property-management, diy-property-management, investments.`;
+Categories must be exactly one of: property-management, diy-property-management, investments, property-automation.`;
 
 const POST_SCHEMA = {
   type: 'object',

@@ -12,6 +12,7 @@ const CATEGORY_LABEL = {
   'property-management':     'Property Management',
   'diy-property-management': 'DIY Property Management',
   'investments':             'Investments',
+  'property-automation':     'Property Automation',
 };
 
 function escape(s) {
