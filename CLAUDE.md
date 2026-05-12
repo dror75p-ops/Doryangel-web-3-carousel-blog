@@ -188,6 +188,25 @@ Only `chat_analyzed` events trigger the pipeline (`chat_started` and `chat_ended
 4. **Wrong event name**: Filter used `call_analyzed` but chat agents fire `chat_analyzed`. Fixed.
 5. **Wrong payload root key**: Make.com paths used `1.call.call_analysis.*` but chat agent payloads use `1.chat.chat_analysis.*`. Confirmed via 4-path debug email test — Path A (`chat.chat_analysis`) had all real data. Fixed.
 
+## Preventive Maintenance & Compliance Calendar (separate repo)
+
+The free tool lives in **`dror75p-ops/Doryangel-preventive-maintenance-schedule.automation`**
+and is served at <https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/>.
+Full diagnostic runbook + the hardened form snippet are in `docs/preventive-maintenance-runbook.md`
+and `docs/preventive-maintenance-form-snippet.md`.
+
+Quick reference:
+
+- Signup form posts JSON `{fname, femail, faddress}` to Make.com webhook
+  `hook.eu1.make.com/tqmgkkgubkr409v3ygd4ohpmxpvx8iw2`
+- Consumed by scenario **5546593** "Doryangel Compliance Calendar — Signup & Welcome Email"
+- Scenario flow: webhook → welcome email to user → owner notification → row in
+  spreadsheet `1KbVggQNhKbX9370zq-thBzHmN1j1R4g9YI8gKm8_R-o` / `Sheet1`
+- A filter on module 2 (`femail contains "@"` AND `fname not empty`) gates the
+  whole pipeline so junk payloads don't crash and auto-disable the scenario
+- Form's `handleSubmit` still needs hardening — see the docs snippet; the
+  current version silently shows "Calendar Unlocked!" even when the pipeline fails
+
 ## Cost (per blog post)
 
 ~$0.02-0.05/post (Opus 4.7), ~$2-3/month total
