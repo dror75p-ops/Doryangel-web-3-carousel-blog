@@ -1410,9 +1410,9 @@ body.variant-dark .audience-card { background: #0F2040; }
   0%, 100% { transform: translateY(0); }
   50%       { transform: translateY(-6px); }
 }
-/* Call pill — mobile only; left side, same bottom as Retell bot circle */
+/* Call pill — mobile only; left side, vertically centred to match Retell bot */
 .sticky-ai-call {
-  position: fixed; bottom: 20px; left: 20px; z-index: 500;
+  position: fixed; top: calc(50vh - 26px); bottom: auto; left: 20px; z-index: 500;
   height: 52px; padding: 0 18px 0 14px; border-radius: 12px;
   background: #0F2847; color: #fff;
   border: 2px solid #0F2847;
@@ -3281,9 +3281,9 @@ async function handleFormSubmit(e) {
    The widget's chat panel is inside a shadow DOM so normal CSS can't reach it.
    We inject a <style> directly into the shadow root once the component is ready. */
 (function () {
-  var FIX_ID = 'da-retell-vp-fix-v5';
-  /* On mobile: pin the launcher to bottom:20px to match the Call Us pill,
-     constrain the chat panel width, and fix input overflow. */
+  var FIX_ID = 'da-retell-vp-fix-v6';
+  /* On mobile: constrain the chat panel width and fix input overflow.
+     Launcher circle position is handled by positionRetell() JS below. */
   var CSS =
     '@media(max-width:768px){' +
     ':host>div{' +
@@ -3291,7 +3291,6 @@ async function handleFormSubmit(e) {
       'right:6px!important;' +
       'box-sizing:border-box!important;' +
     '}' +
-    ':host>div:first-child{bottom:20px!important;}' +
     'input,textarea,[contenteditable="true"]{' +
       'max-width:100%!important;min-width:0!important;width:100%!important;' +
     '}' +
@@ -3316,46 +3315,58 @@ async function handleFormSubmit(e) {
 </script>
 
 <script>
-/* Align the "Call us 24/7" pill with the Retell bot button.
-   sr.firstElementChild is a full-viewport wrapper, not the circle.
-   Walk the entire shadow DOM tree and find the button-sized element
-   closest to the bottom-right corner — that's the actual trigger. */
+/* Move the Retell launcher circle to the vertical middle of the right side on mobile.
+   CSS injection can't beat Retell's own inline styles, so we set inline styles
+   directly on the circle element with !important via style.setProperty(). */
 (function () {
-  function getRetellBotRect() {
+  var retellCircle = null; // cached DOM reference
+
+  function applyPosition(el) {
+    var viewH = window.innerHeight;
+    var h = el.getBoundingClientRect().height || 56;
+    var targetTop = Math.round(viewH / 2 - h / 2);
+    el.style.setProperty('top', targetTop + 'px', 'important');
+    el.style.setProperty('bottom', 'auto', 'important');
+    el.style.setProperty('right', '20px', 'important');
+    el.style.setProperty('left', 'auto', 'important');
+    el.style.setProperty('position', 'fixed', 'important');
+  }
+
+  function positionRetell() {
+    if (window.innerWidth >= 768) return;
     var host = document.querySelector('retell-chat-web-component');
-    if (!host || !host.shadowRoot) return null;
+    if (!host || !host.shadowRoot) return;
+
+    if (retellCircle) { applyPosition(retellCircle); return; }
+
+    /* Walk shadow DOM for the launcher: button-sized, near the bottom-right */
     var viewW = window.innerWidth, viewH = window.innerHeight;
     var best = null, bestDist = Infinity;
     var all = host.shadowRoot.querySelectorAll('*');
     for (var i = 0; i < all.length; i++) {
       var r = all[i].getBoundingClientRect();
-      /* Button-sized: between 30×30 and 160×160, inside the viewport */
-      if (r.width < 30 || r.height < 30 || r.width > 160 || r.height > 160) continue;
-      if (r.right > viewW + 4 || r.bottom > viewH + 4 || r.top < 0) continue;
-      /* Prefer the one closest to the bottom-right corner */
+      if (r.width < 30 || r.height < 30 || r.width > 120 || r.height > 120) continue;
+      if (r.right > viewW + 10 || r.bottom > viewH + 10 || r.top < 0) continue;
       var dist = (viewW - r.right) + (viewH - r.bottom);
-      if (dist < bestDist) { bestDist = dist; best = r; }
+      if (dist < bestDist) { bestDist = dist; best = all[i]; }
     }
-    return best;
-  }
-
-  function syncCallUs() {
-    var pill = document.querySelector('.sticky-ai-call');
-    if (!pill) return false;
-    var botRect = getRetellBotRect();
-    if (!botRect) return false;
-    var viewH = window.innerHeight;
-    var botCenter = viewH - botRect.top - botRect.height / 2;
-    var pillH = pill.offsetHeight || 52;
-    pill.style.bottom = Math.max(Math.round(botCenter - pillH / 2), 8) + 'px';
-    return true;
+    if (best) { retellCircle = best; applyPosition(retellCircle); }
   }
 
   var n = 0;
   (function attempt() {
-    if (!syncCallUs() && n++ < 15) setTimeout(attempt, 300 + n * 150);
+    if (window.innerWidth >= 768) return;
+    positionRetell();
+    if (n++ < 20) setTimeout(attempt, 300 + n * 100);
   })();
-  window.addEventListener('resize', function () { setTimeout(syncCallUs, 300); });
+  window.addEventListener('resize', function () {
+    retellCircle = null;
+    setTimeout(positionRetell, 200);
+  });
+  /* Re-apply after click — panel open/close can trigger Retell style resets */
+  document.addEventListener('click', function () {
+    if (window.innerWidth < 768) setTimeout(positionRetell, 350);
+  }, true);
 })();
 </script>
 
