@@ -1438,6 +1438,130 @@ retell-chat-web-component {
   max-width: 100vw;
   box-sizing: border-box;
 }
+
+/* ── ASK HAILEY SECTION ─────────────────────────── */
+#hailey {
+  background: linear-gradient(135deg, #EBF3FD 0%, #dceeff 100%);
+  padding: 80px 0;
+}
+.hailey-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 24px;
+  text-align: center;
+}
+.hailey-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid var(--grey-mid);
+  border-radius: 999px;
+  padding: 5px 14px 5px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--blue);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.hailey-badge-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: .6; transform: scale(1.3); }
+}
+#hailey h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(28px, 5vw, 42px);
+  color: var(--navy);
+  margin-bottom: 14px;
+  line-height: 1.15;
+}
+#hailey h2 em {
+  font-style: normal;
+  color: var(--blue);
+}
+.hailey-sub {
+  font-size: 16px;
+  color: var(--grey);
+  line-height: 1.7;
+  max-width: 560px;
+  margin: 0 auto 36px;
+}
+.hailey-chips {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 32px;
+  text-align: left;
+}
+@media (max-width: 480px) { .hailey-chips { grid-template-columns: 1fr; } }
+.hailey-chip {
+  background: #fff;
+  border: 1.5px solid var(--grey-mid);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--navy);
+  line-height: 1.45;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color .2s, box-shadow .2s, transform .15s;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.hailey-chip:hover {
+  border-color: var(--blue);
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+.hailey-chip-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.hailey-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 16px 36px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s, transform .15s, box-shadow .2s;
+  box-shadow: 0 4px 20px rgba(30,90,168,0.28);
+  width: 100%;
+  max-width: 360px;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+.hailey-cta:hover {
+  background: #1650a0;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(30,90,168,0.36);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hailey-chip, .hailey-cta { transition: none; transform: none !important; }
+  .hailey-badge-dot { animation: none; }
+}
+.hailey-trust {
+  font-size: 12px;
+  color: var(--grey);
+  letter-spacing: .02em;
+}
 </style>
 <template id="__bundler_thumbnail" data-bg-color="#F4F8FF">
   <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
@@ -1469,10 +1593,10 @@ retell-chat-web-component {
   type="module"
   data-public-key="public_key_274f92a0516ded273d147"
   data-agent-id="agent_88fd2bc14215e7210629dfafda"
-  data-title="Chat with Us"
+  data-title="Chat with Hailey"
   data-color="#1E5AA8"
-  data-bot-name="DoryAngel Team"
-  data-popup-message="Got a question? Our team is available 24/7 — get instant answers on pricing, management services &amp; availability."
+  data-bot-name="Hailey"
+  data-popup-message="Hi! I&apos;m Hailey — ask me anything about DoryAngel&apos;s property management."
   data-show-ai-popup="true"
   data-show-ai-popup-time="8"
 ></script>
@@ -2347,7 +2471,53 @@ retell-chat-web-component {
   </div>
 </section>
 
-<!-- BLOG SECTION -->
+<!-- ASK HAILEY -->
+<section id="hailey" aria-label="Chat with Hailey AI">
+  <div class="hailey-inner reveal">
+    <div class="hailey-badge">
+      <span class="hailey-badge-dot"></span>
+      AI Property Expert &middot; Online Now
+    </div>
+    <h2>Ask Hailey &mdash; <em>Instant Answers</em></h2>
+    <p class="hailey-sub">No hold music. No forms. Hailey knows NYC property law,
+    management pricing, and tenant rights. Ask anything &mdash; she&rsquo;ll help you figure out
+    if DoryAngel is the right fit for your property.</p>
+
+    <div class="hailey-chips" role="list">
+      <button class="hailey-chip reveal" role="listitem"
+              onclick="openHaileyChat('What does it cost to manage a 2-family home in the Bronx?')">
+        <span class="hailey-chip-icon" aria-hidden="true">&#x1F4AC;</span>
+        What does it cost to manage a 2-family home in the Bronx?
+      </button>
+      <button class="hailey-chip reveal" role="listitem"
+              onclick="openHaileyChat('My tenant hasn\'t paid rent in 60 days — what are my options in NYC?')">
+        <span class="hailey-chip-icon" aria-hidden="true">&#x1F4AC;</span>
+        My tenant hasn&rsquo;t paid rent in 60 days &mdash; what are my options in NYC?
+      </button>
+      <button class="hailey-chip reveal" role="listitem"
+              onclick="openHaileyChat('Do I need a property manager or can I handle it myself?')">
+        <span class="hailey-chip-icon" aria-hidden="true">&#x1F4AC;</span>
+        Do I need a property manager or can I handle it myself?
+      </button>
+      <button class="hailey-chip reveal" role="listitem"
+              onclick="openHaileyChat('How long does it typically take to find a good tenant in NYC?')">
+        <span class="hailey-chip-icon" aria-hidden="true">&#x1F4AC;</span>
+        How long does it typically take to find a good tenant in NYC?
+      </button>
+    </div>
+
+    <button class="hailey-cta reveal" onclick="openHaileyChat()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round"
+              d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+      </svg>
+      Chat with Hailey
+    </button>
+    <p class="hailey-trust">Responds in seconds &middot; Available 24/7 &middot; No spam</p>
+  </div>
+</section>
+
 <!-- BLOG SECTION -->
 <section id="blog" class="blog-section-wrap">
   <div class="section-inner">
@@ -3144,6 +3314,28 @@ async function handleFormSubmit(e) {
   /* Watch for the shadow root to be populated */
   new MutationObserver(inject).observe(document.body, { childList: true, subtree: true });
 })();
+</script>
+
+<script>
+/* Open the Retell widget programmatically from the Ask Hailey section.
+   Falls back through three strategies: public API, shadow DOM click, retry. */
+function openHaileyChat(optionalMessage) {
+  var host = document.querySelector('retell-chat-web-component');
+  if (!host) return;
+
+  if (typeof host.open === 'function') {
+    host.open();
+    return;
+  }
+
+  var sr = host.shadowRoot;
+  if (sr) {
+    var btn = sr.querySelector('button') || sr.querySelector('[role="button"]');
+    if (btn) { btn.click(); return; }
+  }
+
+  setTimeout(function () { openHaileyChat(optionalMessage); }, 800);
+}
 </script>
 
 
