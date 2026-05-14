@@ -3281,12 +3281,13 @@ async function handleFormSubmit(e) {
    The widget's chat panel is inside a shadow DOM so normal CSS can't reach it.
    We inject a <style> directly into the shadow root once the component is ready. */
 (function () {
-  var FIX_ID = 'da-retell-vp-fix';
-  /* On mobile: constrain every direct-child div of the host (covers both the
-     floating trigger button and the chat panel), then fix the input row.
-     right:6px keeps content 6 px from the viewport edge on both sides when
-     combined with max-width:calc(100vw - 12px). */
+  var FIX_ID = 'da-retell-vp-fix-v2';
+  /* Hide the floating launcher button — the Ask Hailey card is the entry point.
+     opacity:0 + pointer-events:none hides it from users while still allowing
+     our programmatic dispatchEvent() click to reach it and open the chat panel.
+     On mobile: also constrain the chat panel width to prevent viewport overflow. */
   var CSS =
+    ':host>div:first-child{opacity:0!important;pointer-events:none!important;}' +
     '@media(max-width:768px){' +
     ':host>div{' +
       'max-width:calc(100vw - 12px)!important;' +
@@ -3318,23 +3319,26 @@ async function handleFormSubmit(e) {
 
 <script>
 /* Open the Retell widget programmatically from the Ask Hailey section.
-   Falls back through three strategies: public API, shadow DOM click, retry. */
+   The Retell trigger is a div (not a button), so we target firstElementChild.
+   composed:true lets the synthetic click cross the shadow DOM boundary. */
 function openHaileyChat(optionalMessage) {
   var host = document.querySelector('retell-chat-web-component');
-  if (!host) return;
+  if (!host) { setTimeout(function(){ openHaileyChat(optionalMessage); }, 800); return; }
 
-  if (typeof host.open === 'function') {
-    host.open();
-    return;
-  }
+  if (typeof host.open === 'function') { host.open(); return; }
 
   var sr = host.shadowRoot;
   if (sr) {
-    var btn = sr.querySelector('button') || sr.querySelector('[role="button"]');
-    if (btn) { btn.click(); return; }
+    var trigger = sr.querySelector('[role="button"]') ||
+                  sr.querySelector('button') ||
+                  sr.firstElementChild;
+    if (trigger) {
+      trigger.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true, cancelable: true }));
+      return;
+    }
   }
 
-  setTimeout(function () { openHaileyChat(optionalMessage); }, 800);
+  host.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
 }
 </script>
 
