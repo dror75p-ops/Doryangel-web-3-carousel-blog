@@ -3281,8 +3281,9 @@ async function handleFormSubmit(e) {
    The widget's chat panel is inside a shadow DOM so normal CSS can't reach it.
    We inject a <style> directly into the shadow root once the component is ready. */
 (function () {
-  var FIX_ID = 'da-retell-vp-fix-v4';
-  /* On mobile: constrain the chat panel width to prevent viewport overflow. */
+  var FIX_ID = 'da-retell-vp-fix-v5';
+  /* On mobile: pin the launcher to bottom:20px to match the Call Us pill,
+     constrain the chat panel width, and fix input overflow. */
   var CSS =
     '@media(max-width:768px){' +
     ':host>div{' +
@@ -3290,6 +3291,7 @@ async function handleFormSubmit(e) {
       'right:6px!important;' +
       'box-sizing:border-box!important;' +
     '}' +
+    ':host>div:first-child{bottom:20px!important;}' +
     'input,textarea,[contenteditable="true"]{' +
       'max-width:100%!important;min-width:0!important;width:100%!important;' +
     '}' +
