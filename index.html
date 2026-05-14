@@ -3316,34 +3316,46 @@ async function handleFormSubmit(e) {
 </script>
 
 <script>
-/* Align the "Call us 24/7" pill with the Retell bot button on mobile.
-   Reads the actual rendered position of the Retell trigger from the shadow DOM
-   and sets the pill's bottom to center-match it — works in any orientation. */
+/* Align the "Call us 24/7" pill with the Retell bot button.
+   sr.firstElementChild is a full-viewport wrapper, not the circle.
+   Walk the entire shadow DOM tree and find the button-sized element
+   closest to the bottom-right corner — that's the actual trigger. */
 (function () {
-  function syncCallUs() {
+  function getRetellBotRect() {
     var host = document.querySelector('retell-chat-web-component');
+    if (!host || !host.shadowRoot) return null;
+    var viewW = window.innerWidth, viewH = window.innerHeight;
+    var best = null, bestDist = Infinity;
+    var all = host.shadowRoot.querySelectorAll('*');
+    for (var i = 0; i < all.length; i++) {
+      var r = all[i].getBoundingClientRect();
+      /* Button-sized: between 30×30 and 160×160, inside the viewport */
+      if (r.width < 30 || r.height < 30 || r.width > 160 || r.height > 160) continue;
+      if (r.right > viewW + 4 || r.bottom > viewH + 4 || r.top < 0) continue;
+      /* Prefer the one closest to the bottom-right corner */
+      var dist = (viewW - r.right) + (viewH - r.bottom);
+      if (dist < bestDist) { bestDist = dist; best = r; }
+    }
+    return best;
+  }
+
+  function syncCallUs() {
     var pill = document.querySelector('.sticky-ai-call');
-    if (!host || !pill) return false;
-    var sr = host.shadowRoot;
-    var trigger = sr && sr.firstElementChild;
-    if (!trigger) return false;
-    var tr = trigger.getBoundingClientRect();
-    if (tr.height === 0) return false;
-    var triggerCenterFromBottom = window.innerHeight - tr.top - tr.height / 2;
-    var pillHeight = pill.offsetHeight || 52;
-    var newBottom = Math.round(triggerCenterFromBottom - pillHeight / 2);
-    pill.style.bottom = Math.max(newBottom, 8) + 'px';
+    if (!pill) return false;
+    var botRect = getRetellBotRect();
+    if (!botRect) return false;
+    var viewH = window.innerHeight;
+    var botCenter = viewH - botRect.top - botRect.height / 2;
+    var pillH = pill.offsetHeight || 52;
+    pill.style.bottom = Math.max(Math.round(botCenter - pillH / 2), 8) + 'px';
     return true;
   }
 
-  /* Retry with backoff until the widget has rendered */
   var n = 0;
   (function attempt() {
-    if (!syncCallUs() && n++ < 12) setTimeout(attempt, 300 + n * 150);
+    if (!syncCallUs() && n++ < 15) setTimeout(attempt, 300 + n * 150);
   })();
-
-  /* Re-sync whenever viewport changes (orientation, keyboard, resize) */
-  window.addEventListener('resize', function () { setTimeout(syncCallUs, 250); });
+  window.addEventListener('resize', function () { setTimeout(syncCallUs, 300); });
 })();
 </script>
 
