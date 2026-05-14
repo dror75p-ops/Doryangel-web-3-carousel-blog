@@ -1528,34 +1528,35 @@ retell-chat-web-component {
   flex-shrink: 0;
   margin-top: 1px;
 }
-.hailey-cta {
-  display: inline-flex;
+.hailey-bot-slot {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 10px;
-  background: var(--blue);
-  color: #fff;
-  border: none;
-  border-radius: 12px;
-  padding: 16px 36px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background .2s, transform .15s, box-shadow .2s;
-  box-shadow: 0 4px 20px rgba(30,90,168,0.28);
-  width: 100%;
-  max-width: 360px;
-  justify-content: center;
+  padding: 20px 24px;
+  background: rgba(255,255,255,0.7);
+  border: 1.5px solid rgba(30,90,168,0.15);
+  border-radius: var(--radius);
   margin-bottom: 14px;
 }
-.hailey-cta:hover {
-  background: #1650a0;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(30,90,168,0.36);
+.hailey-bot-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--grey);
+  letter-spacing: .02em;
+}
+@keyframes hailey-bot-bounce {
+  0%,100% { transform: scale(1); }
+  40%      { transform: scale(1.22); }
+}
+.hailey-bot-pulse retell-chat-web-component {
+  animation: hailey-bot-bounce .35s ease-in-out 3;
 }
 @media (prefers-reduced-motion: reduce) {
-  .hailey-chip, .hailey-cta { transition: none; transform: none !important; }
+  .hailey-chip { transition: none; transform: none !important; }
   .hailey-badge-dot { animation: none; }
+  .hailey-bot-pulse retell-chat-web-component { animation: none; }
 }
 .hailey-trust {
   font-size: 12px;
@@ -2484,36 +2485,28 @@ retell-chat-web-component {
     if DoryAngel is the right fit for your property.</p>
 
     <div class="hailey-chips" role="list">
-      <button class="hailey-chip reveal" role="listitem"
-              onclick="openHaileyChat('What does it cost to manage a 2-family home in the Bronx?')">
+      <button class="hailey-chip reveal" role="listitem" onclick="highlightRetellBot()">
         <span class="hailey-chip-icon" aria-hidden="true">&#x1F4AC;</span>
         What does it cost to manage a 2-family home in the Bronx?
       </button>
-      <button class="hailey-chip reveal" role="listitem"
-              onclick="openHaileyChat('My tenant hasn\'t paid rent in 60 days — what are my options in NYC?')">
+      <button class="hailey-chip reveal" role="listitem" onclick="highlightRetellBot()">
         <span class="hailey-chip-icon" aria-hidden="true">&#x1F4AC;</span>
         My tenant hasn&rsquo;t paid rent in 60 days &mdash; what are my options in NYC?
       </button>
-      <button class="hailey-chip reveal" role="listitem"
-              onclick="openHaileyChat('Do I need a property manager or can I handle it myself?')">
+      <button class="hailey-chip reveal" role="listitem" onclick="highlightRetellBot()">
         <span class="hailey-chip-icon" aria-hidden="true">&#x1F4AC;</span>
         Do I need a property manager or can I handle it myself?
       </button>
-      <button class="hailey-chip reveal" role="listitem"
-              onclick="openHaileyChat('How long does it typically take to find a good tenant in NYC?')">
+      <button class="hailey-chip reveal" role="listitem" onclick="highlightRetellBot()">
         <span class="hailey-chip-icon" aria-hidden="true">&#x1F4AC;</span>
         How long does it typically take to find a good tenant in NYC?
       </button>
     </div>
 
-    <button class="hailey-cta reveal" onclick="openHaileyChat()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="2.2" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round"
-              d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-      </svg>
-      Chat with Hailey
-    </button>
+    <div class="hailey-bot-slot reveal" id="hailey-bot-slot">
+      <span class="hailey-bot-label">Tap the button to start chatting</span>
+      <!-- retell-chat-web-component is moved here by JS once loaded -->
+    </div>
     <p class="hailey-trust">Responds in seconds &middot; Available 24/7 &middot; No spam</p>
   </div>
 </section>
@@ -3281,15 +3274,19 @@ async function handleFormSubmit(e) {
    The widget's chat panel is inside a shadow DOM so normal CSS can't reach it.
    We inject a <style> directly into the shadow root once the component is ready. */
 (function () {
-  var FIX_ID = 'da-retell-vp-fix-v2';
-  /* Hide the floating launcher button — the Ask Hailey card is the entry point.
-     opacity:0 + pointer-events:none hides it from users while still allowing
-     our programmatic dispatchEvent() click to reach it and open the chat panel.
+  var FIX_ID = 'da-retell-vp-fix-v3';
+  /* Move the floating launcher into normal document flow (inside the Ask Hailey card).
+     position:relative overrides the widget's default position:fixed so it sits
+     inline in the card slot instead of floating in the corner.
      On mobile: also constrain the chat panel width to prevent viewport overflow. */
   var CSS =
-    ':host>div:first-child{opacity:0!important;pointer-events:none!important;}' +
+    ':host>div:first-child{' +
+      'position:relative!important;' +
+      'bottom:auto!important;right:auto!important;' +
+      'top:auto!important;left:auto!important;' +
+    '}' +
     '@media(max-width:768px){' +
-    ':host>div{' +
+    ':host>div:not(:first-child){' +
       'max-width:calc(100vw - 12px)!important;' +
       'right:6px!important;' +
       'box-sizing:border-box!important;' +
@@ -3318,27 +3315,35 @@ async function handleFormSubmit(e) {
 </script>
 
 <script>
-/* Open the Retell widget programmatically from the Ask Hailey section.
-   The Retell trigger is a div (not a button), so we target firstElementChild.
-   composed:true lets the synthetic click cross the shadow DOM boundary. */
-function openHaileyChat(optionalMessage) {
-  var host = document.querySelector('retell-chat-web-component');
-  if (!host) { setTimeout(function(){ openHaileyChat(optionalMessage); }, 800); return; }
-
-  if (typeof host.open === 'function') { host.open(); return; }
-
-  var sr = host.shadowRoot;
-  if (sr) {
-    var trigger = sr.querySelector('[role="button"]') ||
-                  sr.querySelector('button') ||
-                  sr.firstElementChild;
-    if (trigger) {
-      trigger.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true, cancelable: true }));
-      return;
-    }
+/* Move the Retell widget host element into the Ask Hailey card slot.
+   This makes the real bot button appear inside the card so the user clicks
+   it directly — no synthetic events, no isTrusted issues. */
+(function () {
+  function tryAnchor() {
+    var host = document.querySelector('retell-chat-web-component');
+    var slot = document.getElementById('hailey-bot-slot');
+    if (!host || !slot || slot.contains(host)) return;
+    slot.appendChild(host);
   }
+  [600, 1500, 3000, 5000].forEach(function (t) { setTimeout(tryAnchor, t); });
+  new MutationObserver(function (_, obs) {
+    var host = document.querySelector('retell-chat-web-component');
+    var slot = document.getElementById('hailey-bot-slot');
+    if (host && slot && !slot.contains(host)) { slot.appendChild(host); }
+    if (host && slot && slot.contains(host)) { obs.disconnect(); }
+  }).observe(document.body, { childList: true, subtree: true });
+})();
 
-  host.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+/* When a sample question chip is tapped, scroll the bot into view and
+   bounce it to signal "tap me" — the user then clicks the real button. */
+function highlightRetellBot() {
+  var slot = document.getElementById('hailey-bot-slot');
+  if (!slot) return;
+  slot.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  slot.classList.remove('hailey-bot-pulse');
+  void slot.offsetWidth; /* force reflow to restart animation */
+  slot.classList.add('hailey-bot-pulse');
+  setTimeout(function () { slot.classList.remove('hailey-bot-pulse'); }, 1200);
 }
 </script>
 
