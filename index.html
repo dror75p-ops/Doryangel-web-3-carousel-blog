@@ -3316,6 +3316,38 @@ async function handleFormSubmit(e) {
 </script>
 
 <script>
+/* Align the "Call us 24/7" pill with the Retell bot button on mobile.
+   Reads the actual rendered position of the Retell trigger from the shadow DOM
+   and sets the pill's bottom to center-match it — works in any orientation. */
+(function () {
+  function syncCallUs() {
+    var host = document.querySelector('retell-chat-web-component');
+    var pill = document.querySelector('.sticky-ai-call');
+    if (!host || !pill) return false;
+    var sr = host.shadowRoot;
+    var trigger = sr && sr.firstElementChild;
+    if (!trigger) return false;
+    var tr = trigger.getBoundingClientRect();
+    if (tr.height === 0) return false;
+    var triggerCenterFromBottom = window.innerHeight - tr.top - tr.height / 2;
+    var pillHeight = pill.offsetHeight || 52;
+    var newBottom = Math.round(triggerCenterFromBottom - pillHeight / 2);
+    pill.style.bottom = Math.max(newBottom, 8) + 'px';
+    return true;
+  }
+
+  /* Retry with backoff until the widget has rendered */
+  var n = 0;
+  (function attempt() {
+    if (!syncCallUs() && n++ < 12) setTimeout(attempt, 300 + n * 150);
+  })();
+
+  /* Re-sync whenever viewport changes (orientation, keyboard, resize) */
+  window.addEventListener('resize', function () { setTimeout(syncCallUs, 250); });
+})();
+</script>
+
+<script>
 /* openHailey() — called by the Ask Hailey card CTA and chips.
    Tries every known method to open the Retell chat widget.
    If all programmatic attempts fail, pulses the floating bot button
