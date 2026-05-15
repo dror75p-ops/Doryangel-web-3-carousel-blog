@@ -4,8 +4,9 @@
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from 'fs';
 import { marked } from 'marked';
 
-const SITE_URL = 'https://dror75p-ops.github.io/Doryangel-web-3-carousel-blog';
+const SITE_URL = 'https://doryangel.com';
 const BOOKING_URL = 'https://cal.com/dory-angel-management-v5o0ke/30min';
+const CONTACT_URL = 'https://doryangel.com/#contact';
 const COMPANY_NAME = 'DoryAngel LLC';
 
 const CATEGORY_LABEL = {
@@ -84,6 +85,11 @@ function renderPage(post, related) {
 <title>${escape(post.seoTitle)}</title>
 <meta name="description" content="${escape(post.seoDescription)}">
 <link rel="canonical" href="${url}">
+<meta name="robots" content="index, follow">
+<meta name="geo.region" content="US-NY">
+<meta name="geo.placename" content="Bronx, New York City">
+<meta name="geo.position" content="40.8177;-73.9278">
+<meta name="ICBM" content="40.8177, -73.9278">
 
 <meta property="og:type" content="article">
 <meta property="og:title" content="${escape(post.title)}">
@@ -215,6 +221,17 @@ h1.post-title {
 }
 .cta-block .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,0,0,0.25); }
 
+.internal-links {
+  margin-top: 40px; padding: 24px 28px;
+  background: var(--blue-dim); border-radius: 12px;
+  border-left: 4px solid var(--blue);
+}
+.internal-links p { font-size: 13px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+.internal-links ul { list-style: none; padding: 0; margin: 0; }
+.internal-links li { margin-bottom: 8px; }
+.internal-links li a { color: var(--navy); font-size: 15px; font-weight: 600; text-decoration: none; }
+.internal-links li a:hover { text-decoration: underline; color: var(--blue); }
+
 .hashtag-row {
   margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--grey-mid);
   font-size: 13px; color: var(--text-muted);
@@ -283,9 +300,19 @@ footer.post-footer a { color: white; text-decoration: none; }
   <div class="cta-block">
     <div class="city">Managing rental property in NYC?</div>
     <p>DoryAngel handles everything for a flat <strong>$99/unit/month</strong> — no hidden fees, no percentage tricks. Bronx, Manhattan, Queens, Brooklyn.</p>
-    <a class="btn" href="${BOOKING_URL}" target="_blank">
-      Book a Free Consultation →
+    <a class="btn" href="${CONTACT_URL}">
+      Get a Free Consultation →
     </a>
+  </div>
+
+  <div class="internal-links">
+    <p>Explore DoryAngel:</p>
+    <ul>
+      <li><a href="${SITE_URL}/#pricing">View flat-fee pricing plans — from $99/month →</a></li>
+      <li><a href="${SITE_URL}/#services">Full list of property management services →</a></li>
+      <li><a href="${SITE_URL}/#blog">More articles for NYC landlords →</a></li>
+      <li><a href="${CONTACT_URL}">Request a free property audit →</a></li>
+    </ul>
   </div>
 
   ${hashtagText ? `<div class="hashtag-row">${(post.hashtags || []).map(t => `<span>#${escape(t)}</span>`).join('')}</div>` : ''}
