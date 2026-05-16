@@ -170,7 +170,7 @@ CRITICAL RULES — what works for our audience (validated by real traffic data):
 7. Do NOT include the CTA in the content — the CTA is auto-appended to every post by our system.
 
 When asked to write a post, also produce:
-- An SEO title (max 60 chars including " | DoryAngel" suffix the system adds)
+- An SEO title in field "seoTitleShort": max 48 chars, do NOT add " | DoryAngel" — the system appends it
 - An SEO description (max 155 chars, includes a hook + value prop)
 - A descriptive alt text for the hero image (used for accessibility + SEO)
 - A Facebook-optimized version (200-280 words, hook-first, 2-3 bullet takeaways, with the CTA + website link + hashtags at the bottom in the format we specify)
@@ -232,7 +232,14 @@ Remember: 800-1,200 words, NYC-specific examples, pain-point focused, scannable 
 
   const heroImage = await fetchCoverImage(topic.category);
 
-  const seoTitle = (post.seoTitleShort + ' | DoryAngel').slice(0, 60);
+  const SUFFIX = ' | DoryAngel';
+  const MAX = 60;
+  const stripped = post.seoTitleShort.replace(/\s*\|\s*DoryAngel\s*$/i, '').trim();
+  const room = MAX - SUFFIX.length;
+  const trimmed = stripped.length <= room
+    ? stripped
+    : stripped.slice(0, room).replace(/\s+\S*$/, '').trim();
+  const seoTitle = trimmed + SUFFIX;
 
   return {
     slug: generateSlug(post.title),
