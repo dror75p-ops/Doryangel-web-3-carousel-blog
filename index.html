@@ -1969,7 +1969,33 @@ retell-chat-web-component {
 </section>
 
 <!-- OWNER PORTAL PREVIEW -->
-<section id="owner-portal" style="padding:96px 40px;background:#fff;">
+<style>
+#owner-portal { padding: 96px 40px 80px; background: #fff; }
+#portal-embed-outer {
+  margin: 32px auto 0;
+  max-width: 1200px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 48px rgba(13,30,58,0.14);
+  border: 1px solid #E2E8F0;
+}
+#portal-embed-outer iframe { width: 100%; height: 780px; border: none; display: block; }
+#portal-open-link { text-align:center; margin-top:10px; font-size:12px; color:#94A3B8; }
+#portal-open-link a { color:#3A7BDD; text-decoration:none; }
+@media (max-width: 767px) {
+  #owner-portal { padding: 64px 20px 48px; }
+  #portal-embed-outer {
+    margin: 28px -20px 0;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    box-shadow: none;
+  }
+  #portal-embed-outer iframe { height: 620px; }
+  #portal-open-link { padding: 0 20px; }
+}
+</style>
+<section id="owner-portal">
   <div class="section-inner">
     <div class="section-label">Owner Portal</div>
     <h2 class="section-title reveal">See exactly what you&rsquo;ll have access to.</h2>
@@ -1978,59 +2004,40 @@ retell-chat-web-component {
       maintenance updates, monthly reports, and financial statements, all in one place.
     </p>
 
-    <!-- Embedded reports page -->
-    <div class="reveal" style="
-        margin:48px auto 0;
-        max-width:1100px;
-        border-radius:16px;
-        overflow:hidden;
-        box-shadow:0 12px 48px rgba(13,30,58,0.14);
-        border:1px solid #E2E8F0;
-        background:#F2F4F6;
-        ">
-      <iframe
-        src="https://dror75p-ops.github.io/doryangel-owner-portal-reports/"
-        title="Owner Portal Reports Preview"
-        loading="lazy"
-        style="width:100%;height:780px;border:none;display:block;"
-      ></iframe>
-    </div>
-    <div style="
-        display:flex;flex-wrap:wrap;
-        gap:14px 40px;
-        justify-content:center;
-        margin-top:32px;margin-bottom:8px;
-        ">
-
+    <div style="display:flex;flex-wrap:wrap;gap:12px 36px;justify-content:center;margin-top:28px;">
       <div style="display:flex;align-items:center;gap:10px;font-size:15px;color:#556070;">
-        <span style="width:22px;height:22px;border-radius:50%;background:#EBF3FD;
-                     display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#3A7BDD" stroke-width="2.8"
-               width="12" height="12" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        <span style="width:22px;height:22px;border-radius:50%;background:#EBF3FD;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#3A7BDD" stroke-width="2.8" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg>
         </span>
         Live rent &amp; payment status
       </div>
-
       <div style="display:flex;align-items:center;gap:10px;font-size:15px;color:#556070;">
-        <span style="width:22px;height:22px;border-radius:50%;background:#EBF3FD;
-                     display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#3A7BDD" stroke-width="2.8"
-               width="12" height="12" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        <span style="width:22px;height:22px;border-radius:50%;background:#EBF3FD;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#3A7BDD" stroke-width="2.8" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg>
         </span>
         Maintenance requests &amp; history
       </div>
-
       <div style="display:flex;align-items:center;gap:10px;font-size:15px;color:#556070;">
-        <span style="width:22px;height:22px;border-radius:50%;background:#EBF3FD;
-                     display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#3A7BDD" stroke-width="2.8"
-               width="12" height="12" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        <span style="width:22px;height:22px;border-radius:50%;background:#EBF3FD;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#3A7BDD" stroke-width="2.8" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg>
         </span>
         Monthly statements &amp; year-end reports
       </div>
-
     </div>
   </div>
+
+  <!-- iframe breaks out of section-inner — full width on mobile, wide on desktop -->
+  <div id="portal-embed-outer" class="reveal">
+    <iframe
+      src="https://dror75p-ops.github.io/doryangel-owner-portal-reports/"
+      title="Owner Portal Reports Preview"
+      loading="lazy"
+    ></iframe>
+  </div>
+  <p id="portal-open-link">
+    <a href="https://dror75p-ops.github.io/doryangel-owner-portal-reports/"
+       target="_blank" rel="noopener">Open full page ↗</a>
+  </p>
 </section>
 
 
