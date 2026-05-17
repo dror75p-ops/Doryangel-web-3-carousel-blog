@@ -1978,126 +1978,32 @@ retell-chat-web-component {
       maintenance updates, monthly reports, and financial statements, all in one place.
     </p>
 
-    <!-- Preview card -->
-    <div class="reveal" style="
-        margin:48px auto 0;
-        max-width:900px;
-        border-radius:16px;
-        overflow:hidden;
-        box-shadow:0 12px 48px rgba(13,30,58,0.14);
-        border:1px solid #E2E8F0;
-        background:#F2F4F6;
-        ">
-
-      <div style="position:relative;aspect-ratio:16/9;overflow:hidden;">
-        <svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg"
-             style="width:100%;height:100%;display:block;">
-          <rect width="1200" height="600" fill="#F2F4F6"/>
-          <rect x="60"  y="120" width="280" height="380" rx="14" fill="#fff" stroke="#E5E7EB" stroke-width="1.5"/>
-          <rect x="60"  y="120" width="280" height="42"  rx="14" fill="#F4F5F7"/>
-          <rect x="60"  y="148" width="280" height="14"  fill="#F4F5F7"/>
-          <rect x="370" y="120" width="280" height="380" rx="14" fill="#fff" stroke="#E5E7EB" stroke-width="1.5"/>
-          <rect x="370" y="120" width="280" height="42"  rx="14" fill="#F4F5F7"/>
-          <rect x="370" y="148" width="280" height="14"  fill="#F4F5F7"/>
-          <rect x="680" y="120" width="280" height="380" rx="14" fill="#fff" stroke="#E5E7EB" stroke-width="1.5"/>
-          <rect x="680" y="120" width="280" height="42"  rx="14" fill="#F4F5F7"/>
-          <rect x="680" y="148" width="280" height="14"  fill="#F4F5F7"/>
-          <rect x="990" y="120" width="200" height="380" rx="14" fill="#fff" stroke="#E5E7EB" stroke-width="1.5" opacity="0.5"/>
-          <circle cx="76"  cy="141" r="5" fill="#FF5F57"/><circle cx="91"  cy="141" r="5" fill="#FEBC2E"/><circle cx="106" cy="141" r="5" fill="#28C840"/>
-          <circle cx="386" cy="141" r="5" fill="#FF5F57"/><circle cx="401" cy="141" r="5" fill="#FEBC2E"/><circle cx="416" cy="141" r="5" fill="#28C840"/>
-          <circle cx="696" cy="141" r="5" fill="#FF5F57"/><circle cx="711" cy="141" r="5" fill="#FEBC2E"/><circle cx="726" cy="141" r="5" fill="#28C840"/>
-          <!-- card 1: financial ledger -->
-          <rect x="80"  y="175" width="240" height="14" rx="3" fill="#0F2A3F"/>
-          <rect x="80"  y="197" width="80"  height="9"  rx="2" fill="#E6EBF0"/>
-          <rect x="170" y="197" width="80"  height="9"  rx="2" fill="#E6EBF0"/>
-          <rect x="260" y="197" width="60"  height="9"  rx="2" fill="#E6EBF0"/>
-          <rect x="80"  y="214" width="70"  height="8"  rx="2" fill="#D7DEE5"/>
-          <rect x="170" y="214" width="100" height="8"  rx="2" fill="#D7DEE5"/>
-          <rect x="270" y="214" width="50"  height="8"  rx="2" fill="#BBF7D0"/>
-          <rect x="80"  y="230" width="70"  height="8"  rx="2" fill="#D7DEE5"/>
-          <rect x="170" y="230" width="90"  height="8"  rx="2" fill="#D7DEE5"/>
-          <rect x="270" y="230" width="50"  height="8"  rx="2" fill="#BBF7D0"/>
-          <rect x="80"  y="246" width="70"  height="8"  rx="2" fill="#D7DEE5"/>
-          <rect x="170" y="246" width="110" height="8"  rx="2" fill="#D7DEE5"/>
-          <rect x="270" y="246" width="50"  height="8"  rx="2" fill="#FECACA"/>
-          <rect x="80"  y="262" width="70"  height="8"  rx="2" fill="#D7DEE5"/>
-          <rect x="170" y="262" width="95"  height="8"  rx="2" fill="#D7DEE5"/>
-          <rect x="270" y="262" width="50"  height="8"  rx="2" fill="#FECACA"/>
-          <rect x="80"  y="285" width="240" height="1"  fill="#E5E7EB"/>
-          <rect x="80"  y="295" width="110" height="10" rx="2" fill="#0F2A3F"/>
-          <rect x="250" y="293" width="70"  height="14" rx="3" fill="#16A34A"/>
-          <rect x="60"  y="490" width="280" height="10" fill="#3E8FD4"/>
-          <!-- card 2: maintenance -->
-          <rect x="390" y="175" width="240" height="14" rx="3" fill="#0F2A3F"/>
-          <rect x="390" y="197" width="180" height="9"  rx="2" fill="#E6EBF0"/>
-          <rect x="390" y="214" width="50"  height="22" rx="4" fill="#FEF9C3"/>
-          <rect x="448" y="218" width="130" height="9"  rx="2" fill="#D7DEE5"/>
-          <rect x="448" y="231" width="100" height="7"  rx="2" fill="#E6EBF0"/>
-          <rect x="390" y="244" width="50"  height="22" rx="4" fill="#DCFCE7"/>
-          <rect x="448" y="248" width="130" height="9"  rx="2" fill="#D7DEE5"/>
-          <rect x="448" y="261" width="110" height="7"  rx="2" fill="#E6EBF0"/>
-          <rect x="390" y="274" width="50"  height="22" rx="4" fill="#DCFCE7"/>
-          <rect x="448" y="278" width="130" height="9"  rx="2" fill="#D7DEE5"/>
-          <rect x="448" y="291" width="90"  height="7"  rx="2" fill="#E6EBF0"/>
-          <rect x="370" y="490" width="280" height="10" fill="#3E8FD4"/>
-          <!-- card 3: bills -->
-          <rect x="700" y="175" width="240" height="14" rx="3" fill="#0F2A3F"/>
-          <rect x="700" y="197" width="80"  height="9"  rx="2" fill="#E6EBF0"/>
-          <rect x="790" y="197" width="100" height="9"  rx="2" fill="#E6EBF0"/>
-          <rect x="898" y="197" width="60"  height="9"  rx="2" fill="#E6EBF0"/>
-          <rect x="700" y="214" width="70"  height="8"  rx="2" fill="#D7DEE5"/>
-          <rect x="790" y="214" width="90"  height="8"  rx="2" fill="#D7DEE5"/>
-          <rect x="898" y="214" width="60"  height="8"  rx="2" fill="#D7DEE5"/>
-          <rect x="700" y="230" width="70"  height="8"  rx="2" fill="#D7DEE5"/>
-          <rect x="790" y="230" width="80"  height="8"  rx="2" fill="#D7DEE5"/>
-          <rect x="898" y="230" width="60"  height="8"  rx="2" fill="#D7DEE5"/>
-          <rect x="700" y="246" width="70"  height="8"  rx="2" fill="#D7DEE5"/>
-          <rect x="790" y="246" width="110" height="8"  rx="2" fill="#D7DEE5"/>
-          <rect x="898" y="246" width="60"  height="8"  rx="2" fill="#D7DEE5"/>
-          <rect x="680" y="490" width="280" height="10" fill="#3E8FD4"/>
-          <!-- nav sidebar ghost -->
-          <rect x="0"   y="0"   width="55"  height="600" fill="#0D1E3A"/>
-          <rect x="10"  y="20"  width="35"  height="35"  rx="6" fill="#1E5AA8"/>
-          <rect x="14"  y="80"  width="27"  height="6"   rx="2" fill="rgba(255,255,255,0.25)"/>
-          <rect x="14"  y="96"  width="27"  height="6"   rx="2" fill="rgba(255,255,255,0.15)"/>
-          <rect x="14"  y="112" width="27"  height="6"   rx="2" fill="rgba(255,255,255,0.15)"/>
-          <rect x="14"  y="128" width="27"  height="6"   rx="2" fill="rgba(255,255,255,0.15)"/>
-          <rect x="14"  y="144" width="27"  height="6"   rx="2" fill="rgba(255,255,255,0.25)"/>
-          <rect x="14"  y="160" width="27"  height="6"   rx="2" fill="rgba(255,255,255,0.15)"/>
+    <div class="reveal" style="margin:48px auto 0;max-width:560px;text-align:center;">
+      <a href="https://dror75p-ops.github.io/doryangel-owner-portal-reports/"
+         target="_blank" rel="noopener"
+         style="display:inline-flex;align-items:center;gap:12px;
+                background:#0D1E3A;color:#fff;text-decoration:none;
+                padding:18px 36px;border-radius:10px;
+                font-size:16px;font-weight:700;font-family:inherit;
+                box-shadow:0 4px 24px rgba(13,30,58,0.22);
+                transition:background 0.18s,transform 0.18s,box-shadow 0.18s;"
+         onmouseover="this.style.background='#1E3A6E';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 32px rgba(13,30,58,0.32)'"
+         onmouseout="this.style.background='#0D1E3A';this.style.transform='none';this.style.boxShadow='0 4px 24px rgba(13,30,58,0.22)'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             width="20" height="20" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <path d="M3 9h18M9 21V9"/>
         </svg>
-
-        <div style="
-            position:absolute;inset:0;
-            background:rgba(13,30,58,0.42);
-            backdrop-filter:blur(4px);
-            -webkit-backdrop-filter:blur(4px);
-            display:flex;align-items:center;justify-content:center;
-            ">
-          <button
-            onclick="openPortalModal()"
-            aria-label="Open owner portal preview"
-            style="
-              display:inline-flex;align-items:center;gap:10px;
-              background:#3A7BDD;color:#fff;border:none;
-              padding:15px 32px;border-radius:9px;
-              font-size:16px;font-weight:700;font-family:inherit;
-              cursor:pointer;
-              box-shadow:0 4px 20px rgba(13,30,58,0.30);
-              transition:transform 0.18s,box-shadow 0.18s;
-              "
-            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 28px rgba(13,30,58,0.40)'"
-            onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 20px rgba(13,30,58,0.30)'"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                 width="18" height="18" aria-hidden="true">
-              <circle cx="12" cy="12" r="10"/>
-              <polygon points="10,8 16,12 10,16" fill="currentColor" stroke="none"/>
-            </svg>
-            Preview My Portal
-          </button>
-        </div>
-      </div>
+        See All Owner Reports
+        <svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15" aria-hidden="true">
+          <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </a>
+      <p style="margin-top:14px;font-size:12px;color:#94A3B8;">
+        Opens a full interactive preview — no login required
+      </p>
     </div>
+
 
     <div style="
         display:flex;flex-wrap:wrap;
@@ -2137,8 +2043,8 @@ retell-chat-web-component {
   </div>
 </section>
 
-<!-- PORTAL PREVIEW MODAL -->
-<div id="portalModal" role="dialog" aria-modal="true" aria-label="Owner portal preview"
+<!-- REMOVED: portal modal replaced by direct link -->
+<div id="portalModal" style="display:none;" aria-hidden="true"
      style="display:none;position:fixed;inset:0;z-index:9000;
             background:rgba(13,30,58,0.72);backdrop-filter:blur(6px);
             -webkit-backdrop-filter:blur(6px);
@@ -3144,63 +3050,6 @@ async function handleFormSubmit(e) {
     btn.disabled = false;
   }
 }
-</script>
-
-<!-- ===== OWNER PORTAL MODAL ===== -->
-<script>
-(function(){
-  var idx = 0;
-  var total = 4;
-
-  function renderDots(){
-    var c = document.getElementById('portalDots');
-    if(!c) return;
-    c.innerHTML = '';
-    for(var i=0;i<total;i++){
-      var d = document.createElement('button');
-      d.setAttribute('aria-label','Slide '+(i+1));
-      d.style.cssText='width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;padding:0;transition:background 0.2s;';
-      d.style.background = i===idx ? '#3A7BDD' : '#CBD5E1';
-      (function(i){d.onclick=function(){goTo(i);};})(i);
-      c.appendChild(d);
-    }
-  }
-
-  function goTo(n){
-    idx = Math.max(0, Math.min(n, total-1));
-    var s = document.getElementById('portalSlides');
-    if(s) s.style.transform = 'translateX(-'+(idx*100)+'%)';
-    renderDots();
-    document.getElementById('portalPrevBtn').disabled = idx===0;
-    document.getElementById('portalNextBtn').disabled = idx===total-1;
-  }
-
-  window.openPortalModal = function(){
-    var m = document.getElementById('portalModal');
-    m.style.display='flex';
-    document.body.style.overflow='hidden';
-    goTo(0);
-  };
-  window.closePortalModal = function(){
-    document.getElementById('portalModal').style.display='none';
-    document.body.style.overflow='';
-  };
-  window.portalNext = function(){ goTo(idx+1); };
-  window.portalPrev = function(){ goTo(idx-1); };
-
-  document.addEventListener('keydown',function(e){
-    var m = document.getElementById('portalModal');
-    if(!m || m.style.display==='none') return;
-    if(e.key==='Escape') window.closePortalModal();
-    if(e.key==='ArrowRight') window.portalNext();
-    if(e.key==='ArrowLeft') window.portalPrev();
-  });
-
-  document.addEventListener('click',function(e){
-    var m = document.getElementById('portalModal');
-    if(m && e.target===m) window.closePortalModal();
-  });
-})();
 </script>
 
 <!-- ===== MOTION: scroll reveals, stat counters, carousel auto-scroll ===== -->
