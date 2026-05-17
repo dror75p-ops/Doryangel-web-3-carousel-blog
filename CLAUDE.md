@@ -8,6 +8,10 @@
 - Owner GitHub account: dror75p-ops
 - Owner email: office@doryangel.com (notification emails go to dror75p@gmail.com via Resend)
 
+### Last change (as of 2026-05-17)
+
+- **Removed**: Owner/Tenant Portal card widget from the hero section (the tab + ledger mockup). Branch `claude/remove-portal-section-Izk55` — pending merge to main. Reason: it distracted from the primary lead-collection CTA flow.
+
 ### Hosting status (as of 2026-05-16)
 
 - **Production**: GitHub Pages at the URL above. This is the canonical live site.
