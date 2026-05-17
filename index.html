@@ -3127,7 +3127,7 @@ async function handleFormSubmit(e) {
   var origHref     = logoLink.getAttribute('href');
 
   var promoIdx = 0, isFlipped = false;
-  var HALF = 300, SHOW = 1800;
+  var HALF = 300, SHOW = 3000;
 
   function scaleSwap(el, newHTML, afterFn) {
     el.style.transformOrigin = 'center';
@@ -3172,10 +3172,10 @@ async function handleFormSubmit(e) {
     }, SHOW);
   }
 
-  /* First flip 5 s after load, then every 3 s */
+  /* First flip 5 s after load, then every 5 s */
   setTimeout(function () {
     showPromo();
-    setInterval(showPromo, 3000);
+    setInterval(showPromo, 5000);
   }, 5000);
 })();
 </script>
