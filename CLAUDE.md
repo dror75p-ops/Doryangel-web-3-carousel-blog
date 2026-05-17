@@ -8,9 +8,11 @@
 - Owner GitHub account: dror75p-ops
 - Owner email: office@doryangel.com (notification emails go to dror75p@gmail.com via Resend)
 
-### Last change (as of 2026-05-17)
+### Last changes (as of 2026-05-17)
 
-- **Removed**: Owner/Tenant Portal card widget from the hero section (the tab + ledger mockup). Branch `claude/remove-portal-section-Izk55` — pending merge to main. Reason: it distracted from the primary lead-collection CTA flow.
+- **Removed**: Owner/Tenant Portal card widget from the hero section (the tab + ledger mockup). Merged via PR #43. Reason: it distracted from the primary lead-collection CTA flow.
+- **Accessibility fixes** (merged PR #43): contact form labels linked to inputs via `for`/`id`; FAQ buttons now have `aria-expanded`; hero photo divs have `role="img"` + `aria-label`; blog carousel has `<noscript>` static fallback.
+- **Logo promo flip** (pending PR): hamburger button removed from the flip animation — now always static. Logo flips every 5 seconds (first at 5s after load), shows promo for 3s, then flips back.
 
 ### Hosting status (as of 2026-05-16)
 
