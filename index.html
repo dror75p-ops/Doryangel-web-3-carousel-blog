@@ -3110,12 +3110,11 @@ async function handleFormSubmit(e) {
 })(document)
 </script>
 
-<!-- LOGO + HAMBURGER PROMO FLIP -->
+<!-- LOGO PROMO FLIP (hamburger excluded) -->
 <script>
 (function () {
   var logoLink = document.querySelector('a.nav-logo');
-  var hamBtn   = document.getElementById('hamburgerBtn');
-  if (!logoLink || !hamBtn) return;
+  if (!logoLink) return;
 
   var PROMO_URL = 'https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/';
   var PROMOS = [
@@ -3124,23 +3123,11 @@ async function handleFormSubmit(e) {
     'Doryangel Automation'
   ];
 
-  var origLogoHTML  = logoLink.innerHTML;
-  var origHref      = logoLink.getAttribute('href');
-  var origHamHTML   = hamBtn.innerHTML;
-  var origHamLabel  = hamBtn.getAttribute('aria-label');
+  var origLogoHTML = logoLink.innerHTML;
+  var origHref     = logoLink.getAttribute('href');
 
   var promoIdx = 0, isFlipped = false;
-  var HALF = 360, SHOW = 5500;
-
-  /* Invisible click-catcher overlay on hamburger while promo is active */
-  var overlay = document.createElement('a');
-  overlay.href = PROMO_URL;
-  overlay.target = '_blank';
-  overlay.rel = 'noopener noreferrer';
-  overlay.style.cssText = 'position:absolute;inset:0;border-radius:8px;z-index:5;display:none;cursor:pointer';
-  overlay.addEventListener('click', function (e) { e.stopPropagation(); });
-  hamBtn.style.position = 'relative';
-  hamBtn.appendChild(overlay);
+  var HALF = 300, SHOW = 3000;
 
   function scaleSwap(el, newHTML, afterFn) {
     el.style.transformOrigin = 'center';
@@ -3162,10 +3149,6 @@ async function handleFormSubmit(e) {
       msg + ' →</span>';
   }
 
-  var arrowSVG = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" ' +
-    'stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
-    '<path d="M5 12h14M13 6l6 6-6 6"/></svg>';
-
   function showPromo() {
     if (isFlipped) return;
     isFlipped = true;
@@ -3178,34 +3161,22 @@ async function handleFormSubmit(e) {
       logoLink.rel    = 'noopener noreferrer';
     });
 
-    /* Flip hamburger to arrow, show overlay */
-    scaleSwap(hamBtn, arrowSVG, function () {
-      hamBtn.appendChild(overlay);
-      overlay.style.display = 'block';
-      hamBtn.setAttribute('aria-label', 'Visit Doryangel Automation tools');
-    });
-
-    /* Flip back after SHOW ms */
+    /* Flip logo back after SHOW ms */
     setTimeout(function () {
       scaleSwap(logoLink, origLogoHTML, function () {
         logoLink.href = origHref;
         logoLink.removeAttribute('target');
         logoLink.removeAttribute('rel');
       });
-      scaleSwap(hamBtn, origHamHTML, function () {
-        overlay.style.display = 'none';
-        hamBtn.appendChild(overlay);
-        hamBtn.setAttribute('aria-label', origHamLabel);
-      });
       setTimeout(function () { isFlipped = false; }, HALF * 2 + 100);
     }, SHOW);
   }
 
-  /* First flip 8 s after load, then every 22 s */
+  /* First flip 5 s after load, then every 5 s */
   setTimeout(function () {
     showPromo();
-    setInterval(showPromo, 22000);
-  }, 8000);
+    setInterval(showPromo, 5000);
+  }, 5000);
 })();
 </script>
 
