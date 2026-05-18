@@ -1286,10 +1286,26 @@ body.variant-dark .audience-card { background: #0F2040; }
   outline: 3px solid var(--blue-light); outline-offset: 2px;
 }
 @media (max-width: 767px) {
-  #scroll-top-btn { bottom: 176px; right: 39px; width: 48px; height: 48px; }
+  /* Move to left side on mobile — keeps right side clear for Retell + Call FAB */
+  #scroll-top-btn { bottom: 84px; left: 16px; right: auto; width: 48px; height: 48px; }
 }
 @media (prefers-reduced-motion: reduce) {
   #scroll-top-btn { transition: opacity 0.15s; transform: none !important; }
+}
+
+/* ===== ELFSIGHT NOTIFICATION — MOBILE OVERFLOW FIX ===== */
+/* Constrain Elfsight sales notification card to the visible viewport on mobile.
+   Elfsight injects elements with eapps-* classes at body level. */
+@media (max-width: 767px) {
+  [class*="eapps-sales-notification"],
+  [class*="eapps-notification"],
+  [id*="eapps-sales-notification"],
+  [id*="eapps-notification"] {
+    max-width: calc(100vw - 24px) !important;
+    left: 12px !important;
+    right: 12px !important;
+    box-sizing: border-box !important;
+  }
 }
 
 /* NAV OVERLAY */
@@ -1510,6 +1526,8 @@ body.variant-dark .audience-card { background: #0F2040; }
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
+/* Raise above third-party widgets (Elfsight ~9999) */
+.sticky-ai-call { z-index: 10001; }
 @media (min-width: 768px) { .sticky-ai-call { display: none; } }
 
 /* Park UserWay's own button off-screen so we can trigger it programmatically */
