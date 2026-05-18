@@ -241,8 +241,13 @@ Priority order for next sessions:
 
 ### 4. Conversion / CRO
 - A/B test hero headline: rotating vs. static (measure via GA4 events)
-- Add a lead-capture form or exit-intent popup for free audit CTA
+- Add a lead-capture form or exit-intent popup for free audit CTA ← **DONE 2026-05-18** (Elfsight FOMO widget added)
 - Add social proof counters (Google review count, years in business) above the fold
+- **PENDING: Add Microsoft Clarity heatmaps + session recording**
+  - Sign up free at https://clarity.microsoft.com (desktop only — can't set up from phone)
+  - Create a new project → copy the tracking ID (format: `xxxxxxxx`, 8 chars)
+  - Send the ID to Claude → will add one `<script>` tag to `<head>` in index.html
+  - No other tools needed — Clarity is the only missing analytics layer (GA4 covers events, Clarity covers behavior)
 
 ### 5. Performance
 - Compress the base64 logo image in index.html — it is ~80KB inline and delays first paint
