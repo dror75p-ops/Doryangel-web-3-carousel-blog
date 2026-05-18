@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DoryAngel Property Management NYC | Flat-Fee Management Since 2010</title>
-<meta name="description" content="DoryAngel LLC offers full-service residential and commercial property management in New York City. Flat-fee pricing, real-time owner dashboards, 24/7 maintenance coordination. Serving the Bronx, Queens, Yonkers, Mount Vernon, New Rochelle & North Jersey since 2010.">
+<meta name="description" content="DoryAngel: flat-fee property management in NYC. $99/mo, real-time owner dashboards, 24/7 maintenance. Bronx, Queens, Yonkers, North Jersey. Free audit.">
 <meta name="keywords" content="property management Bronx, flat fee property management NYC, Yonkers property management, Queens landlord services, Mount Vernon property management, New Rochelle rental management, North Jersey property management">
 <meta property="og:title" content="DoryAngel Property Management NYC">
 <meta property="og:description" content="High-tech property management at your fingertips. Flat-fee plans from $99/mo. Serving the Bronx, Queens, Yonkers, Mount Vernon, New Rochelle & North Jersey since 2010.">
@@ -13,6 +13,9 @@
 <meta property="og:url" content="https://doryangel.com/">
 <meta property="og:image" content="https://doryangel.com/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DoryAngel Property Management NYC">
+<meta name="twitter:description" content="DoryAngel: flat-fee property management in NYC. $99/mo, real-time owner dashboards, 24/7 maintenance. Bronx, Queens, Yonkers, North Jersey. Free audit.">
+<meta name="twitter:image" content="https://doryangel.com/og-image.jpg">
 <link rel="canonical" href="https://doryangel.com/">
 <meta name="geo.region" content="US-NY">
 <meta name="geo.placename" content="Bronx, New York City">
@@ -1259,6 +1262,17 @@ body.variant-dark .audience-card { background: #0F2040; }
   .cookie-btn { font-size: 12px; padding: 9px 14px; flex: 1; }
 }
 
+/* ===== SKIP TO CONTENT (keyboard accessibility) ===== */
+.skip-link {
+  position: absolute; top: -48px; left: 12px; z-index: 99999;
+  background: var(--navy); color: #fff;
+  padding: 10px 18px; border-radius: 0 0 8px 8px;
+  font-size: 14px; font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus { top: 0; }
+
 /* ===== SCROLL TO TOP ===== */
 #scroll-top-btn {
   position: fixed;
@@ -1567,7 +1581,7 @@ retell-chat-web-component {
   </svg>
 </template>
 <!-- Markdown parser for blog posts -->
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" async></script>
 <!-- Retell AI Chat Widget — Hailey lead capture -->
 <script
   id="retell-widget"
@@ -1582,6 +1596,7 @@ retell-chat-web-component {
 <body>
 
 <!-- ANNOUNCE BAR -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <div class="announce-bar">
   <strong>NYC Landlords:</strong>
   Save $3,000–$8,000/year vs. percentage-based managers.
@@ -1631,7 +1646,7 @@ retell-chat-web-component {
         <path d="M15.5 8.5h-7a.5.5 0 0 0-.45.72l2.2 4.78H8a1 1 0 0 0 0 2h2.5l.5 4h-1a1 1 0 0 0 0 2h4a1 1 0 0 0 0-2h-1l.5-4H16a1 1 0 0 0 0-2h-2.25l2.2-4.78A.5.5 0 0 0 15.5 8.5z"/>
       </svg>
     </button>
-    <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" class="nav-cta">Book Free Consultation</a>
+    <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" rel="noopener noreferrer" class="nav-cta">Book Free Consultation</a>
     <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer">
       <svg width="22" height="16" viewBox="0 0 22 16" fill="none" aria-hidden="true">
         <rect y="0" width="22" height="2.5" rx="1.25" fill="white"/>
@@ -1718,7 +1733,7 @@ retell-chat-web-component {
 </div>
 
 <!-- HERO -->
-<div class="hero-wrap">
+<div class="hero-wrap" id="main-content">
 <div class="hero-skyline" id="hero-skyline" aria-hidden="true">
   <div class="hero-photo active" role="img" aria-label="NYC residential street with apartment buildings" style="background-image:url('https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=1600&q=80&fit=crop')"></div>
   <div class="hero-photo" role="img" aria-label="Modern apartment building facade in New York City" style="background-image:url('https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=1600&q=80&fit=crop')"></div>
@@ -1833,7 +1848,7 @@ retell-chat-web-component {
       </a>
 
       <!-- Tenants -->
-      <a href="https://doryangel.managebuilding.com" target="_blank" class="audience-card">
+      <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener noreferrer" class="audience-card">
         <div class="audience-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
@@ -2110,7 +2125,7 @@ retell-chat-web-component {
         <span class="tool-tag">Free Tool</span>
         <h3>Preventive Maintenance &amp; Compliance</h3>
         <p>47 HPD, DOB &amp; FDNY compliance tasks — with penalty amounts and seasonal checklists — delivered to your inbox on the 1st of every month. Built for Bronx property owners.</p>
-        <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" class="btn-primary" style="margin-top:8px;width:fit-content;">Open Free Tool &rarr;</a>
+        <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-top:8px;width:fit-content;">Open Free Tool &rarr;</a>
       </div>
 
       <div class="tool-card">
@@ -2120,7 +2135,7 @@ retell-chat-web-component {
         <span class="tool-tag">Powered by Buildium</span>
         <h3>Owner &amp; Tenant Portal</h3>
         <p>Access your live owner dashboard, pay rent online, submit maintenance requests, and view your lease documents — all in one place. Available 24/7 from any device.</p>
-        <a href="https://doryangel.managebuilding.com" target="_blank" class="btn-secondary" style="margin-top:8px;width:fit-content;">Open Portal &rarr;</a>
+        <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="margin-top:8px;width:fit-content;">Open Portal &rarr;</a>
       </div>
 
       <div class="tool-card">
@@ -2130,7 +2145,7 @@ retell-chat-web-component {
         <span class="tool-tag" style="background:#EEF4FF;color:#1E5AA8;">Free Newsletter</span>
         <h3>DoryAngel Digest</h3>
         <p>Subscribe once and get notified whenever we publish a new article matching your interests — property management, DIY landlord tips, or NYC real estate investments. No noise, only what matters.</p>
-        <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/" target="_blank" class="btn-primary" style="margin-top:8px;width:fit-content;">Subscribe Free &rarr;</a>
+        <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-top:8px;width:fit-content;">Subscribe Free &rarr;</a>
       </div>
 
     </div>
@@ -2325,9 +2340,9 @@ retell-chat-web-component {
       </div>
 
       <div class="carousel-nav">
-        <button class="carousel-btn" onclick="scrollCarousel(-1)">&#8592;</button>
+        <button class="carousel-btn" onclick="scrollCarousel(-1)" aria-label="Previous reviews">&#8592;</button>
         <div class="carousel-dots" id="carouselDots"></div>
-        <button class="carousel-btn" onclick="scrollCarousel(1)">&#8594;</button>
+        <button class="carousel-btn" onclick="scrollCarousel(1)" aria-label="Next reviews">&#8594;</button>
       </div>
     </div>
 
@@ -2356,7 +2371,7 @@ retell-chat-web-component {
               <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
             </svg>
           </a>
-          <a href="https://share.google/tTIEyy7qxx4bKm1Zo" target="_blank"
+          <a href="https://share.google/tTIEyy7qxx4bKm1Zo" target="_blank" rel="noopener noreferrer"
              style="display:inline-flex;align-items:center;gap:8px;
                     background:transparent;color:#fff;
                     border:1.5px solid rgba(255,255,255,0.3);
@@ -2381,7 +2396,7 @@ retell-chat-web-component {
   <div class="section-inner">
     <div class="section-label">FAQ</div>
     <h2 class="section-title reveal">Frequently asked<br>questions</h2>
-    <p class="section-sub">Everything you need to know about working with DoryAngel. Can't find your answer? <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" style="color:var(--blue)">Book a free consultation</a>.</p>
+    <p class="section-sub">Everything you need to know about working with DoryAngel. Can't find your answer? <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" rel="noopener noreferrer" style="color:var(--blue)">Book a free consultation</a>.</p>
 
     <div class="faq-categories">
       <button class="faq-cat active" onclick="filterFaq('all', this)">All</button>
@@ -2681,9 +2696,9 @@ retell-chat-web-component {
       <div class="footer-col">
         <h4>Doryangel Property Automation</h4>
         <ul>
-          <li><a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank">Preventive Maintenance &amp; Compliance</a></li>
-          <li><a href="https://doryangel.managebuilding.com" target="_blank">Owner &amp; Tenant Portal (Buildium)</a></li>
-          <li><a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/" target="_blank">DoryAngel Digest</a></li>
+          <li><a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener noreferrer">Preventive Maintenance &amp; Compliance</a></li>
+          <li><a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener noreferrer">Owner &amp; Tenant Portal (Buildium)</a></li>
+          <li><a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/" target="_blank" rel="noopener noreferrer">DoryAngel Digest</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -3027,7 +3042,7 @@ async function handleFormSubmit(e) {
 })();
 </script>
 
-<script src="./blog-loader.js"></script>
+<script src="./blog-loader.js" defer></script>
 
 <!-- ===== SCROLL TO TOP ===== -->
 <button id="scroll-top-btn" aria-label="Back to top" title="Back to top">
