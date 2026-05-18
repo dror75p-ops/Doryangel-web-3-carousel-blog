@@ -1259,6 +1259,39 @@ body.variant-dark .audience-card { background: #0F2040; }
   .cookie-btn { font-size: 12px; padding: 9px 14px; flex: 1; }
 }
 
+/* ===== SCROLL TO TOP ===== */
+#scroll-top-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 80px;
+  z-index: 501;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 20px rgba(13,30,58,0.28);
+  opacity: 0; pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s;
+}
+#scroll-top-btn.is-visible {
+  opacity: 1; pointer-events: auto; transform: translateY(0);
+}
+#scroll-top-btn:hover, #scroll-top-btn:focus-visible {
+  background: var(--blue); transform: translateY(-2px);
+}
+#scroll-top-btn:focus-visible {
+  outline: 3px solid var(--blue-light); outline-offset: 2px;
+}
+@media (max-width: 767px) {
+  #scroll-top-btn { bottom: 176px; right: 39px; width: 48px; height: 48px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #scroll-top-btn { transition: opacity 0.15s; transform: none !important; }
+}
+
 /* NAV OVERLAY */
 .nav-overlay {
   display: none;
@@ -2972,6 +3005,14 @@ async function handleFormSubmit(e) {
 
 <script src="./blog-loader.js"></script>
 
+<!-- ===== SCROLL TO TOP ===== -->
+<button id="scroll-top-btn" aria-label="Back to top" title="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+       width="20" height="20" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/>
+  </svg>
+</button>
+
 <!-- ===== COOKIE CONSENT + GOOGLE ANALYTICS ===== -->
 <div id="cookie-banner" role="dialog" aria-label="Cookie consent">
   <div id="cookie-banner-text">
@@ -3218,6 +3259,30 @@ async function handleFormSubmit(e) {
 })();
 </script>
 
+<script>
+/* ===== SCROLL TO TOP ===== */
+(function () {
+  var btn = document.getElementById('scroll-top-btn');
+  if (!btn) return;
+  var visible = false;
+  function onScroll() {
+    var show = window.scrollY > 400;
+    if (show === visible) return;
+    visible = show;
+    btn.classList.toggle('is-visible', show);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  btn.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+</script>
+
+<!-- ===== FOMO SOCIAL PROOF WIDGET =====
+     Sign up at https://www.socialproofy.io (free plan) or https://elfsight.com
+     Configure: bottom-left position, 20s delay, navy #0D1E3A / blue #1E5AA8 colors
+     Then replace this comment block with the <script> snippet from their dashboard.
+     ===== -->
 
 </body>
 </html>
