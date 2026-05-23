@@ -59,6 +59,16 @@ function renderPage(post, related) {
     url,
   };
 
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/#blog` },
+      { '@type': 'ListItem', position: 3, name: post.title, item: url },
+    ],
+  };
+
   const relatedHtml = related.length === 0 ? '' : `
     <section class="related-posts">
       <h2>Continue reading</h2>
@@ -111,6 +121,9 @@ ${(post.hashtags || []).map(t => `<meta property="article:tag" content="${escape
 
 <script type="application/ld+json">
 ${JSON.stringify(jsonLd, null, 2)}
+</script>
+<script type="application/ld+json">
+${JSON.stringify(breadcrumbLd, null, 2)}
 </script>
 
 <style>
