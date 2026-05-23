@@ -59,6 +59,16 @@ function renderPage(post, related) {
     url,
   };
 
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/#blog` },
+      { '@type': 'ListItem', position: 3, name: post.title, item: url },
+    ],
+  };
+
   const relatedHtml = related.length === 0 ? '' : `
     <section class="related-posts">
       <h2>Continue reading</h2>
@@ -111,6 +121,9 @@ ${(post.hashtags || []).map(t => `<meta property="article:tag" content="${escape
 
 <script type="application/ld+json">
 ${JSON.stringify(jsonLd, null, 2)}
+</script>
+<script type="application/ld+json">
+${JSON.stringify(breadcrumbLd, null, 2)}
 </script>
 
 <style>
@@ -335,6 +348,7 @@ ${relatedHtml}
 function buildSitemap(posts) {
   const urls = [
     `  <url><loc>${SITE_URL}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>`,
+    `  <url><loc>${SITE_URL}/broker-partner.html</loc><lastmod>2026-05-23</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
     ...posts.map(p =>
       `  <url><loc>${SITE_URL}/blog/${p.slug}/</loc><lastmod>${p.publishedDate}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`
     ),
