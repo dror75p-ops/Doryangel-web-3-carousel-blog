@@ -316,6 +316,8 @@ footer.post-footer a { color: white; text-decoration: none; }
   </div>
 
   ${hashtagText ? `<div class="hashtag-row">${(post.hashtags || []).map(t => `<span>#${escape(t)}</span>`).join('')}</div>` : ''}
+
+  <p class="legal-note" style="font-size:12px;color:#888;margin-top:32px;line-height:1.5;">This article is for informational purposes only and does not constitute legal, financial, or professional advice. Consult a qualified attorney or advisor for guidance specific to your situation.</p>
 </article>
 
 ${relatedHtml}

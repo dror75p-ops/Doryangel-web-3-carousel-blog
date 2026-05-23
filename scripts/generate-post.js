@@ -59,6 +59,7 @@ Rules:
 - Title must be a question OR start with a number
 - Address a real landlord pain point; use seasonal relevance where fitting
 - Category must be exactly one of: property-management, diy-property-management, investments, property-automation
+- IMPORTANT: strongly prefer "investments" or "property-automation" — these are underrepresented. Use "property-management" or "diy-property-management" only if no suitable investments/property-automation angle exists for this season
 
 Reply ONLY with valid JSON: {"title": "...", "category": "..."}`,
       }],
@@ -318,6 +319,13 @@ ${post.content}
 async function main() {
   const indexPath = './content/blog/posts-index.json';
   const posts = JSON.parse(readFileSync(indexPath, 'utf8'));
+
+  // Guard: skip if a post was already published today (prevents double-runs)
+  const today = formatDate(new Date());
+  if (posts[0]?.publishedDate === today) {
+    console.log(`Post already published today (${today}) — skipping to avoid duplicate.`);
+    process.exit(0);
+  }
 
   const topic = await pickTopicWithAI(posts);
   console.log(`Generating post about: "${topic.title}" (${topic.category})`);
