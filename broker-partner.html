@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Broker Partner Program | DoryAngel LLC</title>
+<meta name="description" content="Transform your brokerage into an annuity business. Partner with DoryAngel — earn $50/unit/month in recurring income with $0 overhead and zero new responsibilities.">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="Broker Partner Program | DoryAngel LLC">
+<meta property="og:description" content="Keep doing what you do as a broker. We handle property management behind the scenes — and you earn recurring income from every unit you place.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://doryangel.com/broker-partner.html">
+<link rel="canonical" href="https://dror75p-ops.github.io/Doryangel-web-3-carousel-blog/broker-partner.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+body { font-family: 'DM Sans', sans-serif; background: #fff; color: #1A2740; line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+button { cursor: pointer; font-family: inherit; }
+
+:root {
+  --navy:      #0D1E3A;
+  --blue:      #3A7BDD;
+  --blue-lt:   #5B9FEA;
+  --blue-dim:  #EBF3FD;
+  --grey:      #8B9BAE;
+  --grey-light:#F4F7FA;
+  --grey-mid:  #E2E8F0;
+  --text:      #1A2740;
+  --text-muted:#556070;
+  --radius:    12px;
+  --shadow:    0 4px 24px rgba(13,30,58,0.08);
+  --shadow-lg: 0 12px 48px rgba(13,30,58,0.14);
+}
+
+/* ─── LAYOUT UTILS ─── */
+.wrap  { max-width: 1160px; margin: 0 auto; padding: 0 32px; }
+.sec   { padding: 80px 0; }
+.eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--blue); margin-bottom: 10px;
+}
+.section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 44px; font-weight: 800; line-height: 1.05;
+  color: var(--navy); text-transform: uppercase; letter-spacing: -0.01em;
+}
+.section-sub { font-size: 15px; color: var(--text-muted); line-height: 1.7; }
+.center { text-align: center; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+/* ─── NAV ─── */
+.bp-nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--grey-mid);
+}
+.bp-nav-inner {
+  height: 64px; display: flex; align-items: center;
+  justify-content: space-between; gap: 16px;
+}
+.bp-nav-brand {
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.bp-nav-brand img { height: 36px; object-fit: contain; }
+.bp-nav-brand-text .name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 19px; font-weight: 800; color: var(--navy);
+  letter-spacing: 0.02em; line-height: 1.1;
+}
+.bp-nav-brand-text .tag {
+  font-size: 9px; color: var(--grey); letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.bp-nav-links {
+  display: flex; align-items: center; gap: 24px;
+  list-style: none;
+}
+.bp-nav-links a {
+  font-size: 14px; font-weight: 500; color: var(--text-muted);
+  transition: color 0.2s;
+}
+.bp-nav-links a:hover { color: var(--navy); }
+.bp-nav-back {
+  font-size: 13px; font-weight: 600; color: var(--text-muted);
+  display: flex; align-items: center; gap: 5px;
+  transition: color 0.2s;
+}
+.bp-nav-back svg { width: 14px; height: 14px; }
+.bp-nav-back:hover { color: var(--blue); }
+.bp-nav-cta {
+  background: var(--blue); color: #fff;
+  border: none; border-radius: 8px;
+  padding: 10px 22px; font-size: 14px; font-weight: 600;
+  min-height: 44px; white-space: nowrap; cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.bp-nav-cta:hover { background: var(--navy); transform: translateY(-1px); }
+.hamburger {
+  display: none; background: none; border: none;
+  padding: 8px; align-items: center; justify-content: center;
+  min-width: 44px; min-height: 44px;
+}
+.mobile-menu {
+  display: none; flex-direction: column;
+  background: #fff; border-top: 1px solid var(--grey-mid);
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  font-size: 16px; font-weight: 500; color: var(--text);
+  padding: 14px 20px; border-bottom: 1px solid var(--grey-light);
+  display: block;
+}
+.mobile-menu .mob-cta {
+  padding: 14px 20px;
+}
+.mobile-menu .mob-cta button {
+  width: 100%; background: var(--blue); color: #fff;
+  border: none; border-radius: 8px; padding: 14px;
+  font-size: 15px; font-weight: 600; min-height: 48px;
+}
+
+/* ─── HERO ─── */
+.hero {
+  position: relative; min-height: 560px; overflow: hidden;
+  display: flex; align-items: center;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background-image: url('assets/hero-building.jpg');
+  background-size: cover; background-position: center 35%;
+}
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: rgba(10, 18, 38, 0.82);
+}
+.hero-inner {
+  position: relative; z-index: 2;
+  padding-top: 56px; padding-bottom: 56px;
+  max-width: 860px;
+}
+.hero-eyebrow {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--blue-lt);
+  margin-bottom: 14px;
+}
+.hero-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 72px; font-weight: 800; line-height: 1.0;
+  color: #fff; text-transform: uppercase;
+  letter-spacing: -0.01em; margin-bottom: 20px;
+}
+.hero-sub {
+  font-size: 16px; color: rgba(255,255,255,0.72);
+  line-height: 1.7; max-width: 500px; margin-bottom: 32px;
+}
+.hero-actions {
+  display: flex; gap: 14px; margin-bottom: 52px; flex-wrap: wrap;
+}
+.btn-primary {
+  background: var(--blue); color: #fff;
+  border: none; border-radius: 8px;
+  padding: 15px 32px; font-size: 16px; font-weight: 600;
+  min-height: 52px; cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-primary:hover { background: var(--navy); transform: translateY(-1px); }
+.btn-outline-white {
+  background: transparent; color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.38); border-radius: 8px;
+  padding: 15px 28px; font-size: 15px; font-weight: 500;
+  min-height: 52px; display: inline-flex; align-items: center;
+  cursor: pointer; transition: border-color 0.2s, background 0.2s;
+}
+.btn-outline-white:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.6); }
+.hero-stats {
+  display: flex; gap: 48px; flex-wrap: wrap;
+}
+.stat-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 30px; font-weight: 700; color: #fff; line-height: 1;
+}
+.stat-lbl {
+  font-size: 10px; color: rgba(255,255,255,0.45);
+  letter-spacing: 0.07em; text-transform: uppercase; margin-top: 4px;
+}
+
+/* ─── THE DEAL ─── */
+.deal-steps { max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; }
+.deal-step {
+  display: flex; gap: 28px; padding: 28px 0;
+  border-bottom: 1px solid var(--grey-mid);
+}
+.deal-step:last-child { border-bottom: none; }
+.step-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 36px; font-weight: 800; color: var(--blue);
+  opacity: 0.35; line-height: 1; min-width: 48px; flex-shrink: 0;
+}
+.step-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px; font-weight: 700; color: var(--navy);
+  margin-bottom: 8px; line-height: 1.2;
+}
+.step-body { font-size: 15px; color: var(--text-muted); line-height: 1.7; }
+
+/* ─── COMPARISON ─── */
+.compare-wrap {
+  max-width: 900px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr;
+}
+.compare-col-you {
+  background: var(--blue-dim);
+  border-radius: var(--radius) 0 0 var(--radius);
+  padding: 36px 32px;
+  border: 2px solid #A8D0EF; border-right: none;
+}
+.compare-col-us {
+  background: var(--navy);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 36px 32px;
+}
+.compare-head {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 24px;
+}
+.compare-icon {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.compare-head-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.compare-item {
+  display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px;
+}
+.compare-item:last-child { margin-bottom: 0; }
+.check-dot {
+  width: 20px; height: 20px; border-radius: 50%; background: var(--blue);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;
+}
+.check-dot svg { width: 11px; height: 11px; stroke: #fff; }
+.dot-us {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255,255,255,0.35); flex-shrink: 0; margin-top: 8px;
+}
+.compare-item span { font-size: 14px; line-height: 1.55; }
+
+/* ─── CALCULATOR ─── */
+.calc-box {
+  background: var(--grey-light); border-radius: 16px;
+  box-shadow: var(--shadow); max-width: 840px; margin: 0 auto;
+  padding: 44px 52px; border: 1px solid var(--grey-mid);
+}
+.calc-label-row {
+  display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px;
+}
+.calc-units-label {
+  font-size: 12px; font-weight: 600; color: var(--text);
+  text-transform: uppercase; letter-spacing: 0.07em;
+}
+.calc-units-count {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 52px; font-weight: 800; color: var(--blue); line-height: 1;
+}
+input[type=range] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 4px; border-radius: 4px;
+  outline: none; cursor: pointer; background: var(--grey-mid);
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--blue); box-shadow: 0 2px 8px rgba(58,123,221,0.4);
+  transition: transform 0.15s; cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb:active { transform: scale(1.18); }
+input[type=range]::-moz-range-thumb {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--blue); border: none;
+}
+.range-labels {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: var(--grey); margin-top: 8px;
+}
+.calc-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 28px 0; }
+.calc-card {
+  border-radius: 10px; padding: 24px 20px;
+}
+.calc-card-lbl {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--grey); margin-bottom: 8px;
+}
+.calc-card-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 48px; font-weight: 800; line-height: 1; margin-bottom: 6px;
+}
+.calc-card-sub { font-size: 11px; color: var(--grey); line-height: 1.5; }
+.calc-breakdown {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--grey-mid); padding-top: 20px;
+}
+.breakdown-item { padding: 0 20px; }
+.breakdown-item + .breakdown-item { border-left: 1px solid var(--grey-mid); }
+.breakdown-lbl {
+  font-size: 10px; color: var(--grey); text-transform: uppercase;
+  letter-spacing: 0.07em; margin-bottom: 4px;
+}
+.breakdown-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 26px; font-weight: 700; color: var(--navy); line-height: 1.1;
+}
+.breakdown-val.green { color: #16A34A; }
+.breakdown-note { font-size: 11px; color: var(--grey); margin-top: 3px; }
+.calc-footnote {
+  font-size: 12px; color: var(--grey); text-align: center;
+  margin-top: 16px; line-height: 1.6;
+}
+
+/* ─── FAQ ─── */
+.faq-section { background: var(--grey-light); }
+.faq-inner { max-width: 820px; margin: 0 auto; }
+.faq-cat-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px; font-weight: 700; color: var(--blue);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  padding-bottom: 12px; margin-bottom: 4px;
+  border-bottom: 2px solid var(--blue);
+}
+.faq-group { margin-bottom: 40px; }
+.faq-item { border-bottom: 1px solid var(--grey-mid); }
+.faq-q {
+  width: 100%; display: flex; justify-content: space-between;
+  align-items: center; gap: 16px; padding: 18px 0;
+  background: none; border: none; text-align: left; cursor: pointer;
+}
+.faq-q-text { font-size: 15px; font-weight: 500; color: var(--navy); line-height: 1.45; }
+.faq-icon {
+  width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+  border: 1.5px solid var(--grey-mid);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, border-color 0.2s;
+}
+.faq-icon svg { width: 10px; height: 10px; transition: transform 0.25s; }
+.faq-item.open .faq-icon { background: var(--blue); border-color: var(--blue); }
+.faq-item.open .faq-icon svg { transform: rotate(45deg); }
+.faq-a {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.2s;
+}
+.faq-item.open .faq-a { max-height: 600px; }
+.faq-a p { font-size: 14px; color: var(--text-muted); line-height: 1.75; padding-bottom: 20px; }
+
+/* ─── TOOLS GRID ─── */
+.tool-card {
+  background: #fff; border-radius: var(--radius);
+  padding: 24px 20px; box-shadow: var(--shadow);
+  border: 1px solid var(--grey-mid); position: relative;
+}
+.tool-tag {
+  position: absolute; top: 16px; right: 16px;
+  background: var(--blue-dim); color: #2A6FA8;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 3px 8px; border-radius: 4px;
+}
+.tool-icon-wrap {
+  width: 40px; height: 40px; background: var(--grey-light);
+  border-radius: 8px; display: flex; align-items: center;
+  justify-content: center; margin-bottom: 14px;
+}
+.tool-icon-wrap svg { width: 18px; height: 18px; stroke: var(--blue); }
+.tool-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 19px; font-weight: 700; color: var(--navy); margin-bottom: 6px;
+}
+.tool-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+/* ─── TRUST DARK ─── */
+.trust-dark { background: var(--navy); padding: 60px 0; }
+.trust-card {
+  display: flex; gap: 18px; padding: 24px 20px;
+  background: rgba(255,255,255,0.06); border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.trust-icon {
+  width: 44px; height: 44px; background: var(--blue);
+  border-radius: 10px; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0;
+}
+.trust-icon svg { width: 20px; height: 20px; stroke: #fff; }
+.trust-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 19px; font-weight: 700; color: #fff; margin-bottom: 8px;
+}
+.trust-body { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.65; }
+.legal-note {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 22px; margin-top: 28px;
+  font-size: 12px; color: rgba(255,255,255,0.3);
+  line-height: 1.75; max-width: 900px;
+}
+.legal-note strong { color: rgba(255,255,255,0.45); }
+
+/* ─── CTA FORM ─── */
+.cta-section { background: var(--grey-light); }
+.cta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.cta-check-list { display: flex; flex-direction: column; gap: 14px; margin-top: 28px; }
+.cta-check {
+  display: flex; align-items: center; gap: 12px;
+}
+.cta-check-icon {
+  width: 24px; height: 24px; background: var(--blue-dim);
+  border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0;
+}
+.cta-check-icon svg { width: 13px; height: 13px; stroke: var(--blue); }
+.cta-check span { font-size: 14px; color: var(--text); }
+.form-card {
+  background: #fff; border-radius: 14px; padding: 36px 32px;
+  box-shadow: var(--shadow-lg); border: 1px solid var(--grey-mid);
+}
+.form-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 26px; font-weight: 700; color: var(--navy); margin-bottom: 6px;
+}
+.form-sub { font-size: 13px; color: var(--grey); margin-bottom: 24px; line-height: 1.5; }
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block; font-size: 12px; font-weight: 600;
+  color: var(--text); margin-bottom: 6px; letter-spacing: 0.04em;
+}
+.form-input {
+  width: 100%; padding: 13px 14px;
+  border: 1px solid var(--grey-mid); border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 15px;
+  color: var(--text); background: #fff; outline: none;
+  min-height: 48px; transition: border-color 0.2s;
+}
+.form-input:focus { border-color: var(--blue); }
+.form-input.error { border-color: #DC2626; }
+.form-error { font-size: 11px; color: #DC2626; margin-top: 4px; }
+.form-submit {
+  width: 100%; background: var(--blue); color: #fff;
+  border: none; border-radius: 8px; padding: 15px;
+  font-size: 15px; font-weight: 600; margin-top: 6px;
+  min-height: 52px; cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.form-submit:hover { background: var(--navy); transform: translateY(-1px); }
+.form-success { text-align: center; padding: 32px 0; }
+.form-success-icon {
+  width: 64px; height: 64px; background: var(--blue-dim);
+  border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; margin: 0 auto 18px;
+}
+.form-success-icon svg { width: 28px; height: 28px; stroke: var(--blue); }
+.form-success-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 28px; font-weight: 700; color: var(--navy); margin-bottom: 10px;
+}
+.form-success-sub { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+.form-reset {
+  margin-top: 24px; background: transparent;
+  border: 1px solid var(--grey-mid); border-radius: 8px;
+  padding: 11px 22px; font-size: 13px; color: var(--text-muted);
+  min-height: 44px; cursor: pointer; transition: border-color 0.2s;
+}
+.form-reset:hover { border-color: var(--blue); }
+
+/* ─── FOOTER ─── */
+.bp-footer { background: #111827; padding-top: 48px; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1.5fr; gap: 48px; padding-bottom: 32px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.footer-brand-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px; font-weight: 800; color: #fff;
+}
+.footer-brand-tag { font-size: 10px; color: var(--blue); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.footer-desc { font-size: 13px; color: rgba(255,255,255,0.35); line-height: 1.65; max-width: 240px; }
+.footer-col-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px; font-weight: 700; color: #fff;
+  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px;
+}
+.footer-links { display: flex; flex-direction: column; gap: 10px; }
+.footer-links a { font-size: 13px; color: rgba(255,255,255,0.42); transition: color 0.2s; }
+.footer-links a:hover { color: var(--blue-lt); }
+.footer-contact { display: flex; flex-direction: column; gap: 8px; }
+.footer-contact-line { font-size: 13px; color: rgba(255,255,255,0.42); line-height: 1.6; }
+.footer-contact-line a { color: var(--blue-lt); }
+.footer-bottom {
+  padding: 14px 0;
+  font-size: 11px; color: rgba(255,255,255,0.2);
+}
+.back-to-main {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; color: rgba(255,255,255,0.42);
+  margin-bottom: 16px; transition: color 0.2s;
+}
+.back-to-main:hover { color: var(--blue-lt); }
+.back-to-main svg { width: 14px; height: 14px; }
+
+/* ─── FLOAT CTA (mobile) ─── */
+.float-cta {
+  display: none; position: fixed; bottom: 0; left: 0; right: 0;
+  z-index: 90; padding: 12px 20px 20px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--grey-mid);
+}
+.float-cta button {
+  width: 100%; background: var(--blue); color: #fff;
+  border: none; border-radius: 10px; padding: 16px;
+  font-size: 16px; font-weight: 600; min-height: 52px; cursor: pointer;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1024px) {
+  .wrap { padding: 0 24px; }
+  .section-title { font-size: 36px; }
+  .hero-title { font-size: 56px; }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .cta-grid { gap: 48px; }
+  .calc-box { padding: 36px 32px; }
+}
+@media (max-width: 768px) {
+  .wrap { padding: 0 20px; }
+  .sec  { padding: 52px 0; }
+  .section-title { font-size: 30px; }
+  .hero-title { font-size: 38px; margin-bottom: 16px; }
+  .hero-sub { font-size: 15px; }
+  .hero-actions { flex-direction: column; gap: 12px; margin-bottom: 36px; }
+  .hero-actions button, .hero-actions a { width: 100%; justify-content: center; }
+  .hero-stats { gap: 28px; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .compare-wrap { grid-template-columns: 1fr; }
+  .compare-col-you { border-radius: var(--radius) var(--radius) 0 0; border-right: 2px solid #A8D0EF; border-bottom: none; }
+  .compare-col-us { border-radius: 0 0 var(--radius) var(--radius); }
+  .calc-box { padding: 24px 20px; }
+  .calc-cards { grid-template-columns: 1fr; }
+  .calc-breakdown { grid-template-columns: 1fr; }
+  .breakdown-item { padding: 14px 0; border-left: none !important; border-top: 1px solid var(--grey-mid); }
+  .breakdown-item:first-child { border-top: none; }
+  .cta-grid { grid-template-columns: 1fr; gap: 32px; }
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+  .bp-nav-links { display: none; }
+  .hamburger { display: flex; }
+  .float-cta { display: flex; }
+  .bp-footer { padding-bottom: 80px; }
+  .bp-nav-back { display: none; }
+  .bp-nav-back.mobile-back { display: flex; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══════════════════════════════════════════════ -->
+<header class="bp-nav">
+  <div class="wrap">
+    <div class="bp-nav-inner">
+      <div class="bp-nav-brand">
+        <img src="assets/logo.jpg" alt="DoryAngel">
+        <div class="bp-nav-brand-text">
+          <div class="name">DORYANGEL</div>
+          <div class="tag">Enhance Asset Value</div>
+        </div>
+      </div>
+
+      <nav>
+        <ul class="bp-nav-links">
+          <li><a href="#the-deal">The Deal</a></li>
+          <li><a href="#your-income">Your Income</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li>
+            <a href="index.html" class="bp-nav-back" aria-label="Back to DoryAngel main site">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="13 5 6 10 13 15"/></svg>
+              DoryAngel.com
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <button class="bp-nav-cta" onclick="scrollToSection('request-beta-access')">Request Beta Access</button>
+      <button class="hamburger" onclick="toggleMenu()" aria-label="Open menu" aria-expanded="false" id="hamburger-btn">
+        <svg width="22" height="16" viewBox="0 0 22 16" fill="none" id="hamburger-icon">
+          <line x1="1" y1="2" x2="21" y2="2" stroke="#1A2740" stroke-width="2" stroke-linecap="round"/>
+          <line x1="1" y1="8" x2="21" y2="8" stroke="#1A2740" stroke-width="2" stroke-linecap="round"/>
+          <line x1="1" y1="14" x2="21" y2="14" stroke="#1A2740" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#the-deal" onclick="closeMenu()">The Deal</a>
+    <a href="#your-income" onclick="closeMenu()">Your Income</a>
+    <a href="#faq" onclick="closeMenu()">FAQ</a>
+    <a href="index.html">← Back to DoryAngel.com</a>
+    <div class="mob-cta">
+      <button onclick="closeMenu(); scrollToSection('request-beta-access')">Request Beta Access</button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ HERO ═══════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg" role="img" aria-label="Modern urban real estate building"></div>
+  <div class="hero-overlay"></div>
+  <div class="wrap" style="width:100%;">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">United States · Broker Partner Program · Beta 2026</div>
+      <h1 class="hero-title">Keep Being a Broker.<br>Start Getting Paid Like an Owner.</h1>
+      <p class="hero-sub">
+        Keep doing what you do as a broker. We handle property management behind the scenes —
+        and you earn recurring income from every unit you place. No overhead. No new role. Just additional income.
+      </p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="scrollToSection('request-beta-access')">Request Beta Access</button>
+        <a href="#the-deal" class="btn-outline-white">See How It Works</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">$50</div>
+          <div class="stat-lbl">Per Unit / Per Month — New Income</div>
+        </div>
+        <div>
+          <div class="stat-num">$0</div>
+          <div class="stat-lbl">Added to Your Overhead</div>
+        </div>
+        <div>
+          <div class="stat-num">30 min</div>
+          <div class="stat-lbl">Quarterly Commitment</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ THE DEAL ═══════════════════════════════════════════ -->
+<section id="the-deal" class="sec" style="background:#fff;">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:52px;">
+      <div class="eyebrow">The Deal — Plain and Simple</div>
+      <h2 class="section-title" style="margin-bottom:14px;">Here's Exactly How This Works</h2>
+      <p class="section-sub" style="max-width:520px;margin:0 auto;">No jargon. No fine print surprises. Just five clear steps — and then you'll know everything you need to decide.</p>
+    </div>
+    <div class="deal-steps">
+      <div class="deal-step">
+        <div class="step-num">01</div>
+        <div>
+          <div class="step-title">You place a tenant — what you already do</div>
+          <p class="step-body">When you rent a vacant apartment to a qualified tenant, that unit enters the DoryAngel program. Nothing changes about how you operate as a broker. You do exactly what you've always done.</p>
+        </div>
+      </div>
+      <div class="deal-step">
+        <div class="step-num">02</div>
+        <div>
+          <div class="step-title">DoryAngel takes over everything else</div>
+          <p class="step-body">From that moment on, we handle maintenance requests, vendor dispatch, compliance filings, rent monitoring, owner reporting, and tenant communications. You're not in any of those chains.</p>
+        </div>
+      </div>
+      <div class="deal-step">
+        <div class="step-num">03</div>
+        <div>
+          <div class="step-title">You earn $50 / unit / month — every month</div>
+          <p class="step-body">That's your share — approximately 30% of the total property management fee collected. It's recurring, passive income. A unit you placed two years ago still pays you $50 a month today.</p>
+        </div>
+      </div>
+      <div class="deal-step">
+        <div class="step-num">04</div>
+        <div>
+          <div class="step-title">Your existing broker commission stays exactly as it is</div>
+          <p class="step-body">When you rent an apartment, you earn your broker fee — just as you always have. DoryAngel does not change that. The $50/unit/month is purely additional income layered on top of your existing earnings, not a replacement or a trade-off.</p>
+        </div>
+      </div>
+      <div class="deal-step">
+        <div class="step-num">05</div>
+        <div>
+          <div class="step-title">One quarterly check-in call. That's it.</div>
+          <p class="step-body">Every three months, you join a 30-minute call with your owner client and a DoryAngel representative. We review performance, address any questions, and keep the relationship strong. That is your full operational commitment.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COMPARISON ══════════════════════════════════════════ -->
+<section class="sec" style="background:var(--grey-light);">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:44px;">
+      <div class="eyebrow">Division of Responsibility</div>
+      <h2 class="section-title" style="margin-bottom:12px;">You Do This. We Do Everything Else.</h2>
+      <p class="section-sub" style="max-width:480px;margin:0 auto;">The list on the left is short on purpose. That's the whole point.</p>
+    </div>
+    <div class="compare-wrap">
+      <!-- You -->
+      <div class="compare-col-you">
+        <div class="compare-head">
+          <div class="compare-icon" style="background:var(--blue);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="16" height="16">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div class="compare-head-label" style="color:var(--blue);">You</div>
+        </div>
+        <div class="compare-item">
+          <div class="check-dot"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2"><polyline points="2 6 5 9 10 3"/></svg></div>
+          <span>Rent vacant apartments (as you always do)</span>
+        </div>
+        <div class="compare-item">
+          <div class="check-dot"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2"><polyline points="2 6 5 9 10 3"/></svg></div>
+          <span>Keep the owner relationship warm</span>
+        </div>
+        <div class="compare-item">
+          <div class="check-dot"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2"><polyline points="2 6 5 9 10 3"/></svg></div>
+          <span>Join a 30-min quarterly check-in call</span>
+        </div>
+      </div>
+      <!-- DoryAngel -->
+      <div class="compare-col-us">
+        <div class="compare-head">
+          <div class="compare-icon" style="background:rgba(255,255,255,0.12);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="16" height="16">
+              <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/>
+            </svg>
+          </div>
+          <div class="compare-head-label" style="color:#fff;">DoryAngel</div>
+        </div>
+        <div class="compare-item"><div class="dot-us"></div><span style="color:rgba(255,255,255,0.65);">Handle all maintenance requests 24/7</span></div>
+        <div class="compare-item"><div class="dot-us"></div><span style="color:rgba(255,255,255,0.65);">Dispatch licensed vendors by ZIP code</span></div>
+        <div class="compare-item"><div class="dot-us"></div><span style="color:rgba(255,255,255,0.65);">Monitor local compliance requirements</span></div>
+        <div class="compare-item"><div class="dot-us"></div><span style="color:rgba(255,255,255,0.65);">Collect rent and send owner direct deposits</span></div>
+        <div class="compare-item"><div class="dot-us"></div><span style="color:rgba(255,255,255,0.65);">Generate monthly performance reports</span></div>
+        <div class="compare-item"><div class="dot-us"></div><span style="color:rgba(255,255,255,0.65);">Manage Buildium CRM ledgers</span></div>
+        <div class="compare-item"><div class="dot-us"></div><span style="color:rgba(255,255,255,0.65);">Handle all tenant communications</span></div>
+        <div class="compare-item"><div class="dot-us"></div><span style="color:rgba(255,255,255,0.65);">Track inspection deadlines and filings</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CALCULATOR ══════════════════════════════════════════ -->
+<section id="your-income" class="sec" style="background:#fff;">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:44px;">
+      <div class="eyebrow">Your Income Calculator</div>
+      <h2 class="section-title" style="margin-bottom:12px;">What Does This Actually Pay?</h2>
+      <p class="section-sub" style="max-width:500px;margin:0 auto;">The $50/unit/month is the new income DoryAngel adds on top of what you already earn as a broker. Your existing commissions stay untouched. Drag the slider to see the full picture.</p>
+    </div>
+    <div class="calc-box">
+      <div>
+        <div class="calc-label-row">
+          <label class="calc-units-label" for="units-slider">Units Under Management</label>
+          <div class="calc-units-count" id="units-display">10</div>
+        </div>
+        <input type="range" id="units-slider" min="1" max="200" value="10"
+               aria-label="Number of units under management"
+               oninput="updateCalc(this.value)">
+        <div class="range-labels"><span>1 unit</span><span>200 units</span></div>
+      </div>
+      <div class="calc-cards">
+        <div class="calc-card" style="background:#fff;border:1px solid var(--grey-mid);">
+          <div class="calc-card-lbl">New Annual Income from DoryAngel</div>
+          <div class="calc-card-val" id="annual-val" style="color:var(--navy);">$6,000</div>
+          <div class="calc-card-sub">$50/month × 12 × your units — purely additional, on top of your broker fees</div>
+        </div>
+        <div class="calc-card" style="background:var(--blue-dim);border:1px solid #A8D0EF;">
+          <div class="calc-card-lbl">New Income Over 5 Years</div>
+          <div class="calc-card-val" id="fiveyear-val" style="color:var(--blue);">$30,000</div>
+          <div class="calc-card-sub">Recurring, passive — no extra effort required after placement</div>
+        </div>
+      </div>
+      <div class="calc-breakdown">
+        <div class="breakdown-item">
+          <div class="breakdown-lbl">Monthly New Income</div>
+          <div class="breakdown-val" id="monthly-val">$500</div>
+          <div class="breakdown-note">Every month, per unit</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-lbl">Your Broker Fees</div>
+          <div class="breakdown-val">Unchanged</div>
+          <div class="breakdown-note">You keep earning as always</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-lbl">Your Overhead</div>
+          <div class="breakdown-val green">$0</div>
+          <div class="breakdown-note">None, ever</div>
+        </div>
+      </div>
+    </div>
+    <p class="calc-footnote">The $50/unit/month shown here is your additional income from DoryAngel — approximately 30% of the total property management fee. Your existing broker commissions from renting apartments are separate and unaffected.</p>
+  </div>
+</section>
+
+<!-- ═══ FAQ ════════════════════════════════════════════════ -->
+<section id="faq" class="sec faq-section">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:52px;">
+      <div class="eyebrow">FAQ</div>
+      <h2 class="section-title" style="margin-bottom:12px;">Everything You'd Ask on the First Call</h2>
+      <p class="section-sub" style="max-width:480px;margin:0 auto;">We've answered the 25 most common questions brokers ask us. No fluff — straight answers.</p>
+    </div>
+    <div class="faq-inner" id="faq-container">
+
+      <!-- Getting Started -->
+      <div class="faq-group">
+        <div class="faq-cat-label">Getting Started</div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">Do I need a property management license to participate?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>No. Your existing real estate broker license (or salesperson license under a broker) is all you need. DoryAngel operates as a back-office consulting agency. You continue in your existing licensed role — we simply add a revenue stream to it.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">Is there a minimum number of units or clients I need to start?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>Zero minimum. You can start with a single unit. Many partners begin with one or two owner clients and grow naturally from there. There's no floor, no ceiling, and no pressure.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">How long does onboarding take?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>Once your application is approved, most partners are operational within 5 to 7 business days. We set up your Buildium access, sync your client accounts, and walk you through the quarterly check-in process on your first intro call.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">Is there a contract or long-term commitment?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>No contract, no commitment. This is designed to work alongside your existing brokerage practice — not replace it or restrict it. You can start, pause, or stop at any time without penalty.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">Which markets can I operate in?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>The program is open to licensed real estate brokers across the United States and is expanding to the United Kingdom. Wherever you operate, DoryAngel provides the back-office infrastructure — the model is designed to work in any market.</p></div>
+        </div>
+      </div>
+
+      <!-- What You Do -->
+      <div class="faq-group">
+        <div class="faq-cat-label">What You Actually Do</div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">What is my actual day-to-day role?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>You do what you already do: rent vacant apartments. When you place a tenant, that unit enters the DoryAngel management system. From that point forward, your only regular obligation is a 30-minute quarterly check-in call. Everything else — maintenance, vendors, compliance, reporting — is handled by us.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">How much extra time does this take per week?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>Outside of your normal broker activity, plan for approximately zero additional hours. The quarterly check-in runs about 30 minutes total. Occasional calls from owners may come through you, but we coach you on a simple script to route those smoothly to DoryAngel without disrupting your schedule.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">Do I need to be physically present at the properties?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>Never for management purposes. DoryAngel dispatches licensed vendors directly based on ZIP code. You do not inspect, supervise, or coordinate any maintenance work. If an owner calls you about an issue, you simply forward it to the DoryAngel VPM line.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">What happens during the quarterly check-in call?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>It is a 30-minute video or phone call between you, your owner client, and a DoryAngel representative. We review portfolio performance — rent collected, maintenance completed, compliance status — and address any strategic questions. You are there as the relationship manager. We handle the numbers.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">What if an owner contacts me with an urgent problem?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>We give you a simple routing script for exactly this situation. You acknowledge the owner, let them know the DoryAngel team is on it, and forward the details to our VPM line. Owners get a fast response, you stay informed, and you never have to solve the problem yourself.</p></div>
+        </div>
+      </div>
+
+      <!-- The Money -->
+      <div class="faq-group">
+        <div class="faq-cat-label">The Money</div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">How exactly does the $50/unit/month figure work?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>DoryAngel collects a property management fee from the owner each month. Your share — approximately 30% — works out to around $50 per unit. If you have 20 units under management, that is $1,000 per month arriving in your account, every month, with no additional effort required.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">Does joining DoryAngel affect my existing broker commissions?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>Not at all. When you place a tenant in an apartment, your broker fee is yours — exactly as it has always been. DoryAngel does not touch that income. The $50/unit/month is a completely separate, additional revenue stream. You are not giving anything up. You are only gaining.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">When and how do I get paid?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>Management fees are distributed monthly, typically within the first five business days of the month. All payments are made via direct deposit to your registered bank account.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">Do I pay DoryAngel any fees or dues?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>No. There are no setup fees, no monthly charges, and no subscription costs. DoryAngel earns its income from the remaining portion of the management fee. Your $50/unit/month is yours from day one with no deductions.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">What if I have a quiet month with no new placements?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>Your management fee income — $50 per unit per month — continues regardless of new placements. Every unit you have enrolled keeps paying you. This is the whole point of the annuity model: a unit you placed two years ago still generates income for you today, without any additional effort.</p></div>
+        </div>
+      </div>
+
+      <!-- Your Clients -->
+      <div class="faq-group">
+        <div class="faq-cat-label">Your Clients and Relationships</div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">Do my owner clients know about DoryAngel?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>Yes — full transparency is built into the model. Owners sign a management agreement with DoryAngel directly. You are introduced as their local broker partner and relationship manager. There is nothing hidden, and owners generally appreciate knowing there is a professional back-office team behind the service.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">Who owns the client relationship?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>You do. DoryAngel handles operations, but you remain the face of every owner relationship. If an owner ever leaves the program, they leave your book of business — not ours. Your network stays yours.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">Can I enroll clients I'm already helping informally with property management?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>Yes. If you have existing owner relationships where you have been informally helping with management tasks, this is a natural opportunity to formalize and monetize those relationships under the DoryAngel system — and get paid for what you were likely doing for free.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">What if an owner wants to leave the program?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>Owners can exit with 30 days notice per the management agreement. If that happens, your monthly management fee simply stops for that unit. There is no penalty to you.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">How is tenant data and privacy handled?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>All tenant data is processed through Buildium's secure platform and protected under DoryAngel's $250,000 Cyber Liability policy. You never handle sensitive financial data directly — that responsibility sits entirely with us.</p></div>
+        </div>
+      </div>
+
+      <!-- Operations -->
+      <div class="faq-group">
+        <div class="faq-cat-label">How Operations Work</div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">Who handles maintenance emergencies?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>DoryAngel's VPM Call Center operates around the clock. Tenants have a direct line. Vendors are dispatched from a pre-qualified network organized by ZIP code, typically within hours. You are not in the chain for emergencies unless an owner contacts you first, in which case you simply route the call.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">Who manages lease renewals?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>DoryAngel monitors all lease expiration dates and initiates renewal outreach to tenants before the end of term. You are notified when a renewal is approaching. If the unit turns over and you place a new tenant, you earn another broker fee — your standard commission, unaffected by this program.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">Who handles evictions or legal disputes?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>DoryAngel coordinates with licensed attorneys and guides the owner through any legal process from start to finish. You are not involved in legal proceedings. This is a back-office function handled entirely by our team and legal partners.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">What technology do I need?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>Nothing beyond a smartphone or computer. You will have read-only access to your portfolio dashboard in Buildium, showing rent collection status, maintenance history, and owner reports in real time. No new software to learn — we do the work inside the platform.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
+            <span class="faq-q-text">What if I already use my own property management software?</span>
+            <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+          <div class="faq-a"><p>That is fine. The DoryAngel program runs on Buildium on our side. You do not need to migrate or change your existing broker workflow at all. Your brokerage operation stays exactly as it is — the DoryAngel layer operates completely in the background.</p></div>
+        </div>
+      </div>
+
+    </div><!-- /faq-inner -->
+  </div>
+</section>
+
+<!-- ═══ TOOLS GRID ══════════════════════════════════════════ -->
+<section class="sec" style="background:#fff;">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:44px;">
+      <div class="eyebrow">What's Running in the Background</div>
+      <h2 class="section-title" style="margin-bottom:12px;">The Infrastructure You'd Never Build Yourself</h2>
+      <p class="section-sub" style="max-width:480px;margin:0 auto;">All of this comes with your partnership. None of it costs you anything extra.</p>
+    </div>
+    <div class="grid-3">
+      <div class="tool-card">
+        <span class="tool-tag">Integrated</span>
+        <div class="tool-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        </div>
+        <div class="tool-name">Buildium CRM</div>
+        <p class="tool-desc">Your portfolio dashboard, rent ledger, and tenant records — fully managed and always accessible to you in read-only view.</p>
+      </div>
+      <div class="tool-card">
+        <span class="tool-tag">Automated</span>
+        <div class="tool-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </div>
+        <div class="tool-name">AI Maintenance Dispatch</div>
+        <p class="tool-desc">Tenant requests are routed to our VPM Call Center automatically. Vendors dispatched by ZIP code, no involvement needed from you.</p>
+      </div>
+      <div class="tool-card">
+        <span class="tool-tag">Compliance</span>
+        <div class="tool-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <div class="tool-name">SiteCompli</div>
+        <p class="tool-desc">Local code violations, inspection deadlines, and compliance filings are monitored and handled automatically — by state and municipality.</p>
+      </div>
+      <div class="tool-card">
+        <span class="tool-tag">Secure Access</span>
+        <div class="tool-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg>
+        </div>
+        <div class="tool-name">Document Cloud</div>
+        <p class="tool-desc">Lease approvals, compliance filings, and owner reports are all accessible in real-time through secure cloud API.</p>
+      </div>
+      <div class="tool-card">
+        <span class="tool-tag">Included</span>
+        <div class="tool-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="tool-name">E&amp;O Insurance</div>
+        <p class="tool-desc">Professional Liability (Errors &amp; Omissions) coverage keeps both you and your clients protected from day one.</p>
+      </div>
+      <div class="tool-card">
+        <span class="tool-tag">Included</span>
+        <div class="tool-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </div>
+        <div class="tool-name">$250K Cyber Liability</div>
+        <p class="tool-desc">Full cyber liability coverage protecting broker partners and client data from any breach event — at no cost to you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TRUST DARK ══════════════════════════════════════════ -->
+<div class="trust-dark">
+  <div class="wrap">
+    <div class="grid-2">
+      <div class="trust-card">
+        <div class="trust-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="20" height="20"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        </div>
+        <div>
+          <div class="trust-title">Professional Liability (E&amp;O)</div>
+          <p class="trust-body">Both parties are covered under DoryAngel's E&amp;O policy from day one. No additional insurance costs, no paperwork, no gap in protection.</p>
+        </div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="20" height="20"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </div>
+        <div>
+          <div class="trust-title">$250,000 Cyber Liability Coverage</div>
+          <p class="trust-body">All client data processed through our platform is protected under a $250,000 Cyber Liability policy. Your clients' financial records and personal data stay fully secure.</p>
+        </div>
+      </div>
+    </div>
+    <div class="legal-note">
+      <strong>Legal Notice:</strong> DoryAngel LLC operates exclusively as a consulting agency and back-office service provider — not a licensed real estate brokerage. All licensed real estate activities, including property listings, lease signings, and client representation, are performed solely by the licensed broker partner in accordance with the laws of their operating state. This arrangement does not constitute a brokerage relationship or joint venture.
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CTA FORM ════════════════════════════════════════════ -->
+<section id="request-beta-access" class="sec cta-section">
+  <div class="wrap">
+    <div class="cta-grid">
+      <div>
+        <div class="eyebrow">Limited Beta Access</div>
+        <h2 class="section-title" style="margin-bottom:16px;">Ready to Add a Revenue Stream?</h2>
+        <p class="section-sub" style="margin-bottom:0;">We are onboarding a select group of licensed brokers into the DoryAngel Partner Program. You keep your brokerage. You keep your clients. You just start earning more from both.</p>
+        <div class="cta-check-list">
+          <div class="cta-check">
+            <div class="cta-check-icon"><svg viewBox="0 0 14 14" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="2 7 6 11 12 3"/></svg></div>
+            <span>Licensed real estate broker (any US state or UK)</span>
+          </div>
+          <div class="cta-check">
+            <div class="cta-check-icon"><svg viewBox="0 0 14 14" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="2 7 6 11 12 3"/></svg></div>
+            <span>Active owner or rental client relationships</span>
+          </div>
+          <div class="cta-check">
+            <div class="cta-check-icon"><svg viewBox="0 0 14 14" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="2 7 6 11 12 3"/></svg></div>
+            <span>No property management experience needed</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-card" id="form-card">
+        <div id="form-wrap">
+          <div class="form-title">Request Beta Access</div>
+          <p class="form-sub">No commitment required. We'll reach out within 2 business days.</p>
+          <form id="broker-form" onsubmit="handleBrokerSubmit(event)" novalidate>
+            <input type="hidden" name="access_key" value="6991fa6b-8f6c-4c24-9167-b7ee52026a98">
+            <input type="hidden" name="subject" value="New Broker Partner Application — DoryAngel">
+            <input type="hidden" name="from_name" value="DoryAngel Broker Partner Page">
+            <div class="form-group">
+              <label class="form-label" for="bp-name">Full Name</label>
+              <input class="form-input" id="bp-name" name="name" type="text" placeholder="Jane Doe" autocomplete="name">
+              <div class="form-error" id="err-name"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="bp-brokerage">Brokerage Name</label>
+              <input class="form-input" id="bp-brokerage" name="brokerage" type="text" placeholder="ABC Realty Group" autocomplete="organization">
+              <div class="form-error" id="err-brokerage"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="bp-units">Approx. Units You Could Bring</label>
+              <input class="form-input" id="bp-units" name="units" type="number" min="1" placeholder="10">
+              <div class="form-error" id="err-units"></div>
+            </div>
+            <button type="submit" class="form-submit">Submit Application</button>
+          </form>
+        </div>
+        <div id="form-success" class="form-success" style="display:none;">
+          <div class="form-success-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="form-success-title">Application Received</div>
+          <p class="form-success-sub">Our team will review your application and reach out within 1–2 business days to schedule your intro call.</p>
+          <button class="form-reset" onclick="resetBrokerForm()">Submit Another</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ══════════════════════════════════════════════ -->
+<footer class="bp-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <img src="assets/logo.jpg" alt="DoryAngel" style="height:32px;object-fit:contain;">
+          <div class="footer-brand-name">DORYANGEL</div>
+        </div>
+        <div class="footer-brand-tag">Broker Partner Program</div>
+        <p class="footer-desc">Additional income for brokers across the United States. Zero overhead. UK expansion coming soon.</p>
+        <a href="index.html" class="back-to-main" style="margin-top:18px;">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="13 5 6 10 13 15"/></svg>
+          Back to DoryAngel.com
+        </a>
+      </div>
+      <div>
+        <div class="footer-col-title">Program</div>
+        <div class="footer-links">
+          <a href="#the-deal">The Deal</a>
+          <a href="#your-income">Your Income</a>
+          <a href="#faq">FAQ</a>
+          <a href="#request-beta-access">Request Access</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <div class="footer-contact">
+          <div class="footer-contact-line">557 Grand Concourse Ave #4123<br>Bronx, NY 10451</div>
+          <div class="footer-contact-line">516-847-4999</div>
+          <div class="footer-contact-line"><a href="mailto:office@doryangel.com">office@doryangel.com</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © <span id="copy-year"></span> DoryAngel LLC · Consulting Agency, Not a Licensed Brokerage · All Rights Reserved ·
+      <a href="privacy.html" style="color:rgba(255,255,255,0.3);">Privacy</a> ·
+      <a href="terms.html" style="color:rgba(255,255,255,0.3);">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══ FLOAT CTA (mobile) ════════════════════════════════ -->
+<div class="float-cta">
+  <button onclick="scrollToSection('request-beta-access')">Request Beta Access — No Commitment</button>
+</div>
+
+<script>
+/* ─ Utilities ─ */
+document.getElementById('copy-year').textContent = new Date().getFullYear();
+
+function scrollToSection(id) {
+  var el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ─ Mobile menu ─ */
+var menuOpen = false;
+function toggleMenu() {
+  menuOpen = !menuOpen;
+  var m = document.getElementById('mobile-menu');
+  var b = document.getElementById('hamburger-btn');
+  m.classList.toggle('open', menuOpen);
+  b.setAttribute('aria-expanded', String(menuOpen));
+}
+function closeMenu() {
+  menuOpen = false;
+  document.getElementById('mobile-menu').classList.remove('open');
+  document.getElementById('hamburger-btn').setAttribute('aria-expanded', 'false');
+}
+
+/* ─ Calculator ─ */
+function fmt(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
+function updateCalc(val) {
+  val = parseInt(val, 10);
+  var monthly = val * 50;
+  var annual  = monthly * 12;
+  var fiveyr  = annual * 5;
+
+  document.getElementById('units-display').textContent = val;
+  document.getElementById('monthly-val').textContent   = fmt(monthly);
+  document.getElementById('annual-val').textContent    = fmt(annual);
+  document.getElementById('fiveyear-val').textContent  = fmt(fiveyr);
+
+  /* update track fill */
+  var pct = ((val - 1) / 199) * 100;
+  var slider = document.getElementById('units-slider');
+  slider.style.background =
+    'linear-gradient(to right, #3A7BDD ' + pct + '%, #E2E8F0 ' + pct + '%)';
+}
+updateCalc(10);
+
+/* ─ FAQ accordion ─ */
+function toggleFAQ(btn) {
+  var item = btn.closest('.faq-item');
+  var isOpen = item.classList.contains('open');
+  /* close all others in same group */
+  var siblings = item.closest('.faq-group').querySelectorAll('.faq-item');
+  siblings.forEach(function(s) {
+    s.classList.remove('open');
+    s.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+  });
+  if (!isOpen) {
+    item.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+  }
+}
+
+/* ─ Form ─ */
+function handleBrokerSubmit(e) {
+  e.preventDefault();
+  var name      = document.getElementById('bp-name').value.trim();
+  var brokerage = document.getElementById('bp-brokerage').value.trim();
+  var units     = document.getElementById('bp-units').value;
+  var valid = true;
+
+  function setErr(id, msg) {
+    var el = document.getElementById(id);
+    el.textContent = msg;
+    document.getElementById(id.replace('err-', 'bp-')).classList.toggle('error', !!msg);
+  }
+
+  setErr('err-name',      name      ? '' : 'Required');
+  setErr('err-brokerage', brokerage ? '' : 'Required');
+  setErr('err-units',     (units && parseInt(units) >= 1) ? '' : 'Enter a valid unit count');
+
+  if (!name)      valid = false;
+  if (!brokerage) valid = false;
+  if (!units || parseInt(units) < 1) valid = false;
+  if (!valid) return;
+
+  var btn = e.target.querySelector('.form-submit');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+
+  fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      access_key: '6991fa6b-8f6c-4c24-9167-b7ee52026a98',
+      subject:    'New Broker Partner Application — DoryAngel',
+      from_name:  'DoryAngel Broker Partner Page',
+      name:       name,
+      brokerage:  brokerage,
+      units:      units
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.success) {
+      document.getElementById('form-wrap').style.display = 'none';
+      document.getElementById('form-success').style.display = 'block';
+    } else {
+      btn.disabled = false;
+      btn.textContent = 'Submit Application';
+      alert('Something went wrong. Please try again.');
+    }
+  })
+  .catch(function() {
+    btn.disabled = false;
+    btn.textContent = 'Submit Application';
+    alert('Network error. Please check your connection and try again.');
+  });
+}
+
+function resetBrokerForm() {
+  document.getElementById('broker-form').reset();
+  document.getElementById('form-success').style.display = 'none';
+  document.getElementById('form-wrap').style.display    = 'block';
+  updateCalc(10);
+}
+
+/* ─ Lucide icons ─ */
+document.addEventListener('DOMContentLoaded', function() {
+  if (window.lucide) window.lucide.createIcons();
+});
+</script>
+</body>
+</html>
