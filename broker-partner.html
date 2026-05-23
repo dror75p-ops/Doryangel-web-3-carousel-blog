@@ -14,6 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+<script>(function(d){var s=d.createElement('script');s.setAttribute('data-account','lKWv8TGXed');s.setAttribute('src','https://cdn.userway.org/widget.js');(d.body||d.head).appendChild(s);})(document)</script>
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -82,24 +83,13 @@ button { cursor: pointer; font-family: inherit; }
 .bp-nav.bar-hidden { top: 0; }
 .bp-nav-inner {
   height: 64px; display: flex; align-items: center;
-  justify-content: space-between; gap: 16px;
+  justify-content: space-between; gap: 12px;
 }
-.bp-nav-brand {
-  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
-}
-.bp-nav-brand img { height: 36px; object-fit: contain; }
-.bp-nav-brand-text .name {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 19px; font-weight: 800; color: var(--navy);
-  letter-spacing: 0.02em; line-height: 1.1;
-}
-.bp-nav-brand-text .tag {
-  font-size: 9px; color: var(--grey); letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
+.bp-nav-logo { display: flex; align-items: center; flex-shrink: 0; }
+.bp-nav-logo img { height: 40px; object-fit: contain; }
 .bp-nav-links {
   display: flex; align-items: center; gap: 24px;
-  list-style: none;
+  list-style: none; flex: 1; justify-content: center;
 }
 .bp-nav-links a {
   font-size: 14px; font-weight: 500; color: var(--text-muted);
@@ -114,18 +104,25 @@ button { cursor: pointer; font-family: inherit; }
 .bp-nav-back svg { width: 14px; height: 14px; }
 .bp-nav-back:hover { color: var(--blue); }
 .bp-nav-cta {
-  background: var(--blue); color: #fff;
-  border: none; border-radius: 8px;
-  padding: 10px 22px; font-size: 14px; font-weight: 600;
+  background: transparent; color: var(--navy);
+  border: 1.5px solid var(--navy); border-radius: 7px;
+  padding: 8px 18px; font-size: 13px; font-weight: 700;
   min-height: 44px; white-space: nowrap; cursor: pointer;
-  transition: background 0.2s, transform 0.15s;
+  transition: background 0.2s, color 0.2s;
+  text-decoration: none; display: inline-flex; align-items: center;
 }
-.bp-nav-cta:hover { background: var(--navy); transform: translateY(-1px); }
-.hamburger {
-  display: none; background: none; border: none;
-  padding: 8px; align-items: center; justify-content: center;
-  min-width: 44px; min-height: 44px;
+.bp-nav-cta:hover { background: var(--navy); color: #fff; }
+/* Blue square icon buttons — matches main site hamburger-btn / a11y-nav-btn */
+.bp-icon-btn {
+  display: none; align-items: center; justify-content: center;
+  width: 44px; height: 44px; flex-shrink: 0;
+  background: var(--blue); border: none; border-radius: 8px;
+  cursor: pointer; transition: background 0.2s;
+  color: #fff; text-decoration: none;
 }
+.bp-icon-btn:hover { background: var(--navy); }
+.bp-icon-btn svg { display: block; pointer-events: none; }
+/* Mobile drawer */
 .mobile-menu {
   display: none; flex-direction: column;
   background: #fff; border-top: 1px solid var(--grey-mid);
@@ -136,9 +133,7 @@ button { cursor: pointer; font-family: inherit; }
   padding: 14px 20px; border-bottom: 1px solid var(--grey-light);
   display: block;
 }
-.mobile-menu .mob-cta {
-  padding: 14px 20px;
-}
+.mobile-menu .mob-cta { padding: 14px 20px; }
 .mobile-menu .mob-cta button {
   width: 100%; background: var(--blue); color: #fff;
   border: none; border-radius: 8px; padding: 14px;
@@ -524,27 +519,9 @@ input[type=range]::-moz-range-thumb {
 .back-to-main:hover { color: var(--blue-lt); }
 .back-to-main svg { width: 14px; height: 14px; }
 
-/* ─── FLOAT CTA (mobile) ─── */
-.float-cta {
-  display: none; position: fixed; bottom: 0; left: 0; right: 0;
-  z-index: 90; padding: 12px 16px 20px;
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(12px);
-  border-top: 1px solid var(--grey-mid);
-  box-sizing: border-box;
-}
-.float-cta button {
-  width: 100%; background: var(--blue); color: #fff;
-  border: none; border-radius: 10px; padding: 16px;
-  font-size: 15px; font-weight: 600; min-height: 52px; cursor: pointer;
-  /* stay clear of the Retell circle (≈60px) + Call FAB on the right */
-  margin-right: 72px;
-  width: calc(100% - 72px);
-}
-
 /* ─── CALL FAB + RETELL STACK (mobile only) ─── */
 .sticky-call {
-  position: fixed; bottom: 106px; right: 20px; z-index: 999999;
+  position: fixed; bottom: 106px; right: 38px; z-index: 999999;
   width: 56px; height: 56px; border-radius: 50%;
   background: var(--navy); color: #fff;
   display: none; align-items: center; justify-content: center;
@@ -569,7 +546,6 @@ input[type=range]::-moz-range-thumb {
   .calc-box { padding: 36px 32px; }
 }
 @media (max-width: 768px) {
-  body { padding-bottom: 84px; }
   .wrap { padding: 0 20px; }
   .sec  { padding: 52px 0; }
   .section-title { font-size: 30px; }
@@ -591,10 +567,8 @@ input[type=range]::-moz-range-thumb {
   .cta-grid { grid-template-columns: 1fr; gap: 32px; }
   .footer-grid { grid-template-columns: 1fr; gap: 28px; }
   .bp-nav-links { display: none; }
-  .hamburger { display: flex; }
-  .float-cta { display: flex; }
+  .bp-icon-btn { display: flex; }
   .sticky-call { display: flex; }
-  .bp-footer { padding-bottom: 80px; }
   .bp-nav-back { display: none; }
   .bp-nav-back.mobile-back { display: flex; }
 }
@@ -612,12 +586,8 @@ input[type=range]::-moz-range-thumb {
 <header class="bp-nav" id="bp-nav">
   <div class="wrap">
     <div class="bp-nav-inner">
-      <div class="bp-nav-brand">
-        <img src="assets/logo.jpg" alt="DoryAngel">
-        <div class="bp-nav-brand-text">
-          <div class="name">DORYANGEL</div>
-          <div class="tag">Enhance Asset Value</div>
-        </div>
+      <div class="bp-nav-logo">
+        <a href="index.html"><img src="assets/logo.jpg" alt="DoryAngel — back to main site"></a>
       </div>
 
       <nav>
@@ -635,11 +605,16 @@ input[type=range]::-moz-range-thumb {
       </nav>
 
       <button class="bp-nav-cta" onclick="scrollToSection('request-beta-access')">Request Beta Access</button>
-      <button class="hamburger" onclick="toggleMenu()" aria-label="Open menu" aria-expanded="false" id="hamburger-btn">
-        <svg width="22" height="16" viewBox="0 0 22 16" fill="none" id="hamburger-icon">
-          <line x1="1" y1="2" x2="21" y2="2" stroke="#1A2740" stroke-width="2" stroke-linecap="round"/>
-          <line x1="1" y1="8" x2="21" y2="8" stroke="#1A2740" stroke-width="2" stroke-linecap="round"/>
-          <line x1="1" y1="14" x2="21" y2="14" stroke="#1A2740" stroke-width="2" stroke-linecap="round"/>
+      <button class="bp-icon-btn" id="a11y-nav-btn" aria-label="Accessibility options" onclick="if(window.UserWay)window.UserWay.widgetOpen()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="5" r="2"/><path d="M19 9h-5l-1 7h-2l-1-7H5"/><line x1="12" y1="16" x2="12" y2="22"/>
+        </svg>
+      </button>
+      <button class="bp-icon-btn" onclick="toggleMenu()" aria-label="Open menu" aria-expanded="false" id="hamburger-btn">
+        <svg width="22" height="16" viewBox="0 0 22 16" fill="none" aria-hidden="true" id="hamburger-icon">
+          <line x1="1" y1="2" x2="21" y2="2" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <line x1="1" y1="8" x2="21" y2="8" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <line x1="1" y1="14" x2="21" y2="14" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
     </div>
@@ -1253,11 +1228,6 @@ input[type=range]::-moz-range-thumb {
     </div>
   </div>
 </footer>
-
-<!-- ═══ FLOAT CTA (mobile) ════════════════════════════════ -->
-<div class="float-cta">
-  <button onclick="scrollToSection('request-beta-access')">Request Beta Access — No Commitment</button>
-</div>
 
 <!-- CALL FAB — mobile only, dials office number -->
 <a href="tel:+15168474999" class="sticky-call" aria-label="Call DoryAngel">
