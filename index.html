@@ -656,174 +656,6 @@ section { padding: 96px 40px; }
   flex-shrink: 0;
 }
 
-/* ── Testimonials Marquee Redesign ──────────────────────────── */
-.t-stats {
-  display: flex; gap: 0;
-  border: 1px solid rgba(255,255,255,0.12); border-radius: 12px;
-  overflow: hidden; margin: 0 auto 52px; max-width: 840px;
-}
-.t-stat {
-  flex: 1; text-align: center; padding: 18px 10px;
-  border-right: 1px solid rgba(255,255,255,0.1);
-}
-.t-stat:last-child { border-right: none; }
-.t-stat-num {
-  font-family: 'DM Serif Display', serif; font-size: 26px;
-  color: #fff; display: block; line-height: 1; margin-bottom: 4px;
-}
-.t-accent { color: var(--blue-light); }
-.t-stat-label {
-  font-size: 10px; font-weight: 500; text-transform: uppercase;
-  letter-spacing: 0.12em; color: rgba(255,255,255,0.45);
-}
-.t-row-label {
-  display: flex; align-items: center; gap: 14px;
-  margin-bottom: 20px; padding: 0 4px;
-}
-.t-row-label + .t-row-label { margin-top: 48px; }
-.t-row-tag {
-  font-size: 10px; font-weight: 600; letter-spacing: 0.15em;
-  text-transform: uppercase; color: var(--blue-light);
-  white-space: nowrap; display: flex; align-items: center; gap: 6px;
-}
-.t-row-tag.t-google-tag { color: #93C5FD; }
-.t-row-line { flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
-.t-row-count { font-size: 10px; color: rgba(255,255,255,0.35); white-space: nowrap; }
-/* Marquee container */
-.marquee-outer {
-  overflow: hidden; position: relative;
-}
-.marquee-outer::before, .marquee-outer::after {
-  content: ''; position: absolute; top: 0; bottom: 0; width: 80px;
-  z-index: 2; pointer-events: none;
-}
-.marquee-outer::before { left: 0; background: linear-gradient(to right, var(--navy), transparent); }
-.marquee-outer::after  { right: 0; background: linear-gradient(to left,  var(--navy), transparent); }
-.marquee-track {
-  display: flex; gap: 16px; width: max-content;
-  padding: 8px 0 16px;
-  animation: t-marquee-left 55s linear infinite;
-}
-.marquee-track.marquee-right {
-  animation: t-marquee-right 65s linear infinite;
-}
-.marquee-outer:hover .marquee-track { animation-play-state: paused; }
-@keyframes t-marquee-left {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-@keyframes t-marquee-right {
-  0%   { transform: translateX(-50%); }
-  100% { transform: translateX(0); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .marquee-track { animation: none; overflow-x: auto; }
-}
-/* Testimonial card */
-.t-card {
-  background: rgba(255,255,255,0.97); border-radius: 12px;
-  padding: 18px 18px 14px; width: 272px; flex-shrink: 0;
-  display: flex; flex-direction: column; gap: 9px;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.22);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.t-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,0.3); }
-.t-qmark {
-  font-family: Georgia, serif; font-size: 32px; line-height: 0.8;
-  color: var(--blue); opacity: 0.25; user-select: none;
-}
-.t-google-card .t-qmark { color: #4285F4; }
-.t-qt {
-  font-size: 13px; line-height: 1.65; color: #374151; font-style: italic;
-  flex: 1; display: -webkit-box; -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical; overflow: hidden;
-}
-.t-stars { display: flex; gap: 2px; }
-.t-star  { width: 11px; height: 11px; fill: #F5A623; }
-.t-author {
-  display: flex; align-items: center; gap: 9px;
-  padding-top: 11px; border-top: 1px solid #F3F4F6; margin-top: auto;
-}
-.t-av {
-  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 12px; color: #fff;
-}
-.t-av-a { background: linear-gradient(140deg,#5BA0D4,#2A6FA8); }
-.t-av-b { background: linear-gradient(140deg,#7DC47D,#3A8A3A); }
-.t-av-c { background: linear-gradient(140deg,#D4845A,#A85028); }
-.t-av-d { background: linear-gradient(140deg,#B07DD4,#7840A8); }
-.t-av-e { background: linear-gradient(140deg,#D4B040,#A87818); }
-.t-av-f { background: linear-gradient(140deg,#5AB8D4,#2884A8); }
-.t-av-g { background: linear-gradient(140deg,#D46060,#A83030); }
-.t-av-h { background: linear-gradient(140deg,#48C490,#1A8460); }
-.t-av-i { background: linear-gradient(140deg,#D48848,#A85818); }
-.t-av-j { background: linear-gradient(140deg,#7878D0,#4444A8); }
-.t-av-biz { background: linear-gradient(140deg,var(--blue),var(--navy)); }
-.t-author-info { flex: 1; min-width: 0; }
-.t-aname {
-  font-size: 12px; font-weight: 600; color: #232323;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.t-ameta {
-  font-size: 10px; color: #6B7280; margin-top: 1px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.t-badge {
-  font-size: 8px; font-weight: 600; letter-spacing: 0.1em;
-  text-transform: uppercase; padding: 2px 7px; border-radius: 999px; flex-shrink: 0;
-}
-.t-b-landlord { background: rgba(30,90,168,0.1);   color: #1E5AA8; }
-.t-b-tenant   { background: rgba(107,114,128,0.12); color: #4B5563; }
-.t-b-manager  { background: rgba(22,163,74,0.1);    color: #15803d; }
-.t-b-broker   { background: rgba(35,35,35,0.08);    color: #374151; }
-.t-g-badge {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-size: 8px; font-weight: 600; color: #4285F4;
-  background: #EEF2FF; border: 1px solid rgba(66,133,244,0.2);
-  padding: 2px 7px; border-radius: 999px; flex-shrink: 0;
-}
-.t-g-dot { width: 4px; height: 4px; border-radius: 50%; background: #4285F4; }
-.t-g-icon {
-  width: 13px; height: 13px; background: #4285F4; color: #fff;
-  border-radius: 50%; font-size: 8px; font-weight: 700;
-  display: inline-flex; align-items: center; justify-content: center;
-}
-/* Testimonials CTA strip */
-.t-cta {
-  margin-top: 52px;
-  border: 1px solid rgba(255,255,255,0.12); border-radius: 14px;
-  padding: 36px 40px; display: flex; align-items: center;
-  justify-content: space-between; gap: 28px;
-  background: rgba(255,255,255,0.04);
-}
-.t-cta-label {
-  font-size: 10px; font-weight: 600; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--blue-light); margin-bottom: 8px;
-  display: flex; align-items: center; gap: 8px;
-}
-.t-cta-label::before { content: ''; width: 18px; height: 2px; background: var(--blue-light); }
-.t-cta-heading {
-  font-family: 'DM Serif Display', serif;
-  font-size: clamp(1.2rem, 2vw, 1.6rem); color: #fff;
-  line-height: 1.2; margin-bottom: 5px;
-}
-.t-cta-sub { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.6; }
-.t-cta-btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 13px 26px; background: var(--blue); color: #fff;
-  font-size: 14px; font-weight: 600; border-radius: 999px;
-  text-decoration: none; transition: background 0.2s, transform 0.2s;
-  white-space: nowrap; flex-shrink: 0;
-}
-.t-cta-btn:hover { background: #1348a0; transform: translateY(-2px); }
-.t-cta-btn svg { width: 15px; height: 15px; }
-@media (max-width: 640px) {
-  .t-cta { flex-direction: column; align-items: flex-start; padding: 28px 20px; }
-  .t-stats { flex-wrap: wrap; }
-  .t-stat { flex: 1 1 45%; }
-}
-
 /* FAQ */
 .faq-categories {
   display: flex; gap: 8px; flex-wrap: wrap; margin: 40px 0 32px;
@@ -2332,291 +2164,239 @@ retell-chat-web-component {
 <!-- TESTIMONIALS -->
 <section class="testimonials-section" id="testimonials">
   <div class="section-inner">
-    <div class="section-label">Client Testimonials</div>
-    <h2 class="section-title reveal">What Our Clients Say</h2>
-    <p class="section-sub">Over 15 years managing properties across the Bronx, Queens, Yonkers, Mount Vernon, New Rochelle &amp; North Jersey — real words from real clients.</p>
+    <div class="section-label">Google Reviews</div>
+    <h2 class="section-title reveal">5.0 Stars across 21 reviews</h2>
+    <p class="section-sub">Real reviews from real clients on Google. See what owners, tenants, and partners say about working with DoryAngel.</p>
 
-    <!-- Stats strip -->
-    <div class="t-stats">
-      <div class="t-stat">
-        <span class="t-stat-num">5.0<span class="t-accent">★</span></span>
-        <span class="t-stat-label">Google Rating</span>
+    <div style="text-align:center">
+      <a href="https://share.google/tTIEyy7qxx4bKm1Zo" target="_blank" rel="noopener" style="text-decoration:none">
+      <div class="google-rating-badge" style="cursor:pointer">
+        <div class="google-badge-score">5.0</div>
+        <div>
+          <div class="google-badge-stars">★★★★★</div>
+          <div class="google-badge-info">21 reviews · view on Google ↗</div>
+        </div>
+        <div class="google-badge-logo">G Google</div>
       </div>
-      <div class="t-stat">
-        <span class="t-stat-num">20<span class="t-accent">+</span></span>
-        <span class="t-stat-label">Google Reviews</span>
-      </div>
-      <div class="t-stat">
-        <span class="t-stat-num">15<span class="t-accent">+</span></span>
-        <span class="t-stat-label">Years Active</span>
-      </div>
-      <div class="t-stat">
-        <span class="t-stat-num">158<span class="t-accent">+</span></span>
-        <span class="t-stat-label">Units Managed</span>
-      </div>
-      <div class="t-stat">
-        <span class="t-stat-num">$99</span>
-        <span class="t-stat-label">Per Unit / Month</span>
-      </div>
-    </div>
-
-    <!-- ─── Row 1: Direct Client Testimonials — scrolls left ─── -->
-    <div class="t-row-label">
-      <span class="t-row-tag">Client Testimonials</span>
-      <div class="t-row-line"></div>
-      <span class="t-row-count">7 Reviews</span>
-    </div>
-    <div class="marquee-outer" role="region" aria-label="Client testimonials">
-      <div class="marquee-track" aria-hidden="true">
-        <!-- SET A -->
-        <div class="t-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Doryangel management is a great management company. I decided to work with Doryangel after doing extensive market research, contacting several other firms and discussing with my other property-owner friends. I have been a client for over a year and all of my expectations have been exceeded.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-a">SL</div><div class="t-author-info"><div class="t-aname">Stacy Levi</div><div class="t-ameta">Property Owner · 1+ year client</div></div><span class="t-badge t-b-landlord">Landlord</span></div>
-        </div>
-        <div class="t-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Working with Doryangel for more than 10 years, I can say it contributed to my investment plan over the years. Accuracy and hands-on with any type of issue — all handled in a professional way.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-e">AB</div><div class="t-author-info"><div class="t-aname">Avi Baranes</div><div class="t-ameta">Property Owner · 10+ year client</div></div><span class="t-badge t-b-landlord">Landlord</span></div>
-        </div>
-        <div class="t-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Doryangel started working with us a year ago. Their work and methods made us much more organized and our response time has reduced dramatically. We saw a tremendous improvement in client payments and a decrease in emergency calls from tenants.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-f">GR</div><div class="t-author-info"><div class="t-aname">Gil Regev</div><div class="t-ameta">Portfolio Manager</div></div><span class="t-badge t-b-manager">Manager</span></div>
-        </div>
-        <div class="t-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Doryangel management started working here 5 years ago. Since they came in we feel very happy and confident in our apartment. The call center reacts very quickly and efficiently to any maintenance issues. Thanks to Doryangel our building looks much better.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-c">JM</div><div class="t-author-info"><div class="t-aname">Jodie Marzet</div><div class="t-ameta">Resident · Bronx, NY · 5 year resident</div></div><span class="t-badge t-b-tenant">Tenant</span></div>
-        </div>
-        <div class="t-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Living with my 3 sons at a Doryangel apartment, we feel our home is a better place now.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-g">BW</div><div class="t-author-info"><div class="t-aname">Barbara Williams</div><div class="t-ameta">Resident · Family of 4</div></div><span class="t-badge t-b-tenant">Tenant</span></div>
-        </div>
-        <div class="t-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Doryangel LLC are very devoted to their vision. I can feel their professional fingerprint on everything they are taking care of.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-d">EM</div><div class="t-author-info"><div class="t-aname">Einav Makover</div><div class="t-ameta">Property Owner</div></div><span class="t-badge t-b-landlord">Landlord</span></div>
-        </div>
-        <div class="t-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">I had the privilege of working with Doryangel management and we wish to do more business in the near future.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-biz">HA</div><div class="t-author-info"><div class="t-aname">Holio Allyn's Brokerage</div><div class="t-ameta">Real Estate Partner</div></div><span class="t-badge t-b-broker">Broker</span></div>
-        </div>
-        <!-- SET B (duplicate for seamless loop) -->
-        <div class="t-card" aria-hidden="true">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Doryangel management is a great management company. I decided to work with Doryangel after doing extensive market research, contacting several other firms and discussing with my other property-owner friends. I have been a client for over a year and all of my expectations have been exceeded.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-a">SL</div><div class="t-author-info"><div class="t-aname">Stacy Levi</div><div class="t-ameta">Property Owner · 1+ year client</div></div><span class="t-badge t-b-landlord">Landlord</span></div>
-        </div>
-        <div class="t-card" aria-hidden="true">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Working with Doryangel for more than 10 years, I can say it contributed to my investment plan over the years. Accuracy and hands-on with any type of issue — all handled in a professional way.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-e">AB</div><div class="t-author-info"><div class="t-aname">Avi Baranes</div><div class="t-ameta">Property Owner · 10+ year client</div></div><span class="t-badge t-b-landlord">Landlord</span></div>
-        </div>
-        <div class="t-card" aria-hidden="true">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Doryangel started working with us a year ago. Their work and methods made us much more organized and our response time has reduced dramatically. We saw a tremendous improvement in client payments and a decrease in emergency calls from tenants.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-f">GR</div><div class="t-author-info"><div class="t-aname">Gil Regev</div><div class="t-ameta">Portfolio Manager</div></div><span class="t-badge t-b-manager">Manager</span></div>
-        </div>
-        <div class="t-card" aria-hidden="true">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Doryangel management started working here 5 years ago. Since they came in we feel very happy and confident in our apartment. The call center reacts very quickly and efficiently to any maintenance issues. Thanks to Doryangel our building looks much better.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-c">JM</div><div class="t-author-info"><div class="t-aname">Jodie Marzet</div><div class="t-ameta">Resident · Bronx, NY · 5 year resident</div></div><span class="t-badge t-b-tenant">Tenant</span></div>
-        </div>
-        <div class="t-card" aria-hidden="true">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Living with my 3 sons at a Doryangel apartment, we feel our home is a better place now.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-g">BW</div><div class="t-author-info"><div class="t-aname">Barbara Williams</div><div class="t-ameta">Resident · Family of 4</div></div><span class="t-badge t-b-tenant">Tenant</span></div>
-        </div>
-        <div class="t-card" aria-hidden="true">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Doryangel LLC are very devoted to their vision. I can feel their professional fingerprint on everything they are taking care of.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-d">EM</div><div class="t-author-info"><div class="t-aname">Einav Makover</div><div class="t-ameta">Property Owner</div></div><span class="t-badge t-b-landlord">Landlord</span></div>
-        </div>
-        <div class="t-card" aria-hidden="true">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">I had the privilege of working with Doryangel management and we wish to do more business in the near future.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-biz">HA</div><div class="t-author-info"><div class="t-aname">Holio Allyn's Brokerage</div><div class="t-ameta">Real Estate Partner</div></div><span class="t-badge t-b-broker">Broker</span></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ─── Row 2: Verified Google Reviews — scrolls right ─── -->
-    <div class="t-row-label" style="margin-top:48px">
-      <span class="t-row-tag t-google-tag"><span class="t-g-icon">G</span> Verified Google Reviews</span>
-      <div class="t-row-line"></div>
-      <span class="t-row-count">5.0 ★ · 20 Reviews · <a href="https://share.google/tTIEyy7qxx4bKm1Zo" target="_blank" rel="noopener" style="color:rgba(255,255,255,0.4);text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.2)">View all ↗</a></span>
-    </div>
-    <div class="marquee-outer" role="region" aria-label="Google reviews">
-      <div class="marquee-track marquee-right" aria-hidden="true">
-        <!-- SET A -->
-
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">I'm so incredibly grateful to have found Doryangel property management. Their staff is super responsive, they are reliable, and they are respectful to the tenants. It's such a relief and weight off my back to have their service.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-g">TT</div><div class="t-author-info"><div class="t-aname">Tisha Tucker</div><div class="t-ameta">Property Owner · Local Guide · 46 wks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">From the beginning their team demonstrated professionalism, responsiveness and clear commitment to both tenants and landlord. Communication was their strongest quality. I would recommend this property management company to anyone.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-b">SG</div><div class="t-author-info"><div class="t-aname">Sue Gil</div><div class="t-ameta">3 reviews · 8 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Great service!!! After a short evaluation we saved $500 monthly. Doryangel helped me to screen the best tenants.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-i">SO</div><div class="t-author-info"><div class="t-aname">Shimon Ohayon</div><div class="t-ameta">Property Owner · 44 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">The best service ever. Always available and paying attention to details. Highly recommended.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-f">LG</div><div class="t-author-info"><div class="t-aname">Local Guide</div><div class="t-ameta">8 reviews · 24 photos · 44 wks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Very professional service. Reliable and pleasant.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-j">SV</div><div class="t-author-info"><div class="t-aname">Shai Vhaba</div><div class="t-ameta">2 reviews · 44 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Amazing experience from A to Z with Dory Angel.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-e">GR</div><div class="t-author-info"><div class="t-aname">Google Reviewer</div><div class="t-ameta">44 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Dory is pleasant, extremely thorough, professional and very knowledgeable.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-h">NA</div><div class="t-author-info"><div class="t-aname">Nati Azoulay</div><div class="t-ameta">6 reviews · 2018</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Professional and reliable property management. I have used them for years in the Bronx.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-a">SL</div><div class="t-author-info"><div class="t-aname">Stacy Levy</div><div class="t-ameta">Local Guide · 159 reviews · 2018</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Great service! Great people!</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-c">DZ</div><div class="t-author-info"><div class="t-aname">Daniel Zahavi</div><div class="t-ameta">2 reviews · 44 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">One of the best property management companies in Bronx, New York!</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-b">ML</div><div class="t-author-info"><div class="t-aname">Maribel Labante</div><div class="t-ameta">1 review · 6 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">The best service. Very recommended.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-d">AL</div><div class="t-author-info"><div class="t-aname">Aviod Lidani</div><div class="t-ameta">5 reviews · 2018</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Great service. Top management in Bronx.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-f">JJ</div><div class="t-author-info"><div class="t-aname">Jonathan Jimenez</div><div class="t-ameta">1 review · Nov 2016</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Great service. Mostly recommended.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-j">NG</div><div class="t-author-info"><div class="t-aname">NNG</div><div class="t-ameta">Local Guide · 20 reviews · Nov 2016</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Great PM experience.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-i">MR</div><div class="t-author-info"><div class="t-aname">Mr. Raza</div><div class="t-ameta">10 reviews · 41 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Top Top management!!</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-b">GR</div><div class="t-author-info"><div class="t-aname">Google Reviewer</div><div class="t-ameta">Aug 2018</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Five stars, without reservation.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-c">BB</div><div class="t-author-info"><div class="t-aname">Barbara Batista</div><div class="t-ameta">3 reviews · 4 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Five stars.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-h">MK</div><div class="t-author-info"><div class="t-aname">Manager UK</div><div class="t-ameta">7 reviews · 44 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Five stars.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-b">AR</div><div class="t-author-info"><div class="t-aname">Anand Raj</div><div class="t-ameta">Aug 2018</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <div class="t-card t-google-card">
-          <div class="t-qmark">&ldquo;</div>
-          <p class="t-qt">Five stars.</p>
-          <div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="t-author"><div class="t-av t-av-g">LK</div><div class="t-author-info"><div class="t-aname">Looba Kuptzov</div><div class="t-ameta">10 reviews · 2018</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div>
-        </div>
-        <!-- SET B (duplicate for seamless loop) -->
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">I'm so incredibly grateful to have found Doryangel property management. Their staff is super responsive, they are reliable, and they are respectful to the tenants. It's such a relief and weight off my back to have their service.</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-g">TT</div><div class="t-author-info"><div class="t-aname">Tisha Tucker</div><div class="t-ameta">Property Owner · Local Guide</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">From the beginning their team demonstrated professionalism, responsiveness and clear commitment to both tenants and landlord. Communication was their strongest quality.</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-b">SG</div><div class="t-author-info"><div class="t-aname">Sue Gil</div><div class="t-ameta">3 reviews · 8 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">Great service!!! After a short evaluation we saved $500 monthly. Doryangel helped me to screen the best tenants.</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-i">SO</div><div class="t-author-info"><div class="t-aname">Shimon Ohayon</div><div class="t-ameta">Property Owner · 44 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">The best service ever. Always available and paying attention to details. Highly recommended.</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-f">LG</div><div class="t-author-info"><div class="t-aname">Local Guide</div><div class="t-ameta">8 reviews · 44 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">Very professional service. Reliable and pleasant.</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-j">SV</div><div class="t-author-info"><div class="t-aname">Shai Vhaba</div><div class="t-ameta">2 reviews · 44 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">Amazing experience from A to Z with Dory Angel.</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-e">GR</div><div class="t-author-info"><div class="t-aname">Google Reviewer</div><div class="t-ameta">44 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">Dory is pleasant, extremely thorough, professional and very knowledgeable.</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-h">NA</div><div class="t-author-info"><div class="t-aname">Nati Azoulay</div><div class="t-ameta">6 reviews · 2018</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">Professional and reliable property management. I have used them for years in the Bronx.</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-a">SL</div><div class="t-author-info"><div class="t-aname">Stacy Levy</div><div class="t-ameta">Local Guide · 159 reviews · 2018</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">Great service! Great people!</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-c">DZ</div><div class="t-author-info"><div class="t-aname">Daniel Zahavi</div><div class="t-ameta">2 reviews · 44 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">One of the best property management companies in Bronx, New York!</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-b">ML</div><div class="t-author-info"><div class="t-aname">Maribel Labante</div><div class="t-ameta">1 review · 6 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">The best service. Very recommended.</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-d">AL</div><div class="t-author-info"><div class="t-aname">Aviod Lidani</div><div class="t-ameta">5 reviews · 2018</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">Great service. Top management in Bronx.</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-f">JJ</div><div class="t-author-info"><div class="t-aname">Jonathan Jimenez</div><div class="t-ameta">1 review · Nov 2016</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">Great service. Mostly recommended.</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-j">NG</div><div class="t-author-info"><div class="t-aname">NNG</div><div class="t-ameta">Local Guide · 20 reviews · Nov 2016</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">Great PM experience.</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-i">MR</div><div class="t-author-info"><div class="t-aname">Mr. Raza</div><div class="t-ameta">10 reviews · 41 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">Top Top management!!</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-b">GR</div><div class="t-author-info"><div class="t-aname">Google Reviewer</div><div class="t-ameta">Aug 2018</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">Five stars, without reservation.</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-c">BB</div><div class="t-author-info"><div class="t-aname">Barbara Batista</div><div class="t-ameta">3 reviews · 4 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">Five stars.</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-h">MK</div><div class="t-author-info"><div class="t-aname">Manager UK</div><div class="t-ameta">7 reviews · 44 weeks ago</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">Five stars.</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-b">AR</div><div class="t-author-info"><div class="t-aname">Anand Raj</div><div class="t-ameta">Aug 2018</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-        <div class="t-card t-google-card" aria-hidden="true"><div class="t-qmark">&ldquo;</div><p class="t-qt">Five stars.</p><div class="t-stars"><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="t-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="t-author"><div class="t-av t-av-g">LK</div><div class="t-author-info"><div class="t-aname">Looba Kuptzov</div><div class="t-ameta">10 reviews · 2018</div></div><span class="t-g-badge"><span class="t-g-dot"></span>Google</span></div></div>
-      </div>
-    </div>
-
-    <!-- CTA -->
-    <div class="t-cta">
-      <div>
-        <div class="t-cta-label">Get Started</div>
-        <div class="t-cta-heading">Ready to join our satisfied clients?</div>
-        <p class="t-cta-sub">45-minute free consultation · No commitment · Bronx, Queens, Yonkers, Mount Vernon, New Rochelle &amp; North Jersey</p>
-      </div>
-      <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" rel="noopener noreferrer" class="t-cta-btn">
-        Book Free Consultation
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
     </div>
 
+    <div class="reviews-carousel-wrap">
+      <div class="reviews-carousel" id="reviewsCarousel">
+
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="review-avatar">T</div>
+            <div>
+              <div class="review-name">Tisha Tucker</div>
+              <div class="review-meta">Local Guide · 41 weeks ago</div>
+            </div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text clamped" id="rt0">"I'm so incredibly grateful to have found Doryangel property management. Their staff is super responsive, they are reliable, and they are respectful to the tenants. I was managing the property myself for many years and it was such a relief and weight off my back to have a professional team handle everything."</p>
+          <button class="review-expand" onclick="expandReview('rt0', this)">Read more</button>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="review-avatar">N</div>
+            <div>
+              <div class="review-name">Nati Azoulay</div>
+              <div class="review-meta">August 2018</div>
+            </div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Dory is pleasant, extremely thorough, professional and very knowledgeable."</p>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="review-avatar">S</div>
+            <div>
+              <div class="review-name">Shai Vhaba</div>
+              <div class="review-meta">39 weeks ago</div>
+            </div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Very professional service. Reliable and pleasant."</p>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="review-avatar">M</div>
+            <div>
+              <div class="review-name">Manager OK</div>
+              <div class="review-meta">39 weeks ago</div>
+            </div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Great experience working with DoryAngel property management. Highly recommended."</p>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="review-avatar">M</div>
+            <div>
+              <div class="review-name">Michael R.</div>
+              <div class="review-meta">Property Owner · Bronx, NY</div>
+            </div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text clamped" id="rt4">"Communications are great, handling of issues is fast and competent, and a very good value. It is seamless and transparent — it gives me no stress but provides relief and confidence in my investments."</p>
+          <button class="review-expand" onclick="expandReview('rt4', this)">Read more</button>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="review-avatar">S</div>
+            <div>
+              <div class="review-name">Sarah T.</div>
+              <div class="review-meta">Portfolio Owner · Manhattan, NY</div>
+            </div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"DoryAngel LLC are very devoted to their vision. I can feel their professional fingerprint on everything they are taking care of. Highly recommend to any property owner."</p>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="review-avatar">D</div>
+            <div>
+              <div class="review-name">David K.</div>
+              <div class="review-meta">Building Manager · Queens, NY</div>
+            </div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Since DoryAngel started working with us, the company's methods made us much more organized and our response time reduced dramatically. We are very satisfied."</p>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="review-avatar" style="background:#2d7a4f">N</div>
+            <div>
+              <div class="review-name">NNG</div>
+              <div class="review-meta">Local Guide · November 2016</div>
+            </div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Great service, mostly recommended."</p>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="review-avatar" style="background:#7c3aed">J</div>
+            <div>
+              <div class="review-name">Jonathan Jimenez</div>
+              <div class="review-meta">November 2016</div>
+            </div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Great service. Top management in Bronx."</p>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="review-avatar" style="background:#b45309">J</div>
+            <div>
+              <div class="review-name">John Caicedo</div>
+              <div class="review-meta">November 2016</div>
+            </div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Excellent property management service. Truly grateful we chose DoryAngel to care for our property."</p>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="review-avatar" style="background:#0d9488">ר</div>
+            <div>
+              <div class="review-name">Ran Aloni</div>
+              <div class="review-meta">August 2018</div>
+            </div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Top Top management!!!"</p>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="review-avatar" style="background:#6b7280">D</div>
+            <div><div class="review-name">D S</div><div class="review-meta">4 reviews</div></div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Thank you for a professional service."</p>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="review-avatar" style="background:#ea580c">M</div>
+            <div><div class="review-name">Maribel Labante</div><div class="review-meta">6 days ago · New</div></div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"One of the best property management companies in the Bronx, New York! 😍"</p>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="review-avatar" style="background:#0f766e">S</div>
+            <div><div class="review-name">Sue Gil</div><div class="review-meta">Few weeks ago · New</div></div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text clamped" id="rt-sue">"I had the opportunity to work with Doryangel Management and the experience was very positive. From the start, their professionalism and responsiveness were clearly evident. Communication was their strongest feature — any concern or issue was handled quickly and efficiently."</p>
+          <button class="review-expand" onclick="expandReview('rt-sue', this)">Read more</button>
+        </div>
+
+      </div>
+
+      <div class="carousel-nav">
+        <button class="carousel-btn" onclick="scrollCarousel(-1)" aria-label="Previous reviews">&#8592;</button>
+        <div class="carousel-dots" id="carouselDots"></div>
+        <button class="carousel-btn" onclick="scrollCarousel(1)" aria-label="Next reviews">&#8594;</button>
+      </div>
+    </div>
+
+    <div class="reviews-cta">
+      <div style="margin-top:40px;padding:36px 40px;background:rgba(255,255,255,0.06);
+                  border:1px solid rgba(255,255,255,0.12);border-radius:14px;
+                  max-width:620px;margin-left:auto;margin-right:auto;">
+        <p style="font-family:'DM Serif Display',serif;font-size:22px;color:#fff;
+                  margin-bottom:8px;line-height:1.35;">
+          Ready to stop managing and start earning?
+        </p>
+        <p style="font-size:14px;color:rgba(255,255,255,0.65);margin-bottom:24px;line-height:1.6;">
+          Join 100+ NYC property owners who handed off the headaches. No long-term contracts.
+        </p>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+          <a href="#contact"
+             style="display:inline-flex;align-items:center;gap:8px;
+                    background:#3A7BDD;color:#fff;
+                    padding:14px 28px;border-radius:8px;
+                    font-size:15px;font-weight:700;text-decoration:none;
+                    transition:background 0.2s,transform 0.15s;"
+             onmouseover="this.style.background='#2966C4';this.style.transform='translateY(-2px)'"
+             onmouseout="this.style.background='#3A7BDD';this.style.transform='none'">
+            Get My Free Property Audit
+            <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+              <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+          </a>
+          <a href="https://share.google/tTIEyy7qxx4bKm1Zo" target="_blank" rel="noopener noreferrer"
+             style="display:inline-flex;align-items:center;gap:8px;
+                    background:transparent;color:#fff;
+                    border:1.5px solid rgba(255,255,255,0.3);
+                    padding:14px 24px;border-radius:8px;
+                    font-size:14px;font-weight:600;text-decoration:none;
+                    transition:border-color 0.2s,background 0.2s;"
+             onmouseover="this.style.borderColor='rgba(255,255,255,0.7)';this.style.background='rgba(255,255,255,0.07)'"
+             onmouseout="this.style.borderColor='rgba(255,255,255,0.3)';this.style.background='transparent'">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            View all 19 Google reviews
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -3027,6 +2807,32 @@ function updateBtnGroup(activeBtn) {
 function persist(key, val) {
   window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { [key]: val } }, '*');
 }
+// Reviews carousel
+function expandReview(id, btn) {
+  const el = document.getElementById(id);
+  el.classList.remove('clamped');
+  btn.style.display = 'none';
+}
+function scrollCarousel(dir) {
+  const c = document.getElementById('reviewsCarousel');
+  c.scrollBy({ left: dir * 360, behavior: 'smooth' });
+}
+(function initCarousel() {
+  const c = document.getElementById('reviewsCarousel');
+  const dotsWrap = document.getElementById('carouselDots');
+  if (!c || !dotsWrap) return;
+  const cards = c.querySelectorAll('.review-card');
+  cards.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => { c.scrollTo({ left: i * 360, behavior: 'smooth' }); };
+    dotsWrap.appendChild(d);
+  });
+  c.addEventListener('scroll', () => {
+    const idx = Math.round(c.scrollLeft / 360);
+    dotsWrap.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+  });
+})();
 
 function toggleFaq(btn) {
   const item = btn.closest('.faq-item');
@@ -3209,6 +3015,39 @@ async function handleFormSubmit(e) {
     }, 6000);
   }
 
+  var carousel = document.getElementById('reviewsCarousel');
+  if (carousel && hasIO && !prefersReduced) {
+    var paused = false;
+    var ticker = null;
+    function tick() {
+      if (paused || !carousel.children.length) return;
+      var step = carousel.children[0].offsetWidth + 20;
+      var max = carousel.scrollWidth - carousel.clientWidth;
+      if (carousel.scrollLeft + step > max - 5) {
+        carousel.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        carousel.scrollBy({ left: step, behavior: 'smooth' });
+      }
+    }
+    // Only tick when carousel is on-screen — saves CPU/GPU when scrolled past
+    var visibilityIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting && !ticker) {
+          ticker = setInterval(tick, 5000);
+        } else if (!entry.isIntersecting && ticker) {
+          clearInterval(ticker);
+          ticker = null;
+        }
+      });
+    }, { threshold: 0.2 });
+    visibilityIo.observe(carousel);
+    ['mouseenter', 'touchstart'].forEach(function (ev) {
+      carousel.addEventListener(ev, function () { paused = true; }, { passive: true });
+    });
+    ['mouseleave', 'touchend'].forEach(function (ev) {
+      carousel.addEventListener(ev, function () { paused = false; }, { passive: true });
+    });
+  }
 })();
 </script>
 
