@@ -78,12 +78,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 
-<script type="application/json" id="speaker-notes">
-[
-  "I can see the page. Back The rwik a\nSeason "
-]
-</script>
-
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -1559,27 +1553,6 @@ retell-chat-web-component {
   box-sizing: border-box;
 }
 </style>
-<template id="__bundler_thumbnail" data-bg-color="#F4F8FF">
-  <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
-    <rect x="0" y="0" width="800" height="56" fill="white"/>
-    <rect x="60" y="16" width="140" height="24" rx="4" fill="#E2E8F0"/>
-    <rect x="640" y="18" width="110" height="20" rx="6" fill="#0D1E3A"/>
-    <rect x="0" y="56" width="800" height="220" fill="#F4F8FF"/>
-    <ellipse cx="400" cy="56" rx="500" ry="120" fill="rgba(26,91,181,0.08)"/>
-    <rect x="220" y="100" width="180" height="10" rx="3" fill="#1A5BB5" opacity="0.7"/>
-    <rect x="160" y="124" width="480" height="28" rx="4" fill="#0D1E3A"/>
-    <rect x="200" y="162" width="400" height="22" rx="4" fill="#1A5BB5"/>
-    <rect x="240" y="196" width="320" height="12" rx="3" fill="#8B9BAE" opacity="0.5"/>
-    <rect x="230" y="224" width="140" height="32" rx="7" fill="#1A5BB5"/>
-    <rect x="384" y="224" width="140" height="32" rx="7" fill="none" stroke="#0D1E3A" stroke-width="2"/>
-    <rect x="0" y="290" width="800" height="36" fill="#0D1E3A"/>
-    <rect x="40" y="346" width="168" height="100" rx="8" fill="white" stroke="#E2E8F0" stroke-width="1.5"/>
-    <rect x="228" y="346" width="168" height="100" rx="8" fill="white" stroke="#E2E8F0" stroke-width="1.5"/>
-    <rect x="416" y="346" width="168" height="100" rx="8" fill="white" stroke="#E2E8F0" stroke-width="1.5"/>
-    <rect x="604" y="346" width="168" height="100" rx="8" fill="white" stroke="#E2E8F0" stroke-width="1.5"/>
-    <polygon points="700,80 750,110 750,160 700,190 650,160 650,110" fill="#1A5BB5" opacity="0.12"/>
-  </svg>
-</template>
 <!-- Markdown parser for blog posts -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" async></script>
 <!-- Retell AI Chat Widget — Hailey lead capture -->
@@ -2854,17 +2827,6 @@ function filterFaq(cat, btn) {
     else item.classList.add('hidden');
   });
 }
-function handleSubmit(e) {
-  e.preventDefault();
-  const btn = e.target;
-  btn.textContent = '✓ Message sent! We\'ll be in touch shortly.';
-  btn.style.background = '#22C55E';
-  setTimeout(() => {
-    btn.textContent = 'Send Message & Book Consultation →';
-    btn.style.background = '';
-  }, 3500);
-}
-
 // Apply saved defaults
 (function() {
   const d = TWEAK_DEFAULTS;
