@@ -254,6 +254,32 @@ Priority order for next sessions:
 - Add `loading="lazy"` to below-fold images
 - Consider splitting the single 2,400-line index.html into partials built at deploy time
 
+### 7. Analytics dashboard + AI advisor (PARKED — resume AFTER website is published)
+
+Owner request (2026-05-31): a private "mission control" to watch the live site —
+live charts of website activity (traffic + which sections/posts work), plus an
+AI engine that produces prioritized action items. Agreed approach: **both, phased**,
+**start with the free dashboard first**. Owner is non-technical and risk-averse —
+**must NOT touch or risk live site functionality** (site is working well). Everything
+lives OUTSIDE the website. Parked until owner finishes publishing the site.
+
+- **Phase 1a — Free live dashboard (DO THIS FIRST, no repo, no website change):**
+  Google **Looker Studio** (lookerstudio.google.com) → sign in as office@doryangel.com
+  → Create Report → connect Google Analytics property **G-P8QR4VL8NH** → add charts:
+  visitors over time, traffic sources, top pages/posts, big-number visitor tile.
+  Share link / Looker mobile app for phone viewing. GA4 tag confirmed live in index.html
+  (consent-gated, anonymize_ip on) so data is already collecting. ~15 min, desktop only.
+- **Phase 1b — Count leads (the ONLY website-touching step; do only on owner OK):**
+  add lightweight GA4 conversion events for form submit, "Call" tap, booking click,
+  Retell chat — small, reversible edit to index.html, on a reviewed branch/PR first.
+  Lets the dashboard show leads/week by channel, not just traffic.
+- **Phase 1c —** connect the leads Google Sheet (Make.com pipeline) to Looker for real
+  lead counts/trends.
+- **Phase 2 — AI weekly advisor:** create a SEPARATE PRIVATE GitHub repo with a
+  scheduled job (same pattern as blog autopublish) → reads weekly metrics, compares to
+  prior weeks → emails 3–5 prioritized, specific action items via Resend (already wired)
+  using Claude (already wired). Lives entirely in the private repo; touches website: nothing.
+
 ### 6. Off-page / distribution
 - Set up Google Business Profile posts linked to each new blog post
 - Auto-share new posts to LinkedIn / Facebook (extend generate-post.js)
