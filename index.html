@@ -1524,18 +1524,24 @@ body.variant-dark .audience-card { background: #0F2040; }
 @keyframes glowPulse  { 0%,100% { box-shadow:0 8px 28px rgba(45,111,224,.28); } 50% { box-shadow:0 8px 42px rgba(45,111,224,.54); } }
 @keyframes slideGradH { 0% { background-position:0% 0; } 100% { background-position:200% 0; } }
 
-.pm-card { padding:0; border:none; overflow:hidden; background:transparent; box-shadow:0 8px 32px rgba(30,42,68,.15); }
-.pm-card:hover { transform:none; border-color:transparent; box-shadow:0 14px 44px rgba(30,42,68,.2); }
+/* PM card: white, same border/radius as other tool-cards */
+.pm-card { padding:0; overflow:hidden; background:#fff; }
+.pm-card:hover { box-shadow:0 6px 24px rgba(13,31,92,.1); border-color:var(--blue); }
 
-/* hero */
-.pm-hero { position:relative; background:linear-gradient(160deg,#243B66 0%,#2D6FE0 100%); color:#fff; padding:20px 22px 22px; overflow:hidden; }
-.pm-particle { position:absolute; border-radius:50%; pointer-events:none; }
-.pm-badge { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:999px; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.25); margin-bottom:11px; font-size:10.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; }
-.pm-badge-star { animation:pmSparkle 1.8s ease-in-out infinite; font-size:12px; }
-.pm-hero h3 { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:30px; line-height:.98; text-transform:uppercase; color:#fff; margin:0 0 8px; letter-spacing:.005em; }
-.pm-tagline { font-size:13.5px; font-weight:600; line-height:1.4; color:#fff; margin:0 0 11px; }
-.pm-chips { display:flex; flex-wrap:wrap; gap:7px; }
-.pm-chip { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; color:#fff; background:rgba(255,255,255,.14); padding:5px 10px; border-radius:999px; }
+/* animated top accent band — replaces the dark hero */
+.pm-accent-band { height:5px; background:linear-gradient(90deg,#1E5AA8,#3E8FD4,#C97B2F,#3E8FD4,#1E5AA8); background-size:300% 100%; animation:slideGradH 5s linear infinite; }
+
+/* white header section — matches other tool-card layout */
+.pm-white-header { padding:24px 26px 20px; }
+.pm-header-row { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; }
+.pm-premium-pill { display:inline-flex; align-items:center; gap:5px; padding:5px 11px; border-radius:100px; background:#FBF1E6; border:1px solid #F0D9BE; }
+.pm-pill-star { color:#C97B2F; animation:pmSparkle 1.8s ease-in-out infinite; font-size:10px; }
+.pm-pill-text { font-weight:700; font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:#C97B2F; }
+/* override tool-card p so it doesn't bleed onto white header text */
+.pm-card .pm-white-header h3 { font-size:20px; font-weight:700; color:var(--navy,#0F2847); line-height:1.25; margin:0 0 8px; }
+.pm-card .pm-white-header p { font-size:14px; color:var(--text-muted,#5F6B7A); line-height:1.6; margin:0 0 12px; }
+.pm-chips { display:flex; flex-wrap:wrap; gap:6px; }
+.pm-chip { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; color:var(--blue,#1E5AA8); background:var(--blue-dim,#EBF3FD); padding:4px 10px; border-radius:100px; }
 
 /* stat strip */
 .pm-stat-strip { display:grid; grid-template-columns:repeat(3,1fr); background:#F4F7FB; border-bottom:1px solid #E5E9F0; }
@@ -1680,9 +1686,14 @@ retell-chat-web-component {
         <div class="pm-modal-sep"></div>
         <a href="https://www.paypal.com/ncp/payment/6E2ZUE9ZTET8S" target="_blank" rel="noopener" class="pm-pp-btn" id="pmPaypalLink">
           <span class="pm-pp-logo"><b>Pay</b><em>Pal</em></span>
-          <span class="pm-pp-text">Checkout</span>
+          <span class="pm-pp-text">Checkout — $29</span>
         </a>
         <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:13px;color:#6B7280;font-size:12px;"><span>🔒</span> Secure checkout via PayPal · cards accepted</div>
+        <!-- shown after PayPal tab opens: confirm payment then reveal download -->
+        <div id="pmConfirmRow" style="display:none;margin-top:14px;border-top:1px solid #E5E9F0;padding-top:14px;text-align:center;">
+          <div style="font-size:12.5px;color:#6B7280;margin-bottom:10px;">Completed your payment? Tap below to get your file.</div>
+          <button id="pmConfirmBtn" style="border:none;cursor:pointer;background:linear-gradient(135deg,#2E6FA8,#3E8FD4);color:#fff;font-family:'DM Sans',sans-serif;font-weight:700;font-size:14px;padding:11px 24px;border-radius:10px;width:100%;">I've paid — get my download →</button>
+        </div>
       </div>
       <!-- state 1: download -->
       <div id="pmDlState" style="display:none;text-align:center;">
@@ -2288,23 +2299,32 @@ retell-chat-web-component {
       <!-- PREMIUM CARD: Property P&L Dashboard -->
       <div class="tool-card pm-card" id="premiumCard">
 
-        <!-- hero band -->
-        <div class="pm-hero" id="pmHero">
-          <!-- particles injected by JS -->
-          <div style="position:relative;">
-            <div class="pm-badge"><span class="pm-badge-star">✦</span> DIY Property Tool</div>
-            <h3>Property P&amp;L<br>Dashboard</h3>
-            <p class="pm-tagline">Stop paying for property management — do it yourself. Pays for itself the first time it catches a missed rent payment.</p>
-            <div class="pm-chips">
-              <span class="pm-chip">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                Works in Excel, Numbers &amp; Google Sheets
-              </span>
-              <span class="pm-chip">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                Instant download
-              </span>
+        <!-- animated accent band -->
+        <div class="pm-accent-band"></div>
+
+        <!-- white header — same layout as the other tool cards -->
+        <div class="pm-white-header">
+          <div class="pm-header-row">
+            <div class="tool-card-icon" style="background:var(--blue-dim,#EBF3FD);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue,#1E5AA8)" stroke-width="1.8" width="24" height="24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
             </div>
+            <div class="pm-premium-pill">
+              <span class="pm-pill-star">✦</span>
+              <span class="pm-pill-text">Premium Tool</span>
+            </div>
+          </div>
+          <span class="tool-tag" style="background:#FBF1E6;color:#C97B2F;border:1px solid #F0D9BE;">DIY Property Tool · $29</span>
+          <h3>Property P&amp;L Dashboard</h3>
+          <p>Stop paying for property management — do it yourself. Pays for itself the first time it catches a missed rent payment.</p>
+          <div class="pm-chips">
+            <span class="pm-chip">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+              Excel, Numbers &amp; Google Sheets
+            </span>
+            <span class="pm-chip">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+              Instant download
+            </span>
           </div>
         </div>
 
@@ -3385,21 +3405,6 @@ async function handleFormSubmit(e) {
 <!-- ===== PROPERTY P&L DASHBOARD CARD ===== -->
 <script>
 (function () {
-  // --- particles in the hero ---
-  var hero = document.getElementById('pmHero');
-  if (hero) {
-    var PCOLS = ['#9DC3FF', '#6BAFE3', '#C8DEFF'];
-    for (var pi = 0; pi < 12; pi++) {
-      var sp = document.createElement('span');
-      sp.className = 'pm-particle';
-      var sz = 2 + Math.random() * 4;
-      var dur = (5 + Math.random() * 6).toFixed(1);
-      var del = (Math.random() * 5).toFixed(1);
-      sp.style.cssText = 'left:' + (Math.random() * 100).toFixed(0) + '%;top:' + (Math.random() * 100).toFixed(0) + '%;width:' + sz + 'px;height:' + sz + 'px;background:' + PCOLS[pi % 3] + ';opacity:' + (0.15 + Math.random() * 0.35).toFixed(2) + ';animation:pmFloat ' + dur + 's ease-in-out ' + del + 's infinite;';
-      hero.insertBefore(sp, hero.firstChild);
-    }
-  }
-
   // --- countup helper ---
   function countUp(el, target, dur, prefix, suffix, decimals) {
     prefix = prefix || ''; suffix = suffix || ''; decimals = decimals || 0; dur = dur || 1400;
@@ -3588,18 +3593,20 @@ async function handleFormSubmit(e) {
   var paypalLink = document.getElementById('pmPaypalLink');
   var payState = document.getElementById('pmPayState');
   var dlState = document.getElementById('pmDlState');
+  var confirmRow = document.getElementById('pmConfirmRow');
+  var confirmBtn = document.getElementById('pmConfirmBtn');
   var modalTitle = document.getElementById('pmModalTitle');
   var modalSub = document.getElementById('pmModalSub');
 
   function openModal() {
     if (!modal) return;
     if (payState) payState.style.display = '';
+    if (confirmRow) confirmRow.style.display = 'none';
     if (dlState) dlState.style.display = 'none';
     if (modalTitle) modalTitle.textContent = 'Property P&L Dashboard';
     if (modalSub) modalSub.textContent = 'Excel toolkit · instant download';
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
-    // move focus to close button for accessibility
     setTimeout(function () { if (closeBtn) closeBtn.focus(); }, 50);
   }
   function closeModal() {
@@ -3611,13 +3618,16 @@ async function handleFormSubmit(e) {
   if (buyBtn) buyBtn.addEventListener('click', openModal);
   if (closeBtn) closeBtn.addEventListener('click', closeModal);
   if (modal) modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+  // PayPal clicked: show "I've paid" confirmation row (don't auto-reveal download)
   if (paypalLink) paypalLink.addEventListener('click', function () {
-    setTimeout(function () {
-      if (payState) payState.style.display = 'none';
-      if (dlState) dlState.style.display = '';
-      if (modalTitle) modalTitle.textContent = 'Finish in the PayPal tab';
-      if (modalSub) modalSub.textContent = 'Once payment clears, download below.';
-    }, 400);
+    setTimeout(function () { if (confirmRow) confirmRow.style.display = ''; }, 300);
+  });
+  // Confirmation button: switch to download state
+  if (confirmBtn) confirmBtn.addEventListener('click', function () {
+    if (payState) payState.style.display = 'none';
+    if (dlState) dlState.style.display = '';
+    if (modalTitle) modalTitle.textContent = 'Download your file';
+    if (modalSub) modalSub.textContent = 'Thank you! Your Excel file is ready.';
   });
 
   // close on Escape
