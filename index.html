@@ -1740,15 +1740,15 @@ body.variant-dark .audience-card { background: #0F2040; }
 .pm-nav-caption { font-size:12px; font-weight:700; color:#2A3342; display:flex; align-items:center; gap:5px; }
 
 /* price block */
-.pm-price-block { padding:14px 20px 20px; background:#F6F8FB; }
-.pm-price-inner { background:#fff; border:1px solid #E5E9F0; border-radius:16px; padding:17px; box-shadow:0 8px 28px rgba(30,42,68,.10); }
-.pm-price-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:13px; }
+.pm-price-block { padding:10px 16px 14px; background:#F6F8FB; }
+.pm-price-inner { background:#fff; border:1px solid #E5E9F0; border-radius:12px; padding:12px; box-shadow:0 4px 16px rgba(30,42,68,.08); }
+.pm-price-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
 .pm-price-nums { display:flex; align-items:center; gap:8px; }
-.pm-price-was { font-size:16px; text-decoration:line-through; color:#A0A4AB; }
-.pm-price-now { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:40px; line-height:.85; color:#232323; }
-.pm-price-meta { font-size:11.5px; color:#6B7280; margin-top:3px; }
-.pm-launch-pill { font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#C97B2F; background:#FBF1E6; border:1px solid #F0D9BE; padding:7px 12px; border-radius:999px; white-space:nowrap; align-self:center; }
-.pm-buy-btn { width:100%; border:none; cursor:pointer; border-radius:12px; padding:15px; background:linear-gradient(135deg,#2552B5,#2D6FE0); color:#fff; font-family:'DM Sans',sans-serif; font-weight:700; font-size:15.5px; display:flex; align-items:center; justify-content:center; gap:9px; position:relative; overflow:hidden; animation:glowPulse 2.8s ease-in-out infinite; transition:filter .2s; }
+.pm-price-was { font-size:14px; text-decoration:line-through; color:#A0A4AB; }
+.pm-price-now { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:32px; line-height:.85; color:#232323; }
+.pm-price-meta { font-size:11px; color:#6B7280; margin-top:2px; }
+.pm-launch-pill { font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#C97B2F; background:#FBF1E6; border:1px solid #F0D9BE; padding:5px 10px; border-radius:999px; white-space:nowrap; align-self:center; }
+.pm-buy-btn { width:100%; border:none; cursor:pointer; border-radius:10px; padding:11px 15px; background:linear-gradient(135deg,#2552B5,#2D6FE0); color:#fff; font-family:'DM Sans',sans-serif; font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center; gap:8px; position:relative; overflow:hidden; animation:glowPulse 2.8s ease-in-out infinite; transition:filter .2s; }
 .pm-buy-btn:hover { filter:brightness(1.07); }
 .pm-buy-btn:active { transform:scale(.98); }
 .pm-buy-btn .shine { position:absolute; top:0; left:-60%; width:50%; height:100%; background:linear-gradient(100deg,transparent,rgba(255,255,255,.44),transparent); transform:skewX(-20deg); pointer-events:none; animation:shineMove 3.4s ease-in-out infinite; }
@@ -1798,9 +1798,9 @@ body.variant-dark .audience-card { background: #0F2040; }
   background:#F4F7FB; border-top:1px solid #E5E9F0; border-bottom:1px solid #E5E9F0;
 }
 .pm-kpi-prev-sep { background:#E5E9F0; }
-.pm-kpi-prev-cell { padding:12px 8px; text-align:center; }
+.pm-kpi-prev-cell { padding:8px 6px; text-align:center; }
 .pm-kpi-prev-lbl { font-size:9px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#6B7280; margin-bottom:4px; }
-.pm-kpi-prev-val { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:20px; line-height:1; }
+.pm-kpi-prev-val { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:17px; line-height:1; }
 .pm-preview-link {
   display:flex; align-items:center; justify-content:center; gap:7px;
   padding:9px 16px; font-size:12px; font-weight:700; color:var(--blue);
@@ -2598,9 +2598,9 @@ retell-chat-web-component {
         <!-- animated accent band -->
         <div class="pm-accent-band"></div>
 
-        <!-- white header — same layout as the other tool cards -->
-        <div class="pm-white-header">
-          <div class="pm-header-row">
+        <!-- compact header -->
+        <div class="pm-white-header" style="padding:14px 18px 12px;">
+          <div class="pm-header-row" style="margin-bottom:8px;">
             <div class="tool-card-icon" style="background:var(--blue-dim,#EBF3FD);">
               <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue,#1E5AA8)" stroke-width="1.8" width="24" height="24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
             </div>
@@ -2609,8 +2609,7 @@ retell-chat-web-component {
               <span class="pm-pill-text">Premium Tool</span>
             </div>
           </div>
-          <h3>Property P&amp;L Dashboard</h3>
-          <p>Stop paying for property management — do it yourself. Pays for itself the first time it catches a missed rent payment.</p>
+          <h3 style="margin-bottom:8px;">Property P&amp;L Dashboard</h3>
           <div class="pm-chips">
             <span class="pm-chip">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
@@ -2623,39 +2622,8 @@ retell-chat-web-component {
           </div>
         </div>
 
-        <!-- trust stat strip -->
-        <div class="pm-stat-strip">
-          <div class="pm-stat-cell"><div class="pm-stat-val" style="color:#2D6FE0;">4,153</div><div class="pm-stat-lbl">Live formulas inside the file</div></div>
-          <div class="pm-stat-cell"><div class="pm-stat-val" style="color:#15806A;">8</div><div class="pm-stat-lbl">Dashboard sheets</div></div>
-          <div class="pm-stat-cell"><div class="pm-stat-val" style="color:#1E2A44;">50</div><div class="pm-stat-lbl">Properties supported</div></div>
-        </div>
-
         <!-- compact KPI snapshot — full charts at /tools/pl-dashboard/ -->
         <div class="pm-kpi-preview">
-          <div class="pm-kpi-prev-cell">
-            <div class="pm-kpi-prev-lbl">Annual Income</div>
-            <div class="pm-kpi-prev-val" style="color:#15806A;">$98,400</div>
-          </div>
-          <div class="pm-kpi-prev-sep"></div>
-          <div class="pm-kpi-prev-cell">
-            <div class="pm-kpi-prev-lbl">Expenses</div>
-            <div class="pm-kpi-prev-val" style="color:#D14343;">$56,220</div>
-          </div>
-          <div class="pm-kpi-prev-sep"></div>
-          <div class="pm-kpi-prev-cell">
-            <div class="pm-kpi-prev-lbl">Net Profit</div>
-            <div class="pm-kpi-prev-val" style="color:#2D6FE0;">$42,180</div>
-          </div>
-        </div>
-        <div style="padding:8px 18px 0;">
-          <svg width="100%" viewBox="0 0 300 36" style="display:block;opacity:.28;" aria-hidden="true">
-            <path d="M0,30 L27,28 L55,27 L82,18 L109,17 L136,17 L164,16 L191,15 L218,14 L245,11 L273,8 L300,5" fill="none" stroke="#15806A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M0,34 L27,34 L55,33 L82,34 L109,33 L136,33 L164,34 L191,33 L218,34 L245,32 L273,33 L300,32" fill="none" stroke="#E8A08F" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="4 4"/>
-          </svg>
-          <div style="display:flex;justify-content:space-between;font-size:10px;color:#B0BAC8;font-weight:600;margin-top:3px;padding-bottom:10px;">
-            <span>Jan</span><span>Apr</span><span>Jul</span><span>Oct</span><span>Dec</span>
-          </div>
-        </div>
         <a href="/tools/pl-dashboard/" class="pm-preview-link">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
           Preview all 4 dashboard sheets &rarr;
