@@ -1476,10 +1476,15 @@ body.variant-dark .audience-card { background: #0F2040; }
 /* ── AUTOMATION TOOLS ── */
 .tools-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
   margin-top: 40px;
-  max-width: 680px;
+}
+@media (max-width: 900px) {
+  .tools-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .tools-grid { grid-template-columns: 1fr; }
 }
 .tool-card {
   background: #fff;
@@ -1513,6 +1518,168 @@ body.variant-dark .audience-card { background: #0F2040; }
   color: var(--blue); background: var(--blue-dim, #EEF2FD);
   padding: 3px 10px; border-radius: 100px;
   width: fit-content;
+}
+.tool-tag-soon { color: #6B7280 !important; background: #F3F4F6 !important; }
+
+/* coming-soon card variant */
+.tool-card-soon {
+  background: #F8FAFC;
+  border-style: dashed;
+  border-color: #CBD5E1;
+  opacity: .88;
+}
+.tool-card-soon h3 { color: #64748B; }
+.tool-card-soon p  { color: #94A3B8; }
+
+/* trust meta line under card description */
+.tool-trust-meta {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; color: #64748B;
+  margin-top: -4px;
+}
+.tool-trust-meta svg { flex-shrink: 0; }
+
+/* coming-soon teaser strip */
+.tools-coming-teasers {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  margin-top: 16px;
+}
+.tools-coming-teaser {
+  display: flex; align-items: center; gap: 10px;
+  background: #F8FAFC; border: 1.5px dashed #CBD5E1;
+  border-radius: 10px; padding: 10px 14px;
+  flex: 1 1 200px;
+}
+.tools-coming-teaser-name {
+  flex: 1; font-size: 13px; font-weight: 600; color: #64748B;
+}
+.tools-coming-notify {
+  font-size: 11.5px; font-weight: 700; color: var(--blue);
+  background: none; border: none; cursor: pointer;
+  padding: 0; white-space: nowrap; text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.tools-coming-notify:hover { color: var(--navy); }
+
+/* featured divider between free and premium */
+.tools-featured-divider {
+  display: flex; align-items: center; gap: 14px;
+  margin: 36px 0 28px;
+}
+.tools-featured-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, #CBD5E1, transparent);
+}
+.tools-featured-badge {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: #C97B2F;
+  background: #FBF1E6; border: 1px solid #F0D9BE;
+  padding: 6px 14px; border-radius: 999px; white-space: nowrap;
+}
+
+/* premium card when outside the old tools-grid */
+.tools-premium-wrap { margin: 0 auto; max-width: 700px; }
+
+/* bottom CTA strip */
+.tools-cta-strip {
+  margin-top: 36px; padding: 28px 32px;
+  background: var(--navy, #0F2847);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap;
+}
+.tools-cta-strip-text {
+  color: #fff;
+}
+.tools-cta-strip-text strong {
+  display: block; font-size: 18px; font-weight: 700;
+  line-height: 1.3; margin-bottom: 4px;
+}
+.tools-cta-strip-text span {
+  font-size: 14px; color: rgba(255,255,255,.7);
+}
+.tools-cta-strip-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #fff; color: var(--navy, #0F2847);
+  font-weight: 700; font-size: 14px; padding: 12px 22px;
+  border-radius: 10px; text-decoration: none; white-space: nowrap;
+  transition: background .2s, transform .15s;
+  flex-shrink: 0;
+}
+.tools-cta-strip-btn:hover { background: #EBF3FD; transform: translateY(-1px); }
+@media (max-width: 600px) {
+  .tools-cta-strip { flex-direction: column; align-items: flex-start; }
+  .tools-cta-strip-btn { width: 100%; justify-content: center; }
+}
+
+/* ── TOOL GATE MODAL (email capture before opening free tool) ── */
+.toolgate-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(15,40,71,.55); backdrop-filter: blur(4px);
+  display: grid; place-items: center; padding: 20px;
+}
+.toolgate-overlay.hidden { display: none; }
+.toolgate-modal {
+  width: min(420px, 92vw);
+  background: #fff; border-radius: 20px; overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,.3);
+  animation: popIn .3s cubic-bezier(.34,1.56,.64,1);
+}
+.toolgate-head {
+  background: linear-gradient(135deg, #0F2847, #1E5AA8);
+  padding: 22px 26px 18px; color: #fff; position: relative;
+}
+.toolgate-head h4 {
+  font-size: 20px; font-weight: 700; margin: 0 0 4px; line-height: 1.2;
+}
+.toolgate-head p { font-size: 13px; opacity: .8; margin: 0; }
+.toolgate-close {
+  position: absolute; top: 14px; right: 16px;
+  background: rgba(255,255,255,.18); border: none; color: #fff;
+  width: 28px; height: 28px; border-radius: 50%;
+  cursor: pointer; font-size: 16px; display: grid; place-items: center;
+}
+.toolgate-body { padding: 22px 26px 26px; }
+.toolgate-field { margin-bottom: 14px; }
+.toolgate-field label {
+  display: block; font-size: 12px; font-weight: 700;
+  color: #374151; margin-bottom: 5px; letter-spacing: .03em;
+}
+.toolgate-field input {
+  width: 100%; padding: 10px 14px; border: 1.5px solid #E5E9F0;
+  border-radius: 9px; font-size: 14px; font-family: inherit;
+  color: #1a1a1a; background: #fff; outline: none;
+  transition: border-color .15s; box-sizing: border-box;
+}
+.toolgate-field input:focus { border-color: #1E5AA8; }
+.toolgate-submit {
+  width: 100%; border: none; cursor: pointer;
+  background: linear-gradient(135deg, #0F2847, #1E5AA8);
+  color: #fff; font-weight: 700; font-size: 15px;
+  padding: 13px; border-radius: 10px; margin-top: 6px;
+  font-family: inherit; transition: filter .2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.toolgate-submit:hover { filter: brightness(1.1); }
+.toolgate-note {
+  font-size: 11px; color: #9CA3AF; text-align: center; margin-top: 10px;
+}
+.toolgate-success {
+  text-align: center; padding: 16px 0 8px;
+}
+.toolgate-success-icon {
+  width: 52px; height: 52px; background: #DCFCE7;
+  border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; margin: 0 auto 14px;
+  font-size: 24px;
+}
+.toolgate-success h5 {
+  font-size: 17px; font-weight: 700; color: #0F2847; margin: 0 0 6px;
+}
+.toolgate-success p { font-size: 13px; color: #6B7280; margin: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .toolgate-modal { animation: none; }
 }
 
 /* ── PREMIUM P&L TOOL CARD ───────────────────────────────────────────────── */
@@ -1668,6 +1835,80 @@ retell-chat-web-component {
 </style>
 <!-- Markdown parser for blog posts -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" async></script>
+<!-- TOOL GATE MODAL (email capture for free tools) -->
+<div class="toolgate-overlay hidden" id="toolGateOverlay" role="dialog" aria-modal="true" aria-label="Get free tool access">
+  <div class="toolgate-modal" id="toolGateModal">
+    <div class="toolgate-head">
+      <button class="toolgate-close" id="toolGateClose" aria-label="Close">×</button>
+      <h4 id="toolGateTitle">Get instant access</h4>
+      <p id="toolGateSub">We'll also send you NYC landlord tips — unsubscribe any time.</p>
+    </div>
+    <div class="toolgate-body">
+      <!-- form state -->
+      <form id="toolGateForm" style="display:block;" novalidate>
+        <input type="hidden" name="access_key" value="6991fa6b-8f6c-4c24-9167-b7ee52026a98">
+        <input type="hidden" name="subject" id="toolGateSubject" value="Free Tool Access Request">
+        <input type="hidden" name="tool_name" id="toolGateToolName" value="">
+        <input type="hidden" name="from_name" value="DoryAngel Website">
+        <div class="toolgate-field">
+          <label for="toolGateName">Your first name</label>
+          <input type="text" id="toolGateName" name="name" placeholder="e.g. Mark" autocomplete="given-name">
+        </div>
+        <div class="toolgate-field">
+          <label for="toolGateEmail">Email address <span style="color:#D14343;">*</span></label>
+          <input type="email" id="toolGateEmail" name="email" placeholder="you@email.com" required autocomplete="email">
+        </div>
+        <button type="submit" class="toolgate-submit">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Open the Tool &rarr;
+        </button>
+        <p class="toolgate-note">🔒 No spam. Unsubscribe any time. We respect your inbox.</p>
+      </form>
+      <!-- success state -->
+      <div id="toolGateSuccess" class="toolgate-success" style="display:none;">
+        <div class="toolgate-success-icon">✓</div>
+        <h5>You're in!</h5>
+        <p>The tool is opening now in a new tab.<br>Check your inbox for tips from DoryAngel.</p>
+        <button onclick="closeToolGate()" style="margin-top:16px;background:var(--blue);color:#fff;border:none;padding:10px 22px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFY ME MODAL (coming-soon tools) -->
+<div class="toolgate-overlay hidden" id="notifyGateOverlay" role="dialog" aria-modal="true" aria-label="Get notified when tool launches">
+  <div class="toolgate-modal" id="notifyGateModal">
+    <div class="toolgate-head" style="background:linear-gradient(135deg,#374151,#64748B);">
+      <button class="toolgate-close" id="notifyGateClose" aria-label="Close">×</button>
+      <h4 id="notifyGateTitle">Notify me when it launches</h4>
+      <p id="notifyGateSub">Be the first to know — we'll send one email when it's ready.</p>
+    </div>
+    <div class="toolgate-body">
+      <form id="notifyGateForm" style="display:block;" novalidate>
+        <input type="hidden" name="access_key" value="6991fa6b-8f6c-4c24-9167-b7ee52026a98">
+        <input type="hidden" name="subject" id="notifyGateSubject" value="Notify Me: Upcoming Tool">
+        <input type="hidden" name="tool_name" id="notifyGateToolName" value="">
+        <input type="hidden" name="from_name" value="DoryAngel Website">
+        <div class="toolgate-field">
+          <label for="notifyGateEmail">Your email address <span style="color:#D14343;">*</span></label>
+          <input type="email" id="notifyGateEmail" name="email" placeholder="you@email.com" required autocomplete="email">
+        </div>
+        <button type="submit" class="toolgate-submit" style="background:linear-gradient(135deg,#374151,#64748B);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          Notify Me &rarr;
+        </button>
+        <p class="toolgate-note">One email when it launches. That's it.</p>
+      </form>
+      <div id="notifyGateSuccess" class="toolgate-success" style="display:none;">
+        <div class="toolgate-success-icon" style="background:#EEF4FF;">🔔</div>
+        <h5>Got it!</h5>
+        <p>We'll email you as soon as <span id="notifyGateToolDisplay"></span> is ready.</p>
+        <button onclick="closeNotifyGate()" style="margin-top:16px;background:#374151;color:#fff;border:none;padding:10px 22px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Property P&L Dashboard checkout modal -->
 <div class="pm-overlay hidden" id="pmModal" role="dialog" aria-modal="true" aria-label="Purchase Property P&L Dashboard">
   <div class="pm-modal-box" id="pmModalBox">
@@ -1745,24 +1986,25 @@ retell-chat-web-component {
       <li class="nav-has-dropdown">
         <a href="#tools">Tools &#9662;</a>
         <div class="nav-dropdown">
-          <p class="nav-dd-label">Doryangel Property Automation</p>
+          <p class="nav-dd-label">DIY Landlord Toolkit — Free</p>
           <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" class="nav-dd-link">
-            <span class="dd-dot"></span> Preventive Maintenance &amp; Compliance
-          </a>
-          <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" class="nav-dd-link">
-            <span class="dd-dot"></span> Owner &amp; Tenant Portal (Buildium)
+            <span class="dd-dot"></span> Compliance Calendar
           </a>
           <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/" target="_blank" rel="noopener" class="nav-dd-link">
-            <span class="dd-dot" style="background:#1E5AA8;"></span> DoryAngel Digest <span class="nav-dd-tag" style="background:#EEF4FF;color:#1E5AA8;">New</span>
+            <span class="dd-dot" style="background:#1E5AA8;"></span> DoryAngel Digest <span class="nav-dd-tag" style="background:#EEF4FF;color:#1E5AA8;">Free</span>
           </a>
           <a href="#premiumCard" class="nav-dd-link">
             <span class="dd-dot dd-dot-premium"></span> Property P&amp;L Dashboard <span class="nav-dd-tag" style="background:#FBF1E6;color:#C97B2F;">$29</span>
           </a>
           <hr class="nav-dd-sep">
           <p class="nav-dd-label">Coming Soon</p>
-          <span class="nav-dd-soon"><span class="dd-dot dd-dot-soon"></span> Maintenance Request Tracker <span class="nav-dd-tag">Soon</span></span>
-          <span class="nav-dd-soon"><span class="dd-dot dd-dot-soon"></span> Lease Renewal Automation <span class="nav-dd-tag">Soon</span></span>
-          <span class="nav-dd-soon"><span class="dd-dot dd-dot-soon"></span> Vendor Management Portal <span class="nav-dd-tag">Soon</span></span>
+          <span class="nav-dd-soon"><span class="dd-dot dd-dot-soon"></span> NYC Rent Increase Calculator <span class="nav-dd-tag">Soon</span></span>
+          <span class="nav-dd-soon"><span class="dd-dot dd-dot-soon"></span> Security Deposit Tracker <span class="nav-dd-tag">Soon</span></span>
+          <span class="nav-dd-soon"><span class="dd-dot dd-dot-soon"></span> Tenant Screening Checklist <span class="nav-dd-tag">Soon</span></span>
+          <hr class="nav-dd-sep">
+          <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" class="nav-dd-link" style="color:#6B7280;">
+            <span class="dd-dot" style="background:#D1D5DB;"></span> Owner &amp; Tenant Portal (Buildium)
+          </a>
         </div>
       </li>
       <li><a href="#contact">Contact</a></li>
@@ -1813,7 +2055,7 @@ retell-chat-web-component {
   </ul>
   <div class="drawer-sep"></div>
   <div style="padding: 0 0 8px;">
-    <p style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#3E8FD4;margin:0 0 10px;">Doryangel Automation Tools</p>
+    <p style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#3E8FD4;margin:0 0 10px;">DIY Landlord Toolkit</p>
     <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" class="drawer-tool-card">
       <div class="drawer-tool-card-icon" style="background:#EAF4FB;">
         <svg viewBox="0 0 24 24" fill="none" stroke="#3E8FD4" stroke-width="1.8" width="20" height="20"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
@@ -1860,7 +2102,7 @@ retell-chat-web-component {
       </div>
       <div>
         <div style="font-size:13px;font-weight:600;color:#9CA3AF;">More tools coming soon</div>
-        <div style="font-size:11px;color:#C1C9D4;">Maintenance Tracker · Lease Renewal · Vendor Portal</div>
+        <div style="font-size:11px;color:#C1C9D4;">Rent Calculator · Security Deposit · Screening Kit</div>
       </div>
     </div>
   </div>
@@ -2261,43 +2503,95 @@ retell-chat-web-component {
 <!-- AUTOMATION TOOLS -->
 <section id="tools" style="background:var(--grey-light);">
   <div class="section-inner">
-    <div class="section-label">Free Resources</div>
-    <h2 class="section-title reveal">Doryangel Property Automation Tools</h2>
-    <p class="section-sub">Free property management tools built specifically for Bronx and NYC landlords. No subscription, no credit card.</p>
+    <div class="section-label">DIY Landlord Toolkit</div>
+    <h2 class="section-title reveal">The tools your property manager<br>doesn't want you to have</h2>
+    <p class="section-sub">Built for NYC property owners who do it themselves — for now. Free to use. No subscription, no credit card.<br><em style="font-style:normal;font-size:13px;color:#9CA3AF;">We built these because we couldn't find good NYC-specific tools anywhere. So we made them.</em></p>
+
+    <!-- FREE TOOLS ROW -->
     <div class="tools-grid">
 
+      <!-- Card 1: Compliance Calendar -->
       <div class="tool-card">
         <div class="tool-card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="24" height="24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
         </div>
-        <span class="tool-tag">Free Tool</span>
-        <h3>Preventive Maintenance &amp; Compliance</h3>
-        <p>47 HPD, DOB &amp; FDNY compliance tasks — with penalty amounts and seasonal checklists — delivered to your inbox on the 1st of every month. Built for Bronx property owners.</p>
-        <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-top:8px;width:fit-content;">Open Free Tool &rarr;</a>
-      </div>
-
-      <div class="tool-card">
-        <div class="tool-card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="24" height="24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 00-2 2v2h12V5a2 2 0 00-2-2z"/><path d="M12 12v4M10 14h4"/></svg>
+        <span class="tool-tag">Free</span>
+        <h3>Compliance Calendar</h3>
+        <p>47 HPD, DOB &amp; FDNY tasks — with exact penalty amounts and seasonal checklists — delivered to your inbox on the 1st of every month.</p>
+        <div class="tool-trust-meta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          1,200+ NYC landlords · Updated June 2026
         </div>
-        <span class="tool-tag">Powered by Buildium</span>
-        <h3>Owner &amp; Tenant Portal</h3>
-        <p>Access your live owner dashboard, pay rent online, submit maintenance requests, and view your lease documents — all in one place. Available 24/7 from any device.</p>
-        <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="margin-top:8px;width:fit-content;">Open Portal &rarr;</a>
+        <button class="btn-primary" style="margin-top:12px;width:fit-content;background:none;border:2px solid var(--blue);color:var(--blue);cursor:pointer;" onclick="openToolGate('https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/','Compliance Calendar')">Get Instant Access &rarr;</button>
       </div>
 
+      <!-- Card 2: DoryAngel Digest -->
       <div class="tool-card">
         <div class="tool-card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="24" height="24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
         </div>
-        <span class="tool-tag" style="background:#EEF4FF;color:#1E5AA8;">Free Newsletter</span>
+        <span class="tool-tag">Free</span>
         <h3>DoryAngel Digest</h3>
-        <p>Subscribe once and get notified whenever we publish a new article matching your interests — property management, DIY landlord tips, or NYC real estate investments. No noise, only what matters.</p>
-        <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-top:8px;width:fit-content;">Subscribe Free &rarr;</a>
+        <p>NYC landlord tips, law changes, and new tools — straight to your inbox. No spam, no sales pitches. Just the information that saves you money and keeps you compliant.</p>
+        <div class="tool-trust-meta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 15a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 4.21h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 11a16 16 0 0 0 6 6l.93-.93a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 18.4z"/></svg>
+          Published every 2–3 days · Free forever
+        </div>
+        <button class="btn-primary" style="margin-top:12px;width:fit-content;background:none;border:2px solid var(--blue);color:var(--blue);cursor:pointer;" onclick="openToolGate('https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/','DoryAngel Digest')">Subscribe Free &rarr;</button>
       </div>
 
-      <!-- PREMIUM CARD: Property P&L Dashboard -->
-      <div class="tool-card pm-card" id="premiumCard">
+      <!-- Card 3: Coming Soon — Rent Increase Calculator -->
+      <div class="tool-card tool-card-soon">
+        <div class="tool-card-icon" style="background:#F1F5F9;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8" width="24" height="24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 8h10M7 12h6"/></svg>
+        </div>
+        <span class="tool-tag tool-tag-soon">Coming Soon</span>
+        <h3>NYC Rent Increase Calculator</h3>
+        <p>Legal rent increase limits by stabilization status and borough — updated every year. Know exactly what you can charge before you send a notice.</p>
+        <div class="tool-trust-meta" style="color:#94A3B8;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          In development · Est. Q3 2026
+        </div>
+        <button class="btn-primary" style="margin-top:12px;width:fit-content;background:none;border:2px dashed #CBD5E1;color:#64748B;cursor:pointer;" onclick="openNotifyGate('NYC Rent Increase Calculator')">Notify Me When Ready &rarr;</button>
+      </div>
+
+    </div><!-- /tools-grid -->
+
+    <!-- COMING SOON TEASERS ROW -->
+    <div class="tools-coming-teasers">
+      <div class="tools-coming-teaser">
+        <div style="width:32px;height:32px;border-radius:8px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8" width="18" height="18"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <span class="tools-coming-teaser-name">Security Deposit Tracker <em style="font-size:10px;font-style:normal;background:#F1F5F9;color:#94A3B8;padding:1px 6px;border-radius:4px;margin-left:4px;">Soon</em></span>
+        <button class="tools-coming-notify" onclick="openNotifyGate('Security Deposit Tracker')">Notify me</button>
+      </div>
+      <div class="tools-coming-teaser">
+        <div style="width:32px;height:32px;border-radius:8px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8" width="18" height="18"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <span class="tools-coming-teaser-name">Tenant Screening Checklist <em style="font-size:10px;font-style:normal;background:#F1F5F9;color:#94A3B8;padding:1px 6px;border-radius:4px;margin-left:4px;">Soon</em></span>
+        <button class="tools-coming-notify" onclick="openNotifyGate('Tenant Screening Checklist')">Notify me</button>
+      </div>
+      <div class="tools-coming-teaser">
+        <div style="width:32px;height:32px;border-radius:8px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8" width="18" height="18"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <span class="tools-coming-teaser-name">Lease Renewal Generator <em style="font-size:10px;font-style:normal;background:#F1F5F9;color:#94A3B8;padding:1px 6px;border-radius:4px;margin-left:4px;">Soon</em></span>
+        <button class="tools-coming-notify" onclick="openNotifyGate('Lease Renewal Generator')">Notify me</button>
+      </div>
+    </div>
+
+    <!-- FEATURED DIVIDER -->
+    <div class="tools-featured-divider">
+      <div class="tools-featured-line"></div>
+      <div class="tools-featured-badge">✦ Featured Tool</div>
+      <div class="tools-featured-line"></div>
+    </div>
+
+    <!-- PREMIUM CARD: Property P&L Dashboard -->
+    <div class="tools-premium-wrap">
+    <div class="tool-card pm-card" id="premiumCard">
 
         <!-- animated accent band -->
         <div class="pm-accent-band"></div>
@@ -2511,8 +2805,19 @@ retell-chat-web-component {
         </div>
 
       </div><!-- /premium card -->
+    </div><!-- /tools-premium-wrap -->
 
+    <!-- BOTTOM CTA STRIP -->
+    <div class="tools-cta-strip">
+      <div class="tools-cta-strip-text">
+        <strong>Managing more than 3 units? That's where we come in.</strong>
+        <span>Most of our clients started as DIY landlords. When you're ready, we're here.</span>
+      </div>
+      <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" rel="noopener noreferrer" class="tools-cta-strip-btn">
+        Book a Free 15-Min Call &rarr;
+      </a>
     </div>
+
   </div>
 </section>
 
@@ -3941,6 +4246,103 @@ async function handleFormSubmit(e) {
   new MutationObserver(scan).observe(document.body, { childList: true, subtree: true });
   [500, 1500, 3000, 6000, 10000, 15000].forEach(function (t) { setTimeout(scan, t); });
 })();
+</script>
+
+<script>
+/* ── TOOL GATE — free tool email capture ─────────────────────────── */
+var _toolGateUrl = '';
+
+function openToolGate(toolUrl, toolName) {
+  _toolGateUrl = toolUrl;
+  document.getElementById('toolGateTitle').textContent = toolName;
+  document.getElementById('toolGateSubject').value = 'Free Tool Access: ' + toolName;
+  document.getElementById('toolGateToolName').value = toolName;
+  document.getElementById('toolGateForm').style.display = 'block';
+  document.getElementById('toolGateSuccess').style.display = 'none';
+  document.getElementById('toolGateEmail').value = '';
+  document.getElementById('toolGateName').value = '';
+  document.getElementById('toolGateOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  setTimeout(function() { document.getElementById('toolGateEmail').focus(); }, 100);
+}
+
+function closeToolGate() {
+  document.getElementById('toolGateOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var overlay = document.getElementById('toolGateOverlay');
+  var form    = document.getElementById('toolGateForm');
+  var close   = document.getElementById('toolGateClose');
+
+  close.addEventListener('click', closeToolGate);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeToolGate(); });
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var email = document.getElementById('toolGateEmail').value.trim();
+    if (!email || !email.includes('@')) {
+      document.getElementById('toolGateEmail').focus();
+      document.getElementById('toolGateEmail').style.borderColor = '#D14343';
+      return;
+    }
+    document.getElementById('toolGateEmail').style.borderColor = '';
+
+    // open tool immediately — don't wait on network
+    window.open(_toolGateUrl, '_blank', 'noopener,noreferrer');
+
+    // fire-and-forget to Web3Forms
+    var data = new FormData(form);
+    fetch('https://api.web3forms.com/submit', { method: 'POST', body: data }).catch(function(){});
+
+    form.style.display = 'none';
+    document.getElementById('toolGateSuccess').style.display = 'block';
+  });
+});
+
+/* ── NOTIFY GATE — coming-soon email capture ─────────────────────── */
+function openNotifyGate(toolName) {
+  document.getElementById('notifyGateTitle').textContent = 'Notify me: ' + toolName;
+  document.getElementById('notifyGateSubject').value = 'Notify Me: ' + toolName;
+  document.getElementById('notifyGateToolName').value = toolName;
+  document.getElementById('notifyGateToolDisplay').textContent = toolName;
+  document.getElementById('notifyGateForm').style.display = 'block';
+  document.getElementById('notifyGateSuccess').style.display = 'none';
+  document.getElementById('notifyGateEmail').value = '';
+  document.getElementById('notifyGateOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  setTimeout(function() { document.getElementById('notifyGateEmail').focus(); }, 100);
+}
+
+function closeNotifyGate() {
+  document.getElementById('notifyGateOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var overlay = document.getElementById('notifyGateOverlay');
+  var form    = document.getElementById('notifyGateForm');
+  var close   = document.getElementById('notifyGateClose');
+
+  close.addEventListener('click', closeNotifyGate);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeNotifyGate(); });
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var email = document.getElementById('notifyGateEmail').value.trim();
+    if (!email || !email.includes('@')) {
+      document.getElementById('notifyGateEmail').focus();
+      document.getElementById('notifyGateEmail').style.borderColor = '#D14343';
+      return;
+    }
+    document.getElementById('notifyGateEmail').style.borderColor = '';
+    var data = new FormData(form);
+    fetch('https://api.web3forms.com/submit', { method: 'POST', body: data }).catch(function(){});
+    form.style.display = 'none';
+    document.getElementById('notifyGateSuccess').style.display = 'block';
+  });
+});
 </script>
 
 </body>
