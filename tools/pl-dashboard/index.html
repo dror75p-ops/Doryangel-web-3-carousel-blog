@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Property P&L Dashboard for NYC Landlords | DoryAngel</title>
+  <meta name="description" content="Track rent, expenses, and net profit across up to 50 properties. 4,153 live formulas across 8 dashboard sheets. One-time $29. Built for Bronx and NYC landlords.">
+  <link rel="canonical" href="https://dror75p-ops.github.io/Doryangel-web-3-carousel-blog/tools/pl-dashboard/">
+  <meta property="og:title" content="Property P&L Dashboard for NYC Landlords | DoryAngel">
+  <meta property="og:description" content="4,153 live formulas. 8 dashboard sheets. Up to 50 properties. One-time $29.">
+  <meta property="og:url" content="https://dror75p-ops.github.io/Doryangel-web-3-carousel-blog/tools/pl-dashboard/">
+  <meta property="og:type" content="product">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:    #0F2847;
+      --blue:    #1E5AA8;
+      --blue2:   #3E8FD4;
+      --blue-dim:#EBF3FD;
+      --gold:    #C97B2F;
+      --text:    #1a1a1a;
+      --muted:   #5F6B7A;
+      --border:  #E5E9F0;
+      --grey:    #F4F7FB;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      background: #fff;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--navy); height: 56px;
+      display: flex; align-items: center;
+      padding: 0 24px; gap: 16px;
+    }
+    .header-back {
+      display: flex; align-items: center; gap: 6px;
+      color: rgba(255,255,255,.75); font-size: 13px; font-weight: 600;
+      text-decoration: none; transition: color .15s; white-space: nowrap;
+    }
+    .header-back:hover { color: #fff; }
+    .header-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 17px; color: #fff; text-decoration: none; margin-right: auto;
+    }
+    .header-cta {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: linear-gradient(135deg,#2552B5,#2D6FE0);
+      color: #fff; font-weight: 700; font-size: 13px;
+      padding: 8px 16px; border-radius: 8px; text-decoration: none;
+      white-space: nowrap; transition: filter .2s;
+    }
+    .header-cta:hover { filter: brightness(1.1); }
+
+    /* ── HERO BANNER ── */
+    .hero-banner {
+      background: linear-gradient(135deg, var(--navy) 0%, #1a3d6e 100%);
+      padding: 48px 24px 40px; text-align: center; color: #fff;
+    }
+    .hero-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: #F0D9BE;
+      background: rgba(201,123,47,.2); border: 1px solid rgba(201,123,47,.4);
+      padding: 5px 12px; border-radius: 999px; margin-bottom: 18px;
+    }
+    .hero-banner h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(26px, 5vw, 42px); line-height: 1.2;
+      margin-bottom: 14px; max-width: 640px; margin-inline: auto;
+    }
+    .hero-banner p {
+      font-size: 15px; color: rgba(255,255,255,.78);
+      max-width: 520px; margin-inline: auto; line-height: 1.6;
+    }
+    .hero-chips {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+      margin-top: 20px;
+    }
+    .hero-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12px; font-weight: 600;
+      color: rgba(255,255,255,.85);
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
+      padding: 5px 12px; border-radius: 999px;
+    }
+
+    /* ── MAIN PRODUCT AREA ── */
+    .product-wrap {
+      max-width: 1100px; margin: 0 auto;
+      padding: 40px 24px 0;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 32px;
+      align-items: start;
+    }
+    @media (max-width: 820px) {
+      .product-wrap { grid-template-columns: 1fr; padding: 24px 16px 0; }
+    }
+
+    /* ── CAROUSEL COLUMN ── */
+    .carousel-col {}
+
+    /* tab nav above the carousel */
+    .pm-tabs {
+      display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap;
+    }
+    .pm-tab {
+      flex: 1 1 auto; min-width: 0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; font-weight: 700;
+      padding: 8px 10px; border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: #fff; color: var(--muted);
+      cursor: pointer; transition: all .15s;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .pm-tab:hover { border-color: var(--blue); color: var(--blue); }
+    .pm-tab.pm-tab-on {
+      background: var(--blue); color: #fff;
+      border-color: var(--blue);
+    }
+
+    /* ── PM CARD (carousel) ── */
+    @keyframes shineMove  { 0% { left:-60%; } 60%,100% { left:130%; } }
+    @keyframes popIn      { 0% { transform:scale(.6); opacity:0; } 100% { transform:scale(1); opacity:1; } }
+    @keyframes pmSparkle  { 0%,100% { transform:scale(1) rotate(0deg); opacity:1; } 50% { transform:scale(1.4) rotate(20deg); opacity:.7; } }
+    @keyframes slideGradH { 0% { background-position:0% 0; } 100% { background-position:200% 0; } }
+    @keyframes glowPulse  { 0%,100% { box-shadow:0 8px 28px rgba(45,111,224,.28); } 50% { box-shadow:0 8px 42px rgba(45,111,224,.54); } }
+
+    .pm-card {
+      background: #fff; border: 1.5px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+      box-shadow: 0 4px 24px rgba(13,31,92,.09);
+    }
+    .pm-accent-band {
+      height: 5px;
+      background: linear-gradient(90deg,#1E5AA8,#3E8FD4,#C97B2F,#3E8FD4,#1E5AA8);
+      background-size: 300% 100%;
+      animation: slideGradH 5s linear infinite;
+    }
+    .pm-white-header { padding: 18px 20px 14px; }
+    .pm-header-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+    .tool-card-icon {
+      width:44px; height:44px; border-radius:10px;
+      background: var(--blue-dim); display:flex;
+      align-items:center; justify-content:center; flex-shrink:0;
+    }
+    .pm-premium-pill {
+      display:inline-flex; align-items:center; gap:5px;
+      padding:5px 11px; border-radius:100px;
+      background:#FBF1E6; border:1px solid #F0D9BE;
+    }
+    .pm-pill-star { color:#C97B2F; animation:pmSparkle 1.8s ease-in-out infinite; font-size:10px; }
+    .pm-pill-text { font-weight:700; font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:#C97B2F; }
+    .pm-white-header h3 { font-size:20px; font-weight:700; color:var(--navy); line-height:1.25; margin:0 0 6px; }
+    .pm-white-header p { font-size:13.5px; color:var(--muted); line-height:1.6; margin:0 0 10px; }
+    .pm-chips { display:flex; flex-wrap:wrap; gap:6px; }
+    .pm-chip {
+      display:inline-flex; align-items:center; gap:5px;
+      font-size:10.5px; font-weight:600; color:var(--blue);
+      background:var(--blue-dim); padding:4px 9px; border-radius:100px; white-space:nowrap;
+    }
+    .pm-stat-strip { display:grid; grid-template-columns:repeat(3,1fr); background:var(--grey); border-bottom:1px solid var(--border); }
+    .pm-stat-cell { padding:12px 8px; text-align:center; border-right:1px solid var(--border); }
+    .pm-stat-cell:last-child { border-right:none; }
+    .pm-stat-val { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:26px; line-height:1; letter-spacing:-.01em; }
+    .pm-stat-lbl { font-size:9.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:#6B7280; line-height:1.25; margin-top:4px; }
+    .pm-section-bar {
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      background:#EEF3F9; padding:9px 15px;
+      border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+    }
+    .pm-section-bar-l { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+    .pm-section-bar-title {
+      font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:17px;
+      letter-spacing:.01em; color:#1E2A44; text-transform:uppercase;
+      line-height:1; white-space:nowrap;
+    }
+    .pm-section-bar-sub { font-size:11px; color:#6B7280; text-align:right; line-height:1.25; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px; }
+    .pm-slides-wrap { position:relative; min-height:310px; background:#fff; overflow:hidden; }
+    .pm-slide { position:absolute; inset:0; opacity:0; pointer-events:none; transition:opacity .45s ease; padding:13px 15px 15px; }
+    .pm-slide.pm-active { position:relative; opacity:1; pointer-events:auto; }
+    .pm-watermark { position:absolute; right:10px; bottom:24px; display:flex; align-items:center; gap:5px; opacity:.13; pointer-events:none; user-select:none; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:12px; color:#7A8D9B; text-transform:uppercase; line-height:.95; }
+    .pm-nav { display:flex; flex-direction:column; align-items:center; gap:6px; padding:10px 0 12px; border-top:1px solid var(--border); background:#fff; }
+    .pm-nav-row { display:flex; align-items:center; gap:13px; }
+    .pm-nav-arrow { width:34px; height:34px; border-radius:50%; border:1px solid var(--border); background:#fff; cursor:pointer; font-size:14px; color:#2A3342; display:grid; place-items:center; line-height:1; transition:background .15s; }
+    .pm-nav-arrow:hover { background:#F4F6FA; }
+    .pm-dots { display:flex; gap:6px; align-items:center; }
+    .pm-dot { height:8px; border-radius:999px; border:none; cursor:pointer; padding:0; background:#CBD3DF; transition:all .3s ease; width:8px; }
+    .pm-dot.pm-dot-on { width:22px; background:#2D6FE0; }
+    .pm-nav-caption { font-size:12px; font-weight:700; color:#2A3342; display:flex; align-items:center; gap:5px; }
+    .pm-kpi-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:13px; }
+    .pm-kpi-card { background:#F4F6FA; border:1px solid var(--border); border-radius:10px; padding:10px 12px; min-width:0; overflow:hidden; }
+    .pm-kpi-lbl { font-size:9.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:#6B7280; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .pm-kpi-val { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:20px; line-height:1.05; white-space:nowrap; }
+    .pm-legend { display:flex; gap:14px; margin-bottom:7px; font-size:11.5px; color:#2A3342; }
+    .pm-legend-item { display:flex; align-items:center; gap:5px; }
+    .pm-legend-line { width:15px; height:3px; border-radius:2px; }
+    .pm-bar-track { flex:1; height:9px; background:#EEF1F6; border-radius:999px; overflow:hidden; }
+    .pm-bar-fill { height:100%; border-radius:999px; width:0; transition:width .9s cubic-bezier(.4,0,.2,1); }
+    @media (prefers-reduced-motion: reduce) {
+      .pm-tab, .pm-accent-band, .pm-pill-star { animation: none !important; }
+      .pm-slide, .pm-bar-fill, #pmAnnInc, #pmAnnAreaPath, #pmAnnExp,
+      #pmMonInc, #pmMonAreaPath, #pmDonut { transition: none !important; }
+      .pm-modal-box { animation: none !important; }
+    }
+
+    /* ── PRICE PANEL (right column) ── */
+    .price-col { position: sticky; top: 72px; }
+    @media (max-width: 820px) { .price-col { position: static; } }
+    .price-panel {
+      background: #fff; border: 1.5px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+      box-shadow: 0 4px 24px rgba(13,31,92,.09);
+    }
+    .price-panel-head {
+      background: linear-gradient(135deg,#0F2847,#1E5AA8);
+      padding: 18px 20px; color: #fff;
+    }
+    .price-panel-head h3 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+    .price-panel-head p { font-size: 12.5px; opacity: .8; }
+    .price-panel-body { padding: 18px 20px; }
+    .price-nums-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+    .price-was { font-size: 17px; text-decoration: line-through; color: #A0A4AB; }
+    .price-now { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: .9; color: #232323; }
+    .price-meta { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+    .launch-pill {
+      font-size: 10.5px; font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--gold);
+      background: #FBF1E6; border: 1px solid #F0D9BE;
+      padding: 5px 10px; border-radius: 999px;
+    }
+    .pm-buy-btn {
+      width: 100%; border: none; cursor: pointer; border-radius: 12px; padding: 15px;
+      background: linear-gradient(135deg,#2552B5,#2D6FE0); color: #fff;
+      font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 15.5px;
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      position: relative; overflow: hidden;
+      animation: glowPulse 2.8s ease-in-out infinite;
+      transition: filter .2s;
+    }
+    .pm-buy-btn:hover { filter: brightness(1.07); }
+    .pm-buy-btn:active { transform: scale(.98); }
+    .pm-buy-btn .shine {
+      position: absolute; top: 0; left: -60%; width: 50%; height: 100%;
+      background: linear-gradient(100deg,transparent,rgba(255,255,255,.44),transparent);
+      transform: skewX(-20deg); pointer-events: none;
+      animation: shineMove 3.4s ease-in-out infinite;
+    }
+    .pm-secure { display:flex; align-items:center; justify-content:center; gap:6px; margin-top:10px; color:#6B7280; font-size:11px; }
+    .panel-chips { display: flex; flex-direction: column; gap: 7px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+    .panel-chip-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+    .panel-chip-row svg { color: #15806A; flex-shrink: 0; }
+    .panel-stat-strip { display: grid; grid-template-columns: repeat(3,1fr); border-top: 1px solid var(--border); }
+    .panel-stat-cell { padding: 10px 6px; text-align: center; border-right: 1px solid var(--border); }
+    .panel-stat-cell:last-child { border-right: none; }
+    .panel-stat-val { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:20px; line-height:1; }
+    .panel-stat-lbl { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:#6B7280; line-height:1.2; margin-top:3px; }
+
+    /* ── MOBILE STICKY BUY BAR ── */
+    .mobile-buy-bar {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      background: var(--navy); padding: 12px 16px 16px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,.2);
+      align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .mobile-buy-bar-info { color: #fff; }
+    .mobile-buy-bar-info strong { font-size: 15px; display: block; }
+    .mobile-buy-bar-info span { font-size: 11px; opacity: .7; }
+    .mobile-buy-bar-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: linear-gradient(135deg,#2552B5,#2D6FE0);
+      color: #fff; font-weight: 700; font-size: 14px;
+      padding: 11px 18px; border-radius: 10px; border: none; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; white-space: nowrap;
+      animation: glowPulse 2.8s ease-in-out infinite;
+    }
+    @media (max-width: 820px) { .mobile-buy-bar { display: flex; } body { padding-bottom: 72px; } }
+
+    /* ── SECTION COMMON ── */
+    .section { padding: 56px 24px; max-width: 1100px; margin: 0 auto; }
+    .section-lbl {
+      font-size: 11px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--blue);
+      display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+    }
+    .section-lbl::before { content:''; width:18px; height:2px; background:var(--blue); border-radius:2px; }
+    .section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(22px, 4vw, 32px); color: var(--navy);
+      line-height: 1.25; margin-bottom: 8px;
+    }
+    .section-sub { font-size: 15px; color: var(--muted); max-width: 560px; line-height: 1.6; margin-bottom: 36px; }
+
+    /* ── SHEETS GRID ── */
+    .sheets-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 600px) { .sheets-grid { grid-template-columns: 1fr; } }
+    .sheet-row {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: #F8FAFC; border: 1.5px solid var(--border);
+      border-radius: 12px; padding: 16px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .sheet-row:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,90,168,.08); }
+    .sheet-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+    .sheet-info h4 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+    .sheet-info p { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+
+    /* ── FOR WHO ── */
+    .for-who-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    @media (max-width: 700px) { .for-who-grid { grid-template-columns: 1fr; } }
+    .for-who-card {
+      background: var(--blue-dim); border-radius: 12px; padding: 20px;
+    }
+    .for-who-card .check { font-size: 18px; margin-bottom: 10px; }
+    .for-who-card h4 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+    .for-who-card p { font-size: 13px; color: #3D5A8A; line-height: 1.55; }
+
+    /* ── FINAL CTA SECTION ── */
+    .final-cta {
+      background: linear-gradient(135deg, var(--navy), #1a3d6e);
+      padding: 56px 24px; text-align: center; color: #fff;
+    }
+    .final-cta h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(22px, 4vw, 32px);
+      margin-bottom: 10px;
+    }
+    .final-cta p { font-size: 15px; opacity: .78; margin-bottom: 28px; }
+    .final-cta-price {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      margin-bottom: 20px;
+    }
+    .final-cta-was { font-size: 18px; text-decoration: line-through; opacity: .5; }
+    .final-cta-now { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 52px; line-height: .9; }
+    .final-cta-meta { font-size: 13px; opacity: .65; margin-top: 6px; }
+    .final-buy-btn {
+      display: inline-flex; align-items: center; gap: 9px;
+      background: #fff; color: var(--navy); font-weight: 700; font-size: 16px;
+      padding: 16px 32px; border-radius: 12px; border: none; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; text-decoration: none;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 8px 28px rgba(0,0,0,.25);
+    }
+    .final-buy-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(0,0,0,.3); }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      background: #0A1E38; padding: 24px;
+      display: flex; flex-wrap: wrap; align-items: center;
+      justify-content: space-between; gap: 12px;
+    }
+    .site-footer p { font-size: 12px; color: rgba(255,255,255,.5); }
+    .site-footer a { color: rgba(255,255,255,.5); text-decoration: none; font-size: 12px; }
+    .site-footer a:hover { color: #fff; }
+    .footer-links { display: flex; gap: 18px; flex-wrap: wrap; }
+
+    /* ── CHECKOUT MODAL ── */
+    .pm-overlay { position:fixed; inset:0; z-index:9999; background:rgba(20,28,38,.55); backdrop-filter:blur(4px); display:grid; place-items:center; padding:20px; }
+    .pm-overlay.hidden { display:none; }
+    .pm-modal-box { width:min(420px,92vw); background:#fff; border-radius:20px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.35); animation:popIn .35s cubic-bezier(.34,1.56,.64,1); }
+    .pm-modal-head { background:linear-gradient(135deg,#2E6FA8,#3E8FD4); padding:22px 26px; color:#fff; position:relative; }
+    .pm-modal-head h4 { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; letter-spacing:.02em; margin:0 0 4px; }
+    .pm-modal-head p { opacity:.85; font-size:13.5px; margin:0; }
+    .pm-modal-close { position:absolute; top:14px; right:16px; background:rgba(255,255,255,.2); border:none; color:#fff; width:28px; height:28px; border-radius:50%; cursor:pointer; font-size:18px; display:grid; place-items:center; }
+    .pm-modal-body { padding:24px 26px; }
+    .pm-modal-sep { height:1px; background:#E5E9F0; margin:14px 0 18px; }
+    .pm-pp-btn { display:flex; align-items:center; justify-content:center; gap:2px; width:100%; border:none; cursor:pointer; background:#FFC439; border-radius:24px; padding:13px 24px; text-decoration:none; box-shadow:0 3px 10px rgba(0,48,135,.18); transition:box-shadow .2s,transform .2s; }
+    .pm-pp-btn:hover { box-shadow:0 8px 22px rgba(0,48,135,.28); transform:translateY(-2px); }
+    .pm-pp-logo { font-family:'DM Sans',sans-serif; font-weight:700; font-size:17px; font-style:italic; }
+    .pm-pp-logo b { color:#003087; } .pm-pp-logo em { color:#009CDE; font-style:normal; }
+    .pm-pp-text { font-family:'DM Sans',sans-serif; font-weight:600; font-size:14px; color:#1a1a1a; margin-left:6px; }
+    .pm-dl-btn { display:inline-flex; align-items:center; gap:8px; text-decoration:none; background:linear-gradient(135deg,#2E6FA8,#3E8FD4); color:#fff; padding:13px 26px; border-radius:12px; font-weight:700; font-size:15px; box-shadow:0 8px 22px rgba(46,111,168,.35); }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <a href="../../index.html" class="header-back" aria-label="Back to DoryAngel">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    All Tools
+  </a>
+  <a href="../../index.html" class="header-logo">DoryAngel</a>
+  <button class="pm-buy-btn" id="headerBuyBtn" style="width:auto;padding:9px 18px;font-size:13px;animation:none;" aria-label="Get the Property P&L Dashboard for $29">
+    <span class="shine"></span>
+    Get Dashboard — $29
+  </button>
+</header>
+
+<!-- HERO BANNER -->
+<section class="hero-banner">
+  <div class="hero-label">
+    <span style="color:#C97B2F;">✦</span> Premium Tool · One-time payment
+  </div>
+  <h1>The spreadsheet your accountant<br>wishes you had</h1>
+  <p>4,153 live formulas. 8 dashboard sheets. Track income, expenses, and net profit across up to 50 NYC properties — all in one file.</p>
+  <div class="hero-chips">
+    <span class="hero-chip">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      Excel, Numbers &amp; Google Sheets
+    </span>
+    <span class="hero-chip">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
+      Instant download after payment
+    </span>
+    <span class="hero-chip">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Lifetime access · One-time $29
+    </span>
+  </div>
+</section>
+
+<!-- MAIN PRODUCT AREA -->
+<div class="product-wrap">
+
+  <!-- LEFT: carousel -->
+  <div class="carousel-col">
+    <!-- tab navigation -->
+    <div class="pm-tabs" id="pmTabs">
+      <button class="pm-tab pm-tab-on" data-i="0">📊 Annual</button>
+      <button class="pm-tab" data-i="1">🥧 Expenses</button>
+      <button class="pm-tab" data-i="2">📅 Monthly</button>
+      <button class="pm-tab" data-i="3">📈 Month-over-Month</button>
+    </div>
+
+    <!-- carousel card -->
+    <div class="pm-card" id="premiumCard">
+      <div class="pm-accent-band"></div>
+      <div class="pm-section-bar" id="pmSectionBar">
+        <div class="pm-section-bar-l">
+          <span id="pmSlideIcon" style="font-size:16px;">📊</span>
+          <span class="pm-section-bar-title" id="pmSlideTitle">Annual Dashboard</span>
+        </div>
+        <span class="pm-section-bar-sub" id="pmSlideSub">The whole year at a glance</span>
+      </div>
+
+      <div class="pm-slides-wrap" id="pmSlidesWrap">
+
+        <!-- SLIDE 0: Annual Dashboard -->
+        <div class="pm-slide pm-active" id="pmSlide0">
+          <div class="pm-kpi-grid" style="grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px;">
+            <div class="pm-kpi-card"><div class="pm-kpi-lbl">Total Income</div><div class="pm-kpi-val" style="color:#15806A;" data-countup="98400" data-prefix="$">$0</div></div>
+            <div class="pm-kpi-card"><div class="pm-kpi-lbl">Total Expenses</div><div class="pm-kpi-val" style="color:#D14343;" data-countup="56220" data-prefix="$">$0</div></div>
+            <div class="pm-kpi-card"><div class="pm-kpi-lbl">Net Profit</div><div class="pm-kpi-val" style="color:#2D6FE0;" data-countup="42180" data-prefix="$">$0</div></div>
+          </div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;color:#6B7280;text-transform:uppercase;margin-bottom:5px;">Income vs Expenses — Full Year</div>
+          <div class="pm-legend" style="margin-bottom:6px;">
+            <span class="pm-legend-item"><span class="pm-legend-line" style="background:#15806A;"></span>Income</span>
+            <span class="pm-legend-item"><span class="pm-legend-line" style="background:#E8A08F;border-style:dashed;height:0;border-top:2.5px dashed #E8A08F;width:15px;"></span>Expenses</span>
+          </div>
+          <svg width="100%" viewBox="0 0 300 90" style="display:block;" id="pmAnnualChart">
+            <defs>
+              <linearGradient id="pmAnnArea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#15806A" stop-opacity=".16"/>
+                <stop offset="100%" stop-color="#15806A" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <line x1="0" y1="45" x2="300" y2="45" stroke="#E5E9F0" stroke-width="1"/>
+            <path id="pmAnnAreaPath" d="M0,74 L27,71 L55,69 L82,52 L109,51 L136,51 L164,50 L191,49 L218,47 L245,43 L273,38 L300,33 L300,90 L0,90 Z" fill="url(#pmAnnArea)" opacity="0" style="transition:opacity .8s ease .5s"/>
+            <path id="pmAnnInc" d="M0,74 L27,71 L55,69 L82,52 L109,51 L136,51 L164,50 L191,49 L218,47 L245,43 L273,38 L300,33" fill="none" stroke="#15806A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="540" stroke-dashoffset="540" style="transition:stroke-dashoffset 1.4s ease .15s"/>
+            <path d="M0,82 L27,82 L55,81 L82,83 L109,82 L136,81 L164,82 L191,81 L218,82 L245,80 L273,81 L300,80" fill="none" stroke="#E8A08F" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" opacity="0" id="pmAnnExp" style="transition:opacity .6s ease .9s"/>
+          </svg>
+        </div>
+
+        <!-- SLIDE 1: Expense Breakdown -->
+        <div class="pm-slide" id="pmSlide1">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+            <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:#2A3342;text-transform:uppercase;flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">Expense Breakdown</span>
+            <span style="font-weight:700;font-size:11.5px;color:#2D6FE0;background:#E8F0FC;padding:3px 9px;border-radius:999px;white-space:nowrap;flex-shrink:0;">$11,250 total</span>
+          </div>
+          <div style="display:flex;gap:14px;align-items:center;margin-bottom:14px;">
+            <div style="position:relative;width:100px;height:100px;flex-shrink:0;">
+              <div id="pmDonut" style="width:100px;height:100px;border-radius:50%;background:conic-gradient(#E5E9F0 0% 100%);transition:background 1.1s ease .4s;-webkit-mask:radial-gradient(circle 30px at center,transparent 98%,#000 100%);mask:radial-gradient(circle 30px at center,transparent 98%,#000 100%);"></div>
+              <div style="position:absolute;inset:0;display:grid;place-items:center;text-align:center;">
+                <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:#2A3342;line-height:1;">38%</div><div style="font-size:10px;color:#6B7280;">Mortgage</div></div>
+              </div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:6px;font-size:13px;">
+              <div style="display:flex;align-items:center;gap:8px;"><span style="width:11px;height:11px;border-radius:3px;background:#2D6FE0;flex-shrink:0;"></span><span style="flex:1;color:#2A3342;">Mortgage</span><span style="font-weight:700;">38%</span></div>
+              <div style="display:flex;align-items:center;gap:8px;"><span style="width:11px;height:11px;border-radius:3px;background:#E8A08F;flex-shrink:0;"></span><span style="flex:1;color:#2A3342;">Repairs</span><span style="font-weight:700;">19%</span></div>
+              <div style="display:flex;align-items:center;gap:8px;"><span style="width:11px;height:11px;border-radius:3px;background:#15806A;flex-shrink:0;"></span><span style="flex:1;color:#2A3342;">Tax</span><span style="font-weight:700;">18%</span></div>
+              <div style="display:flex;align-items:center;gap:8px;"><span style="width:11px;height:11px;border-radius:3px;background:#C9A227;flex-shrink:0;"></span><span style="flex:1;color:#2A3342;">Insurance</span><span style="font-weight:700;">12%</span></div>
+              <div style="display:flex;align-items:center;gap:8px;"><span style="width:11px;height:11px;border-radius:3px;background:#8A9BA8;flex-shrink:0;"></span><span style="flex:1;color:#2A3342;">Mgmt</span><span style="font-weight:700;">9%</span></div>
+            </div>
+          </div>
+          <div style="border-top:1px solid #E5E9F0;padding-top:12px;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;color:#6B7280;text-transform:uppercase;margin-bottom:10px;">Expense Distribution</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;align-items:center;gap:9px;font-size:12px;"><span style="width:58px;color:#2A3342;flex-shrink:0;">Mortgage</span><div class="pm-bar-track"><div class="pm-bar-fill" style="background:#2D6FE0;" data-w="100"></div></div><span style="width:30px;text-align:right;font-weight:700;">38%</span></div>
+              <div style="display:flex;align-items:center;gap:9px;font-size:12px;"><span style="width:58px;color:#2A3342;flex-shrink:0;">Repairs</span><div class="pm-bar-track"><div class="pm-bar-fill" style="background:#E8A08F;" data-w="50"></div></div><span style="width:30px;text-align:right;font-weight:700;">19%</span></div>
+              <div style="display:flex;align-items:center;gap:9px;font-size:12px;"><span style="width:58px;color:#2A3342;flex-shrink:0;">Tax</span><div class="pm-bar-track"><div class="pm-bar-fill" style="background:#15806A;" data-w="47"></div></div><span style="width:30px;text-align:right;font-weight:700;">18%</span></div>
+              <div style="display:flex;align-items:center;gap:9px;font-size:12px;"><span style="width:58px;color:#2A3342;flex-shrink:0;">Insurance</span><div class="pm-bar-track"><div class="pm-bar-fill" style="background:#C9A227;" data-w="32"></div></div><span style="width:30px;text-align:right;font-weight:700;">12%</span></div>
+              <div style="display:flex;align-items:center;gap:9px;font-size:12px;"><span style="width:58px;color:#2A3342;flex-shrink:0;">Mgmt</span><div class="pm-bar-track"><div class="pm-bar-fill" style="background:#8A9BA8;" data-w="24"></div></div><span style="width:30px;text-align:right;font-weight:700;">9%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 2: Monthly Drill-down -->
+        <div class="pm-slide" id="pmSlide2">
+          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;">
+            <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Jan</span>
+            <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Feb</span>
+            <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Mar</span>
+            <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #2D6FE0;background:#2D6FE0;color:#fff;">Apr</span>
+            <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">May</span>
+            <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Jun</span>
+            <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Jul</span>
+            <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Aug</span>
+            <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Sep</span>
+            <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Oct</span>
+            <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Nov</span>
+            <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Dec</span>
+          </div>
+          <div class="pm-kpi-grid" style="margin-bottom:12px;">
+            <div class="pm-kpi-card"><div class="pm-kpi-lbl">Apr Income</div><div class="pm-kpi-val" style="color:#15806A;" data-countup="8050" data-prefix="$">$0</div></div>
+            <div class="pm-kpi-card"><div class="pm-kpi-lbl">Apr Expenses</div><div class="pm-kpi-val" style="color:#D14343;" data-countup="1780" data-prefix="$">$0</div></div>
+            <div class="pm-kpi-card"><div class="pm-kpi-lbl">Net Profit</div><div class="pm-kpi-val" style="color:#2D6FE0;" data-countup="6270" data-prefix="$">$0</div></div>
+            <div class="pm-kpi-card"><div class="pm-kpi-lbl">Margin</div><div class="pm-kpi-val" style="color:#C9A227;" data-countup="77.9" data-suffix="%" data-decimals="1">0%</div></div>
+          </div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;color:#6B7280;text-transform:uppercase;margin-bottom:5px;">Monthly Income Trend</div>
+          <svg width="100%" viewBox="0 0 300 70" style="display:block;">
+            <defs><linearGradient id="pmMonArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#15806A" stop-opacity=".18"/><stop offset="100%" stop-color="#15806A" stop-opacity="0"/></linearGradient></defs>
+            <path id="pmMonAreaPath" d="M0,76 L27,76 L55,75 L82,61 L109,60 L136,60 L164,60 L191,59 L218,58 L245,55 L273,50 L300,45 L300,80 L0,80 Z" fill="url(#pmMonArea)" opacity="0" style="transition:opacity .8s ease .5s"/>
+            <path id="pmMonInc" d="M0,76 L27,76 L55,75 L82,61 L109,60 L136,60 L164,60 L191,59 L218,58 L245,55 L273,50 L300,45" fill="none" stroke="#15806A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="540" stroke-dashoffset="540" style="transition:stroke-dashoffset 1.4s ease .2s"/>
+          </svg>
+        </div>
+
+        <!-- SLIDE 3: Month-over-Month -->
+        <div class="pm-slide" id="pmSlide3">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:11px;">
+            <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:#2A3342;text-transform:uppercase;flex:1;">Month Over Month</span>
+            <span style="font-weight:700;font-size:11px;color:#15806A;background:#E4F2EC;padding:3px 9px;border-radius:999px;">↑ +8.3% avg</span>
+          </div>
+          <div class="pm-legend" style="margin-bottom:11px;">
+            <span class="pm-legend-item"><span style="width:11px;height:11px;background:#C9D8F2;border-radius:3px;"></span>Prev month</span>
+            <span class="pm-legend-item"><span style="width:11px;height:11px;background:#2D6FE0;border-radius:3px;"></span>Current</span>
+          </div>
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:7px;height:130px;margin-bottom:12px;border-bottom:1px solid #E5E9F0;padding-bottom:2px;" id="pmMomBars">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;"><div style="font-size:10.5px;font-weight:700;margin-bottom:3px;color:#15806A;">+19%</div><div style="display:flex;align-items:flex-end;gap:2px;height:110px;"><div style="width:10px;background:#C9D8F2;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 0ms;" data-h="50"></div><div style="width:10px;background:#2D6FE0;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 60ms;" data-h="66"></div></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;"><div style="font-size:10.5px;font-weight:700;margin-bottom:3px;color:#15806A;">+14%</div><div style="display:flex;align-items:flex-end;gap:2px;height:110px;"><div style="width:10px;background:#C9D8F2;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 80ms;" data-h="64"></div><div style="width:10px;background:#2D6FE0;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 140ms;" data-h="79"></div></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;"><div style="font-size:10.5px;font-weight:700;margin-bottom:3px;color:#15806A;">+32%</div><div style="display:flex;align-items:flex-end;gap:2px;height:110px;"><div style="width:10px;background:#C9D8F2;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 160ms;" data-h="77"></div><div style="width:10px;background:#2D6FE0;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 220ms;" data-h="105"></div></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;"><div style="font-size:10.5px;font-weight:700;margin-bottom:3px;color:#6B7280;">0%</div><div style="display:flex;align-items:flex-end;gap:2px;height:110px;"><div style="width:10px;background:#C9D8F2;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 240ms;" data-h="101"></div><div style="width:10px;background:#2D6FE0;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 300ms;" data-h="101"></div></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;"><div style="font-size:10.5px;font-weight:700;margin-bottom:3px;color:#D14343;">-3%</div><div style="display:flex;align-items:flex-end;gap:2px;height:110px;"><div style="width:10px;background:#C9D8F2;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 320ms;" data-h="101"></div><div style="width:10px;background:#2D6FE0;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 380ms;" data-h="98"></div></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;"><div style="font-size:10.5px;font-weight:700;margin-bottom:3px;color:#15806A;">+5%</div><div style="display:flex;align-items:flex-end;gap:2px;height:110px;"><div style="width:10px;background:#C9D8F2;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 400ms;" data-h="95"></div><div style="width:10px;background:#2D6FE0;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 460ms;" data-h="104"></div></div></div>
+          </div>
+          <div style="display:flex;gap:7px;">
+            <div style="flex:1;background:#F4F6FA;border:1px solid #E5E9F0;border-radius:10px;padding:9px 6px;text-align:center;"><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:#15806A;line-height:1;">+32%</div><div style="font-size:9.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#6B7280;margin-top:2px;">Best month</div></div>
+            <div style="flex:1;background:#F4F6FA;border:1px solid #E5E9F0;border-radius:10px;padding:9px 6px;text-align:center;"><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:#D14343;line-height:1;">-3%</div><div style="font-size:9.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#6B7280;margin-top:2px;">Worst month</div></div>
+            <div style="flex:1;background:#F4F6FA;border:1px solid #E5E9F0;border-radius:10px;padding:9px 6px;text-align:center;"><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:#2A3342;line-height:1;">+8.3%</div><div style="font-size:9.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#6B7280;margin-top:2px;">Avg growth</div></div>
+          </div>
+        </div>
+
+        <div class="pm-watermark">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#7A8D9B"><path d="M12 3l3 2 4 1 1 4 2 3-2 3-1 4-4 1-3 2-3-2-4-1-1-4-2-3 2-3 1-4 4-1z"/></svg>
+          <div>DoryAngel<br><span style="font-size:10px;letter-spacing:.05em;">Property Automation</span></div>
+        </div>
+      </div><!-- /pm-slides-wrap -->
+
+      <!-- nav controls -->
+      <div class="pm-nav">
+        <div class="pm-nav-row">
+          <button class="pm-nav-arrow" id="pmPrev" aria-label="Previous sheet">←</button>
+          <div class="pm-dots" id="pmDots">
+            <button class="pm-dot pm-dot-on" data-i="0" aria-label="Sheet 1"></button>
+            <button class="pm-dot" data-i="1" aria-label="Sheet 2"></button>
+            <button class="pm-dot" data-i="2" aria-label="Sheet 3"></button>
+            <button class="pm-dot" data-i="3" aria-label="Sheet 4"></button>
+          </div>
+          <button class="pm-nav-arrow" id="pmNext" aria-label="Next sheet">→</button>
+        </div>
+        <div class="pm-nav-caption" id="pmCaption"><span id="pmCaptionIcon">📊</span><span id="pmCaptionText">Annual Dashboard</span></div>
+      </div>
+    </div><!-- /pm-card -->
+  </div><!-- /carousel-col -->
+
+  <!-- RIGHT: sticky price panel -->
+  <div class="price-col">
+    <div class="price-panel">
+      <div class="price-panel-head">
+        <h3>Property P&amp;L Dashboard</h3>
+        <p>The spreadsheet your accountant wishes you had</p>
+      </div>
+      <div class="price-panel-body">
+        <div class="price-nums-row">
+          <span class="price-was">$79</span>
+          <span class="price-now">$29</span>
+          <span class="launch-pill">Launch Price</span>
+        </div>
+        <div class="price-meta">One-time · Lifetime access · Instant download</div>
+        <button class="pm-buy-btn" id="pmBuyBtn" aria-label="Get the Property P&L Dashboard for $29">
+          <span class="shine"></span>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
+          Get the dashboard — $29
+        </button>
+        <div class="pm-secure">🔒 Secure checkout via PayPal · cards accepted</div>
+        <div class="panel-chips">
+          <div class="panel-chip-row">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            Works in Excel, Numbers &amp; Google Sheets
+          </div>
+          <div class="panel-chip-row">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            No subscription — pay once, own forever
+          </div>
+          <div class="panel-chip-row">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            Up to 50 properties supported
+          </div>
+          <div class="panel-chip-row">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            Built for NYC tax season
+          </div>
+        </div>
+      </div>
+      <div class="panel-stat-strip">
+        <div class="panel-stat-cell"><div class="panel-stat-val" style="color:#2D6FE0;">4,153</div><div class="panel-stat-lbl">Live formulas</div></div>
+        <div class="panel-stat-cell"><div class="panel-stat-val" style="color:#15806A;">8</div><div class="panel-stat-lbl">Dashboard sheets</div></div>
+        <div class="panel-stat-cell"><div class="panel-stat-val" style="color:#1E2A44;">50</div><div class="panel-stat-lbl">Properties</div></div>
+      </div>
+    </div>
+  </div><!-- /price-col -->
+
+</div><!-- /product-wrap -->
+
+<!-- WHAT'S INSIDE SECTION -->
+<section class="section">
+  <div class="section-lbl">Inside the file</div>
+  <h2>8 sheets, every angle covered</h2>
+  <p class="section-sub">Each sheet answers a different landlord question — from "how did the whole year go?" to "which month hurt me most?"</p>
+  <div class="sheets-grid">
+    <div class="sheet-row">
+      <div class="sheet-icon">📊</div>
+      <div class="sheet-info">
+        <h4>Annual Dashboard</h4>
+        <p>Full-year income vs. expense overview with a live sparkline. First thing you see when you open the file.</p>
+      </div>
+    </div>
+    <div class="sheet-row">
+      <div class="sheet-icon">🥧</div>
+      <div class="sheet-info">
+        <h4>Expense Breakdown</h4>
+        <p>Donut chart + bar chart showing exactly where your money went — mortgage, repairs, tax, insurance, management.</p>
+      </div>
+    </div>
+    <div class="sheet-row">
+      <div class="sheet-icon">📅</div>
+      <div class="sheet-info">
+        <h4>Monthly Dashboard</h4>
+        <p>Drill into any single month. Click a month tab to see income, expenses, net profit, and margin for that period.</p>
+      </div>
+    </div>
+    <div class="sheet-row">
+      <div class="sheet-icon">📈</div>
+      <div class="sheet-info">
+        <h4>Month-over-Month</h4>
+        <p>Side-by-side bar chart of current vs. previous month. Shows best month, worst month, and average growth rate.</p>
+      </div>
+    </div>
+    <div class="sheet-row">
+      <div class="sheet-icon">🏠</div>
+      <div class="sheet-info">
+        <h4>Per-Property Ledger</h4>
+        <p>Separate tracking for each unit or building. Compare properties side by side to see which ones perform best.</p>
+      </div>
+    </div>
+    <div class="sheet-row">
+      <div class="sheet-icon">🧾</div>
+      <div class="sheet-info">
+        <h4>Rent Roll Tracker</h4>
+        <p>All tenants, all units. See who paid, who didn't, and what's outstanding — at a glance.</p>
+      </div>
+    </div>
+    <div class="sheet-row">
+      <div class="sheet-icon">🔧</div>
+      <div class="sheet-info">
+        <h4>Maintenance &amp; Repair Log</h4>
+        <p>Log repairs by unit and vendor. Totals feed automatically into your expense dashboard — no double entry.</p>
+      </div>
+    </div>
+    <div class="sheet-row">
+      <div class="sheet-icon">📋</div>
+      <div class="sheet-info">
+        <h4>Tax Summary Sheet</h4>
+        <p>Annual totals formatted for your accountant (or Schedule E). Saves a conversation every April.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR SECTION -->
+<section class="section" style="padding-top:0;">
+  <div class="section-lbl">Who it's for</div>
+  <h2>This is for you if…</h2>
+  <p class="section-sub">You don't need a property manager. You need better data.</p>
+  <div class="for-who-grid">
+    <div class="for-who-card">
+      <div class="check">🏠</div>
+      <h4>You manage 1–10 units yourself</h4>
+      <p>Too small for property management software, too big to track in your head. This file handles the gap perfectly.</p>
+    </div>
+    <div class="for-who-card">
+      <div class="check">📉</div>
+      <h4>Tax season stresses you out</h4>
+      <p>The Tax Summary sheet gives your accountant exactly what they need. No more hunting through bank statements in April.</p>
+    </div>
+    <div class="for-who-card">
+      <div class="check">💸</div>
+      <h4>You've ever had a surprise expense hit hard</h4>
+      <p>When every dollar is tracked monthly, surprises stop being surprises. You see the pattern before it becomes a problem.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <h2>Ready to know exactly where<br>your money goes?</h2>
+  <p>One-time payment. No subscription. Works in the spreadsheet you already have.</p>
+  <div class="final-cta-price">
+    <span class="final-cta-was">$79</span>
+    <span class="final-cta-now">$29</span>
+  </div>
+  <div class="final-cta-meta">Launch price · Lifetime access · Instant download</div>
+  <br><br>
+  <button class="final-buy-btn" id="finalBuyBtn" aria-label="Get the Property P&L Dashboard for $29">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
+    Get the Dashboard — $29
+  </button>
+  <div style="margin-top:14px;font-size:12px;opacity:.55;">🔒 Secure checkout via PayPal · cards accepted</div>
+</section>
+
+<!-- SITE FOOTER -->
+<footer class="site-footer">
+  <p>© 2026 DoryAngel Property Management · Bronx, NY</p>
+  <div class="footer-links">
+    <a href="../../index.html">Home</a>
+    <a href="../../privacy.html">Privacy</a>
+    <a href="../../terms.html">Terms</a>
+    <a href="../../index.html#tools">← All Tools</a>
+  </div>
+</footer>
+
+<!-- MOBILE STICKY BUY BAR -->
+<div class="mobile-buy-bar" id="mobileBuyBar">
+  <div class="mobile-buy-bar-info">
+    <strong>Property P&amp;L Dashboard</strong>
+    <span>One-time $29 · Instant download</span>
+  </div>
+  <button class="mobile-buy-bar-btn" id="mobileBuyBtn" aria-label="Get the dashboard for $29">
+    Get it — $29
+  </button>
+</div>
+
+<!-- CHECKOUT MODAL (same PayPal flow as main site) -->
+<div class="pm-overlay hidden" id="pmModal" role="dialog" aria-modal="true" aria-label="Purchase Property P&L Dashboard">
+  <div class="pm-modal-box" id="pmModalBox">
+    <div class="pm-modal-head">
+      <button class="pm-modal-close" id="pmModalClose" aria-label="Close">×</button>
+      <h4 id="pmModalTitle">Property P&amp;L Dashboard</h4>
+      <p id="pmModalSub">Excel toolkit · instant download</p>
+    </div>
+    <div class="pm-modal-body">
+      <div id="pmPayState">
+        <p style="font-size:13.5px;color:#374151;line-height:1.6;margin-bottom:14px;">You'll be taken to PayPal to complete your $29 payment. Once paid, your download link is sent immediately.</p>
+        <a id="pmPaypalLink" href="https://www.paypal.com/ncp/payment/SJQMKQEPFSQMC" target="_blank" rel="noopener noreferrer" class="pm-pp-btn" onclick="setTimeout(function(){document.getElementById('pmPayState').style.display='none';document.getElementById('pmConfirmRow').style.display='block';},2000)">
+          <span class="pm-pp-logo"><b>Pay</b><em>Pal</em></span>
+          <span class="pm-pp-text">Pay $29 securely</span>
+        </a>
+        <div class="pm-modal-sep"></div>
+        <div id="pmConfirmRow" style="display:none;">
+          <p style="font-size:13px;color:#374151;margin-bottom:10px;">Payment complete? Click below to get your download link.</p>
+          <button id="pmConfirmBtn" style="width:100%;background:#15803D;color:#fff;border:none;padding:12px;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">I completed payment → Get my download</button>
+        </div>
+      </div>
+      <div id="pmDlState" style="display:none;text-align:center;padding:10px 0;">
+        <div style="font-size:36px;margin-bottom:10px;">🎉</div>
+        <p style="font-size:15px;font-weight:700;color:#0F2847;margin-bottom:6px;">You're all set!</p>
+        <p style="font-size:13px;color:#5F6B7A;margin-bottom:18px;">Your dashboard is downloading. Check your email too — a copy is on its way.</p>
+        <a href="https://drive.google.com/uc?export=download&id=YOUR_FILE_ID" class="pm-dl-btn" download>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
+          Download Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  /* ── COUNTUP ── */
+  function countUp(el, target, dur, prefix, suffix, decimals) {
+    prefix = prefix || ''; suffix = suffix || ''; decimals = decimals || 0; dur = dur || 1400;
+    var start, raf;
+    function tick(t) {
+      if (!start) start = t;
+      var p = Math.min((t - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      var val = target * eased;
+      el.textContent = prefix + val.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
+      if (p < 1) raf = requestAnimationFrame(tick);
+    }
+    raf = requestAnimationFrame(tick);
+  }
+
+  /* ── SLIDE DATA ── */
+  var SLIDES = [
+    { icon: '📊', title: 'Annual Dashboard',   sub: 'The whole year at a glance',              caption: 'Annual Dashboard' },
+    { icon: '🥧', title: 'Expense Breakdown',  sub: 'Know where every dollar is going',        caption: 'Expense Breakdown' },
+    { icon: '📅', title: 'Monthly Dashboard',  sub: 'Drill into any single month',             caption: 'Monthly Drill-down' },
+    { icon: '📈', title: 'Month-over-Month',   sub: 'See exactly where income grew or dipped', caption: 'Month-over-Month' },
+  ];
+
+  var cur = 0, timer, visible = false, paused = false;
+  var slideEls = [
+    document.getElementById('pmSlide0'),
+    document.getElementById('pmSlide1'),
+    document.getElementById('pmSlide2'),
+    document.getElementById('pmSlide3'),
+  ];
+  var dots = document.querySelectorAll('#pmDots .pm-dot');
+  var tabs = document.querySelectorAll('#pmTabs .pm-tab');
+
+  function playSlideAnimations(idx) {
+    var slide = slideEls[idx]; if (!slide) return;
+    slide.querySelectorAll('[data-countup]').forEach(function (el) {
+      countUp(el, parseFloat(el.dataset.countup), 1400, el.dataset.prefix || '', el.dataset.suffix || '', parseFloat(el.dataset.decimals || '0'));
+    });
+    if (idx === 0) {
+      var inc = document.getElementById('pmAnnInc'), area = document.getElementById('pmAnnAreaPath'), exp = document.getElementById('pmAnnExp');
+      if (inc) inc.style.strokeDashoffset = '0';
+      if (area) area.style.opacity = '1';
+      if (exp) exp.style.opacity = '1';
+    }
+    if (idx === 1) {
+      var donut = document.getElementById('pmDonut');
+      if (donut) donut.style.background = 'conic-gradient(#2D6FE0 0% 38%, #E8A08F 38% 57%, #15806A 57% 75%, #C9A227 75% 87%, #8A9BA8 87% 96%, #DDE3EC 96% 100%)';
+      slide.querySelectorAll('.pm-bar-fill').forEach(function (bar) { bar.style.width = bar.dataset.w + '%'; });
+    }
+    if (idx === 2) {
+      var minc = slide.querySelector('#pmMonInc'), marea = slide.querySelector('#pmMonAreaPath');
+      if (minc) minc.style.strokeDashoffset = '0';
+      if (marea) marea.style.opacity = '1';
+    }
+    if (idx === 3) {
+      slide.querySelectorAll('[data-h]').forEach(function (bar) { bar.style.height = bar.dataset.h + 'px'; });
+    }
+  }
+
+  function resetSlideAnimations(idx) {
+    var slide = slideEls[idx]; if (!slide) return;
+    slide.querySelectorAll('[data-countup]').forEach(function (el) {
+      el.textContent = (el.dataset.prefix || '') + '0' + (el.dataset.suffix || '');
+    });
+    if (idx === 0) {
+      var inc = document.getElementById('pmAnnInc'), area = document.getElementById('pmAnnAreaPath'), exp = document.getElementById('pmAnnExp');
+      if (inc) inc.style.strokeDashoffset = '540';
+      if (area) area.style.opacity = '0';
+      if (exp) exp.style.opacity = '0';
+    }
+    if (idx === 1) {
+      var donut = document.getElementById('pmDonut');
+      if (donut) donut.style.background = 'conic-gradient(#E5E9F0 0% 100%)';
+      slide.querySelectorAll('.pm-bar-fill').forEach(function (bar) { bar.style.width = '0'; });
+    }
+    if (idx === 2) {
+      var minc = slide.querySelector('#pmMonInc'), marea = slide.querySelector('#pmMonAreaPath');
+      if (minc) minc.style.strokeDashoffset = '540';
+      if (marea) marea.style.opacity = '0';
+    }
+    if (idx === 3) {
+      slide.querySelectorAll('[data-h]').forEach(function (bar) { bar.style.height = '0'; });
+    }
+  }
+
+  function goTo(n) {
+    var prev = cur;
+    cur = (n + SLIDES.length) % SLIDES.length;
+    var si = document.getElementById('pmSlideIcon'), st = document.getElementById('pmSlideTitle'), ss = document.getElementById('pmSlideSub');
+    var ci = document.getElementById('pmCaptionIcon'), ct = document.getElementById('pmCaptionText');
+    if (si) si.textContent = SLIDES[cur].icon;
+    if (st) st.textContent = SLIDES[cur].title;
+    if (ss) ss.textContent = SLIDES[cur].sub;
+    if (ci) ci.textContent = SLIDES[cur].icon;
+    if (ct) ct.textContent = SLIDES[cur].caption;
+    slideEls.forEach(function (el, i) {
+      if (!el) return;
+      if (i === cur) { el.classList.add('pm-active'); if (visible) setTimeout(function () { playSlideAnimations(cur); }, 50); }
+      else { el.classList.remove('pm-active'); resetSlideAnimations(i); }
+    });
+    dots.forEach(function (d, i) { d.classList.toggle('pm-dot-on', i === cur); });
+    tabs.forEach(function (t, i) { t.classList.toggle('pm-tab-on', i === cur); });
+  }
+
+  function startTimer() {
+    clearInterval(timer);
+    timer = setInterval(function () { if (!paused) goTo(cur + 1); }, 4200);
+  }
+
+  document.getElementById('pmPrev').addEventListener('click', function () { goTo(cur - 1); startTimer(); });
+  document.getElementById('pmNext').addEventListener('click', function () { goTo(cur + 1); startTimer(); });
+  dots.forEach(function (d) { d.addEventListener('click', function () { goTo(parseInt(d.dataset.i)); startTimer(); }); });
+  tabs.forEach(function (t) { t.addEventListener('click', function () { goTo(parseInt(t.dataset.i)); startTimer(); }); });
+
+  var carousel = document.getElementById('premiumCard');
+  if (carousel) {
+    ['mouseenter','touchstart'].forEach(function(ev){ carousel.addEventListener(ev, function(){ paused=true; }, { passive:true }); });
+    ['mouseleave','touchend'].forEach(function(ev){ carousel.addEventListener(ev, function(){ paused=false; }, { passive:true }); });
+  }
+
+  if (typeof IntersectionObserver !== 'undefined') {
+    var io = new IntersectionObserver(function (entries) {
+      if (entries[0].isIntersecting && !visible) {
+        visible = true; playSlideAnimations(cur); startTimer(); io.disconnect();
+      }
+    }, { threshold: 0.2 });
+    io.observe(document.getElementById('premiumCard'));
+  } else {
+    setTimeout(function () { visible = true; playSlideAnimations(cur); startTimer(); }, 600);
+  }
+
+  /* ── CHECKOUT MODAL ── */
+  var modal = document.getElementById('pmModal');
+  var closeBtn = document.getElementById('pmModalClose');
+  var confirmBtn = document.getElementById('pmConfirmBtn');
+  var payState = document.getElementById('pmPayState');
+  var dlState = document.getElementById('pmDlState');
+
+  function openModal() { modal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+  function closeModal() { modal.classList.add('hidden'); document.body.style.overflow = ''; }
+
+  ['pmBuyBtn','headerBuyBtn','finalBuyBtn','mobileBuyBtn'].forEach(function(id) {
+    var btn = document.getElementById(id);
+    if (btn) btn.addEventListener('click', openModal);
+  });
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+  if (confirmBtn) confirmBtn.addEventListener('click', function () {
+    payState.style.display = 'none'; dlState.style.display = 'block';
+  });
+
+})();
+</script>
+</body>
+</html>

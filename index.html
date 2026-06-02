@@ -1476,10 +1476,15 @@ body.variant-dark .audience-card { background: #0F2040; }
 /* ── AUTOMATION TOOLS ── */
 .tools-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
   margin-top: 40px;
-  max-width: 680px;
+}
+@media (max-width: 900px) {
+  .tools-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .tools-grid { grid-template-columns: 1fr; }
 }
 .tool-card {
   background: #fff;
@@ -1513,6 +1518,168 @@ body.variant-dark .audience-card { background: #0F2040; }
   color: var(--blue); background: var(--blue-dim, #EEF2FD);
   padding: 3px 10px; border-radius: 100px;
   width: fit-content;
+}
+.tool-tag-soon { color: #6B7280 !important; background: #F3F4F6 !important; }
+
+/* coming-soon card variant */
+.tool-card-soon {
+  background: #F8FAFC;
+  border-style: dashed;
+  border-color: #CBD5E1;
+  opacity: .88;
+}
+.tool-card-soon h3 { color: #64748B; }
+.tool-card-soon p  { color: #94A3B8; }
+
+/* trust meta line under card description */
+.tool-trust-meta {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; color: #64748B;
+  margin-top: -4px;
+}
+.tool-trust-meta svg { flex-shrink: 0; }
+
+/* coming-soon teaser strip */
+.tools-coming-teasers {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  margin-top: 16px;
+}
+.tools-coming-teaser {
+  display: flex; align-items: center; gap: 10px;
+  background: #F8FAFC; border: 1.5px dashed #CBD5E1;
+  border-radius: 10px; padding: 10px 14px;
+  flex: 1 1 200px;
+}
+.tools-coming-teaser-name {
+  flex: 1; font-size: 13px; font-weight: 600; color: #64748B;
+}
+.tools-coming-notify {
+  font-size: 11.5px; font-weight: 700; color: var(--blue);
+  background: none; border: none; cursor: pointer;
+  padding: 0; white-space: nowrap; text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.tools-coming-notify:hover { color: var(--navy); }
+
+/* featured divider between free and premium */
+.tools-featured-divider {
+  display: flex; align-items: center; gap: 14px;
+  margin: 36px 0 28px;
+}
+.tools-featured-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, #CBD5E1, transparent);
+}
+.tools-featured-badge {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: #C97B2F;
+  background: #FBF1E6; border: 1px solid #F0D9BE;
+  padding: 6px 14px; border-radius: 999px; white-space: nowrap;
+}
+
+/* premium card when outside the old tools-grid */
+.tools-premium-wrap { margin: 0 auto; max-width: 700px; }
+
+/* bottom CTA strip */
+.tools-cta-strip {
+  margin-top: 36px; padding: 28px 32px;
+  background: var(--navy, #0F2847);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap;
+}
+.tools-cta-strip-text {
+  color: #fff;
+}
+.tools-cta-strip-text strong {
+  display: block; font-size: 18px; font-weight: 700;
+  line-height: 1.3; margin-bottom: 4px;
+}
+.tools-cta-strip-text span {
+  font-size: 14px; color: rgba(255,255,255,.7);
+}
+.tools-cta-strip-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #fff; color: var(--navy, #0F2847);
+  font-weight: 700; font-size: 14px; padding: 12px 22px;
+  border-radius: 10px; text-decoration: none; white-space: nowrap;
+  transition: background .2s, transform .15s;
+  flex-shrink: 0;
+}
+.tools-cta-strip-btn:hover { background: #EBF3FD; transform: translateY(-1px); }
+@media (max-width: 600px) {
+  .tools-cta-strip { flex-direction: column; align-items: flex-start; }
+  .tools-cta-strip-btn { width: 100%; justify-content: center; }
+}
+
+/* ── TOOL GATE MODAL (email capture before opening free tool) ── */
+.toolgate-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(15,40,71,.55); backdrop-filter: blur(4px);
+  display: grid; place-items: center; padding: 20px;
+}
+.toolgate-overlay.hidden { display: none; }
+.toolgate-modal {
+  width: min(420px, 92vw);
+  background: #fff; border-radius: 20px; overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,.3);
+  animation: popIn .3s cubic-bezier(.34,1.56,.64,1);
+}
+.toolgate-head {
+  background: linear-gradient(135deg, #0F2847, #1E5AA8);
+  padding: 22px 26px 18px; color: #fff; position: relative;
+}
+.toolgate-head h4 {
+  font-size: 20px; font-weight: 700; margin: 0 0 4px; line-height: 1.2;
+}
+.toolgate-head p { font-size: 13px; opacity: .8; margin: 0; }
+.toolgate-close {
+  position: absolute; top: 14px; right: 16px;
+  background: rgba(255,255,255,.18); border: none; color: #fff;
+  width: 28px; height: 28px; border-radius: 50%;
+  cursor: pointer; font-size: 16px; display: grid; place-items: center;
+}
+.toolgate-body { padding: 22px 26px 26px; }
+.toolgate-field { margin-bottom: 14px; }
+.toolgate-field label {
+  display: block; font-size: 12px; font-weight: 700;
+  color: #374151; margin-bottom: 5px; letter-spacing: .03em;
+}
+.toolgate-field input {
+  width: 100%; padding: 10px 14px; border: 1.5px solid #E5E9F0;
+  border-radius: 9px; font-size: 14px; font-family: inherit;
+  color: #1a1a1a; background: #fff; outline: none;
+  transition: border-color .15s; box-sizing: border-box;
+}
+.toolgate-field input:focus { border-color: #1E5AA8; }
+.toolgate-submit {
+  width: 100%; border: none; cursor: pointer;
+  background: linear-gradient(135deg, #0F2847, #1E5AA8);
+  color: #fff; font-weight: 700; font-size: 15px;
+  padding: 13px; border-radius: 10px; margin-top: 6px;
+  font-family: inherit; transition: filter .2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.toolgate-submit:hover { filter: brightness(1.1); }
+.toolgate-note {
+  font-size: 11px; color: #9CA3AF; text-align: center; margin-top: 10px;
+}
+.toolgate-success {
+  text-align: center; padding: 16px 0 8px;
+}
+.toolgate-success-icon {
+  width: 52px; height: 52px; background: #DCFCE7;
+  border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; margin: 0 auto 14px;
+  font-size: 24px;
+}
+.toolgate-success h5 {
+  font-size: 17px; font-weight: 700; color: #0F2847; margin: 0 0 6px;
+}
+.toolgate-success p { font-size: 13px; color: #6B7280; margin: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .toolgate-modal { animation: none; }
 }
 
 /* ── PREMIUM P&L TOOL CARD ───────────────────────────────────────────────── */
@@ -1625,6 +1792,23 @@ body.variant-dark .audience-card { background: #0F2040; }
   .pm-overlay { animation: none !important; }
 }
 
+/* compact KPI snapshot replacing the carousel in the section card */
+.pm-kpi-preview {
+  display:grid; grid-template-columns:1fr 1px 1fr 1px 1fr;
+  background:#F4F7FB; border-top:1px solid #E5E9F0; border-bottom:1px solid #E5E9F0;
+}
+.pm-kpi-prev-sep { background:#E5E9F0; }
+.pm-kpi-prev-cell { padding:12px 8px; text-align:center; }
+.pm-kpi-prev-lbl { font-size:9px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#6B7280; margin-bottom:4px; }
+.pm-kpi-prev-val { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:20px; line-height:1; }
+.pm-preview-link {
+  display:flex; align-items:center; justify-content:center; gap:7px;
+  padding:9px 16px; font-size:12px; font-weight:700; color:var(--blue);
+  text-decoration:none; background:#F8FAFC; border-bottom:1px solid #E5E9F0;
+  transition:background .15s;
+}
+.pm-preview-link:hover { background:#EBF3FD; }
+
 /* nav-bar entry */
 .dd-dot-premium { background: linear-gradient(135deg,#C97B2F,#E8A35A); }
 
@@ -1668,6 +1852,80 @@ retell-chat-web-component {
 </style>
 <!-- Markdown parser for blog posts -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" async></script>
+<!-- TOOL GATE MODAL (email capture for free tools) -->
+<div class="toolgate-overlay hidden" id="toolGateOverlay" role="dialog" aria-modal="true" aria-label="Get free tool access">
+  <div class="toolgate-modal" id="toolGateModal">
+    <div class="toolgate-head">
+      <button class="toolgate-close" id="toolGateClose" aria-label="Close">×</button>
+      <h4 id="toolGateTitle">Get instant access</h4>
+      <p id="toolGateSub">We'll also send you NYC landlord tips — unsubscribe any time.</p>
+    </div>
+    <div class="toolgate-body">
+      <!-- form state -->
+      <form id="toolGateForm" style="display:block;" novalidate>
+        <input type="hidden" name="access_key" value="6991fa6b-8f6c-4c24-9167-b7ee52026a98">
+        <input type="hidden" name="subject" id="toolGateSubject" value="Free Tool Access Request">
+        <input type="hidden" name="tool_name" id="toolGateToolName" value="">
+        <input type="hidden" name="from_name" value="DoryAngel Website">
+        <div class="toolgate-field">
+          <label for="toolGateName">Your first name</label>
+          <input type="text" id="toolGateName" name="name" placeholder="e.g. Mark" autocomplete="given-name">
+        </div>
+        <div class="toolgate-field">
+          <label for="toolGateEmail">Email address <span style="color:#D14343;">*</span></label>
+          <input type="email" id="toolGateEmail" name="email" placeholder="you@email.com" required autocomplete="email">
+        </div>
+        <button type="submit" class="toolgate-submit">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Open the Tool &rarr;
+        </button>
+        <p class="toolgate-note">🔒 No spam. Unsubscribe any time. We respect your inbox.</p>
+      </form>
+      <!-- success state -->
+      <div id="toolGateSuccess" class="toolgate-success" style="display:none;">
+        <div class="toolgate-success-icon">✓</div>
+        <h5>You're in!</h5>
+        <p>The tool is opening now in a new tab.<br>Check your inbox for tips from DoryAngel.</p>
+        <button onclick="closeToolGate()" style="margin-top:16px;background:var(--blue);color:#fff;border:none;padding:10px 22px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFY ME MODAL (coming-soon tools) -->
+<div class="toolgate-overlay hidden" id="notifyGateOverlay" role="dialog" aria-modal="true" aria-label="Get notified when tool launches">
+  <div class="toolgate-modal" id="notifyGateModal">
+    <div class="toolgate-head" style="background:linear-gradient(135deg,#374151,#64748B);">
+      <button class="toolgate-close" id="notifyGateClose" aria-label="Close">×</button>
+      <h4 id="notifyGateTitle">Notify me when it launches</h4>
+      <p id="notifyGateSub">Be the first to know — we'll send one email when it's ready.</p>
+    </div>
+    <div class="toolgate-body">
+      <form id="notifyGateForm" style="display:block;" novalidate>
+        <input type="hidden" name="access_key" value="6991fa6b-8f6c-4c24-9167-b7ee52026a98">
+        <input type="hidden" name="subject" id="notifyGateSubject" value="Notify Me: Upcoming Tool">
+        <input type="hidden" name="tool_name" id="notifyGateToolName" value="">
+        <input type="hidden" name="from_name" value="DoryAngel Website">
+        <div class="toolgate-field">
+          <label for="notifyGateEmail">Your email address <span style="color:#D14343;">*</span></label>
+          <input type="email" id="notifyGateEmail" name="email" placeholder="you@email.com" required autocomplete="email">
+        </div>
+        <button type="submit" class="toolgate-submit" style="background:linear-gradient(135deg,#374151,#64748B);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          Notify Me &rarr;
+        </button>
+        <p class="toolgate-note">One email when it launches. That's it.</p>
+      </form>
+      <div id="notifyGateSuccess" class="toolgate-success" style="display:none;">
+        <div class="toolgate-success-icon" style="background:#EEF4FF;">🔔</div>
+        <h5>Got it!</h5>
+        <p>We'll email you as soon as <span id="notifyGateToolDisplay"></span> is ready.</p>
+        <button onclick="closeNotifyGate()" style="margin-top:16px;background:#374151;color:#fff;border:none;padding:10px 22px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Property P&L Dashboard checkout modal -->
 <div class="pm-overlay hidden" id="pmModal" role="dialog" aria-modal="true" aria-label="Purchase Property P&L Dashboard">
   <div class="pm-modal-box" id="pmModalBox">
@@ -1745,24 +2003,24 @@ retell-chat-web-component {
       <li class="nav-has-dropdown">
         <a href="#tools">Tools &#9662;</a>
         <div class="nav-dropdown">
-          <p class="nav-dd-label">Doryangel Property Automation</p>
+          <p class="nav-dd-label">DIY Landlord Toolkit — Free</p>
           <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" class="nav-dd-link">
-            <span class="dd-dot"></span> Preventive Maintenance &amp; Compliance
-          </a>
-          <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" class="nav-dd-link">
-            <span class="dd-dot"></span> Owner &amp; Tenant Portal (Buildium)
+            <span class="dd-dot"></span> Compliance Calendar
           </a>
           <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/" target="_blank" rel="noopener" class="nav-dd-link">
-            <span class="dd-dot" style="background:#1E5AA8;"></span> DoryAngel Digest <span class="nav-dd-tag" style="background:#EEF4FF;color:#1E5AA8;">New</span>
+            <span class="dd-dot" style="background:#1E5AA8;"></span> DoryAngel Digest <span class="nav-dd-tag" style="background:#EEF4FF;color:#1E5AA8;">Free</span>
           </a>
           <a href="#premiumCard" class="nav-dd-link">
             <span class="dd-dot dd-dot-premium"></span> Property P&amp;L Dashboard <span class="nav-dd-tag" style="background:#FBF1E6;color:#C97B2F;">$29</span>
           </a>
           <hr class="nav-dd-sep">
           <p class="nav-dd-label">Coming Soon</p>
-          <span class="nav-dd-soon"><span class="dd-dot dd-dot-soon"></span> Maintenance Request Tracker <span class="nav-dd-tag">Soon</span></span>
-          <span class="nav-dd-soon"><span class="dd-dot dd-dot-soon"></span> Lease Renewal Automation <span class="nav-dd-tag">Soon</span></span>
-          <span class="nav-dd-soon"><span class="dd-dot dd-dot-soon"></span> Vendor Management Portal <span class="nav-dd-tag">Soon</span></span>
+          <span class="nav-dd-soon"><span class="dd-dot dd-dot-soon"></span> Vendor &amp; Tenant Triage Automation <span class="nav-dd-tag">Next</span></span>
+          <span class="nav-dd-soon"><span class="dd-dot dd-dot-soon"></span> Tenant Screening Tool <span class="nav-dd-tag">After</span></span>
+          <hr class="nav-dd-sep">
+          <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" class="nav-dd-link" style="color:#6B7280;">
+            <span class="dd-dot" style="background:#D1D5DB;"></span> Owner &amp; Tenant Portal (Buildium)
+          </a>
         </div>
       </li>
       <li><a href="#contact">Contact</a></li>
@@ -1813,7 +2071,7 @@ retell-chat-web-component {
   </ul>
   <div class="drawer-sep"></div>
   <div style="padding: 0 0 8px;">
-    <p style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#3E8FD4;margin:0 0 10px;">Doryangel Automation Tools</p>
+    <p style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#3E8FD4;margin:0 0 10px;">DIY Landlord Toolkit</p>
     <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" class="drawer-tool-card">
       <div class="drawer-tool-card-icon" style="background:#EAF4FB;">
         <svg viewBox="0 0 24 24" fill="none" stroke="#3E8FD4" stroke-width="1.8" width="20" height="20"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
@@ -1860,7 +2118,7 @@ retell-chat-web-component {
       </div>
       <div>
         <div style="font-size:13px;font-weight:600;color:#9CA3AF;">More tools coming soon</div>
-        <div style="font-size:11px;color:#C1C9D4;">Maintenance Tracker · Lease Renewal · Vendor Portal</div>
+        <div style="font-size:11px;color:#C1C9D4;">Vendor Triage Automation · Tenant Screening Tool</div>
       </div>
     </div>
   </div>
@@ -2261,43 +2519,81 @@ retell-chat-web-component {
 <!-- AUTOMATION TOOLS -->
 <section id="tools" style="background:var(--grey-light);">
   <div class="section-inner">
-    <div class="section-label">Free Resources</div>
-    <h2 class="section-title reveal">Doryangel Property Automation Tools</h2>
-    <p class="section-sub">Free property management tools built specifically for Bronx and NYC landlords. No subscription, no credit card.</p>
+    <div class="section-label">DIY Landlord Toolkit</div>
+    <h2 class="section-title reveal">The tools your property manager<br>doesn't want you to have</h2>
+    <p class="section-sub">Built for NYC property owners who do it themselves — for now. Free to use. No subscription, no credit card.<br><em style="font-style:normal;font-size:13px;color:#9CA3AF;">We built these because we couldn't find good NYC-specific tools anywhere. So we made them.</em></p>
+
+    <!-- FREE TOOLS ROW -->
     <div class="tools-grid">
 
+      <!-- Card 1: Compliance Calendar -->
       <div class="tool-card">
         <div class="tool-card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="24" height="24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
         </div>
-        <span class="tool-tag">Free Tool</span>
-        <h3>Preventive Maintenance &amp; Compliance</h3>
-        <p>47 HPD, DOB &amp; FDNY compliance tasks — with penalty amounts and seasonal checklists — delivered to your inbox on the 1st of every month. Built for Bronx property owners.</p>
-        <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-top:8px;width:fit-content;">Open Free Tool &rarr;</a>
-      </div>
-
-      <div class="tool-card">
-        <div class="tool-card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="24" height="24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 00-2 2v2h12V5a2 2 0 00-2-2z"/><path d="M12 12v4M10 14h4"/></svg>
+        <span class="tool-tag">Free</span>
+        <h3>Compliance Calendar</h3>
+        <p>47 HPD, DOB &amp; FDNY tasks — with exact penalty amounts and seasonal checklists — delivered to your inbox on the 1st of every month.</p>
+        <div class="tool-trust-meta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          1,200+ NYC landlords · Updated June 2026
         </div>
-        <span class="tool-tag">Powered by Buildium</span>
-        <h3>Owner &amp; Tenant Portal</h3>
-        <p>Access your live owner dashboard, pay rent online, submit maintenance requests, and view your lease documents — all in one place. Available 24/7 from any device.</p>
-        <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="margin-top:8px;width:fit-content;">Open Portal &rarr;</a>
+        <button class="btn-primary" style="margin-top:12px;width:fit-content;background:none;border:2px solid var(--blue);color:var(--blue);cursor:pointer;" onclick="openToolGate('https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/','Compliance Calendar')">Get Instant Access &rarr;</button>
       </div>
 
+      <!-- Card 2: DoryAngel Digest -->
       <div class="tool-card">
         <div class="tool-card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="24" height="24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
         </div>
-        <span class="tool-tag" style="background:#EEF4FF;color:#1E5AA8;">Free Newsletter</span>
+        <span class="tool-tag">Free</span>
         <h3>DoryAngel Digest</h3>
-        <p>Subscribe once and get notified whenever we publish a new article matching your interests — property management, DIY landlord tips, or NYC real estate investments. No noise, only what matters.</p>
-        <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-top:8px;width:fit-content;">Subscribe Free &rarr;</a>
+        <p>NYC landlord tips, law changes, and new tools — straight to your inbox. No spam, no sales pitches. Just the information that saves you money and keeps you compliant.</p>
+        <div class="tool-trust-meta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 15a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 4.21h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 11a16 16 0 0 0 6 6l.93-.93a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 18.4z"/></svg>
+          Published every 2–3 days · Free forever
+        </div>
+        <button class="btn-primary" style="margin-top:12px;width:fit-content;background:none;border:2px solid var(--blue);color:var(--blue);cursor:pointer;" onclick="openToolGate('https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/','DoryAngel Digest')">Subscribe Free &rarr;</button>
       </div>
 
-      <!-- PREMIUM CARD: Property P&L Dashboard -->
-      <div class="tool-card pm-card" id="premiumCard">
+      <!-- Card 3: Coming Soon — Vendor & Tenant Triage Automation -->
+      <div class="tool-card tool-card-soon">
+        <div class="tool-card-icon" style="background:#F1F5F9;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8" width="24" height="24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        </div>
+        <span class="tool-tag tool-tag-soon">Coming Soon</span>
+        <h3>Vendor &amp; Tenant Triage Automation</h3>
+        <p>Smart triage that routes maintenance requests to the right vendor automatically and flags urgent tenant issues before they become code violations or legal disputes.</p>
+        <div class="tool-trust-meta" style="color:#94A3B8;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          Next tool in development · Est. Q4 2026
+        </div>
+        <button class="btn-primary" style="margin-top:12px;width:fit-content;background:none;border:2px dashed #CBD5E1;color:#64748B;cursor:pointer;" onclick="openNotifyGate('Vendor & Tenant Triage Automation')">Notify Me When Ready &rarr;</button>
+      </div>
+
+    </div><!-- /tools-grid -->
+
+    <!-- COMING SOON TEASERS ROW -->
+    <div class="tools-coming-teasers">
+      <div class="tools-coming-teaser">
+        <div style="width:32px;height:32px;border-radius:8px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8" width="18" height="18"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <span class="tools-coming-teaser-name">Tenant Screening Tool <em style="font-size:10px;font-style:normal;background:#F1F5F9;color:#94A3B8;padding:1px 6px;border-radius:4px;margin-left:4px;">After that</em></span>
+        <button class="tools-coming-notify" onclick="openNotifyGate('Tenant Screening Tool')">Notify me</button>
+      </div>
+    </div>
+
+    <!-- FEATURED DIVIDER -->
+    <div class="tools-featured-divider">
+      <div class="tools-featured-line"></div>
+      <div class="tools-featured-badge">✦ Featured Tool</div>
+      <div class="tools-featured-line"></div>
+    </div>
+
+    <!-- PREMIUM CARD: Property P&L Dashboard -->
+    <div class="tools-premium-wrap">
+    <div class="tool-card pm-card" id="premiumCard">
 
         <!-- animated accent band -->
         <div class="pm-accent-band"></div>
@@ -2334,162 +2630,36 @@ retell-chat-web-component {
           <div class="pm-stat-cell"><div class="pm-stat-val" style="color:#1E2A44;">50</div><div class="pm-stat-lbl">Properties supported</div></div>
         </div>
 
-        <!-- dashboard carousel -->
-        <div class="pm-carousel" id="pmCarousel">
-          <div class="pm-section-bar" id="pmSectionBar">
-            <div class="pm-section-bar-l">
-              <span id="pmSlideIcon" style="font-size:16px;">📊</span>
-              <span class="pm-section-bar-title" id="pmSlideTitle">Annual Dashboard</span>
-            </div>
-            <span class="pm-section-bar-sub" id="pmSlideSub">The whole year at a glance</span>
+        <!-- compact KPI snapshot — full charts at /tools/pl-dashboard/ -->
+        <div class="pm-kpi-preview">
+          <div class="pm-kpi-prev-cell">
+            <div class="pm-kpi-prev-lbl">Annual Income</div>
+            <div class="pm-kpi-prev-val" style="color:#15806A;">$98,400</div>
           </div>
-
-          <div class="pm-slides-wrap" id="pmSlidesWrap">
-
-            <!-- SLIDE 0: Annual Dashboard -->
-            <div class="pm-slide pm-active" id="pmSlide0">
-              <div class="pm-kpi-grid" style="grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px;">
-                <div class="pm-kpi-card"><div class="pm-kpi-lbl">Total Income</div><div class="pm-kpi-val" style="color:#15806A;" data-countup="98400" data-prefix="$">$0</div></div>
-                <div class="pm-kpi-card"><div class="pm-kpi-lbl">Total Expenses</div><div class="pm-kpi-val" style="color:#D14343;" data-countup="56220" data-prefix="$">$0</div></div>
-                <div class="pm-kpi-card"><div class="pm-kpi-lbl">Net Profit</div><div class="pm-kpi-val" style="color:#2D6FE0;" data-countup="42180" data-prefix="$">$0</div></div>
-              </div>
-              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;color:#6B7280;text-transform:uppercase;margin-bottom:5px;">Income vs Expenses — Full Year</div>
-              <div class="pm-legend" style="margin-bottom:6px;">
-                <span class="pm-legend-item"><span class="pm-legend-line" style="background:#15806A;"></span>Income</span>
-                <span class="pm-legend-item"><span class="pm-legend-line" style="background:#E8A08F;border-style:dashed;height:0;border-top:2.5px dashed #E8A08F;width:15px;"></span>Expenses</span>
-              </div>
-              <svg width="100%" viewBox="0 0 300 90" style="display:block;" id="pmAnnualChart">
-                <defs>
-                  <linearGradient id="pmAnnArea" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#15806A" stop-opacity=".16"/>
-                    <stop offset="100%" stop-color="#15806A" stop-opacity="0"/>
-                  </linearGradient>
-                </defs>
-                <line x1="0" y1="45" x2="300" y2="45" stroke="#E5E9F0" stroke-width="1"/>
-                <!-- income line path: values [40,44,48,70,72,71,73,75,78,84,90,96] mapped to 300x90 -->
-                <path id="pmAnnAreaPath" d="M0,74 L27,71 L55,69 L82,52 L109,51 L136,51 L164,50 L191,49 L218,47 L245,43 L273,38 L300,33 L300,90 L0,90 Z" fill="url(#pmAnnArea)" opacity="0" style="transition:opacity .8s ease .5s"/>
-                <path id="pmAnnInc" d="M0,74 L27,71 L55,69 L82,52 L109,51 L136,51 L164,50 L191,49 L218,47 L245,43 L273,38 L300,33" fill="none" stroke="#15806A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="540" stroke-dashoffset="540" style="transition:stroke-dashoffset 1.4s ease .15s"/>
-                <path d="M0,82 L27,82 L55,81 L82,83 L109,82 L136,81 L164,82 L191,81 L218,82 L245,80 L273,81 L300,80" fill="none" stroke="#E8A08F" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" opacity="0" id="pmAnnExp" style="transition:opacity .6s ease .9s"/>
-              </svg>
-            </div>
-
-            <!-- SLIDE 1: Expense Breakdown -->
-            <div class="pm-slide" id="pmSlide1">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-                <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:#2A3342;text-transform:uppercase;flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">Expense Breakdown</span>
-                <span style="font-weight:700;font-size:11.5px;color:#2D6FE0;background:#E8F0FC;padding:3px 9px;border-radius:999px;white-space:nowrap;flex-shrink:0;">$11,250 total</span>
-              </div>
-              <div style="display:flex;gap:14px;align-items:center;margin-bottom:14px;">
-                <div style="position:relative;width:100px;height:100px;flex-shrink:0;">
-                  <div id="pmDonut" style="width:100px;height:100px;border-radius:50%;background:conic-gradient(#E5E9F0 0% 100%);transition:background 1.1s ease .4s;-webkit-mask:radial-gradient(circle 30px at center,transparent 98%,#000 100%);mask:radial-gradient(circle 30px at center,transparent 98%,#000 100%);"></div>
-                  <div style="position:absolute;inset:0;display:grid;place-items:center;text-align:center;">
-                    <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:#2A3342;line-height:1;">38%</div><div style="font-size:10px;color:#6B7280;">Mortgage</div></div>
-                  </div>
-                </div>
-                <div style="flex:1;display:flex;flex-direction:column;gap:6px;font-size:13px;">
-                  <div style="display:flex;align-items:center;gap:8px;"><span style="width:11px;height:11px;border-radius:3px;background:#2D6FE0;flex-shrink:0;"></span><span style="flex:1;color:#2A3342;">Mortgage</span><span style="font-weight:700;">38%</span></div>
-                  <div style="display:flex;align-items:center;gap:8px;"><span style="width:11px;height:11px;border-radius:3px;background:#E8A08F;flex-shrink:0;"></span><span style="flex:1;color:#2A3342;">Repairs</span><span style="font-weight:700;">19%</span></div>
-                  <div style="display:flex;align-items:center;gap:8px;"><span style="width:11px;height:11px;border-radius:3px;background:#15806A;flex-shrink:0;"></span><span style="flex:1;color:#2A3342;">Tax</span><span style="font-weight:700;">18%</span></div>
-                  <div style="display:flex;align-items:center;gap:8px;"><span style="width:11px;height:11px;border-radius:3px;background:#C9A227;flex-shrink:0;"></span><span style="flex:1;color:#2A3342;">Insurance</span><span style="font-weight:700;">12%</span></div>
-                  <div style="display:flex;align-items:center;gap:8px;"><span style="width:11px;height:11px;border-radius:3px;background:#8A9BA8;flex-shrink:0;"></span><span style="flex:1;color:#2A3342;">Mgmt</span><span style="font-weight:700;">9%</span></div>
-                  <div style="display:flex;align-items:center;gap:8px;"><span style="width:11px;height:11px;border-radius:3px;background:#DDE3EC;flex-shrink:0;"></span><span style="flex:1;color:#2A3342;">Other</span><span style="font-weight:700;">4%</span></div>
-                </div>
-              </div>
-              <div style="border-top:1px solid #E5E9F0;padding-top:12px;">
-                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;color:#6B7280;text-transform:uppercase;margin-bottom:10px;">Expense Distribution</div>
-                <div style="display:flex;flex-direction:column;gap:8px;">
-                  <div style="display:flex;align-items:center;gap:9px;font-size:12px;"><span style="width:58px;color:#2A3342;flex-shrink:0;">Mortgage</span><div class="pm-bar-track"><div class="pm-bar-fill" style="background:#2D6FE0;" data-w="100"></div></div><span style="width:30px;text-align:right;font-weight:700;">38%</span></div>
-                  <div style="display:flex;align-items:center;gap:9px;font-size:12px;"><span style="width:58px;color:#2A3342;flex-shrink:0;">Repairs</span><div class="pm-bar-track"><div class="pm-bar-fill" style="background:#E8A08F;" data-w="50"></div></div><span style="width:30px;text-align:right;font-weight:700;">19%</span></div>
-                  <div style="display:flex;align-items:center;gap:9px;font-size:12px;"><span style="width:58px;color:#2A3342;flex-shrink:0;">Tax</span><div class="pm-bar-track"><div class="pm-bar-fill" style="background:#15806A;" data-w="47"></div></div><span style="width:30px;text-align:right;font-weight:700;">18%</span></div>
-                  <div style="display:flex;align-items:center;gap:9px;font-size:12px;"><span style="width:58px;color:#2A3342;flex-shrink:0;">Insurance</span><div class="pm-bar-track"><div class="pm-bar-fill" style="background:#C9A227;" data-w="32"></div></div><span style="width:30px;text-align:right;font-weight:700;">12%</span></div>
-                  <div style="display:flex;align-items:center;gap:9px;font-size:12px;"><span style="width:58px;color:#2A3342;flex-shrink:0;">Mgmt</span><div class="pm-bar-track"><div class="pm-bar-fill" style="background:#8A9BA8;" data-w="24"></div></div><span style="width:30px;text-align:right;font-weight:700;">9%</span></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- SLIDE 2: Monthly Drill-down -->
-            <div class="pm-slide" id="pmSlide2">
-              <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;">
-                <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Jan</span>
-                <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Feb</span>
-                <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Mar</span>
-                <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #2D6FE0;background:#2D6FE0;color:#fff;">Apr</span>
-                <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">May</span>
-                <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Jun</span>
-                <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Jul</span>
-                <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Aug</span>
-                <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Sep</span>
-                <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Oct</span>
-                <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Nov</span>
-                <span style="font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:6px;border:1px solid #E5E9F0;background:#fff;color:#2A3342;">Dec</span>
-              </div>
-              <div class="pm-kpi-grid" style="margin-bottom:12px;">
-                <div class="pm-kpi-card"><div class="pm-kpi-lbl">Apr Income</div><div class="pm-kpi-val" style="color:#15806A;" data-countup="8050" data-prefix="$">$0</div></div>
-                <div class="pm-kpi-card"><div class="pm-kpi-lbl">Apr Expenses</div><div class="pm-kpi-val" style="color:#D14343;" data-countup="1780" data-prefix="$">$0</div></div>
-                <div class="pm-kpi-card"><div class="pm-kpi-lbl">Net Profit</div><div class="pm-kpi-val" style="color:#2D6FE0;" data-countup="6270" data-prefix="$">$0</div></div>
-                <div class="pm-kpi-card"><div class="pm-kpi-lbl">Margin</div><div class="pm-kpi-val" style="color:#C9A227;" data-countup="77.9" data-suffix="%" data-decimals="1">0%</div></div>
-              </div>
-              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;color:#6B7280;text-transform:uppercase;margin-bottom:5px;">Full Year Income vs Expenses</div>
-              <div class="pm-legend" style="margin-bottom:5px;">
-                <span class="pm-legend-item"><span class="pm-legend-line" style="background:#15806A;"></span>Income</span>
-                <span class="pm-legend-item"><span class="pm-legend-line" style="background:#E8A08F;"></span>Expenses</span>
-              </div>
-              <svg width="100%" viewBox="0 0 300 80" style="display:block;">
-                <defs><linearGradient id="pmMonArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#15806A" stop-opacity=".18"/><stop offset="100%" stop-color="#15806A" stop-opacity="0"/></linearGradient></defs>
-                <line x1="0" y1="40" x2="300" y2="40" stroke="#E5E9F0" stroke-width="1"/>
-                <path id="pmMonAreaPath" d="M0,76 L27,76 L55,75 L82,61 L109,60 L136,60 L164,60 L191,59 L218,58 L245,55 L273,50 L300,45 L300,80 L0,80 Z" fill="url(#pmMonArea)" opacity="0" style="transition:opacity .8s ease .5s"/>
-                <path id="pmMonInc" d="M0,76 L27,76 L55,75 L82,61 L109,60 L136,60 L164,60 L191,59 L218,58 L245,55 L273,50 L300,45" fill="none" stroke="#15806A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="540" stroke-dashoffset="540" style="transition:stroke-dashoffset 1.4s ease .2s"/>
-              </svg>
-            </div>
-
-            <!-- SLIDE 3: Month-over-Month -->
-            <div class="pm-slide" id="pmSlide3">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:11px;">
-                <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:#2A3342;text-transform:uppercase;flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">Month Over Month</span>
-                <span style="font-weight:700;font-size:11px;color:#15806A;background:#E4F2EC;padding:3px 9px;border-radius:999px;white-space:nowrap;flex-shrink:0;">↑ +8.3% avg</span>
-              </div>
-              <div class="pm-legend" style="margin-bottom:11px;">
-                <span class="pm-legend-item"><span style="width:11px;height:11px;background:#C9D8F2;border-radius:3px;"></span>Prev month</span>
-                <span class="pm-legend-item"><span style="width:11px;height:11px;background:#2D6FE0;border-radius:3px;"></span>Current</span>
-              </div>
-              <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:7px;height:130px;margin-bottom:12px;border-bottom:1px solid #E5E9F0;padding-bottom:2px;" id="pmMomBars">
-                <!-- bars injected at animation time via JS -->
-                <div style="flex:1;display:flex;flex-direction:column;align-items:center;"><div style="font-size:10.5px;font-weight:700;margin-bottom:3px;color:#15806A;">+19%</div><div style="display:flex;align-items:flex-end;gap:2px;height:110px;"><div style="width:10px;background:#C9D8F2;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 0ms;" data-h="50"></div><div style="width:10px;background:#2D6FE0;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 60ms;" data-h="66"></div></div></div>
-                <div style="flex:1;display:flex;flex-direction:column;align-items:center;"><div style="font-size:10.5px;font-weight:700;margin-bottom:3px;color:#15806A;">+14%</div><div style="display:flex;align-items:flex-end;gap:2px;height:110px;"><div style="width:10px;background:#C9D8F2;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 80ms;" data-h="64"></div><div style="width:10px;background:#2D6FE0;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 140ms;" data-h="79"></div></div></div>
-                <div style="flex:1;display:flex;flex-direction:column;align-items:center;"><div style="font-size:10.5px;font-weight:700;margin-bottom:3px;color:#15806A;">+32%</div><div style="display:flex;align-items:flex-end;gap:2px;height:110px;"><div style="width:10px;background:#C9D8F2;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 160ms;" data-h="77"></div><div style="width:10px;background:#2D6FE0;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 220ms;" data-h="105"></div></div></div>
-                <div style="flex:1;display:flex;flex-direction:column;align-items:center;"><div style="font-size:10.5px;font-weight:700;margin-bottom:3px;color:#6B7280;">0%</div><div style="display:flex;align-items:flex-end;gap:2px;height:110px;"><div style="width:10px;background:#C9D8F2;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 240ms;" data-h="101"></div><div style="width:10px;background:#2D6FE0;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 300ms;" data-h="101"></div></div></div>
-                <div style="flex:1;display:flex;flex-direction:column;align-items:center;"><div style="font-size:10.5px;font-weight:700;margin-bottom:3px;color:#D14343;">-3%</div><div style="display:flex;align-items:flex-end;gap:2px;height:110px;"><div style="width:10px;background:#C9D8F2;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 320ms;" data-h="101"></div><div style="width:10px;background:#2D6FE0;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 380ms;" data-h="98"></div></div></div>
-                <div style="flex:1;display:flex;flex-direction:column;align-items:center;"><div style="font-size:10.5px;font-weight:700;margin-bottom:3px;color:#15806A;">+5%</div><div style="display:flex;align-items:flex-end;gap:2px;height:110px;"><div style="width:10px;background:#C9D8F2;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 400ms;" data-h="95"></div><div style="width:10px;background:#2D6FE0;border-radius:3px 3px 0 0;height:0;transition:height .8s cubic-bezier(.34,1.3,.64,1) 460ms;" data-h="104"></div></div></div>
-              </div>
-              <div style="display:flex;gap:7px;">
-                <div style="flex:1;background:#F4F6FA;border:1px solid #E5E9F0;border-radius:10px;padding:9px 6px;text-align:center;"><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:#15806A;line-height:1;">+32%</div><div style="font-size:9.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#6B7280;margin-top:2px;">Best month</div></div>
-                <div style="flex:1;background:#F4F6FA;border:1px solid #E5E9F0;border-radius:10px;padding:9px 6px;text-align:center;"><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:#D14343;line-height:1;">-3%</div><div style="font-size:9.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#6B7280;margin-top:2px;">Worst month</div></div>
-                <div style="flex:1;background:#F4F6FA;border:1px solid #E5E9F0;border-radius:10px;padding:9px 6px;text-align:center;"><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:#2A3342;line-height:1;">+8.3%</div><div style="font-size:9.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#6B7280;margin-top:2px;">Avg growth</div></div>
-              </div>
-            </div>
-
-            <!-- watermark -->
-            <div class="pm-watermark">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="#7A8D9B"><path d="M12 3l3 2 4 1 1 4 2 3-2 3-1 4-4 1-3 2-3-2-4-1-1-4-2-3 2-3 1-4 4-1z"/></svg>
-              <div>Doryangel<br><span style="font-size:10px;letter-spacing:.05em;">Property Automation</span></div>
-            </div>
-          </div><!-- /pm-slides-wrap -->
-
-          <!-- nav controls -->
-          <div class="pm-nav">
-            <div class="pm-nav-row">
-              <button class="pm-nav-arrow" id="pmPrev" aria-label="Previous sheet">←</button>
-              <div class="pm-dots" id="pmDots">
-                <button class="pm-dot pm-dot-on" data-i="0" aria-label="Sheet 1"></button>
-                <button class="pm-dot" data-i="1" aria-label="Sheet 2"></button>
-                <button class="pm-dot" data-i="2" aria-label="Sheet 3"></button>
-                <button class="pm-dot" data-i="3" aria-label="Sheet 4"></button>
-              </div>
-              <button class="pm-nav-arrow" id="pmNext" aria-label="Next sheet">→</button>
-            </div>
-            <div class="pm-nav-caption" id="pmCaption"><span id="pmCaptionIcon">📊</span><span id="pmCaptionText">Annual Dashboard</span></div>
+          <div class="pm-kpi-prev-sep"></div>
+          <div class="pm-kpi-prev-cell">
+            <div class="pm-kpi-prev-lbl">Expenses</div>
+            <div class="pm-kpi-prev-val" style="color:#D14343;">$56,220</div>
           </div>
-        </div><!-- /pm-carousel -->
+          <div class="pm-kpi-prev-sep"></div>
+          <div class="pm-kpi-prev-cell">
+            <div class="pm-kpi-prev-lbl">Net Profit</div>
+            <div class="pm-kpi-prev-val" style="color:#2D6FE0;">$42,180</div>
+          </div>
+        </div>
+        <div style="padding:8px 18px 0;">
+          <svg width="100%" viewBox="0 0 300 36" style="display:block;opacity:.28;" aria-hidden="true">
+            <path d="M0,30 L27,28 L55,27 L82,18 L109,17 L136,17 L164,16 L191,15 L218,14 L245,11 L273,8 L300,5" fill="none" stroke="#15806A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M0,34 L27,34 L55,33 L82,34 L109,33 L136,33 L164,34 L191,33 L218,34 L245,32 L273,33 L300,32" fill="none" stroke="#E8A08F" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="4 4"/>
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:#B0BAC8;font-weight:600;margin-top:3px;padding-bottom:10px;">
+            <span>Jan</span><span>Apr</span><span>Jul</span><span>Oct</span><span>Dec</span>
+          </div>
+        </div>
+        <a href="/tools/pl-dashboard/" class="pm-preview-link">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          Preview all 4 dashboard sheets &rarr;
+        </a>
 
         <!-- price + CTA -->
         <div class="pm-price-block">
@@ -2511,8 +2681,19 @@ retell-chat-web-component {
         </div>
 
       </div><!-- /premium card -->
+    </div><!-- /tools-premium-wrap -->
 
+    <!-- BOTTOM CTA STRIP -->
+    <div class="tools-cta-strip">
+      <div class="tools-cta-strip-text">
+        <strong>Managing more than 3 units? That's where we come in.</strong>
+        <span>Most of our clients started as DIY landlords. When you're ready, we're here.</span>
+      </div>
+      <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" rel="noopener noreferrer" class="tools-cta-strip-btn">
+        Book a Free 15-Min Call &rarr;
+      </a>
     </div>
+
   </div>
 </section>
 
@@ -3398,6 +3579,9 @@ async function handleFormSubmit(e) {
 <!-- ===== PROPERTY P&L DASHBOARD CARD ===== -->
 <script>
 (function () {
+  // Carousel lives on /tools/pl-dashboard/ — skip if not present
+  if (!document.getElementById('pmCarousel')) return;
+
   // --- countup helper ---
   function countUp(el, target, dur, prefix, suffix, decimals) {
     prefix = prefix || ''; suffix = suffix || ''; decimals = decimals || 0; dur = dur || 1400;
@@ -3941,6 +4125,103 @@ async function handleFormSubmit(e) {
   new MutationObserver(scan).observe(document.body, { childList: true, subtree: true });
   [500, 1500, 3000, 6000, 10000, 15000].forEach(function (t) { setTimeout(scan, t); });
 })();
+</script>
+
+<script>
+/* ── TOOL GATE — free tool email capture ─────────────────────────── */
+var _toolGateUrl = '';
+
+function openToolGate(toolUrl, toolName) {
+  _toolGateUrl = toolUrl;
+  document.getElementById('toolGateTitle').textContent = toolName;
+  document.getElementById('toolGateSubject').value = 'Free Tool Access: ' + toolName;
+  document.getElementById('toolGateToolName').value = toolName;
+  document.getElementById('toolGateForm').style.display = 'block';
+  document.getElementById('toolGateSuccess').style.display = 'none';
+  document.getElementById('toolGateEmail').value = '';
+  document.getElementById('toolGateName').value = '';
+  document.getElementById('toolGateOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  setTimeout(function() { document.getElementById('toolGateEmail').focus(); }, 100);
+}
+
+function closeToolGate() {
+  document.getElementById('toolGateOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var overlay = document.getElementById('toolGateOverlay');
+  var form    = document.getElementById('toolGateForm');
+  var close   = document.getElementById('toolGateClose');
+
+  close.addEventListener('click', closeToolGate);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeToolGate(); });
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var email = document.getElementById('toolGateEmail').value.trim();
+    if (!email || !email.includes('@')) {
+      document.getElementById('toolGateEmail').focus();
+      document.getElementById('toolGateEmail').style.borderColor = '#D14343';
+      return;
+    }
+    document.getElementById('toolGateEmail').style.borderColor = '';
+
+    // open tool immediately — don't wait on network
+    window.open(_toolGateUrl, '_blank', 'noopener,noreferrer');
+
+    // fire-and-forget to Web3Forms
+    var data = new FormData(form);
+    fetch('https://api.web3forms.com/submit', { method: 'POST', body: data }).catch(function(){});
+
+    form.style.display = 'none';
+    document.getElementById('toolGateSuccess').style.display = 'block';
+  });
+});
+
+/* ── NOTIFY GATE — coming-soon email capture ─────────────────────── */
+function openNotifyGate(toolName) {
+  document.getElementById('notifyGateTitle').textContent = 'Notify me: ' + toolName;
+  document.getElementById('notifyGateSubject').value = 'Notify Me: ' + toolName;
+  document.getElementById('notifyGateToolName').value = toolName;
+  document.getElementById('notifyGateToolDisplay').textContent = toolName;
+  document.getElementById('notifyGateForm').style.display = 'block';
+  document.getElementById('notifyGateSuccess').style.display = 'none';
+  document.getElementById('notifyGateEmail').value = '';
+  document.getElementById('notifyGateOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  setTimeout(function() { document.getElementById('notifyGateEmail').focus(); }, 100);
+}
+
+function closeNotifyGate() {
+  document.getElementById('notifyGateOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var overlay = document.getElementById('notifyGateOverlay');
+  var form    = document.getElementById('notifyGateForm');
+  var close   = document.getElementById('notifyGateClose');
+
+  close.addEventListener('click', closeNotifyGate);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeNotifyGate(); });
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var email = document.getElementById('notifyGateEmail').value.trim();
+    if (!email || !email.includes('@')) {
+      document.getElementById('notifyGateEmail').focus();
+      document.getElementById('notifyGateEmail').style.borderColor = '#D14343';
+      return;
+    }
+    document.getElementById('notifyGateEmail').style.borderColor = '';
+    var data = new FormData(form);
+    fetch('https://api.web3forms.com/submit', { method: 'POST', body: data }).catch(function(){});
+    form.style.display = 'none';
+    document.getElementById('notifyGateSuccess').style.display = 'block';
+  });
+});
 </script>
 
 </body>
