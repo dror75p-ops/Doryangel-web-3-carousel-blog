@@ -90,6 +90,7 @@
     .hero-banner {
       background: linear-gradient(135deg, var(--navy) 0%, #1a3d6e 100%);
       padding: 48px 24px 40px; text-align: center; color: #fff;
+      overflow: hidden;
     }
     .hero-label {
       display: inline-flex; align-items: center; gap: 6px;
@@ -109,7 +110,7 @@
     }
     .hero-chips {
       display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
-      margin-top: 20px;
+      margin-top: 20px; max-width: 100%; padding: 0 4px;
     }
     .hero-chip {
       display: inline-flex; align-items: center; gap: 5px;
@@ -118,6 +119,25 @@
       background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
       padding: 5px 12px; border-radius: 999px;
     }
+    @media (max-width: 480px) {
+      .hero-chip { font-size: 11px; padding: 4px 9px; }
+      .hero-chips { gap: 6px; }
+      .hero-banner { padding: 32px 16px 28px; }
+    }
+
+    /* ── PAYPAL DIRECT BUTTON (price panel) ── */
+    .pp-direct-btn {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      width: 100%; background: #FFC439; border: none; border-radius: 10px;
+      padding: 11px 16px; cursor: pointer; margin-top: 10px;
+      text-decoration: none; transition: box-shadow .2s, transform .15s;
+      box-shadow: 0 3px 10px rgba(0,48,135,.15);
+    }
+    .pp-direct-btn:hover { box-shadow: 0 6px 18px rgba(0,48,135,.25); transform: translateY(-1px); }
+    .pp-direct-btn-logo { font-family:'DM Sans',sans-serif; font-weight:700; font-size:14px; font-style:italic; line-height:1; }
+    .pp-direct-btn-logo b { color:#003087; }
+    .pp-direct-btn-logo em { color:#009CDE; font-style:normal; }
+    .pp-direct-btn-text { font-size:12.5px; font-weight:600; color:#1a1a1a; }
 
     /* ── MAIN PRODUCT AREA ── */
     .product-wrap {
@@ -644,7 +664,11 @@
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
           Get the dashboard — $29
         </button>
-        <div class="pm-secure">🔒 Secure checkout via PayPal · cards accepted</div>
+        <a href="https://www.paypal.com/ncp/payment/SJQMKQEPFSQMC" target="_blank" rel="noopener" class="pp-direct-btn" aria-label="Pay $29 with PayPal">
+          <span class="pp-direct-btn-logo"><b>Pay</b><em>Pal</em></span>
+          <span class="pp-direct-btn-text">Pay $29 securely</span>
+        </a>
+        <div class="pm-secure" style="margin-top:8px;">🔒 Cards, PayPal, and PayPal Credit accepted</div>
         <div class="panel-chips">
           <div class="panel-chip-row">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
@@ -827,7 +851,7 @@
         <div style="font-size:36px;margin-bottom:10px;">🎉</div>
         <p style="font-size:15px;font-weight:700;color:#0F2847;margin-bottom:6px;">You're all set!</p>
         <p style="font-size:13px;color:#5F6B7A;margin-bottom:18px;">Your dashboard is downloading. Check your email too — a copy is on its way.</p>
-        <a href="https://drive.google.com/uc?export=download&id=YOUR_FILE_ID" class="pm-dl-btn" download>
+        <a href="../../assets/tools/property-dashboard.xlsx" class="pm-dl-btn" download="Doryangel-Property-PnL-Dashboard.xlsx">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
           Download Dashboard
         </a>
