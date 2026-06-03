@@ -25,8 +25,9 @@
     'diy-property-management':   'DIY Property Management',
     'investments':               'Investments',
     'property-automation':       'Property Automation',
+    'broker-partnerships':       'Broker Partnerships',
   };
-  var TABS = ['all', 'property-management', 'diy-property-management', 'investments', 'property-automation'];
+  var TABS = ['all', 'property-management', 'diy-property-management', 'investments', 'property-automation', 'broker-partnerships'];
   var activeCategory = 'all';
 
   var BASE = './blog/';
