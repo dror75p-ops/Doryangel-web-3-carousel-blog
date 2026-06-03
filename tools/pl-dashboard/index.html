@@ -232,7 +232,7 @@
     }
 
     /* ── CAROUSEL COLUMN ── */
-    .carousel-col {}
+    .carousel-col { min-width: 0; }
 
     /* tab nav above the carousel */
     .pm-tabs {
@@ -268,6 +268,7 @@
       background: #fff; border: 1.5px solid var(--border);
       border-radius: 12px; overflow: hidden;
       box-shadow: 0 4px 24px rgba(13,31,92,.09);
+      max-width: 100%; min-width: 0;
     }
     .pm-accent-band {
       height: 5px;
@@ -373,7 +374,7 @@
     .pm-mpill.active { background: #2D6FE0; border-color: #2D6FE0; color: #fff; }
 
     /* ── PRICE PANEL (right column) ── */
-    .price-col { position: sticky; top: 152px; }
+    .price-col { position: sticky; top: 152px; min-width: 0; }
     @media (max-width: 820px) { .price-col { position: static; } }
     .price-panel {
       background: #fff; border: 1.5px solid var(--border);
