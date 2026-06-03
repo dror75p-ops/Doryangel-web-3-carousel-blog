@@ -1740,15 +1740,15 @@ body.variant-dark .audience-card { background: #0F2040; }
 .pm-nav-caption { font-size:12px; font-weight:700; color:#2A3342; display:flex; align-items:center; gap:5px; }
 
 /* price block */
-.pm-price-block { padding:14px 20px 20px; background:#F6F8FB; }
-.pm-price-inner { background:#fff; border:1px solid #E5E9F0; border-radius:16px; padding:17px; box-shadow:0 8px 28px rgba(30,42,68,.10); }
-.pm-price-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:13px; }
+.pm-price-block { padding:10px 16px 14px; background:#F6F8FB; }
+.pm-price-inner { background:#fff; border:1px solid #E5E9F0; border-radius:12px; padding:12px; box-shadow:0 4px 16px rgba(30,42,68,.08); }
+.pm-price-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
 .pm-price-nums { display:flex; align-items:center; gap:8px; }
-.pm-price-was { font-size:16px; text-decoration:line-through; color:#A0A4AB; }
-.pm-price-now { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:40px; line-height:.85; color:#232323; }
-.pm-price-meta { font-size:11.5px; color:#6B7280; margin-top:3px; }
-.pm-launch-pill { font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#C97B2F; background:#FBF1E6; border:1px solid #F0D9BE; padding:7px 12px; border-radius:999px; white-space:nowrap; align-self:center; }
-.pm-buy-btn { width:100%; border:none; cursor:pointer; border-radius:12px; padding:15px; background:linear-gradient(135deg,#2552B5,#2D6FE0); color:#fff; font-family:'DM Sans',sans-serif; font-weight:700; font-size:15.5px; display:flex; align-items:center; justify-content:center; gap:9px; position:relative; overflow:hidden; animation:glowPulse 2.8s ease-in-out infinite; transition:filter .2s; }
+.pm-price-was { font-size:14px; text-decoration:line-through; color:#A0A4AB; }
+.pm-price-now { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:32px; line-height:.85; color:#232323; }
+.pm-price-meta { font-size:11px; color:#6B7280; margin-top:2px; }
+.pm-launch-pill { font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#C97B2F; background:#FBF1E6; border:1px solid #F0D9BE; padding:5px 10px; border-radius:999px; white-space:nowrap; align-self:center; }
+.pm-buy-btn { width:100%; border:none; cursor:pointer; border-radius:10px; padding:11px 15px; background:linear-gradient(135deg,#2552B5,#2D6FE0); color:#fff; font-family:'DM Sans',sans-serif; font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center; gap:8px; position:relative; overflow:hidden; animation:glowPulse 2.8s ease-in-out infinite; transition:filter .2s; }
 .pm-buy-btn:hover { filter:brightness(1.07); }
 .pm-buy-btn:active { transform:scale(.98); }
 .pm-buy-btn .shine { position:absolute; top:0; left:-60%; width:50%; height:100%; background:linear-gradient(100deg,transparent,rgba(255,255,255,.44),transparent); transform:skewX(-20deg); pointer-events:none; animation:shineMove 3.4s ease-in-out infinite; }
@@ -1798,9 +1798,9 @@ body.variant-dark .audience-card { background: #0F2040; }
   background:#F4F7FB; border-top:1px solid #E5E9F0; border-bottom:1px solid #E5E9F0;
 }
 .pm-kpi-prev-sep { background:#E5E9F0; }
-.pm-kpi-prev-cell { padding:12px 8px; text-align:center; }
+.pm-kpi-prev-cell { padding:8px 6px; text-align:center; }
 .pm-kpi-prev-lbl { font-size:9px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#6B7280; margin-bottom:4px; }
-.pm-kpi-prev-val { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:20px; line-height:1; }
+.pm-kpi-prev-val { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:17px; line-height:1; }
 .pm-preview-link {
   display:flex; align-items:center; justify-content:center; gap:7px;
   padding:9px 16px; font-size:12px; font-weight:700; color:var(--blue);
@@ -1808,6 +1808,46 @@ body.variant-dark .audience-card { background: #0F2040; }
   transition:background .15s;
 }
 .pm-preview-link:hover { background:#EBF3FD; }
+
+/* ── DASHBOARD MOCKUP inside premium card ── */
+.pm-dash-wrap { padding:14px 16px 4px; }
+.pm-dash-mock { border:1px solid #E0E6EF; border-radius:10px; overflow:hidden; font-size:11px; box-shadow:0 2px 10px rgba(30,90,168,.07); }
+.pm-dash-hdr { background:#0F2847; color:#fff; padding:8px 12px; display:flex; justify-content:space-between; align-items:center; }
+.pm-dash-hdr-title { font-size:10px; font-weight:800; letter-spacing:.12em; }
+.pm-dash-hdr-right { display:flex; gap:5px; }
+.pm-dash-dd { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2); border-radius:4px; padding:2px 7px; font-size:9px; color:#fff; font-weight:600; display:flex; align-items:center; gap:3px; }
+.pm-dash-dd-lbl { font-size:8px; color:rgba(255,255,255,.55); }
+.pm-dash-kpi-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:7px; padding:9px 10px 7px; background:#fff; }
+.pm-dash-kpi { border-radius:6px; padding:7px 9px; }
+.pm-dash-kpi-in  { background:#E8F5E9; border:1px solid #A5D6A7; }
+.pm-dash-kpi-ex  { background:#FFEBEE; border:1px solid #FFCDD2; }
+.pm-dash-kpi-net { background:#E3F2FD; border:1px solid #90CAF9; }
+.pm-dash-kpi-lbl { font-size:8.5px; font-weight:700; letter-spacing:.06em; color:#5F6B7A; text-transform:uppercase; margin-bottom:2px; }
+.pm-dash-kpi-val { font-size:12px; font-weight:800; line-height:1.1; }
+.pm-dash-kpi-in  .pm-dash-kpi-val { color:#2E7D32; }
+.pm-dash-kpi-ex  .pm-dash-kpi-val { color:#C62828; }
+.pm-dash-kpi-net .pm-dash-kpi-val { color:#1565C0; }
+.pm-dash-charts { display:grid; grid-template-columns:70px 1fr; gap:8px; padding:6px 10px 8px; background:#fff; border-top:1px solid #F0F4F8; }
+.pm-dash-donut-lbl { font-size:8.5px; color:#5F6B7A; font-weight:700; letter-spacing:.06em; text-align:center; margin-bottom:3px; }
+.pm-dash-bars-title { font-size:8.5px; color:#5F6B7A; font-weight:700; letter-spacing:.06em; margin-bottom:4px; }
+.pm-dash-bars { display:flex; align-items:flex-end; gap:3px; height:42px; }
+.pm-dash-bar-col { display:flex; flex-direction:column; align-items:center; gap:2px; flex:1; }
+.pm-dash-bar { width:100%; border-radius:3px 3px 0 0; background:linear-gradient(180deg,#F87171,#EF4444); min-height:3px; }
+.pm-dash-bar.g { background:linear-gradient(180deg,#4ADE80,#16A34A); }
+.pm-dash-bar-mo { font-size:7.5px; color:#9CA3AF; font-weight:600; }
+.pm-dash-table { background:#F8FAFC; border-top:1px solid #E0E6EF; }
+.pm-dash-th { display:flex; background:#E5E9F0; padding:3px 10px; gap:3px; }
+.pm-dash-th span,.pm-dash-tr span { flex:1; font-size:8px; font-weight:700; color:#374151; text-align:center; letter-spacing:.03em; }
+.pm-dash-th span:first-child,.pm-dash-tr span:first-child { flex:1.5; text-align:left; }
+.pm-dash-tr { display:flex; padding:3px 10px; gap:3px; border-top:1px solid #EDF0F4; }
+.pm-dash-tr:nth-child(even) { background:#F0F4F8; }
+.pm-dash-tr span { font-size:8px; color:#374151; }
+.pm-dash-tr span.g { color:#16A34A; font-weight:600; }
+.pm-dash-tr span.r { color:#DC2626; font-weight:600; }
+.pm-dash-tr span.b { color:#1565C0; font-weight:700; }
+.pm-dash-caption { padding:6px 12px; background:#F8FAFC; border-top:1px solid #E0E6EF; display:flex; align-items:center; justify-content:space-between; }
+.pm-dash-caption-txt { font-size:9.5px; color:#8B9BAE; font-style:italic; }
+.pm-dash-caption-badge { font-size:9px; font-weight:700; color:#1E5AA8; background:#EBF3FD; padding:2px 7px; border-radius:4px; }
 
 /* nav-bar entry */
 .dd-dot-premium { background: linear-gradient(135deg,#C97B2F,#E8A35A); }
@@ -2010,7 +2050,7 @@ retell-chat-web-component {
           <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/" target="_blank" rel="noopener" class="nav-dd-link">
             <span class="dd-dot" style="background:#1E5AA8;"></span> DoryAngel Digest <span class="nav-dd-tag" style="background:#EEF4FF;color:#1E5AA8;">Free</span>
           </a>
-          <a href="#premiumCard" class="nav-dd-link">
+          <a href="#tools" class="nav-dd-link">
             <span class="dd-dot dd-dot-premium"></span> Property P&amp;L Dashboard <span class="nav-dd-tag" style="background:#FBF1E6;color:#C97B2F;">$29</span>
           </a>
           <hr class="nav-dd-sep">
@@ -2102,7 +2142,7 @@ retell-chat-web-component {
       </div>
       <svg class="drawer-tool-card-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M5 8h6M9 5l3 3-3 3"/></svg>
     </a>
-    <a href="#premiumCard" class="drawer-tool-card" onclick="var d=document.getElementById('navDrawer');if(d)d.classList.remove('is-open');">
+    <a href="#tools" class="drawer-tool-card" onclick="var d=document.getElementById('navDrawer');if(d)d.classList.remove('is-open');">
       <div class="drawer-tool-card-icon" style="background:#FBF1E6;">
         <svg viewBox="0 0 24 24" fill="none" stroke="#C97B2F" stroke-width="1.8" width="20" height="20"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
       </div>
@@ -2598,9 +2638,9 @@ retell-chat-web-component {
         <!-- animated accent band -->
         <div class="pm-accent-band"></div>
 
-        <!-- white header — same layout as the other tool cards -->
-        <div class="pm-white-header">
-          <div class="pm-header-row">
+        <!-- compact header -->
+        <div class="pm-white-header" style="padding:14px 18px 12px;">
+          <div class="pm-header-row" style="margin-bottom:8px;">
             <div class="tool-card-icon" style="background:var(--blue-dim,#EBF3FD);">
               <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue,#1E5AA8)" stroke-width="1.8" width="24" height="24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
             </div>
@@ -2609,8 +2649,7 @@ retell-chat-web-component {
               <span class="pm-pill-text">Premium Tool</span>
             </div>
           </div>
-          <h3>Property P&amp;L Dashboard</h3>
-          <p>Stop paying for property management — do it yourself. Pays for itself the first time it catches a missed rent payment.</p>
+          <h3 style="margin-bottom:8px;">Property P&amp;L Dashboard</h3>
           <div class="pm-chips">
             <span class="pm-chip">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
@@ -2623,40 +2662,66 @@ retell-chat-web-component {
           </div>
         </div>
 
-        <!-- trust stat strip -->
-        <div class="pm-stat-strip">
-          <div class="pm-stat-cell"><div class="pm-stat-val" style="color:#2D6FE0;">4,153</div><div class="pm-stat-lbl">Live formulas inside the file</div></div>
-          <div class="pm-stat-cell"><div class="pm-stat-val" style="color:#15806A;">8</div><div class="pm-stat-lbl">Dashboard sheets</div></div>
-          <div class="pm-stat-cell"><div class="pm-stat-val" style="color:#1E2A44;">50</div><div class="pm-stat-lbl">Properties supported</div></div>
+        <!-- dashboard mockup preview -->
+        <div class="pm-dash-wrap">
+          <div class="pm-dash-mock">
+            <div class="pm-dash-hdr">
+              <div>
+                <div class="pm-dash-hdr-title">PROPERTY DASHBOARD</div>
+                <div style="font-size:9px;color:rgba(255,255,255,.55);margin-top:1px;">Annual Summary · 2025–2026</div>
+              </div>
+              <div class="pm-dash-hdr-right">
+                <div class="pm-dash-dd"><span class="pm-dash-dd-lbl">YEAR</span> 2025</div>
+                <div class="pm-dash-dd"><span class="pm-dash-dd-lbl">UNIT</span> All</div>
+              </div>
+            </div>
+            <div class="pm-dash-kpi-row">
+              <div class="pm-dash-kpi pm-dash-kpi-in"><div class="pm-dash-kpi-lbl">Total Income</div><div class="pm-dash-kpi-val">$98,400</div></div>
+              <div class="pm-dash-kpi pm-dash-kpi-ex"><div class="pm-dash-kpi-lbl">Total Expenses</div><div class="pm-dash-kpi-val">$56,220</div></div>
+              <div class="pm-dash-kpi pm-dash-kpi-net"><div class="pm-dash-kpi-lbl">Net Profit</div><div class="pm-dash-kpi-val">$42,180</div></div>
+            </div>
+            <div class="pm-dash-charts">
+              <div>
+                <div class="pm-dash-donut-lbl">PROFIT<br>MARGIN</div>
+                <svg width="60" height="60" viewBox="0 0 64 64" aria-hidden="true">
+                  <circle cx="32" cy="32" r="24" fill="none" stroke="#E5E9F0" stroke-width="10"/>
+                  <circle cx="32" cy="32" r="24" fill="none" stroke="#1E5AA8" stroke-width="10" stroke-dasharray="130 151" stroke-dashoffset="38" stroke-linecap="round"/>
+                  <text x="32" y="36" text-anchor="middle" font-size="13" font-weight="800" fill="#0F2847" font-family="DM Sans,sans-serif">43%</text>
+                </svg>
+              </div>
+              <div>
+                <div class="pm-dash-bars-title">MONTHLY PROFIT</div>
+                <div class="pm-dash-bars">
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar"   style="height:20px;"></div><div class="pm-dash-bar-mo">J</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar g" style="height:32px;"></div><div class="pm-dash-bar-mo">F</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar g" style="height:26px;"></div><div class="pm-dash-bar-mo">M</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar g" style="height:38px;"></div><div class="pm-dash-bar-mo">A</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar"   style="height:14px;"></div><div class="pm-dash-bar-mo">M</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar g" style="height:34px;"></div><div class="pm-dash-bar-mo">J</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar g" style="height:40px;"></div><div class="pm-dash-bar-mo">J</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar g" style="height:36px;"></div><div class="pm-dash-bar-mo">A</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar g" style="height:28px;"></div><div class="pm-dash-bar-mo">S</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar"   style="height:18px;"></div><div class="pm-dash-bar-mo">O</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar g" style="height:42px;"></div><div class="pm-dash-bar-mo">N</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar g" style="height:30px;"></div><div class="pm-dash-bar-mo">D</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="pm-dash-table">
+              <div class="pm-dash-th"><span>Category</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span></div>
+              <div class="pm-dash-tr"><span>Income</span><span class="g">$8,200</span><span class="g">$8,200</span><span class="g">$8,200</span><span class="g">$8,200</span><span class="g">$8,200</span><span class="g">$8,200</span></div>
+              <div class="pm-dash-tr"><span>Expenses</span><span class="r">$4,680</span><span class="r">$4,210</span><span class="r">$4,890</span><span class="r">$3,940</span><span class="r">$5,120</span><span class="r">$4,380</span></div>
+              <div class="pm-dash-tr"><span>Net</span><span class="b">$3,520</span><span class="b">$3,990</span><span class="b">$3,310</span><span class="b">$4,260</span><span class="b">$3,080</span><span class="b">$3,820</span></div>
+            </div>
+            <div class="pm-dash-caption">
+              <span class="pm-dash-caption-txt">Sample data — your numbers populate automatically</span>
+              <span class="pm-dash-caption-badge">Sheet 1 of 8</span>
+            </div>
+          </div>
         </div>
 
-        <!-- compact KPI snapshot — full charts at /tools/pl-dashboard/ -->
-        <div class="pm-kpi-preview">
-          <div class="pm-kpi-prev-cell">
-            <div class="pm-kpi-prev-lbl">Annual Income</div>
-            <div class="pm-kpi-prev-val" style="color:#15806A;">$98,400</div>
-          </div>
-          <div class="pm-kpi-prev-sep"></div>
-          <div class="pm-kpi-prev-cell">
-            <div class="pm-kpi-prev-lbl">Expenses</div>
-            <div class="pm-kpi-prev-val" style="color:#D14343;">$56,220</div>
-          </div>
-          <div class="pm-kpi-prev-sep"></div>
-          <div class="pm-kpi-prev-cell">
-            <div class="pm-kpi-prev-lbl">Net Profit</div>
-            <div class="pm-kpi-prev-val" style="color:#2D6FE0;">$42,180</div>
-          </div>
-        </div>
-        <div style="padding:8px 18px 0;">
-          <svg width="100%" viewBox="0 0 300 36" style="display:block;opacity:.28;" aria-hidden="true">
-            <path d="M0,30 L27,28 L55,27 L82,18 L109,17 L136,17 L164,16 L191,15 L218,14 L245,11 L273,8 L300,5" fill="none" stroke="#15806A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M0,34 L27,34 L55,33 L82,34 L109,33 L136,33 L164,34 L191,33 L218,34 L245,32 L273,33 L300,32" fill="none" stroke="#E8A08F" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="4 4"/>
-          </svg>
-          <div style="display:flex;justify-content:space-between;font-size:10px;color:#B0BAC8;font-weight:600;margin-top:3px;padding-bottom:10px;">
-            <span>Jan</span><span>Apr</span><span>Jul</span><span>Oct</span><span>Dec</span>
-          </div>
-        </div>
-        <a href="/tools/pl-dashboard/" class="pm-preview-link">
+        <!-- preview link -->
+        <a href="tools/pl-dashboard/" class="pm-preview-link">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
           Preview all 4 dashboard sheets &rarr;
         </a>
@@ -2676,7 +2741,11 @@ retell-chat-web-component {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
               Get the dashboard — $29
             </button>
-            <div class="pm-secure"><span>🔒</span> Secure checkout via PayPal · cards accepted</div>
+            <a href="https://www.paypal.com/ncp/payment/6E2ZUE9ZTET8S" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:5px;margin-top:8px;background:#FFC439;border:none;border-radius:9px;padding:9px 14px;text-decoration:none;box-shadow:0 3px 8px rgba(0,48,135,.12);transition:box-shadow .2s;" aria-label="Pay with PayPal">
+              <span style="font-family:'DM Sans',sans-serif;font-weight:700;font-size:13px;font-style:italic;"><b style="color:#003087;">Pay</b><em style="color:#009CDE;font-style:normal;">Pal</em></span>
+              <span style="font-size:12px;font-weight:600;color:#1a1a1a;">Pay $29 securely</span>
+            </a>
+            <div class="pm-secure" style="margin-top:6px;"><span>🔒</span> Cards, PayPal &amp; PayPal Credit accepted</div>
           </div>
         </div>
 
@@ -3254,6 +3323,7 @@ retell-chat-web-component {
           <li><a href="#blog">Blog</a></li>
           <li><a href="#contact">Careers</a></li>
           <li><a href="#contact">Contact</a></li>
+          <li><a href="https://share.google/tTIEyy7qxx4bKm1Zo" target="_blank" rel="noopener noreferrer">Leave a Google Review</a></li>
         </ul>
       </div>
       <div class="footer-col">

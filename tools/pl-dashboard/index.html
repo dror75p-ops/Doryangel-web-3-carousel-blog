@@ -16,6 +16,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { overflow-x: hidden; }
     :root {
       --navy:    #0F2847;
       --blue:    #1E5AA8;
@@ -32,38 +33,139 @@
       color: var(--text);
       background: #fff;
       -webkit-font-smoothing: antialiased;
+      padding-top: 130px;
+      overflow-x: hidden;
+      max-width: 100vw;
     }
 
-    /* ── HEADER ── */
-    .site-header {
-      position: sticky; top: 0; z-index: 100;
-      background: var(--navy); height: 56px;
-      display: flex; align-items: center;
-      padding: 0 24px; gap: 16px;
+    /* ── ANNOUNCE BAR (exact match to main site) ── */
+    .da-announce {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 302;
+      background: #0D1E3A; color: #fff;
+      text-align: center; padding: 9px 20px;
+      font-size: 13px; font-weight: 500; line-height: 1.5;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .header-back {
+    .da-announce strong { font-weight: 700; }
+    .da-announce a { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+    .da-announce a:hover { opacity: .85; }
+    @media (max-width: 540px) { .da-announce { font-size: 11px; padding: 8px 16px; } }
+
+    /* ── SITE NAV (exact match to main site — 2-row, white glass) ── */
+    .da-nav {
+      position: fixed; top: 38px; left: 0; right: 0; z-index: 100;
+      background: rgba(255,255,255,.97);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid #E0E6EF;
+      padding: 10px 40px 0;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .da-logo { display: flex; align-items: center; text-decoration: none; }
+    .da-logo img { height: 40px; object-fit: contain; display: block; }
+    .da-nav-bottom {
+      display: flex; align-items: center; gap: 20px;
+      padding: 8px 0; width: 100%; justify-content: center;
+    }
+    .da-nav-links { display: flex; gap: 24px; list-style: none; align-items: center; }
+    .da-nav-links a {
+      font-size: 14px; font-weight: 500; color: var(--muted);
+      text-decoration: none; transition: color .2s;
+    }
+    .da-nav-links a:hover { color: var(--navy); }
+    .da-divider { width: 1px; height: 18px; background: #E0E6EF; flex-shrink: 0; }
+    .da-back {
+      font-size: 13px; font-weight: 600; color: var(--muted);
+      text-decoration: none; white-space: nowrap; transition: color .15s;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .da-back:hover { color: var(--navy); }
+    .da-nav-cta {
+      background: transparent; color: var(--navy);
+      padding: 8px 18px; border-radius: 7px;
+      font-size: 13px; font-weight: 700;
+      border: 1.5px solid var(--navy); white-space: nowrap;
+      transition: background .2s, color .2s;
+      font-family: 'DM Sans', sans-serif; cursor: pointer;
+      letter-spacing: .02em;
+    }
+    .da-nav-cta:hover { background: var(--navy); color: #fff; }
+    .da-hamburger {
+      display: none; align-items: center; justify-content: center;
+      width: 44px; height: 44px; border-radius: 8px;
+      background: var(--blue); border: none; cursor: pointer; flex-shrink: 0;
+    }
+
+    /* ── MOBILE NAV OVERRIDES ── */
+    @media (max-width: 860px) {
+      body { padding-top: 148px; } /* announce ~38px + nav ~105px + 5px buffer */
+      .da-nav { padding: 8px 16px 0; top: 38px; }
+      .da-logo img { height: 36px; }
+      .da-nav-bottom { justify-content: space-between; gap: 8px; flex-wrap: nowrap; }
+      .da-nav-links { display: none; }
+      .da-divider { display: none; }
+      .da-back { display: flex; }
+      .da-hamburger { display: flex; }
+      .da-nav-cta { flex: 1; padding: 10px 14px; min-height: 44px; font-size: 13px;
+        display: inline-flex; align-items: center; justify-content: center; }
+    }
+    @media (max-width: 400px) {
+      .da-nav-cta { font-size: 11px; padding: 10px 8px; letter-spacing: 0; }
+      .da-nav { padding: 8px 12px 0; }
+    }
+
+    /* ── MOBILE DRAWER ── */
+    .da-overlay {
+      position: fixed; inset: 0; z-index: 399;
+      background: rgba(0,0,0,.38); opacity: 0; pointer-events: none;
+      transition: opacity .3s;
+    }
+    .da-overlay.open { opacity: 1; pointer-events: auto; }
+    .da-drawer {
+      position: fixed; top: 0; right: 0; bottom: 0; z-index: 400;
+      width: min(300px,88vw); background: #fff;
+      box-shadow: -4px 0 32px rgba(0,0,0,.18);
+      overflow-y: auto; padding: 20px;
+      transform: translateX(100%);
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+    }
+    .da-drawer.open { transform: translateX(0); }
+    .da-drawer-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #F4F7FB;
+    }
+    .da-drawer-close {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #F4F7FB; border: none; cursor: pointer;
+      display: grid; place-items: center; font-size: 20px; color: #2A3342;
+    }
+    .da-drawer-back {
       display: flex; align-items: center; gap: 6px;
-      color: rgba(255,255,255,.75); font-size: 13px; font-weight: 600;
-      text-decoration: none; transition: color .15s; white-space: nowrap;
+      font-size: 13px; font-weight: 600; color: var(--muted);
+      text-decoration: none; padding: 12px 0;
+      border-bottom: 1px solid #F4F7FB; margin-bottom: 4px;
     }
-    .header-back:hover { color: #fff; }
-    .header-logo {
-      font-family: 'DM Serif Display', serif;
-      font-size: 17px; color: #fff; text-decoration: none; margin-right: auto;
+    .da-drawer-back:hover { color: var(--navy); }
+    .da-drawer-links { list-style: none; }
+    .da-drawer-links li { border-bottom: 1px solid #F4F7FB; }
+    .da-drawer-links a {
+      display: block; padding: 13px 4px;
+      font-size: 15px; font-weight: 600; color: var(--text);
+      text-decoration: none;
     }
-    .header-cta {
-      display: inline-flex; align-items: center; gap: 7px;
-      background: linear-gradient(135deg,#2552B5,#2D6FE0);
-      color: #fff; font-weight: 700; font-size: 13px;
-      padding: 8px 16px; border-radius: 8px; text-decoration: none;
-      white-space: nowrap; transition: filter .2s;
+    .da-drawer-links a:hover { color: var(--blue); }
+    .da-drawer-cta {
+      display: block; margin-top: 20px; text-align: center;
+      background: var(--navy); color: #fff; padding: 14px;
+      border-radius: 10px; font-weight: 700; font-size: 15px;
+      border: none; width: 100%; cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
     }
-    .header-cta:hover { filter: brightness(1.1); }
 
     /* ── HERO BANNER ── */
     .hero-banner {
       background: linear-gradient(135deg, var(--navy) 0%, #1a3d6e 100%);
       padding: 48px 24px 40px; text-align: center; color: #fff;
+      overflow: hidden; width: 100%;
     }
     .hero-label {
       display: inline-flex; align-items: center; gap: 6px;
@@ -83,7 +185,7 @@
     }
     .hero-chips {
       display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
-      margin-top: 20px;
+      margin-top: 20px; max-width: 100%; padding: 0 4px;
     }
     .hero-chip {
       display: inline-flex; align-items: center; gap: 5px;
@@ -92,6 +194,29 @@
       background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
       padding: 5px 12px; border-radius: 999px;
     }
+    @media (max-width: 480px) {
+      .hero-chip { font-size: 11px; padding: 4px 9px; }
+      .hero-chips { gap: 6px; }
+      .hero-banner { padding: 32px 16px 28px; }
+    }
+    /* hard stop: nothing punches through the viewport edge */
+    .hero-banner, .product-wrap, .section, .final-cta, .site-footer {
+      max-width: 100%;
+    }
+
+    /* ── PAYPAL DIRECT BUTTON (price panel) ── */
+    .pp-direct-btn {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      width: 100%; background: #FFC439; border: none; border-radius: 10px;
+      padding: 11px 16px; cursor: pointer; margin-top: 10px;
+      text-decoration: none; transition: box-shadow .2s, transform .15s;
+      box-shadow: 0 3px 10px rgba(0,48,135,.15);
+    }
+    .pp-direct-btn:hover { box-shadow: 0 6px 18px rgba(0,48,135,.25); transform: translateY(-1px); }
+    .pp-direct-btn-logo { font-family:'DM Sans',sans-serif; font-weight:700; font-size:14px; font-style:italic; line-height:1; }
+    .pp-direct-btn-logo b { color:#003087; }
+    .pp-direct-btn-logo em { color:#009CDE; font-style:normal; }
+    .pp-direct-btn-text { font-size:12.5px; font-weight:600; color:#1a1a1a; }
 
     /* ── MAIN PRODUCT AREA ── */
     .product-wrap {
@@ -111,10 +236,13 @@
 
     /* tab nav above the carousel */
     .pm-tabs {
-      display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap;
+      display: flex; gap: 4px; margin-bottom: 12px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; padding-bottom: 2px;
     }
+    .pm-tabs::-webkit-scrollbar { display: none; }
     .pm-tab {
-      flex: 1 1 auto; min-width: 0;
+      flex: 0 0 auto; min-width: 0;
       font-family: 'DM Sans', sans-serif;
       font-size: 12px; font-weight: 700;
       padding: 8px 10px; border-radius: 8px;
@@ -215,7 +343,7 @@
     }
 
     /* ── PRICE PANEL (right column) ── */
-    .price-col { position: sticky; top: 72px; }
+    .price-col { position: sticky; top: 152px; }
     @media (max-width: 820px) { .price-col { position: static; } }
     .price-panel {
       background: #fff; border: 1.5px solid var(--border);
@@ -379,28 +507,80 @@
     .pm-modal-close { position:absolute; top:14px; right:16px; background:rgba(255,255,255,.2); border:none; color:#fff; width:28px; height:28px; border-radius:50%; cursor:pointer; font-size:18px; display:grid; place-items:center; }
     .pm-modal-body { padding:24px 26px; }
     .pm-modal-sep { height:1px; background:#E5E9F0; margin:14px 0 18px; }
-    .pm-pp-btn { display:flex; align-items:center; justify-content:center; gap:2px; width:100%; border:none; cursor:pointer; background:#FFC439; border-radius:24px; padding:13px 24px; text-decoration:none; box-shadow:0 3px 10px rgba(0,48,135,.18); transition:box-shadow .2s,transform .2s; }
+    .pm-pp-btn { display:flex; align-items:center; justify-content:center; gap:2px; width:100%; border:none; cursor:pointer; background:#FFC439; border-radius:24px; padding:9px 16px; text-decoration:none; box-shadow:0 3px 10px rgba(0,48,135,.18); transition:box-shadow .2s,transform .2s; }
     .pm-pp-btn:hover { box-shadow:0 8px 22px rgba(0,48,135,.28); transform:translateY(-2px); }
-    .pm-pp-logo { font-family:'DM Sans',sans-serif; font-weight:700; font-size:17px; font-style:italic; }
+    .pm-pp-logo { font-family:'DM Sans',sans-serif; font-weight:700; font-size:14px; font-style:italic; }
     .pm-pp-logo b { color:#003087; } .pm-pp-logo em { color:#009CDE; font-style:normal; }
-    .pm-pp-text { font-family:'DM Sans',sans-serif; font-weight:600; font-size:14px; color:#1a1a1a; margin-left:6px; }
+    .pm-pp-text { font-family:'DM Sans',sans-serif; font-weight:600; font-size:12px; color:#1a1a1a; margin-left:5px; }
     .pm-dl-btn { display:inline-flex; align-items:center; gap:8px; text-decoration:none; background:linear-gradient(135deg,#2E6FA8,#3E8FD4); color:#fff; padding:13px 26px; border-radius:12px; font-weight:700; font-size:15px; box-shadow:0 8px 22px rgba(46,111,168,.35); }
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="site-header">
-  <a href="../../index.html" class="header-back" aria-label="Back to DoryAngel">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-    All Tools
+<!-- ANNOUNCE BAR -->
+<div class="da-announce">
+  <strong>NYC Landlords:</strong> Save $3,000–$8,000/year vs. percentage-based managers.
+  <a href="../../index.html#contact">Get your free property audit &rarr;</a>
+</div>
+
+<!-- NAV -->
+<nav class="da-nav" role="navigation" aria-label="Main navigation">
+  <a href="../../index.html" class="da-logo" aria-label="DoryAngel — back to home">
+    <img src="../../assets/logo.jpg" alt="DoryAngel">
   </a>
-  <a href="../../index.html" class="header-logo">DoryAngel</a>
-  <button class="pm-buy-btn" id="headerBuyBtn" style="width:auto;padding:9px 18px;font-size:13px;animation:none;" aria-label="Get the Property P&L Dashboard for $29">
-    <span class="shine"></span>
-    Get Dashboard — $29
-  </button>
-</header>
+  <div class="da-nav-bottom">
+    <ul class="da-nav-links">
+      <li><a href="../../index.html#services">Services</a></li>
+      <li><a href="../../index.html#about">About</a></li>
+      <li><a href="../../index.html#pricing">Pricing</a></li>
+      <li><a href="../../index.html#testimonials">Reviews</a></li>
+      <li><a href="../../index.html#faq">FAQ</a></li>
+      <li><a href="../../index.html#blog">Blog</a></li>
+      <li><a href="../../index.html#tools">Tools</a></li>
+      <li><a href="../../index.html#contact">Contact</a></li>
+      <li><a href="https://share.google/FcmXTN7BpxR9m3XoZ" target="_blank" rel="noopener">Brochure</a></li>
+    </ul>
+    <div class="da-divider"></div>
+    <a href="../../index.html#tools" class="da-back">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      All Tools
+    </a>
+    <button class="da-nav-cta" id="headerBuyBtn" aria-label="Get the Property P&L Dashboard for $29">Get Dashboard — $29</button>
+    <button class="da-hamburger" id="daHamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="daDrawer">
+      <svg width="20" height="14" viewBox="0 0 22 16" fill="none" aria-hidden="true">
+        <rect y="0" width="22" height="2.5" rx="1.25" fill="white"/>
+        <rect y="6.75" width="22" height="2.5" rx="1.25" fill="white"/>
+        <rect y="13.5" width="22" height="2.5" rx="1.25" fill="white"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- DRAWER OVERLAY -->
+<div class="da-overlay" id="daOverlay" aria-hidden="true"></div>
+
+<!-- MOBILE DRAWER -->
+<div class="da-drawer" id="daDrawer" role="dialog" aria-modal="true" aria-label="Navigation menu">
+  <div class="da-drawer-head">
+    <img src="../../assets/logo.jpg" alt="DoryAngel" height="36">
+    <button class="da-drawer-close" id="daDrawerClose" aria-label="Close menu">&#215;</button>
+  </div>
+  <a href="../../index.html#tools" class="da-drawer-back">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    ← All Tools
+  </a>
+  <ul class="da-drawer-links">
+    <li><a href="../../index.html#services">Services</a></li>
+    <li><a href="../../index.html#about">About</a></li>
+    <li><a href="../../index.html#pricing">Pricing</a></li>
+    <li><a href="../../index.html#testimonials">Reviews</a></li>
+    <li><a href="../../index.html#faq">FAQ</a></li>
+    <li><a href="../../index.html#blog">Blog</a></li>
+    <li><a href="../../index.html#tools">Tools</a></li>
+    <li><a href="../../index.html#contact">Contact</a></li>
+  </ul>
+  <button class="da-drawer-cta" id="drawerBuyBtn">Get Dashboard — $29</button>
+</div>
 
 <!-- HERO BANNER -->
 <section class="hero-banner">
@@ -607,7 +787,11 @@
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
           Get the dashboard — $29
         </button>
-        <div class="pm-secure">🔒 Secure checkout via PayPal · cards accepted</div>
+        <a href="https://www.paypal.com/ncp/payment/SJQMKQEPFSQMC" target="_blank" rel="noopener" class="pp-direct-btn" aria-label="Pay $29 with PayPal">
+          <span class="pp-direct-btn-logo"><b>Pay</b><em>Pal</em></span>
+          <span class="pp-direct-btn-text">Pay $29 securely</span>
+        </a>
+        <div class="pm-secure" style="margin-top:8px;">🔒 Cards, PayPal, and PayPal Credit accepted</div>
         <div class="panel-chips">
           <div class="panel-chip-row">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
@@ -790,7 +974,7 @@
         <div style="font-size:36px;margin-bottom:10px;">🎉</div>
         <p style="font-size:15px;font-weight:700;color:#0F2847;margin-bottom:6px;">You're all set!</p>
         <p style="font-size:13px;color:#5F6B7A;margin-bottom:18px;">Your dashboard is downloading. Check your email too — a copy is on its way.</p>
-        <a href="https://drive.google.com/uc?export=download&id=YOUR_FILE_ID" class="pm-dl-btn" download>
+        <a href="../../assets/tools/property-dashboard.xlsx" class="pm-dl-btn" download="Doryangel-Property-PnL-Dashboard.xlsx">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
           Download Dashboard
         </a>
@@ -942,15 +1126,40 @@
   function openModal() { modal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
   function closeModal() { modal.classList.add('hidden'); document.body.style.overflow = ''; }
 
-  ['pmBuyBtn','headerBuyBtn','finalBuyBtn','mobileBuyBtn'].forEach(function(id) {
+  ['pmBuyBtn','headerBuyBtn','finalBuyBtn','mobileBuyBtn','drawerBuyBtn'].forEach(function(id) {
     var btn = document.getElementById(id);
-    if (btn) btn.addEventListener('click', openModal);
+    if (btn) btn.addEventListener('click', function () { openModal(); closeDrawer(); });
   });
   closeBtn.addEventListener('click', closeModal);
   modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
   if (confirmBtn) confirmBtn.addEventListener('click', function () {
     payState.style.display = 'none'; dlState.style.display = 'block';
   });
+
+  /* ── MOBILE DRAWER ── */
+  var daOverlay  = document.getElementById('daOverlay');
+  var daDrawer   = document.getElementById('daDrawer');
+  var daOpen     = document.getElementById('daHamburger');
+  var daClose    = document.getElementById('daDrawerClose');
+
+  function openDrawer() {
+    daDrawer.classList.add('open');
+    daOverlay.classList.add('open');
+    daOverlay.setAttribute('aria-hidden','false');
+    daOpen && daOpen.setAttribute('aria-expanded','true');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawer() {
+    daDrawer.classList.remove('open');
+    daOverlay.classList.remove('open');
+    daOverlay.setAttribute('aria-hidden','true');
+    daOpen && daOpen.setAttribute('aria-expanded','false');
+    document.body.style.overflow = '';
+  }
+  if (daOpen)    daOpen.addEventListener('click', openDrawer);
+  if (daClose)   daClose.addEventListener('click', closeDrawer);
+  if (daOverlay) daOverlay.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', function(e) { if (e.key==='Escape') { closeModal(); closeDrawer(); } });
 
 })();
 </script>
