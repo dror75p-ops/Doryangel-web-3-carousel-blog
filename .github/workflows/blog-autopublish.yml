@@ -4,7 +4,13 @@ on:
   schedule:
     # Runs every 3 days at 9:00 AM EST (14:00 UTC) — explicit dates avoid month-boundary gaps
     - cron: '0 14 1,4,7,10,13,16,19,22,25,28 * *'
-  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force publish even if a post was already published today'
+        required: false
+        default: 'false'
+        type: string
 
 concurrency:
   group: blog-publish
@@ -34,6 +40,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+          FORCE_PUBLISH: ${{ github.event.inputs.force || 'false' }}
         run: node scripts/generate-post.js
 
       - name: Build per-post HTML pages + sitemap

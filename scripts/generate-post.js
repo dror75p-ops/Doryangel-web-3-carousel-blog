@@ -337,10 +337,12 @@ async function main() {
   const indexPath = './content/blog/posts-index.json';
   const posts = JSON.parse(readFileSync(indexPath, 'utf8'));
 
-  // Guard: skip if a post was already published today (prevents double-runs)
+  // Guard: skip if a post was already published today (prevents double-runs on schedule)
+  // Bypass with FORCE_PUBLISH=true for manual test runs
   const today = formatDate(new Date());
-  if (posts[0]?.publishedDate === today) {
+  if (posts[0]?.publishedDate === today && process.env.FORCE_PUBLISH !== 'true') {
     console.log(`Post already published today (${today}) — skipping to avoid duplicate.`);
+    console.log('To override, set FORCE_PUBLISH=true');
     process.exit(0);
   }
 
