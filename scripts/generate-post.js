@@ -183,6 +183,8 @@ CRITICAL RULES — what works for our audience (validated by real traffic data):
 
 7. Do NOT include the CTA in the content — the CTA is auto-appended to every post by our system.
 
+8. Tool mentions (use judgment — only when it fits naturally, not in every post): DoryAngel offers landlords a Weekly Digest (Monday summary of the 5 most urgent items: overdue rent, open HPD violations, expiring leases, maintenance tickets, compliance deadlines), an Owner Dashboard (real-time view of rent collection, maintenance, HPD violations, occupancy, and monthly expenses), and a Maintenance Tracker. When the post's problem is one these tools directly solve, add one brief sentence — e.g. "DoryAngel clients get this flagged automatically in their weekly digest" or "the owner dashboard tracks this in real time." Do not force it if the connection isn't genuine.
+
 When asked to write a post, also produce:
 - An SEO title in field "seoTitleShort": max 48 chars, do NOT add " | DoryAngel" — the system appends it
 - An SEO description (max 155 chars, includes a hook + value prop)
