@@ -29,6 +29,11 @@ const FALLBACK_TOPICS = [
   { title: 'Can a Bronx Landlord Automate Rent Collection with Smart Tech?', category: 'property-automation' },
   { title: '3 IoT Devices That Pay for Themselves in Your Bronx Rental Property', category: 'property-automation' },
   { title: 'How Bronx Landlords Are Using Smart Locks to Cut Vacancy Turnaround Time', category: 'property-automation' },
+  { title: 'How Do Bronx Real Estate Brokers Earn Referral Income After the Deal Closes?', category: 'broker-partnerships' },
+  { title: 'What Should a Bronx Broker Tell a Client Who Wants to Self-Manage a 6-Unit Building?', category: 'broker-partnerships' },
+  { title: '5 Signs Your Bronx Investor Client Needs a Property Manager — Not Just a New Agent', category: 'broker-partnerships' },
+  { title: 'Can a Bronx Broker Grow a Referral Business Without Adding to Their Workload?', category: 'broker-partnerships' },
+  { title: 'How Does the DoryAngel Broker Referral Program Work in NYC?', category: 'broker-partnerships' },
 ];
 
 function getSeason(month) {
@@ -58,8 +63,9 @@ Rules:
 - Title MUST reference the Bronx specifically — no other NYC borough or city
 - Title must be a question OR start with a number
 - Address a real landlord pain point; use seasonal relevance where fitting
-- Category must be exactly one of: property-management, diy-property-management, investments, property-automation
-- IMPORTANT: strongly prefer "investments" or "property-automation" — these are underrepresented. Use "property-management" or "diy-property-management" only if no suitable investments/property-automation angle exists for this season
+- Category must be exactly one of: property-management, diy-property-management, investments, property-automation, broker-partnerships
+- IMPORTANT: strongly prefer "investments", "property-automation", or "broker-partnerships" — these are underrepresented. Use "property-management" or "diy-property-management" only if no suitable angle exists in the preferred categories for this season
+- "broker-partnerships" posts target NYC real estate brokers/agents as referral partners — topics should cover referral income, how to advise landlord clients, or how the DoryAngel partner program works
 
 Reply ONLY with valid JSON: {"title": "...", "category": "..."}`,
       }],
@@ -99,6 +105,7 @@ const HASHTAGS_BY_CATEGORY = {
   'diy-property-management': ['diylandlord', 'bronxlandlord', 'nyc', 'rentalproperty', 'doryangel'],
   'investments':             ['realestateinvesting', 'bronx', 'nycrealestate', 'rentalincome', 'doryangel'],
   'property-automation':     ['smartproperty', 'proptech', 'bronxlandlord', 'IoT', 'doryangel'],
+  'broker-partnerships':     ['bronxrealestate', 'nycbroker', 'propertymanagement', 'referralincome', 'doryangel'],
 };
 
 const IMAGE_QUERIES = {
@@ -125,6 +132,12 @@ const IMAGE_QUERIES = {
     'security camera building surveillance',
     'IoT smart sensor home device',
     'property technology digital dashboard screen',
+  ],
+  'broker-partnerships': [
+    'real estate broker professional handshake office',
+    'realtor reviewing documents bright office',
+    'business partners meeting modern office nyc',
+    'real estate agent client consultation bright',
   ],
 };
 
@@ -176,7 +189,9 @@ When asked to write a post, also produce:
 - A descriptive alt text for the hero image (used for accessibility + SEO)
 - A Facebook-optimized version (200-280 words, hook-first, 2-3 bullet takeaways, with the CTA + website link + hashtags at the bottom in the format we specify)
 
-Categories must be exactly one of: property-management, diy-property-management, investments, property-automation.`;
+Categories must be exactly one of: property-management, diy-property-management, investments, property-automation, broker-partnerships.
+
+For broker-partnerships posts: the audience is NYC real estate brokers and agents, not landlords. Write peer-to-peer — broker talking to broker. Focus on referral income, protecting client relationships, and how DoryAngel works as an expert backstop. Lead with the broker's pain point (income stops at closing, clients call them about management problems, fear of losing relationships). Do NOT include any landlord-specific compliance content as the primary angle.`;
 
 const POST_SCHEMA = {
   type: 'object',
