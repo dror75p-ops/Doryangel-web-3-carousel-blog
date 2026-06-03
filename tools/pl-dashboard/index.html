@@ -368,8 +368,8 @@
     .pm-exp-leg-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
     .pm-exp-leg-name { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: #2A3342; }
     .pm-exp-leg-pct { font-weight: 700; flex-shrink: 0; color: #2A3342; }
-    .pm-month-pills { display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; margin-bottom: 9px; }
-    .pm-mpill { padding: 5px 0; font-size: 10px; font-weight: 700; text-align: center; border-radius: 5px; border: 1.5px solid #E5E9F0; color: #2A3342; }
+    .pm-month-pills { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 8px; }
+    .pm-mpill { padding: 5px 2px; font-size: 10.5px; font-weight: 700; text-align: center; border-radius: 6px; border: 1.5px solid #E5E9F0; color: #2A3342; white-space: nowrap; overflow: hidden; }
     .pm-mpill.active { background: #2D6FE0; border-color: #2D6FE0; color: #fff; }
 
     /* ── PRICE PANEL (right column) ── */
@@ -724,10 +724,9 @@
         <!-- SLIDE 2: Monthly Drill-down -->
         <div class="pm-slide" id="pmSlide2">
           <div class="pm-month-pills">
-            <span class="pm-mpill">Jan</span><span class="pm-mpill">Feb</span><span class="pm-mpill">Mar</span>
-            <span class="pm-mpill active">Apr</span><span class="pm-mpill">May</span><span class="pm-mpill">Jun</span>
-            <span class="pm-mpill">Jul</span><span class="pm-mpill">Aug</span><span class="pm-mpill">Sep</span>
-            <span class="pm-mpill">Oct</span><span class="pm-mpill">Nov</span><span class="pm-mpill">Dec</span>
+            <span class="pm-mpill">Jan</span><span class="pm-mpill">Feb</span><span class="pm-mpill">Mar</span><span class="pm-mpill active">Apr</span>
+            <span class="pm-mpill">May</span><span class="pm-mpill">Jun</span><span class="pm-mpill">Jul</span><span class="pm-mpill">Aug</span>
+            <span class="pm-mpill">Sep</span><span class="pm-mpill">Oct</span><span class="pm-mpill">Nov</span><span class="pm-mpill">Dec</span>
           </div>
           <div class="pm-slide-kpi2">
             <div class="pm-skpi green"><div class="pm-skpi-lbl">Apr Income</div><div class="pm-skpi-val" data-countup="8050" data-prefix="$">$0</div></div>
@@ -740,10 +739,10 @@
             <span>April's 77.9% margin was your best month — 3 units fully paid, zero vacancy</span>
           </div>
           <div class="pm-chart-lbl">Monthly Income Trend</div>
-          <svg width="100%" viewBox="0 0 300 58" style="display:block;">
+          <svg width="100%" viewBox="0 0 300 44" style="display:block;">
             <defs><linearGradient id="pmMonArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#15806A" stop-opacity=".18"/><stop offset="100%" stop-color="#15806A" stop-opacity="0"/></linearGradient></defs>
-            <path id="pmMonAreaPath" d="M0,62 L27,62 L55,61 L82,50 L109,48 L136,48 L164,48 L191,47 L218,46 L245,43 L273,38 L300,33 L300,64 L0,64 Z" fill="url(#pmMonArea)" opacity="0" style="transition:opacity .8s ease .5s"/>
-            <path id="pmMonInc" d="M0,62 L27,62 L55,61 L82,50 L109,48 L136,48 L164,48 L191,47 L218,46 L245,43 L273,38 L300,33" fill="none" stroke="#15806A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="540" stroke-dashoffset="540" style="transition:stroke-dashoffset 1.4s ease .2s"/>
+            <path id="pmMonAreaPath" d="M0,47 L27,47 L55,46 L82,37 L109,35 L136,35 L164,35 L191,34 L218,33 L245,30 L273,25 L300,20 L300,48 L0,48 Z" fill="url(#pmMonArea)" opacity="0" style="transition:opacity .8s ease .5s"/>
+            <path id="pmMonInc" d="M0,47 L27,47 L55,46 L82,37 L109,35 L136,35 L164,35 L191,34 L218,33 L245,30 L273,25 L300,20" fill="none" stroke="#15806A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="540" stroke-dashoffset="540" style="transition:stroke-dashoffset 1.4s ease .2s"/>
           </svg>
         </div>
 
