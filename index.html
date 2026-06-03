@@ -1809,6 +1809,46 @@ body.variant-dark .audience-card { background: #0F2040; }
 }
 .pm-preview-link:hover { background:#EBF3FD; }
 
+/* ── DASHBOARD MOCKUP inside premium card ── */
+.pm-dash-wrap { padding:14px 16px 4px; }
+.pm-dash-mock { border:1px solid #E0E6EF; border-radius:10px; overflow:hidden; font-size:11px; box-shadow:0 2px 10px rgba(30,90,168,.07); }
+.pm-dash-hdr { background:#0F2847; color:#fff; padding:8px 12px; display:flex; justify-content:space-between; align-items:center; }
+.pm-dash-hdr-title { font-size:10px; font-weight:800; letter-spacing:.12em; }
+.pm-dash-hdr-right { display:flex; gap:5px; }
+.pm-dash-dd { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2); border-radius:4px; padding:2px 7px; font-size:9px; color:#fff; font-weight:600; display:flex; align-items:center; gap:3px; }
+.pm-dash-dd-lbl { font-size:8px; color:rgba(255,255,255,.55); }
+.pm-dash-kpi-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:7px; padding:9px 10px 7px; background:#fff; }
+.pm-dash-kpi { border-radius:6px; padding:7px 9px; }
+.pm-dash-kpi-in  { background:#E8F5E9; border:1px solid #A5D6A7; }
+.pm-dash-kpi-ex  { background:#FFEBEE; border:1px solid #FFCDD2; }
+.pm-dash-kpi-net { background:#E3F2FD; border:1px solid #90CAF9; }
+.pm-dash-kpi-lbl { font-size:8.5px; font-weight:700; letter-spacing:.06em; color:#5F6B7A; text-transform:uppercase; margin-bottom:2px; }
+.pm-dash-kpi-val { font-size:12px; font-weight:800; line-height:1.1; }
+.pm-dash-kpi-in  .pm-dash-kpi-val { color:#2E7D32; }
+.pm-dash-kpi-ex  .pm-dash-kpi-val { color:#C62828; }
+.pm-dash-kpi-net .pm-dash-kpi-val { color:#1565C0; }
+.pm-dash-charts { display:grid; grid-template-columns:70px 1fr; gap:8px; padding:6px 10px 8px; background:#fff; border-top:1px solid #F0F4F8; }
+.pm-dash-donut-lbl { font-size:8.5px; color:#5F6B7A; font-weight:700; letter-spacing:.06em; text-align:center; margin-bottom:3px; }
+.pm-dash-bars-title { font-size:8.5px; color:#5F6B7A; font-weight:700; letter-spacing:.06em; margin-bottom:4px; }
+.pm-dash-bars { display:flex; align-items:flex-end; gap:3px; height:42px; }
+.pm-dash-bar-col { display:flex; flex-direction:column; align-items:center; gap:2px; flex:1; }
+.pm-dash-bar { width:100%; border-radius:3px 3px 0 0; background:linear-gradient(180deg,#F87171,#EF4444); min-height:3px; }
+.pm-dash-bar.g { background:linear-gradient(180deg,#4ADE80,#16A34A); }
+.pm-dash-bar-mo { font-size:7.5px; color:#9CA3AF; font-weight:600; }
+.pm-dash-table { background:#F8FAFC; border-top:1px solid #E0E6EF; }
+.pm-dash-th { display:flex; background:#E5E9F0; padding:3px 10px; gap:3px; }
+.pm-dash-th span,.pm-dash-tr span { flex:1; font-size:8px; font-weight:700; color:#374151; text-align:center; letter-spacing:.03em; }
+.pm-dash-th span:first-child,.pm-dash-tr span:first-child { flex:1.5; text-align:left; }
+.pm-dash-tr { display:flex; padding:3px 10px; gap:3px; border-top:1px solid #EDF0F4; }
+.pm-dash-tr:nth-child(even) { background:#F0F4F8; }
+.pm-dash-tr span { font-size:8px; color:#374151; }
+.pm-dash-tr span.g { color:#16A34A; font-weight:600; }
+.pm-dash-tr span.r { color:#DC2626; font-weight:600; }
+.pm-dash-tr span.b { color:#1565C0; font-weight:700; }
+.pm-dash-caption { padding:6px 12px; background:#F8FAFC; border-top:1px solid #E0E6EF; display:flex; align-items:center; justify-content:space-between; }
+.pm-dash-caption-txt { font-size:9.5px; color:#8B9BAE; font-style:italic; }
+.pm-dash-caption-badge { font-size:9px; font-weight:700; color:#1E5AA8; background:#EBF3FD; padding:2px 7px; border-radius:4px; }
+
 /* nav-bar entry */
 .dd-dot-premium { background: linear-gradient(135deg,#C97B2F,#E8A35A); }
 
@@ -2619,6 +2659,64 @@ retell-chat-web-component {
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
               Instant download
             </span>
+          </div>
+        </div>
+
+        <!-- dashboard mockup preview -->
+        <div class="pm-dash-wrap">
+          <div class="pm-dash-mock">
+            <div class="pm-dash-hdr">
+              <div>
+                <div class="pm-dash-hdr-title">PROPERTY DASHBOARD</div>
+                <div style="font-size:9px;color:rgba(255,255,255,.55);margin-top:1px;">Annual Summary · 2025–2026</div>
+              </div>
+              <div class="pm-dash-hdr-right">
+                <div class="pm-dash-dd"><span class="pm-dash-dd-lbl">YEAR</span> 2025</div>
+                <div class="pm-dash-dd"><span class="pm-dash-dd-lbl">UNIT</span> All</div>
+              </div>
+            </div>
+            <div class="pm-dash-kpi-row">
+              <div class="pm-dash-kpi pm-dash-kpi-in"><div class="pm-dash-kpi-lbl">Total Income</div><div class="pm-dash-kpi-val">$98,400</div></div>
+              <div class="pm-dash-kpi pm-dash-kpi-ex"><div class="pm-dash-kpi-lbl">Total Expenses</div><div class="pm-dash-kpi-val">$56,220</div></div>
+              <div class="pm-dash-kpi pm-dash-kpi-net"><div class="pm-dash-kpi-lbl">Net Profit</div><div class="pm-dash-kpi-val">$42,180</div></div>
+            </div>
+            <div class="pm-dash-charts">
+              <div>
+                <div class="pm-dash-donut-lbl">PROFIT<br>MARGIN</div>
+                <svg width="60" height="60" viewBox="0 0 64 64" aria-hidden="true">
+                  <circle cx="32" cy="32" r="24" fill="none" stroke="#E5E9F0" stroke-width="10"/>
+                  <circle cx="32" cy="32" r="24" fill="none" stroke="#1E5AA8" stroke-width="10" stroke-dasharray="130 151" stroke-dashoffset="38" stroke-linecap="round"/>
+                  <text x="32" y="36" text-anchor="middle" font-size="13" font-weight="800" fill="#0F2847" font-family="DM Sans,sans-serif">43%</text>
+                </svg>
+              </div>
+              <div>
+                <div class="pm-dash-bars-title">MONTHLY PROFIT</div>
+                <div class="pm-dash-bars">
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar"   style="height:20px;"></div><div class="pm-dash-bar-mo">J</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar g" style="height:32px;"></div><div class="pm-dash-bar-mo">F</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar g" style="height:26px;"></div><div class="pm-dash-bar-mo">M</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar g" style="height:38px;"></div><div class="pm-dash-bar-mo">A</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar"   style="height:14px;"></div><div class="pm-dash-bar-mo">M</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar g" style="height:34px;"></div><div class="pm-dash-bar-mo">J</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar g" style="height:40px;"></div><div class="pm-dash-bar-mo">J</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar g" style="height:36px;"></div><div class="pm-dash-bar-mo">A</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar g" style="height:28px;"></div><div class="pm-dash-bar-mo">S</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar"   style="height:18px;"></div><div class="pm-dash-bar-mo">O</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar g" style="height:42px;"></div><div class="pm-dash-bar-mo">N</div></div>
+                  <div class="pm-dash-bar-col"><div class="pm-dash-bar g" style="height:30px;"></div><div class="pm-dash-bar-mo">D</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="pm-dash-table">
+              <div class="pm-dash-th"><span>Category</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span></div>
+              <div class="pm-dash-tr"><span>Income</span><span class="g">$8,200</span><span class="g">$8,200</span><span class="g">$8,200</span><span class="g">$8,200</span><span class="g">$8,200</span><span class="g">$8,200</span></div>
+              <div class="pm-dash-tr"><span>Expenses</span><span class="r">$4,680</span><span class="r">$4,210</span><span class="r">$4,890</span><span class="r">$3,940</span><span class="r">$5,120</span><span class="r">$4,380</span></div>
+              <div class="pm-dash-tr"><span>Net</span><span class="b">$3,520</span><span class="b">$3,990</span><span class="b">$3,310</span><span class="b">$4,260</span><span class="b">$3,080</span><span class="b">$3,820</span></div>
+            </div>
+            <div class="pm-dash-caption">
+              <span class="pm-dash-caption-txt">Sample data — your numbers populate automatically</span>
+              <span class="pm-dash-caption-badge">Sheet 1 of 8</span>
+            </div>
           </div>
         </div>
 
