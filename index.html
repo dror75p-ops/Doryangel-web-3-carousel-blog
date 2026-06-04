@@ -2078,7 +2078,7 @@ retell-chat-web-component {
         <path d="M15.5 8.5h-7a.5.5 0 0 0-.45.72l2.2 4.78H8a1 1 0 0 0 0 2h2.5l.5 4h-1a1 1 0 0 0 0 2h4a1 1 0 0 0 0-2h-1l.5-4H16a1 1 0 0 0 0-2h-2.25l2.2-4.78A.5.5 0 0 0 15.5 8.5z"/>
       </svg>
     </button>
-    <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" rel="noopener noreferrer" class="nav-cta">Book Free Consultation</a>
+    <a href="#contact" class="nav-cta">Free Property Audit</a>
     <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer">
       <svg width="22" height="16" viewBox="0 0 22 16" fill="none" aria-hidden="true">
         <rect y="0" width="22" height="2.5" rx="1.25" fill="white"/>
@@ -2182,7 +2182,7 @@ retell-chat-web-component {
   </div>
   <div class="drawer-sep"></div>
   <div class="drawer-ctas">
-    <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" rel="noopener" class="drawer-cta-book">Book Free Consultation</a>
+    <a href="#contact" class="drawer-cta-book" onclick="document.getElementById('navDrawer').classList.remove('is-open');document.getElementById('navOverlay').setAttribute('aria-hidden','true');">Free Property Audit</a>
     <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" class="drawer-cta-portal">Tenant Portal</a>
   </div>
 </div>
@@ -2776,8 +2776,8 @@ retell-chat-web-component {
         <strong>Managing more than 3 units? That's where we come in.</strong>
         <span>Most of our clients started as DIY landlords. When you're ready, we're here.</span>
       </div>
-      <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" rel="noopener noreferrer" class="tools-cta-strip-btn">
-        Book a Free 15-Min Call &rarr;
+      <a href="#contact" class="tools-cta-strip-btn">
+        Get Your Free Property Audit &rarr;
       </a>
     </div>
 
@@ -3260,6 +3260,10 @@ retell-chat-web-component {
             <input type="tel" id="phone" name="phone" placeholder="(212) 000-0000">
           </div>
           <div class="form-group">
+            <label for="property-address">Property Address</label>
+            <input type="text" id="property-address" name="property-address" placeholder="e.g. 123 Grand Concourse, Bronx, NY">
+          </div>
+          <div class="form-group">
             <label for="role">I am a...</label>
             <select id="role" name="role">
               <option value="">Select your role</option>
@@ -3280,7 +3284,7 @@ retell-chat-web-component {
               By providing your phone number and submitting this form, you consent to receive calls and/or text messages from <strong>DoryAngel LLC</strong> regarding your inquiry. Message and data rates may apply. You may opt out at any time by replying STOP or contacting us at <a href="mailto:office@doryangel.com">office@doryangel.com</a>. Your information will never be sold or shared with third parties. See our <a href="./terms.html">Terms &amp; Conditions</a> and <a href="./privacy.html">Privacy Policy</a>.
             </label>
           </div>
-          <button type="submit" class="form-submit">Send Message & Book Consultation →</button>
+          <button type="submit" class="form-submit">Send My Inquiry →</button>
         </form>
       </div>
     </div>
