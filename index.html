@@ -4167,13 +4167,13 @@ async function handleFormSubmit(e) {
     }, SHOW);
   }
 
-  /* First flip 5 s after load, then every 5 s.
+  /* First flip 10 s after load, then every 10 s.
      Lock the logo slot width before the first flip so the stripe never resizes. */
   setTimeout(function () {
     logoLink.style.minWidth = logoLink.offsetWidth + 'px';
     showPromo();
-    setInterval(showPromo, 5000);
-  }, 5000);
+    setInterval(showPromo, 10000);
+  }, 10000);
 })();
 </script>
 
