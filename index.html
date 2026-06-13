@@ -139,8 +139,8 @@ nav.bar-hidden { top: 0; }
   100% { opacity: 1; transform: translateX(0) scale(1); }
 }
 @keyframes logoBreathe {
-  0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.025); }
+  0%, 100% { transform: scale(1);     filter: drop-shadow(0 0 0px transparent); }
+  50%      { transform: scale(1.025); filter: drop-shadow(0 0 8px rgba(91,159,234,0.65)); }
 }
 @media (prefers-reduced-motion: reduce) {
   .nav-logo img { animation: none !important; }
@@ -4155,6 +4155,13 @@ async function handleFormSubmit(e) {
         logoLink.href = origHref;
         logoLink.removeAttribute('target');
         logoLink.removeAttribute('rel');
+        /* Brief glow flash as logo lands back */
+        var img = logoLink.querySelector('img');
+        if (img) {
+          img.style.transition = 'filter 0.7s ease-out';
+          img.style.filter = 'drop-shadow(0 0 14px rgba(91,159,234,0.9))';
+          setTimeout(function () { img.style.filter = ''; }, 700);
+        }
       });
       setTimeout(function () { isFlipped = false; }, HALF * 2 + 100);
     }, SHOW);
