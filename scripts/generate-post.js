@@ -6,7 +6,7 @@ import { readFileSync, writeFileSync } from 'fs';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 4 });
 const resend = new Resend(process.env.RESEND_API_KEY);
-const APPROVAL_EMAIL = 'dror75p@gmail.com';
+const APPROVAL_EMAIL = 'office@doryangel.com';
 
 // Fallback topics used if AI topic selection fails
 const FALLBACK_TOPICS = [
