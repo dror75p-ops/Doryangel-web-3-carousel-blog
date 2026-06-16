@@ -4195,15 +4195,8 @@ async function handleFormSubmit(e) {
    We inject a <style> directly into the shadow root once the component is ready. */
 (function () {
   var FIX_ID = 'da-retell-vp-fix';
-  /* On mobile: constrain every direct-child div of the host (covers both the
-     floating trigger button and the chat panel), then fix the input row.
-     right:6px keeps content 6 px from the viewport edge on both sides when
-     combined with max-width:calc(100vw - 12px). */
   var CSS =
     ':host>div{z-index:999999!important;}' +
-    ':host>div:last-child{width:60px!important;height:60px!important;min-width:0!important;max-width:60px!important;border-radius:50%!important;overflow:hidden!important;padding:0!important;}' +
-    ':host>div:last-child span,:host>div:last-child p,:host>div:last-child div{display:none!important;}' +
-    ':host>div:last-child img,:host>div:last-child svg{display:block!important;margin:auto!important;}' +
     '@media(max-width:768px){' +
     ':host>div{' +
       'max-width:calc(100vw - 12px)!important;' +
@@ -4215,20 +4208,46 @@ async function handleFormSubmit(e) {
     '}' +
     '}';
 
-  function inject() {
-    var host = document.querySelector('retell-chat-web-component');
-    if (!host || !host.shadowRoot || host.shadowRoot.getElementById(FIX_ID)) return;
-    var s = document.createElement('style');
-    s.id = FIX_ID;
-    s.textContent = CSS;
-    host.shadowRoot.appendChild(s);
+  function circleifyTrigger(root) {
+    /* Find the trigger: the smallest direct-child div (not the full chat panel).
+       We detect it by checking offsetWidth — the trigger bubble is narrow,
+       the chat panel is wide. Fall back to last-child if nothing found. */
+    var children = Array.prototype.slice.call(root.querySelectorAll(':host > div, :scope > div'));
+    if (!children.length) children = Array.prototype.slice.call(root.children);
+    var trigger = null;
+    children.forEach(function(el) {
+      if (el.tagName === 'STYLE') return;
+      /* Trigger button is typically ≤120px wide; chat panel is much wider */
+      if (!trigger || el.offsetWidth < trigger.offsetWidth) trigger = el;
+    });
+    if (!trigger) return;
+    trigger.style.setProperty('width', '60px', 'important');
+    trigger.style.setProperty('height', '60px', 'important');
+    trigger.style.setProperty('min-width', '0', 'important');
+    trigger.style.setProperty('max-width', '60px', 'important');
+    trigger.style.setProperty('border-radius', '50%', 'important');
+    trigger.style.setProperty('overflow', 'hidden', 'important');
+    trigger.style.setProperty('padding', '0', 'important');
+    /* Hide text labels inside the trigger, keep images/icons */
+    Array.prototype.forEach.call(trigger.querySelectorAll('span,p,label'), function(el) {
+      el.style.setProperty('display', 'none', 'important');
+    });
   }
 
-  /* Try on initial load (widget may not be ready yet) */
+  function inject() {
+    var host = document.querySelector('retell-chat-web-component');
+    if (!host || !host.shadowRoot) return;
+    if (!host.shadowRoot.getElementById(FIX_ID)) {
+      var s = document.createElement('style');
+      s.id = FIX_ID;
+      s.textContent = CSS;
+      host.shadowRoot.appendChild(s);
+    }
+    circleifyTrigger(host.shadowRoot);
+  }
+
   [600, 1500, 3500].forEach(function (t) { setTimeout(inject, t); });
-  /* Re-apply whenever user interacts — the panel mounts on first click */
   document.addEventListener('click', function () { setTimeout(inject, 120); }, true);
-  /* Watch for the shadow root to be populated */
   new MutationObserver(inject).observe(document.body, { childList: true, subtree: true });
 })();
 </script>
