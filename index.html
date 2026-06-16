@@ -17,13 +17,13 @@
 <meta property="og:description" content="High-tech property management at your fingertips. Flat-fee plans from $99/mo. Serving the Bronx, Queens, Yonkers, Mount Vernon, New Rochelle & North Jersey since 2010.">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://doryangel.com/">
-<meta property="og:image" content="https://doryangel.com/og-image.jpg">
+<meta property="og:url" content="https://beta.doryangel.com/">
+<meta property="og:image" content="https://beta.doryangel.com/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="DoryAngel Property Management NYC">
 <meta name="twitter:description" content="DoryAngel: flat-fee property management in NYC. $99/mo, real-time owner dashboards, 24/7 maintenance. Bronx, Queens, Yonkers, North Jersey. Free audit.">
-<meta name="twitter:image" content="https://doryangel.com/og-image.jpg">
-<link rel="canonical" href="https://doryangel.com/">
+<meta name="twitter:image" content="https://beta.doryangel.com/og-image.jpg">
+<link rel="canonical" href="https://beta.doryangel.com/">
 <meta name="geo.region" content="US-NY">
 <meta name="geo.placename" content="Bronx, New York City">
 <meta name="geo.position" content="40.8177;-73.9278">
@@ -35,7 +35,7 @@
   "@context": "https://schema.org",
   "@type": ["LocalBusiness", "RealEstateAgent"],
   "name": "DoryAngel LLC",
-  "url": "https://doryangel.com",
+  "url": "https://beta.doryangel.com",
   "telephone": "+15168474999",
   "email": "office@doryangel.com",
   "description": "Flat-fee property management in New York City. Serving the Bronx, Queens, Yonkers, Mount Vernon, New Rochelle & North Jersey since 2010. From $99/month.",
@@ -3984,6 +3984,16 @@ async function handleFormSubmit(e) {
   var GA_ID = 'G-0W61NYHM78';
   var STORAGE_KEY = 'doryangel-cookie-consent';
 
+  function loadClarity() {
+    if (window.__clarityLoaded) return;
+    window.__clarityLoaded = true;
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "x7y1bk4fhc");
+  }
+
   function loadGA() {
     if (window.__gaLoaded) return;
     window.__gaLoaded = true;
@@ -3997,12 +4007,17 @@ async function handleFormSubmit(e) {
     window.gtag('config', GA_ID, { anonymize_ip: true });
   }
 
+  function loadAnalytics() {
+    loadGA();
+    loadClarity();
+  }
+
   var banner = document.getElementById('cookie-banner');
   var consent = null;
   try { consent = localStorage.getItem(STORAGE_KEY); } catch (e) {}
 
   if (consent === 'accepted') {
-    loadGA();
+    loadAnalytics();
   } else if (consent !== 'rejected') {
     setTimeout(function () { banner.classList.add('visible'); }, 1200);
   }
@@ -4010,7 +4025,7 @@ async function handleFormSubmit(e) {
   document.getElementById('cookie-accept').onclick = function () {
     try { localStorage.setItem(STORAGE_KEY, 'accepted'); } catch (e) {}
     banner.classList.remove('visible');
-    loadGA();
+    loadAnalytics();
   };
   document.getElementById('cookie-reject').onclick = function () {
     try { localStorage.setItem(STORAGE_KEY, 'rejected'); } catch (e) {}
