@@ -1904,15 +1904,6 @@ retell-chat-web-component {
   max-width: 100vw;
   box-sizing: border-box;
 }
-/* Clip the trigger pill to a 60×60 circle matching the Call button.
-   When the chat panel opens it expands beyond this — that's fine because
-   the panel breaks out via fixed positioning inside the shadow DOM. */
-retell-chat-web-component:not([data-open]) {
-  width: 60px !important;
-  height: 60px !important;
-  border-radius: 50% !important;
-  overflow: hidden !important;
-}
 </style>
 <!-- Markdown parser for blog posts -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" async></script>
