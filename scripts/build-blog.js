@@ -4,9 +4,9 @@
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from 'fs';
 import { marked } from 'marked';
 
-const SITE_URL = 'https://doryangel.com';
+const SITE_URL = 'https://beta.doryangel.com';
 const BOOKING_URL = 'https://cal.com/dory-angel-management-v5o0ke/30min';
-const CONTACT_URL = 'https://doryangel.com/#contact';
+const CONTACT_URL = 'https://beta.doryangel.com/#contact';
 const COMPANY_NAME = 'DoryAngel LLC';
 
 const CATEGORY_LABEL = {
