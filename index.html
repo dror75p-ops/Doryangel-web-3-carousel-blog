@@ -1904,6 +1904,15 @@ retell-chat-web-component {
   max-width: 100vw;
   box-sizing: border-box;
 }
+/* Clip the trigger pill to a 60×60 circle matching the Call button.
+   When the chat panel opens it expands beyond this — that's fine because
+   the panel breaks out via fixed positioning inside the shadow DOM. */
+retell-chat-web-component:not([data-open]) {
+  width: 60px !important;
+  height: 60px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+}
 </style>
 <!-- Markdown parser for blog posts -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" async></script>
@@ -4208,42 +4217,13 @@ async function handleFormSubmit(e) {
     '}' +
     '}';
 
-  function circleifyTrigger(root) {
-    /* Find the trigger: the smallest direct-child div (not the full chat panel).
-       We detect it by checking offsetWidth — the trigger bubble is narrow,
-       the chat panel is wide. Fall back to last-child if nothing found. */
-    var children = Array.prototype.slice.call(root.querySelectorAll(':host > div, :scope > div'));
-    if (!children.length) children = Array.prototype.slice.call(root.children);
-    var trigger = null;
-    children.forEach(function(el) {
-      if (el.tagName === 'STYLE') return;
-      /* Trigger button is typically ≤120px wide; chat panel is much wider */
-      if (!trigger || el.offsetWidth < trigger.offsetWidth) trigger = el;
-    });
-    if (!trigger) return;
-    trigger.style.setProperty('width', '60px', 'important');
-    trigger.style.setProperty('height', '60px', 'important');
-    trigger.style.setProperty('min-width', '0', 'important');
-    trigger.style.setProperty('max-width', '60px', 'important');
-    trigger.style.setProperty('border-radius', '50%', 'important');
-    trigger.style.setProperty('overflow', 'hidden', 'important');
-    trigger.style.setProperty('padding', '0', 'important');
-    /* Hide text labels inside the trigger, keep images/icons */
-    Array.prototype.forEach.call(trigger.querySelectorAll('span,p,label'), function(el) {
-      el.style.setProperty('display', 'none', 'important');
-    });
-  }
-
   function inject() {
     var host = document.querySelector('retell-chat-web-component');
-    if (!host || !host.shadowRoot) return;
-    if (!host.shadowRoot.getElementById(FIX_ID)) {
-      var s = document.createElement('style');
-      s.id = FIX_ID;
-      s.textContent = CSS;
-      host.shadowRoot.appendChild(s);
-    }
-    circleifyTrigger(host.shadowRoot);
+    if (!host || !host.shadowRoot || host.shadowRoot.getElementById(FIX_ID)) return;
+    var s = document.createElement('style');
+    s.id = FIX_ID;
+    s.textContent = CSS;
+    host.shadowRoot.appendChild(s);
   }
 
   [600, 1500, 3500].forEach(function (t) { setTimeout(inject, t); });
