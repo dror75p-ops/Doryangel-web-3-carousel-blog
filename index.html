@@ -4201,7 +4201,9 @@ async function handleFormSubmit(e) {
      combined with max-width:calc(100vw - 12px). */
   var CSS =
     ':host>div{z-index:999999!important;}' +
-    ':host>div:first-child{border-radius:50%!important;overflow:hidden!important;}' +
+    ':host>div:last-child{width:60px!important;height:60px!important;min-width:0!important;max-width:60px!important;border-radius:50%!important;overflow:hidden!important;padding:0!important;}' +
+    ':host>div:last-child span,:host>div:last-child p,:host>div:last-child div{display:none!important;}' +
+    ':host>div:last-child img,:host>div:last-child svg{display:block!important;margin:auto!important;}' +
     '@media(max-width:768px){' +
     ':host>div{' +
       'max-width:calc(100vw - 12px)!important;' +
