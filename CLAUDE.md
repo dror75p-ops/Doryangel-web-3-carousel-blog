@@ -208,6 +208,32 @@ Only `chat_analyzed` events trigger the pipeline (`chat_started` and `chat_ended
 4. **Wrong event name**: Filter used `call_analyzed` but chat agents fire `chat_analyzed`. Fixed.
 5. **Wrong payload root key**: Make.com paths used `1.call.call_analysis.*` but chat agent payloads use `1.chat.chat_analysis.*`. Confirmed via 4-path debug email test — Path A (`chat.chat_analysis`) had all real data. Fixed.
 
+## Make.com scenarios (all active — eu1 zone)
+
+8 scenarios running as of 2026-06-17. All active, 0 errors across all.
+
+| ID | Name | Trigger | Actions | Runs | Notes |
+|----|------|---------|---------|------|-------|
+| 5578524 | **DoryAngel Chat — New Leads** | Webhook (Retell `chat_analyzed`) | Sheets + Gmail | 10 | Retell Hailey chat leads → "DoryAngel Chat Leads" sheet + owner email |
+| 4406127 | **Doeyangel looking for rent agent** | Webhook | Sheets + Gmail | 75 | Landlord inquiry form → Sheets + owner email |
+| 4482886 | **Multy channel new leads** | Webhook → Router | 4× Sheets + Gmail | 45 | Multi-source lead router (4 branches) → per-source Sheets + email |
+| 5546593 | **Compliance Calendar — Signup & Welcome** | Webhook | Gmail ×2 + Sheets | 2 | Signup form → welcome email to subscriber + notify owner + log to Sheets |
+| 5546729 | **Compliance Calendar — Monthly Broadcast** | Schedule (monthly, next: 2026-07-01 13:00 UTC) | Data Store → Gmail | 0 | Reads subscriber list from Data Store, sends monthly compliance digest |
+| 5549170 | **Digest — New Subscriber** | Webhook | Sheets + Gmail | 2,488 | Blog digest signup → log subscriber + welcome email (highest-volume scenario) |
+| 5549246 | **Digest — Send Post Notification** | Webhook (triggered by `generate-post.js`) | Sheets filter + Gmail | 11 | New blog post published → filter subscriber list → notify all subscribers |
+| 5349573 | **Blog Publish Notification** | Webhook | Gmail | 0 | Alternate blog publish email (0 runs — may be superseded by scenario 5549246) |
+
+### Trigger sources
+
+- **generate-post.js** fires the Digest — Send Post Notification webhook (`https://hook.eu1.make.com/wxmjj64ih7wvw4di4dyop4cwy8e75qj8`) on every auto-publish
+- **Retell chat widget** fires DoryAngel Chat — New Leads on `chat_analyzed` events only
+- **Contact/lead forms on the site** feed Multy channel new leads and Doeyangel looking for rent agent via their respective webhook URLs
+- **Compliance Calendar signup form** feeds scenario 5546593; monthly broadcast runs on its own schedule
+
+### Operations budget note
+
+The Digest — New Subscriber scenario has run 2,488 times — this is the largest operations consumer. At the free-tier limit of 10,000 ops/month, watch this if subscriber signups grow significantly.
+
 ## Cost (per blog post)
 
 ~$0.02-0.05/post (Opus 4.7), ~$2-3/month total
