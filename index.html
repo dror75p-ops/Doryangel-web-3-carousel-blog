@@ -2,13 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "x7y1bk4fhc");
-</script>
+<!-- Clarity loads only after cookie consent via loadClarity() below — GDPR compliant -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DoryAngel Property Management NYC | Flat-Fee Management Since 2010</title>
 <meta name="description" content="DoryAngel: flat-fee property management in NYC. $99/mo, real-time owner dashboards, 24/7 maintenance. Bronx, Queens, Yonkers, North Jersey. Free audit.">
@@ -82,6 +76,8 @@
 }
 </script>
 
+<link rel="icon" href="./assets/logo-icon.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="./assets/logo-icon.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 
@@ -528,7 +524,7 @@ section { padding: 96px 40px; }
 }
 #portal-embed-outer iframe { width: 100%; height: 780px; border: none; display: block; }
 #portal-open-link { margin-top: 10px; font-size: 12px; color: #94A3B8; }
-#portal-open-link a { color: #3A7BDD; text-decoration: none; }
+#portal-open-link a { color: var(--blue); text-decoration: none; }
 
 /* PRICING */
 .pricing-grid {
@@ -783,11 +779,11 @@ section { padding: 96px 40px; }
   content: '✦ Featured';
   position: absolute; top: 24px; right: 28px;
   font-size: 10px; font-weight: 700; letter-spacing: 2px;
-  color: #3A7BDD; text-transform: uppercase;
+  color: var(--blue); text-transform: uppercase;
 }
 .blog-featured-cat {
   font-size: 10px; font-weight: 700; letter-spacing: 2px;
-  text-transform: uppercase; color: #3A7BDD; margin-bottom: 10px;
+  text-transform: uppercase; color: var(--blue); margin-bottom: 10px;
 }
 .blog-featured-title {
   font-family: 'DM Serif Display', serif;
@@ -804,7 +800,7 @@ section { padding: 96px 40px; }
 }
 .blog-featured-byline { font-size: 12px; color: #8B9BAE; }
 .blog-featured-link {
-  font-size: 13px; font-weight: 700; color: #3A7BDD;
+  font-size: 13px; font-weight: 700; color: var(--blue);
   background: none; border: none; cursor: pointer;
   font-family: 'DM Sans', sans-serif; padding: 0;
   transition: color 0.15s;
@@ -832,7 +828,7 @@ section { padding: 96px 40px; }
 .blog-list-body { flex: 1; min-width: 0; }
 .blog-list-cat {
   font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
-  text-transform: uppercase; color: #3A7BDD; margin-bottom: 4px;
+  text-transform: uppercase; color: var(--blue); margin-bottom: 4px;
 }
 .blog-list-title {
   font-family: 'DM Serif Display', serif;
@@ -840,7 +836,7 @@ section { padding: 96px 40px; }
   margin-bottom: 4px; font-weight: 400;
 }
 .blog-list-meta { font-size: 11px; color: #8B9BAE; }
-.blog-list-arrow { color: #3A7BDD; font-size: 18px; flex-shrink: 0; align-self: center; }
+.blog-list-arrow { color: var(--blue); font-size: 18px; flex-shrink: 0; align-self: center; }
 
 /* Footer row */
 .blog-footer-row {
@@ -848,7 +844,7 @@ section { padding: 96px 40px; }
   padding-top: 4px;
 }
 .blog-view-all {
-  font-size: 14px; font-weight: 700; color: #3A7BDD;
+  font-size: 14px; font-weight: 700; color: var(--blue);
   background: none; border: none; cursor: pointer;
   font-family: 'DM Sans', sans-serif; padding: 0; transition: color 0.15s;
 }
@@ -885,9 +881,9 @@ section { padding: 96px 40px; }
   border-bottom: 2px solid #0D1E3A; padding-bottom: 16px; margin-bottom: 28px;
 }
 .blog-article-body h2 { color: #0D1E3A; font-size: 20px; margin: 32px 0 10px; font-weight: 700; }
-.blog-article-body h3 { color: #3A7BDD; font-size: 16px; margin: 24px 0 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.blog-article-body h3 { color: var(--blue); font-size: 16px; margin: 24px 0 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 .blog-article-body p { margin-bottom: 16px; }
-.blog-article-body a { color: #3A7BDD; text-decoration: underline; }
+.blog-article-body a { color: var(--blue); text-decoration: underline; }
 .blog-article-body ul, .blog-article-body ol { padding-left: 24px; margin-bottom: 16px; }
 .blog-article-body li { margin-bottom: 6px; }
 .blog-article-body hr { border: none; border-top: 1px solid #dce4ef; margin: 32px 0; }
@@ -1919,6 +1915,7 @@ retell-chat-web-component {
       <!-- form state -->
       <form id="toolGateForm" style="display:block;" novalidate>
         <input type="hidden" name="access_key" value="6991fa6b-8f6c-4c24-9167-b7ee52026a98">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
         <input type="hidden" name="subject" id="toolGateSubject" value="Free Tool Access Request">
         <input type="hidden" name="tool_name" id="toolGateToolName" value="">
         <input type="hidden" name="from_name" value="DoryAngel Website">
@@ -1958,6 +1955,7 @@ retell-chat-web-component {
     <div class="toolgate-body">
       <form id="notifyGateForm" style="display:block;" novalidate>
         <input type="hidden" name="access_key" value="6991fa6b-8f6c-4c24-9167-b7ee52026a98">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
         <input type="hidden" name="subject" id="notifyGateSubject" value="Notify Me: Upcoming Tool">
         <input type="hidden" name="tool_name" id="notifyGateToolName" value="">
         <input type="hidden" name="from_name" value="DoryAngel Website">
@@ -3875,7 +3873,7 @@ retell-chat-web-component {
           <input type="hidden" name="access_key" value="6991fa6b-8f6c-4c24-9167-b7ee52026a98">
           <input type="hidden" name="subject" value="New DoryAngel Website Inquiry">
           <input type="hidden" name="from_name" value="DoryAngel Website">
-          <input type="hidden" name="redirect" value="https://dror75p-ops.github.io/Doryangel-web-3-carousel-blog/thank-you.html">
+          <input type="hidden" name="redirect" value="https://beta.doryangel.com/thank-you.html">
           <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
 
           <div class="form-row">
@@ -4147,6 +4145,7 @@ async function handleFormSubmit(e) {
     });
     const result = await response.json();
     if (result.success) {
+      if (typeof gtag !== 'undefined') { gtag('event', 'contact_form_submit', { event_category: 'lead', event_label: 'main_contact' }); }
       window.location.href = './thank-you.html';
     } else {
       btn.textContent = 'Error – please call (516) 847-4999';
@@ -4224,6 +4223,7 @@ async function handleFormSubmit(e) {
   if (heroRotator && !prefersReduced) {
     var heroIdx = 0;
     setInterval(function () {
+      if (document.hidden) return;
       heroRotator.classList.add('rotating');
       setTimeout(function () {
         heroIdx = (heroIdx + 1) % heroLines.length;
@@ -4245,6 +4245,7 @@ async function handleFormSubmit(e) {
   if (trustRotator && !prefersReduced) {
     var trustIdx = 0;
     setInterval(function () {
+      if (document.hidden) return;
       trustRotator.classList.add('swap-out');
       setTimeout(function () {
         trustIdx = (trustIdx + 1) % trustLines.length;
@@ -4263,6 +4264,7 @@ async function handleFormSubmit(e) {
     var photos = skyline.querySelectorAll('.hero-photo');
     var photoIdx = 0;
     setInterval(function () {
+      if (document.hidden) return;
       photos[photoIdx].classList.remove('active');
       photoIdx = (photoIdx + 1) % photos.length;
       photos[photoIdx].classList.add('active');
@@ -4922,6 +4924,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // fire-and-forget to Web3Forms
     var data = new FormData(form);
     fetch('https://api.web3forms.com/submit', { method: 'POST', body: data }).catch(function(){});
+    if (typeof gtag !== 'undefined') { gtag('event', 'tool_gate_submit', { event_category: 'lead', event_label: 'tool_access' }); }
 
     form.style.display = 'none';
     document.getElementById('toolGateSuccess').style.display = 'block';

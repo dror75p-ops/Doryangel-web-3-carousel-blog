@@ -61,7 +61,7 @@ ${recentTitles}
 
 Rules:
 - Title MUST reference the Bronx specifically — no other NYC borough or city
-- Title must be a question OR start with a number
+- Title must be a question OR start with a number — but VARY the opening word. Do NOT start with "Are", "Is", "Can", or "How" if more than one of the last 5 titles already uses that word
 - Address a real landlord pain point; use seasonal relevance where fitting
 - Category must be exactly one of: property-management, diy-property-management, investments, property-automation, broker-partnerships
 - IMPORTANT: strongly prefer "investments", "property-automation", or "broker-partnerships" — these are underrepresented. Use "property-management" or "diy-property-management" only if no suitable angle exists in the preferred categories for this season
