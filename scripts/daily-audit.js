@@ -216,6 +216,18 @@ const LEAD_SHEETS = [
     tsCol: 0,    // "Timestamp" column
     nameCol: 2,  // full_name (col C)
   },
+  {
+    id:    '1-9IDAD1VmlnCvTdU3JqDWahjEFQaUFtRG-WayHZ9N8o',
+    label: 'Newsletter subscribers',
+    tsCol: 3,    // "date subscribed" column
+    nameCol: 0,  // name
+  },
+  {
+    id:    '1KbVggQNhKbX9370zq-thBzHmN1j1R4g9YI8gKm8_R-o',
+    label: 'Website tool signups',
+    tsCol: 3,    // "signup_date" column
+    nameCol: 0,  // email (most reliable identifier)
+  },
 ];
 
 async function getMakeStats() {
