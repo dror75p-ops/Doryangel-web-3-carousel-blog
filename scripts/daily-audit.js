@@ -94,12 +94,12 @@ async function getOpenIssues() {
 
 // ─── Google Analytics 4 ───────────────────────────────────────────────────────
 
-async function getGoogleAccessToken(credentials) {
+async function getGoogleAccessToken(credentials, scope = 'https://www.googleapis.com/auth/analytics.readonly') {
   const now = Math.floor(Date.now() / 1000);
   const header  = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT' })).toString('base64url');
   const payload = Buffer.from(JSON.stringify({
     iss: credentials.client_email,
-    scope: 'https://www.googleapis.com/auth/analytics.readonly',
+    scope,
     aud: 'https://oauth2.googleapis.com/token',
     exp: now + 3600,
     iat: now,
@@ -195,50 +195,62 @@ async function getGA4Stats() {
   }
 }
 
-// ─── Make.com scenario stats ──────────────────────────────────────────────────
+// ─── Hailey lead stats (Google Sheets) ───────────────────────────────────────
 
 async function getMakeStats() {
-  const apiKey = process.env.MAKE_API_KEY;
-  if (!apiKey) return null;
+  const saKey = process.env.GOOGLE_SA_KEY;
+  if (!saKey) return null;
 
-  const SCENARIO_ID = 5578524;
-  const BASE = 'https://eu1.make.com/api/v2';
+  const SHEET_ID = '1druOTrJhRVhrbAPrGBWD8HtMNkxy-h-PiJcYEhGsuHk';
 
   try {
-    const now = Date.now();
-    const msDay = 86400000;
-    const from  = now - 30 * msDay; // last 30 days
+    const credentials = JSON.parse(saKey);
+    const token = await getGoogleAccessToken(
+      credentials,
+      'https://www.googleapis.com/auth/spreadsheets.readonly'
+    );
 
     const res = await fetch(
-      `${BASE}/scenarios/${SCENARIO_ID}/executions?pg[limit]=500&from=${from}`,
-      { headers: { 'Authorization': `Token ${apiKey}`, 'Content-Type': 'application/json' } }
+      `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1`,
+      { headers: { 'Authorization': `Bearer ${token}` } }
     );
-    if (!res.ok) throw new Error(`Make API ${res.status}: ${await res.text()}`);
+    if (!res.ok) throw new Error(`Sheets API ${res.status}: ${await res.text()}`);
 
-    const body = await res.json();
-    const execs = Array.isArray(body) ? body : (body.executions || []);
+    const data = await res.json();
+    const rows = (data.values || []).slice(1); // skip header row
 
-    const cutDay  = now - msDay;
-    const cutWeek = now - 7 * msDay;
+    const now = Date.now();
+    const msDay = 86400000;
+    const cutDay   = now - msDay;
+    const cutWeek  = now - 7 * msDay;
+    const cutMonth = now - 30 * msDay;
 
-    const inPeriod = (e, cut) => new Date(e.timestamp).getTime() >= cut;
-    // transfer > 1000 bytes = filter passed → real lead written to Google Sheets
-    const isLead = e => (e.transfer || 0) > 1000;
+    // A valid lead row: column A has a parseable ISO timestamp
+    // A "real lead": also has a name (col C), phone (col D), or email (col E)
+    const validRows = rows.filter(r => {
+      const ts = r[0] && new Date(r[0]).getTime();
+      return ts && !isNaN(ts);
+    });
+
+    const inPeriod = (r, cut) => new Date(r[0]).getTime() >= cut;
+    const isLead   = r => !!(r[2] || r[3] || r[4]); // name || phone || email
 
     return {
       chats: {
-        day:   execs.filter(e => inPeriod(e, cutDay)).length,
-        week:  execs.filter(e => inPeriod(e, cutWeek)).length,
-        month: execs.length,
+        day:   validRows.filter(r => inPeriod(r, cutDay)).length,
+        week:  validRows.filter(r => inPeriod(r, cutWeek)).length,
+        month: validRows.filter(r => inPeriod(r, cutMonth)).length,
+        total: validRows.length,
       },
       leads: {
-        day:   execs.filter(e => inPeriod(e, cutDay)  && isLead(e)).length,
-        week:  execs.filter(e => inPeriod(e, cutWeek) && isLead(e)).length,
-        month: execs.filter(e => isLead(e)).length,
+        day:   validRows.filter(r => inPeriod(r, cutDay)   && isLead(r)).length,
+        week:  validRows.filter(r => inPeriod(r, cutWeek)  && isLead(r)).length,
+        month: validRows.filter(r => inPeriod(r, cutMonth) && isLead(r)).length,
+        total: validRows.filter(r => isLead(r)).length,
       },
     };
   } catch (err) {
-    console.warn(`Make.com stats failed: ${err.message}`);
+    console.warn(`Sheets lead stats failed: ${err.message}`);
     return null;
   }
 }
@@ -491,23 +503,28 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
   let makeSection = '';
   if (make) {
     makeSection = `
-    <!-- Make.com Hailey leads -->
-    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">💬 Hailey chat leads (Make.com)</h3>
-    <table style="border-collapse:collapse;width:100%;margin-bottom:24px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
+    <!-- Hailey leads -->
+    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">💬 Hailey chat leads</h3>
+    <table style="border-collapse:collapse;width:100%;margin-bottom:8px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
       <tr style="background:#F4F7FA;">
         <th style="padding:8px 12px;text-align:left;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:34%;">Metric</th>
         <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:22%;">Today</th>
         <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:22%;">7 days</th>
         <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:22%;">30 days</th>
       </tr>
-      ${statRow('Chats analyzed', make.chats, '#1E5AA8', '#ffffff')}
-      ${statRow('Leads captured', make.leads, '#0D7B4E', '#F8FAFB')}
-    </table>`;
+      ${statRow('Chats logged', make.chats, '#1E5AA8', '#ffffff')}
+      ${statRow('Real leads', make.leads, '#0D7B4E', '#F8FAFB')}
+      <tr style="background:#ffffff;">
+        <td style="padding:10px 12px;color:#556070;font-size:13px;">Total leads (all time)</td>
+        <td colspan="3" style="padding:10px 12px;text-align:center;font-weight:700;color:#0D7B4E;font-size:20px;">${make.leads.total}</td>
+      </tr>
+    </table>
+    <p style="font-size:11px;color:#8B9BAE;margin:0 0 24px;">Source: DoryAngel Chat Leads Google Sheet · "Real lead" = row has name, phone, or email</p>`;
   } else {
     makeSection = `
     <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:12px 16px;margin-bottom:24px;">
-      <p style="margin:0;color:#92400E;font-size:12px;font-weight:700;">🔌 Make.com not connected</p>
-      <p style="margin:4px 0 0;color:#92400E;font-size:12px;">Add <code>MAKE_API_KEY</code> as a GitHub secret to see Hailey lead stats here.</p>
+      <p style="margin:0;color:#92400E;font-size:12px;font-weight:700;">🔌 Hailey lead stats not available</p>
+      <p style="margin:4px 0 0;color:#92400E;font-size:12px;">Set <code>GOOGLE_SA_KEY</code> and share the leads sheet with the service account to enable this.</p>
     </div>`;
   }
 
