@@ -195,13 +195,32 @@ async function getGA4Stats() {
   }
 }
 
-// ─── Hailey lead stats (Google Sheets) ───────────────────────────────────────
+// ─── Lead stats from all 3 Google Sheets ─────────────────────────────────────
+
+const LEAD_SHEETS = [
+  {
+    id:    '18El2tatb8w8gxbaEhEsu2-562waRDwZMow7jHGcMaxs',
+    label: 'Owner leads (voice)',
+    tsCol: 16,   // "Date and time" column
+    nameCol: 4,  // full_name
+  },
+  {
+    id:    '1YEFPfjyifDXsiujQHFpf871-xDdXJ93Fb6hNGXlbF60',
+    label: 'Apartment inquiries (voice)',
+    tsCol: 11,   // "date and time" column
+    nameCol: 0,  // full_name
+  },
+  {
+    id:    '1druOTrJhRVhrbAPrGBWD8HtMNkxy-h-PiJcYEhGsuHk',
+    label: 'Hailey chat leads',
+    tsCol: 0,    // "Timestamp" column
+    nameCol: 2,  // full_name (col C)
+  },
+];
 
 async function getMakeStats() {
   const saKey = process.env.GOOGLE_SA_KEY;
   if (!saKey) return null;
-
-  const SHEET_ID = '1druOTrJhRVhrbAPrGBWD8HtMNkxy-h-PiJcYEhGsuHk';
 
   try {
     const credentials = JSON.parse(saKey);
@@ -210,47 +229,56 @@ async function getMakeStats() {
       'https://www.googleapis.com/auth/spreadsheets.readonly'
     );
 
-    const res = await fetch(
-      `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1`,
-      { headers: { 'Authorization': `Bearer ${token}` } }
-    );
-    if (!res.ok) throw new Error(`Sheets API ${res.status}: ${await res.text()}`);
-
-    const data = await res.json();
-    const rows = (data.values || []).slice(1); // skip header row
-
     const now = Date.now();
-    const msDay = 86400000;
+    const msDay  = 86400000;
     const cutDay   = now - msDay;
     const cutWeek  = now - 7 * msDay;
     const cutMonth = now - 30 * msDay;
 
-    // A valid lead row: column A has a parseable ISO timestamp
-    // A "real lead": also has a name (col C), phone (col D), or email (col E)
-    const validRows = rows.filter(r => {
-      const ts = r[0] && new Date(r[0]).getTime();
-      return ts && !isNaN(ts);
-    });
+    const results = await Promise.all(LEAD_SHEETS.map(async (sheet) => {
+      try {
+        const res = await fetch(
+          `https://sheets.googleapis.com/v4/spreadsheets/${sheet.id}/values/Sheet1`,
+          { headers: { 'Authorization': `Bearer ${token}` } }
+        );
+        if (!res.ok) throw new Error(`${res.status}`);
+        const data = await res.json();
+        const rows = (data.values || []).slice(1); // skip header
 
-    const inPeriod = (r, cut) => new Date(r[0]).getTime() >= cut;
-    const isLead   = r => !!(r[2] || r[3] || r[4]); // name || phone || email
+        const valid = rows.filter(r => {
+          const ts = r[sheet.tsCol] && new Date(r[sheet.tsCol]).getTime();
+          return ts && !isNaN(ts);
+        });
 
-    return {
-      chats: {
-        day:   validRows.filter(r => inPeriod(r, cutDay)).length,
-        week:  validRows.filter(r => inPeriod(r, cutWeek)).length,
-        month: validRows.filter(r => inPeriod(r, cutMonth)).length,
-        total: validRows.length,
-      },
-      leads: {
-        day:   validRows.filter(r => inPeriod(r, cutDay)   && isLead(r)).length,
-        week:  validRows.filter(r => inPeriod(r, cutWeek)  && isLead(r)).length,
-        month: validRows.filter(r => inPeriod(r, cutMonth) && isLead(r)).length,
-        total: validRows.filter(r => isLead(r)).length,
-      },
-    };
+        const inPeriod = (r, cut) => new Date(r[sheet.tsCol]).getTime() >= cut;
+        const isLead   = r => !!(r[sheet.nameCol]);
+
+        return {
+          label: sheet.label,
+          day:   valid.filter(r => inPeriod(r, cutDay)   && isLead(r)).length,
+          week:  valid.filter(r => inPeriod(r, cutWeek)  && isLead(r)).length,
+          month: valid.filter(r => inPeriod(r, cutMonth) && isLead(r)).length,
+          total: valid.filter(r => isLead(r)).length,
+        };
+      } catch (e) {
+        return { label: sheet.label, day: 0, week: 0, month: 0, total: 0, error: e.message };
+      }
+    }));
+
+    // Aggregate totals
+    const totals = results.reduce(
+      (acc, s) => ({
+        day:   acc.day   + s.day,
+        week:  acc.week  + s.week,
+        month: acc.month + s.month,
+        total: acc.total + s.total,
+      }),
+      { day: 0, week: 0, month: 0, total: 0 }
+    );
+
+    return { totals, sources: results };
   } catch (err) {
-    console.warn(`Sheets lead stats failed: ${err.message}`);
+    console.warn(`Lead stats failed: ${err.message}`);
     return null;
   }
 }
@@ -502,29 +530,44 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
   // ── Make.com Hailey leads section ─────────────────────────────────────────────
   let makeSection = '';
   if (make) {
+    const sourceRows = make.sources.map((s, i) => {
+      const bg = i % 2 === 0 ? '#ffffff' : '#F8FAFB';
+      const errBadge = s.error ? ` <span style="color:#B91C1C;font-size:10px;">(${s.error})</span>` : '';
+      return `<tr style="background:${bg};">
+        <td style="padding:8px 12px;color:#556070;font-size:12px;">${s.label}${errBadge}</td>
+        <td style="padding:8px 12px;text-align:center;color:#0F2847;font-size:12px;font-weight:600;">${s.day}</td>
+        <td style="padding:8px 12px;text-align:center;color:#0F2847;font-size:12px;font-weight:600;">${s.week}</td>
+        <td style="padding:8px 12px;text-align:center;color:#0F2847;font-size:12px;font-weight:600;">${s.month}</td>
+        <td style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;">${s.total} total</td>
+      </tr>`;
+    }).join('');
+
     makeSection = `
-    <!-- Hailey leads -->
-    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">💬 Hailey chat leads</h3>
+    <!-- All lead sources -->
+    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">📞 Leads — all channels</h3>
     <table style="border-collapse:collapse;width:100%;margin-bottom:8px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
       <tr style="background:#F4F7FA;">
-        <th style="padding:8px 12px;text-align:left;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:34%;">Metric</th>
-        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:22%;">Today</th>
-        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:22%;">7 days</th>
-        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:22%;">30 days</th>
+        <th style="padding:8px 12px;text-align:left;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:30%;">Source</th>
+        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:14%;">Today</th>
+        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:14%;">7 days</th>
+        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:14%;">30 days</th>
+        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:16%;">All time</th>
       </tr>
-      ${statRow('Chats logged', make.chats, '#1E5AA8', '#ffffff')}
-      ${statRow('Real leads', make.leads, '#0D7B4E', '#F8FAFB')}
-      <tr style="background:#ffffff;">
-        <td style="padding:10px 12px;color:#556070;font-size:13px;">Total leads (all time)</td>
-        <td colspan="3" style="padding:10px 12px;text-align:center;font-weight:700;color:#0D7B4E;font-size:20px;">${make.leads.total}</td>
+      ${sourceRows}
+      <tr style="background:#EBF3FD;">
+        <td style="padding:10px 12px;color:#0F2847;font-size:13px;font-weight:700;">Total</td>
+        <td style="padding:10px 12px;text-align:center;font-weight:700;color:#0F2847;font-size:15px;">${make.totals.day}</td>
+        <td style="padding:10px 12px;text-align:center;font-weight:700;color:#0F2847;font-size:15px;">${make.totals.week}</td>
+        <td style="padding:10px 12px;text-align:center;font-weight:700;color:#0F2847;font-size:15px;">${make.totals.month}</td>
+        <td style="padding:10px 12px;text-align:center;font-weight:700;color:#0D7B4E;font-size:18px;">${make.totals.total}</td>
       </tr>
     </table>
-    <p style="font-size:11px;color:#8B9BAE;margin:0 0 24px;">Source: DoryAngel Chat Leads Google Sheet · "Real lead" = row has name, phone, or email</p>`;
+    <p style="font-size:11px;color:#8B9BAE;margin:0 0 24px;">Sources: Google Sheets via Retell voice + Hailey chat agents</p>`;
   } else {
     makeSection = `
     <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:12px 16px;margin-bottom:24px;">
-      <p style="margin:0;color:#92400E;font-size:12px;font-weight:700;">🔌 Hailey lead stats not available</p>
-      <p style="margin:4px 0 0;color:#92400E;font-size:12px;">Set <code>GOOGLE_SA_KEY</code> and share the leads sheet with the service account to enable this.</p>
+      <p style="margin:0;color:#92400E;font-size:12px;font-weight:700;">🔌 Lead stats not available</p>
+      <p style="margin:4px 0 0;color:#92400E;font-size:12px;">Set <code>GOOGLE_SA_KEY</code> and share the 3 lead sheets with the service account to enable this.</p>
     </div>`;
   }
 
@@ -653,7 +696,7 @@ async function main() {
 
   const [ga4, make] = await Promise.all([getGA4Stats(), getMakeStats()]);
   console.log(`GA4: ${ga4 ? `sessions today=${ga4.sessions.day}` : 'not configured'}`);
-  console.log(`Make: ${make ? `chats 30d=${make.chats.month}, leads 30d=${make.leads.month}` : 'not configured'}`);
+  console.log(`Leads: ${make ? `total=${make.totals.total}, 30d=${make.totals.month}` : 'not configured'}`);
 
   await sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make });
   console.log(`Digest sent to ${NOTIFY_EMAIL}`);
