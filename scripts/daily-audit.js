@@ -9,6 +9,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { Resend } from 'resend';
 import { readFileSync, writeFileSync } from 'fs';
 import { execSync } from 'child_process';
+import { createSign } from 'crypto';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 3 });
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -87,6 +88,110 @@ async function getOpenIssues() {
     return issues.map(i => i.title);
   } catch {
     return [];
+  }
+}
+
+// ─── Google Analytics 4 ───────────────────────────────────────────────────────
+
+async function getGoogleAccessToken(credentials) {
+  const now = Math.floor(Date.now() / 1000);
+  const header  = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT' })).toString('base64url');
+  const payload = Buffer.from(JSON.stringify({
+    iss: credentials.client_email,
+    scope: 'https://www.googleapis.com/auth/analytics.readonly',
+    aud: 'https://oauth2.googleapis.com/token',
+    exp: now + 3600,
+    iat: now,
+  })).toString('base64url');
+  const toSign = `${header}.${payload}`;
+  const sign = createSign('RSA-SHA256');
+  sign.update(toSign);
+  const sig = sign.sign(credentials.private_key, 'base64url');
+  const jwt = `${toSign}.${sig}`;
+
+  const res = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${jwt}`,
+  });
+  const data = await res.json();
+  if (!data.access_token) throw new Error(`GA4 token error: ${JSON.stringify(data)}`);
+  return data.access_token;
+}
+
+async function getGA4Stats() {
+  const saKey      = process.env.GOOGLE_SA_KEY;
+  const propertyId = process.env.GA4_PROPERTY_ID;
+  if (!saKey || !propertyId) return null;
+
+  try {
+    const credentials = JSON.parse(saKey);
+    const token = await getGoogleAccessToken(credentials);
+
+    // Fetch sessions + users + pageviews across 3 date ranges in one call
+    const reportRes = await fetch(
+      `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`,
+      {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dateRanges: [
+            { startDate: 'today',      endDate: 'today',      name: 'day'   },
+            { startDate: '7daysAgo',   endDate: 'today',      name: 'week'  },
+            { startDate: '30daysAgo',  endDate: 'today',      name: 'month' },
+          ],
+          metrics: [
+            { name: 'sessions' },
+            { name: 'activeUsers' },
+            { name: 'screenPageViews' },
+          ],
+        }),
+      }
+    );
+    const report = await reportRes.json();
+    if (!report.rows) throw new Error(`GA4 report error: ${JSON.stringify(report)}`);
+
+    // rows are indexed by dateRange: 0=day, 1=week, 2=month
+    const byRange = {};
+    report.rows.forEach(row => {
+      const range = row.dimensionValues?.[0]?.value ?? row.metricValues && 'day';
+      byRange[row.dimensionValues?.[0]?.value] = {
+        sessions:  parseInt(row.metricValues[0].value) || 0,
+        users:     parseInt(row.metricValues[1].value) || 0,
+        pageviews: parseInt(row.metricValues[2].value) || 0,
+      };
+    });
+
+    // Fetch top 5 pages by sessions (last 30 days)
+    const pagesRes = await fetch(
+      `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`,
+      {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],
+          dimensions: [{ name: 'pagePath' }],
+          metrics: [{ name: 'sessions' }],
+          orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
+          limit: 5,
+        }),
+      }
+    );
+    const pagesReport = await pagesRes.json();
+    const topPages = (pagesReport.rows || []).map(r => ({
+      path:     r.dimensionValues[0].value,
+      sessions: parseInt(r.metricValues[0].value) || 0,
+    }));
+
+    return {
+      sessions:  { day: byRange['day']?.sessions  ?? 0, week: byRange['week']?.sessions  ?? 0, month: byRange['month']?.sessions  ?? 0 },
+      users:     { day: byRange['day']?.users      ?? 0, week: byRange['week']?.users      ?? 0, month: byRange['month']?.users      ?? 0 },
+      pageviews: { day: byRange['day']?.pageviews  ?? 0, week: byRange['week']?.pageviews  ?? 0, month: byRange['month']?.pageviews  ?? 0 },
+      topPages,
+    };
+  } catch (err) {
+    console.warn(`GA4 fetch failed: ${err.message}`);
+    return null;
   }
 }
 
@@ -242,7 +347,7 @@ Return ONLY valid JSON (no markdown, no explanation outside the JSON):
 
 // ─── Email digest ─────────────────────────────────────────────────────────────
 
-async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state }) {
+async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4 }) {
   const { stats, categoryCounts, postCount } = state;
 
   const resultColor     = resultType === 'code' ? '#E8F8E8' : '#E7F3FF';
@@ -287,6 +392,52 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state })
       <td style="padding:5px 12px;color:#8B9BAE;font-size:11px;white-space:nowrap;">${p.date}</td>
     </tr>`;
   }).join('');
+
+  // ── GA4 traffic section ───────────────────────────────────────────────────────
+  let ga4Section = '';
+  if (ga4) {
+    const maxSessions = Math.max(ga4.topPages[0]?.sessions || 1, 1);
+    const topPageRows = ga4.topPages.map((p, i) => {
+      const pct = Math.round((p.sessions / maxSessions) * 100);
+      const bg  = i % 2 === 0 ? '#ffffff' : '#F8FAFB';
+      const label = p.path.length > 42 ? p.path.slice(0, 42) + '…' : p.path;
+      return `<tr style="background:${bg};">
+        <td style="padding:5px 12px;color:#556070;font-size:12px;width:42%;font-family:monospace;">${label}</td>
+        <td style="padding:5px 12px;width:46%;">
+          <table style="width:100%;border-collapse:collapse;"><tr>
+            <td style="width:${pct}%;background:#5B9FEA;height:8px;border-radius:3px;"></td>
+            <td style="width:${100 - pct}%;"></td>
+          </tr></table>
+        </td>
+        <td style="padding:5px 12px;text-align:right;font-weight:700;color:#0F2847;font-size:12px;width:12%;">${p.sessions}</td>
+      </tr>`;
+    }).join('');
+
+    ga4Section = `
+    <!-- GA4 traffic -->
+    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">🌐 Website traffic (GA4)</h3>
+    <table style="border-collapse:collapse;width:100%;margin-bottom:16px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
+      <tr style="background:#F4F7FA;">
+        <th style="padding:8px 12px;text-align:left;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:34%;">Metric</th>
+        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:22%;">Today</th>
+        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:22%;">7 days</th>
+        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:22%;">30 days</th>
+      </tr>
+      ${statRow('Sessions', ga4.sessions, '#1E5AA8', '#ffffff')}
+      ${statRow('Active users', ga4.users, '#0F2847', '#F8FAFB')}
+      ${statRow('Page views', ga4.pageviews, '#5B7A9F', '#ffffff')}
+    </table>
+    <p style="font-size:12px;color:#8B9BAE;margin:0 0 8px;">Top pages — last 30 days</p>
+    <table style="border-collapse:collapse;width:100%;margin-bottom:24px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
+      ${topPageRows}
+    </table>`;
+  } else {
+    ga4Section = `
+    <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:12px 16px;margin-bottom:24px;">
+      <p style="margin:0;color:#92400E;font-size:12px;font-weight:700;">🔌 GA4 not connected</p>
+      <p style="margin:4px 0 0;color:#92400E;font-size:12px;">Add <code>GA4_PROPERTY_ID</code> and <code>GOOGLE_SA_KEY</code> as GitHub secrets to see traffic data here.</p>
+    </div>`;
+  }
 
   await resend.emails.send({
     from: 'DoryAngel Bot <onboarding@resend.dev>',
@@ -333,6 +484,9 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state })
     <table style="border-collapse:collapse;width:100%;margin-bottom:24px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
       ${catBars}
     </table>
+
+    <!-- GA4 traffic -->
+    ${ga4Section}
 
     <!-- Recent posts -->
     <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">🗒 Latest posts</h3>
@@ -405,7 +559,10 @@ async function main() {
     resultType = 'issue';
   }
 
-  await sendDigest({ taskLabel, taskWhy, resultType, resultLink, state });
+  const ga4 = await getGA4Stats();
+  console.log(`GA4: ${ga4 ? `sessions today=${ga4.sessions.day}` : 'not configured'}`);
+
+  await sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4 });
   console.log(`Digest sent to ${NOTIFY_EMAIL}`);
 }
 
