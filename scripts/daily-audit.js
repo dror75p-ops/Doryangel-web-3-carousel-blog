@@ -154,7 +154,6 @@ async function getGA4Stats() {
     // rows are indexed by dateRange: 0=day, 1=week, 2=month
     const byRange = {};
     report.rows.forEach(row => {
-      const range = row.dimensionValues?.[0]?.value ?? row.metricValues && 'day';
       byRange[row.dimensionValues?.[0]?.value] = {
         sessions:  parseInt(row.metricValues[0].value) || 0,
         users:     parseInt(row.metricValues[1].value) || 0,
