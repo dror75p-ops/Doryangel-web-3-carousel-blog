@@ -195,6 +195,54 @@ async function getGA4Stats() {
   }
 }
 
+// ─── Make.com scenario stats ──────────────────────────────────────────────────
+
+async function getMakeStats() {
+  const apiKey = process.env.MAKE_API_KEY;
+  if (!apiKey) return null;
+
+  const SCENARIO_ID = 5578524;
+  const BASE = 'https://eu1.make.com/api/v2';
+
+  try {
+    const now = Date.now();
+    const msDay = 86400000;
+    const from  = now - 30 * msDay; // last 30 days
+
+    const res = await fetch(
+      `${BASE}/scenarios/${SCENARIO_ID}/executions?pg[limit]=500&from=${from}`,
+      { headers: { 'Authorization': `Token ${apiKey}`, 'Content-Type': 'application/json' } }
+    );
+    if (!res.ok) throw new Error(`Make API ${res.status}: ${await res.text()}`);
+
+    const body = await res.json();
+    const execs = Array.isArray(body) ? body : (body.executions || []);
+
+    const cutDay  = now - msDay;
+    const cutWeek = now - 7 * msDay;
+
+    const inPeriod = (e, cut) => new Date(e.timestamp).getTime() >= cut;
+    // transfer > 1000 bytes = filter passed → real lead written to Google Sheets
+    const isLead = e => (e.transfer || 0) > 1000;
+
+    return {
+      chats: {
+        day:   execs.filter(e => inPeriod(e, cutDay)).length,
+        week:  execs.filter(e => inPeriod(e, cutWeek)).length,
+        month: execs.length,
+      },
+      leads: {
+        day:   execs.filter(e => inPeriod(e, cutDay)  && isLead(e)).length,
+        week:  execs.filter(e => inPeriod(e, cutWeek) && isLead(e)).length,
+        month: execs.filter(e => isLead(e)).length,
+      },
+    };
+  } catch (err) {
+    console.warn(`Make.com stats failed: ${err.message}`);
+    return null;
+  }
+}
+
 // ─── Auto-implementable improvements (highest priority first) ─────────────────
 
 const AUTO_TASKS = [
@@ -347,7 +395,7 @@ Return ONLY valid JSON (no markdown, no explanation outside the JSON):
 
 // ─── Email digest ─────────────────────────────────────────────────────────────
 
-async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4 }) {
+async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make }) {
   const { stats, categoryCounts, postCount } = state;
 
   const resultColor     = resultType === 'code' ? '#E8F8E8' : '#E7F3FF';
@@ -439,6 +487,30 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
     </div>`;
   }
 
+  // ── Make.com Hailey leads section ─────────────────────────────────────────────
+  let makeSection = '';
+  if (make) {
+    makeSection = `
+    <!-- Make.com Hailey leads -->
+    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">💬 Hailey chat leads (Make.com)</h3>
+    <table style="border-collapse:collapse;width:100%;margin-bottom:24px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
+      <tr style="background:#F4F7FA;">
+        <th style="padding:8px 12px;text-align:left;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:34%;">Metric</th>
+        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:22%;">Today</th>
+        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:22%;">7 days</th>
+        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:22%;">30 days</th>
+      </tr>
+      ${statRow('Chats analyzed', make.chats, '#1E5AA8', '#ffffff')}
+      ${statRow('Leads captured', make.leads, '#0D7B4E', '#F8FAFB')}
+    </table>`;
+  } else {
+    makeSection = `
+    <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:12px 16px;margin-bottom:24px;">
+      <p style="margin:0;color:#92400E;font-size:12px;font-weight:700;">🔌 Make.com not connected</p>
+      <p style="margin:4px 0 0;color:#92400E;font-size:12px;">Add <code>MAKE_API_KEY</code> as a GitHub secret to see Hailey lead stats here.</p>
+    </div>`;
+  }
+
   await resend.emails.send({
     from: `${AGENT_NAME} by DoryAngel <onboarding@resend.dev>`,
     to: NOTIFY_EMAIL,
@@ -487,6 +559,9 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
 
     <!-- GA4 traffic -->
     ${ga4Section}
+
+    <!-- Make.com Hailey leads -->
+    ${makeSection}
 
     <!-- Recent posts -->
     <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">🗒 Latest posts</h3>
@@ -559,10 +634,11 @@ async function main() {
     resultType = 'issue';
   }
 
-  const ga4 = await getGA4Stats();
+  const [ga4, make] = await Promise.all([getGA4Stats(), getMakeStats()]);
   console.log(`GA4: ${ga4 ? `sessions today=${ga4.sessions.day}` : 'not configured'}`);
+  console.log(`Make: ${make ? `chats 30d=${make.chats.month}, leads 30d=${make.leads.month}` : 'not configured'}`);
 
-  await sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4 });
+  await sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make });
   console.log(`Digest sent to ${NOTIFY_EMAIL}`);
 }
 
