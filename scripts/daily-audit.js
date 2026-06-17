@@ -17,6 +17,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const NOTIFY_EMAIL = 'dror75p@gmail.com';
 const REPO = 'dror75p-ops/Doryangel-web-3-carousel-blog';
 const GH_TOKEN = process.env.GH_TOKEN;
+const AGENT_NAME = 'Arlo';
 
 function today() { return new Date().toISOString().split('T')[0]; }
 
@@ -439,15 +440,15 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
   }
 
   await resend.emails.send({
-    from: 'DoryAngel Bot <onboarding@resend.dev>',
+    from: `${AGENT_NAME} by DoryAngel <onboarding@resend.dev>`,
     to: NOTIFY_EMAIL,
-    subject: `🔧 Daily Audit — ${taskLabel}`,
+    subject: `🔧 ${AGENT_NAME} — ${taskLabel}`,
     html: `
 <div style="font-family:Arial,sans-serif;max-width:620px;margin:0 auto;color:#1A2740;">
 
   <!-- Header -->
   <div style="background:#0F2847;padding:20px 24px;border-radius:8px 8px 0 0;">
-    <h1 style="color:white;font-size:18px;margin:0;">🔧 Daily Website Audit</h1>
+    <h1 style="color:white;font-size:18px;margin:0;">🔧 ${AGENT_NAME} — Daily Website Audit</h1>
     <p style="color:rgba(255,255,255,0.65);font-size:13px;margin:5px 0 0;">${today()} — automated improvement loop</p>
   </div>
 
@@ -495,7 +496,7 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
 
     <!-- Footer -->
     <p style="margin:28px 0 0;font-size:11px;color:#8B9BAE;text-align:center;">
-      DoryAngel daily audit — runs every day at 9 AM EST<br>
+      ${AGENT_NAME} runs every day at 9 AM EST<br>
       <a href="https://github.com/${REPO}/pulls" style="color:#8B9BAE;">Open PRs</a> ·
       <a href="https://github.com/${REPO}/issues" style="color:#8B9BAE;">Open issues</a>
     </p>
