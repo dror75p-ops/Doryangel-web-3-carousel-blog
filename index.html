@@ -3203,6 +3203,602 @@ retell-chat-web-component {
   </div>
 </section>
 
+<!-- CLIENT TESTIMONIALS -->
+<style>
+/* ── CT section (scoped with ct- prefix to avoid conflicts) ── */
+.ct-section {
+  background: #fff;
+  padding: 88px 24px 96px;
+}
+.ct-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Eyebrow */
+.ct-eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #1E5AA8;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ct-eyebrow::before {
+  content: '';
+  width: 28px;
+  height: 2px;
+  background: #1E5AA8;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* Heading */
+.ct-heading {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 400;
+  line-height: 1.12;
+  color: #0F2847;
+  margin-bottom: 14px;
+}
+
+/* Subtext */
+.ct-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  color: #6B7280;
+  line-height: 1.65;
+  max-width: 560px;
+  margin-bottom: 48px;
+}
+
+/* Stats strip */
+.ct-stats {
+  display: flex;
+  border: 1px solid #F3F4F6;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 60px;
+}
+.ct-stat {
+  flex: 1;
+  text-align: center;
+  padding: 22px 16px;
+  border-right: 1px solid #F3F4F6;
+}
+.ct-stat:last-child { border-right: none; }
+.ct-stat-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: #0F2847;
+  display: block;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.ct-accent { color: #1E5AA8; }
+.ct-stat-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #6B7280;
+}
+
+/* Section divider */
+.ct-sec-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+  margin-top: 0;
+}
+.ct-sec-tag {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #1E5AA8;
+  white-space: nowrap;
+}
+.ct-sec-line {
+  flex: 1;
+  height: 1px;
+  background: #F3F4F6;
+}
+.ct-sec-count {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: #6B7280;
+  white-space: nowrap;
+}
+
+/* Featured 2-col row */
+.ct-featured-row {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+/* Masonry */
+.ct-masonry {
+  columns: 3;
+  column-gap: 18px;
+}
+.ct-masonry .ct-card {
+  break-inside: avoid;
+  margin-bottom: 18px;
+}
+
+/* Card base */
+.ct-card {
+  background: #fff;
+  border: 1px solid #F3F4F6;
+  border-radius: 14px;
+  padding: 26px 24px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  opacity: 0;
+  animation: ctFadeUp 0.45s ease forwards;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.ct-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 28px rgba(0,0,0,0.11);
+  border-color: #5B9FEA;
+}
+.ct-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 14px 14px 0 0;
+  background: #F3F4F6;
+  transition: background 0.22s;
+}
+.ct-card:hover::before { background: #1E5AA8; }
+
+/* Featured card */
+.ct-featured {
+  background: #EBF3FD;
+  border-color: rgba(30,90,168,0.18);
+}
+.ct-featured::before { background: #1E5AA8; }
+
+/* Quote mark */
+.ct-qmark {
+  font-family: Georgia, serif;
+  font-size: 52px;
+  line-height: 0.7;
+  color: #1E5AA8;
+  opacity: 0.18;
+  user-select: none;
+  margin-bottom: -4px;
+}
+
+/* Quote text */
+.ct-qt {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.75;
+  color: #374151;
+  font-style: italic;
+  flex: 1;
+}
+.ct-featured .ct-qt { font-size: 15px; }
+
+/* Stars */
+.ct-stars {
+  display: flex;
+  gap: 2px;
+}
+.ct-star {
+  width: 12px;
+  height: 12px;
+  fill: #F5A623;
+}
+
+/* Chip */
+.ct-chip {
+  display: inline-block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: #6B7280;
+  background: #F9FAFB;
+  border: 1px solid #F3F4F6;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  width: fit-content;
+}
+
+/* Author row */
+.ct-author {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding-top: 14px;
+  border-top: 1px solid #F3F4F6;
+  margin-top: auto;
+}
+.ct-author-info { flex: 1; min-width: 0; }
+.ct-aname {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0F2847;
+}
+.ct-ameta {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  color: #6B7280;
+  margin-top: 1px;
+}
+
+/* Avatar */
+.ct-av {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.4);
+}
+.ct-av-a { background: linear-gradient(140deg,#5B9FEA,#1E5AA8); }
+.ct-av-b { background: linear-gradient(140deg,#7DC47D,#3A8A3A); }
+.ct-av-c { background: linear-gradient(140deg,#D4845A,#A85028); }
+.ct-av-d { background: linear-gradient(140deg,#B07DD4,#7840A8); }
+.ct-av-e { background: linear-gradient(140deg,#D4B040,#A87818); }
+.ct-av-f { background: linear-gradient(140deg,#5AB8D4,#2884A8); }
+.ct-av-g { background: linear-gradient(140deg,#D46060,#A83030); }
+.ct-av-biz { background: linear-gradient(140deg,#1E5AA8,#0F2847); border: 1.5px solid rgba(91,159,234,0.3); }
+
+/* Role badges */
+.ct-badge {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+.ct-b-landlord { background: rgba(30,90,168,0.10); color: #1E5AA8; }
+.ct-b-tenant   { background: rgba(122,141,155,0.12); color: #6B7280; }
+.ct-b-manager  { background: rgba(22,163,74,0.10); color: #15803d; }
+.ct-b-broker   { background: rgba(15,40,71,0.08); color: #0F2847; }
+
+/* CTA strip */
+.ct-cta-strip {
+  margin-top: 68px;
+  border: 1px solid #F3F4F6;
+  border-radius: 14px;
+  padding: 44px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  background: #F9FAFB;
+}
+.ct-cta-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #1E5AA8;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ct-cta-label::before { content: ''; width: 18px; height: 2px; background: #1E5AA8; flex-shrink: 0; }
+.ct-cta-heading {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+  font-weight: 400;
+  color: #0F2847;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+.ct-cta-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: #6B7280;
+  line-height: 1.6;
+}
+.ct-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  background: #1E5AA8;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 9999px;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 18px rgba(30,90,168,0.30);
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ct-cta-btn:hover {
+  background: #0F2847;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(30,90,168,0.38);
+}
+
+/* Fade-up animation */
+@keyframes ctFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .ct-masonry { columns: 2; }
+  .ct-featured-row { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .ct-section { padding: 60px 20px 72px; }
+  .ct-masonry { columns: 1; }
+  .ct-stats { flex-wrap: wrap; }
+  .ct-stat { flex: 1 1 45%; }
+  .ct-cta-strip { flex-direction: column; align-items: flex-start; padding: 32px 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ct-card { animation: none; opacity: 1; }
+}
+</style>
+
+<section id="client-testimonials" class="ct-section">
+  <div class="ct-inner">
+
+    <!-- Header -->
+    <div class="ct-eyebrow">In Their Own Words</div>
+    <h2 class="ct-heading">What Our Clients Say</h2>
+    <p class="ct-sub">Over 15 years managing properties across the Bronx, Queens, Yonkers, Mount Vernon, New Rochelle &amp; North Jersey — real words from real clients.</p>
+
+    <!-- Stats strip -->
+    <div class="ct-stats">
+      <div class="ct-stat">
+        <span class="ct-stat-num">5.0<span class="ct-accent">★</span></span>
+        <span class="ct-stat-label">Google Rating</span>
+      </div>
+      <div class="ct-stat">
+        <span class="ct-stat-num">21<span class="ct-accent">+</span></span>
+        <span class="ct-stat-label">Google Reviews</span>
+      </div>
+      <div class="ct-stat">
+        <span class="ct-stat-num">15<span class="ct-accent">+</span></span>
+        <span class="ct-stat-label">Years in Business</span>
+      </div>
+      <div class="ct-stat">
+        <span class="ct-stat-num">158<span class="ct-accent">+</span></span>
+        <span class="ct-stat-label">Units Managed</span>
+      </div>
+      <div class="ct-stat">
+        <span class="ct-stat-num">$99</span>
+        <span class="ct-stat-label">Per Unit / Month</span>
+      </div>
+    </div>
+
+    <!-- Section divider -->
+    <div class="ct-sec-head">
+      <span class="ct-sec-tag">Client Testimonials</span>
+      <div class="ct-sec-line"></div>
+      <span class="ct-sec-count">7 Statements</span>
+    </div>
+
+    <!-- Featured pair -->
+    <div class="ct-featured-row">
+
+      <!-- Stacy Levi — featured -->
+      <div class="ct-card ct-featured">
+        <div class="ct-qmark">&ldquo;</div>
+        <p class="ct-qt">Doryangel management is a great management company. I decided to work with Doryangel after doing extensive market research, contacting several other firms and discussing with my other property-owner friends. I have been a client for over a year and all of my expectations have been exceeded. Communications are great, handling of issues fast and competent, and a very good value for what I pay. It is seamless and transparent to me — it gives me no stress but provides relief and confidence in my investments.</p>
+        <div class="ct-stars">
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div class="ct-author">
+          <div class="ct-av ct-av-a">SL</div>
+          <div class="ct-author-info">
+            <div class="ct-aname">Stacy Levi</div>
+            <div class="ct-ameta">Property Owner · 1+ year client</div>
+          </div>
+          <span class="ct-badge ct-b-landlord">Landlord</span>
+        </div>
+      </div>
+
+      <!-- Avi Baranes -->
+      <div class="ct-card">
+        <div class="ct-qmark">&ldquo;</div>
+        <p class="ct-qt">Working with Doryangel for more than 10 years, I can say it contributed to my investment plan over the years. Accuracy and hands-on with any type of issue — all handled in a professional way.</p>
+        <div class="ct-chip">10+ year client</div>
+        <div class="ct-stars">
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div class="ct-author">
+          <div class="ct-av ct-av-e">AB</div>
+          <div class="ct-author-info">
+            <div class="ct-aname">Avi Baranes</div>
+            <div class="ct-ameta">Property Owner</div>
+          </div>
+          <span class="ct-badge ct-b-landlord">Landlord</span>
+        </div>
+      </div>
+
+    </div><!-- /featured-row -->
+
+    <!-- Masonry grid -->
+    <div class="ct-masonry">
+
+      <!-- Gil Regev -->
+      <div class="ct-card">
+        <div class="ct-qmark">&ldquo;</div>
+        <p class="ct-qt">Doryangel started working with us a year ago. Their work and methods made us much more organized and our response time has reduced dramatically. When we started working we had unresolved issues with tenants who didn't want to pay rent. After 6 months we saw a tremendous improvement in client payments on one hand and a decrease in emergency calls from tenants on the other hand.</p>
+        <div class="ct-chip">1 year client</div>
+        <div class="ct-stars">
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div class="ct-author">
+          <div class="ct-av ct-av-f">GR</div>
+          <div class="ct-author-info">
+            <div class="ct-aname">Gil Regev</div>
+            <div class="ct-ameta">Portfolio Manager</div>
+          </div>
+          <span class="ct-badge ct-b-manager">Manager</span>
+        </div>
+      </div>
+
+      <!-- Jodie Marzet -->
+      <div class="ct-card">
+        <div class="ct-qmark">&ldquo;</div>
+        <p class="ct-qt">Doryangel management started working here 5 years ago. Since they came in we feel very happy and confident in our apartment. The call center reacts very quickly and efficiently to any maintenance issues. Thanks to Doryangel our building looks much better. Thank you!</p>
+        <div class="ct-chip">5 year resident</div>
+        <div class="ct-stars">
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div class="ct-author">
+          <div class="ct-av ct-av-c">JM</div>
+          <div class="ct-author-info">
+            <div class="ct-aname">Jodie Marzet</div>
+            <div class="ct-ameta">Resident · Bronx, NY</div>
+          </div>
+          <span class="ct-badge ct-b-tenant">Tenant</span>
+        </div>
+      </div>
+
+      <!-- Barbara Williams -->
+      <div class="ct-card">
+        <div class="ct-qmark">&ldquo;</div>
+        <p class="ct-qt">Living with my 3 sons at a Doryangel apartment, we feel our home is a better place now.</p>
+        <div class="ct-stars">
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div class="ct-author">
+          <div class="ct-av ct-av-g">BW</div>
+          <div class="ct-author-info">
+            <div class="ct-aname">Barbara Williams</div>
+            <div class="ct-ameta">Resident · Family of 4</div>
+          </div>
+          <span class="ct-badge ct-b-tenant">Tenant</span>
+        </div>
+      </div>
+
+      <!-- Einav Makover -->
+      <div class="ct-card">
+        <div class="ct-qmark">&ldquo;</div>
+        <p class="ct-qt">Doryangel LLC are very devoted to their vision. I can feel their professional fingerprint on everything they are taking care of.</p>
+        <div class="ct-stars">
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div class="ct-author">
+          <div class="ct-av ct-av-d">EM</div>
+          <div class="ct-author-info">
+            <div class="ct-aname">Einav Makover</div>
+            <div class="ct-ameta">Property Owner</div>
+          </div>
+          <span class="ct-badge ct-b-landlord">Landlord</span>
+        </div>
+      </div>
+
+      <!-- Holio Allyn Brokerage -->
+      <div class="ct-card">
+        <div class="ct-qmark">&ldquo;</div>
+        <p class="ct-qt">I had the privilege of working with Doryangel management and we wish to do more business in the near future.</p>
+        <div class="ct-stars">
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="ct-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div class="ct-author">
+          <div class="ct-av ct-av-biz">
+            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linecap="round" style="width:18px;height:18px"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-4h6v4M9 10h1m4 0h1M9 14h1m4 0h1"/></svg>
+          </div>
+          <div class="ct-author-info">
+            <div class="ct-aname">Holio Allyn's Brokerage</div>
+            <div class="ct-ameta">Real Estate Partner</div>
+          </div>
+          <span class="ct-badge ct-b-broker">Broker</span>
+        </div>
+      </div>
+
+    </div><!-- /masonry -->
+
+    <!-- CTA strip -->
+    <div class="ct-cta-strip">
+      <div>
+        <div class="ct-cta-label">Get Started</div>
+        <div class="ct-cta-heading">Ready to join our satisfied clients?</div>
+        <p class="ct-cta-sub">45-minute free consultation · No commitment · Bronx, Queens, Yonkers, Mount Vernon, New Rochelle &amp; North Jersey</p>
+      </div>
+      <a href="#contact" class="ct-cta-btn">
+        Book Free Consultation
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+  </div><!-- /ct-inner -->
+</section>
+
+<script>
+(function(){
+  var cards = document.querySelectorAll('#client-testimonials .ct-card');
+  cards.forEach(function(c, i){ c.style.animationDelay = (i * 0.055) + 's'; });
+})();
+</script>
+
 <!-- CONTACT -->
 <section class="contact-section" id="contact">
   <div class="section-inner">
