@@ -212,11 +212,15 @@ Only `chat_analyzed` events trigger the pipeline (`chat_started` and `chat_ended
 
 ~$0.02-0.05/post (Opus 4.7), ~$2-3/month total
 
-## Status (as of 2026-04-29)
+## Status (as of 2026-06-17)
 
 This repo is now the **primary active design** and will replace the Wix website in the coming days.
 - Hamburger mobile nav is live (merged PRs #11, #12, #13)
 - Auto-publish blog pipeline running every 3 days
+- Daily website audit automation live (PR #87) — runs every 9 AM EST, auto-fixes + creates GitHub Issues
+- Microsoft Clarity live (ID `x7y1bk4fhc`, consent-gated)
+- LocalBusiness + RealEstateAgent JSON-LD schema live in `<head>`
+- Client testimonials section added (PR #85)
 - GitHub Pages live at the URL above; custom domain switch pending
 
 ## Improvement roadmap (exposure / SEO)
@@ -235,7 +239,7 @@ Priority order for next sessions:
 
 ### 3. Technical SEO
 - Submit sitemap to Google Search Console (already verified)
-- Add `LocalBusiness` + `RealEstateAgent` JSON-LD schema to index.html
+- ~~Add `LocalBusiness` + `RealEstateAgent` JSON-LD schema to index.html~~ ← **DONE** (in `<head>`)
 - Add breadcrumb JSON-LD to blog post pages
 - Add `hreflang` if Spanish content is ever added (large Bronx audience)
 
@@ -243,11 +247,7 @@ Priority order for next sessions:
 - A/B test hero headline: rotating vs. static (measure via GA4 events)
 - Add a lead-capture form or exit-intent popup for free audit CTA ← **DONE 2026-05-18** (Elfsight FOMO widget added)
 - Add social proof counters (Google review count, years in business) above the fold
-- **PENDING: Add Microsoft Clarity heatmaps + session recording**
-  - Sign up free at https://clarity.microsoft.com (desktop only — can't set up from phone)
-  - Create a new project → copy the tracking ID (format: `xxxxxxxx`, 8 chars)
-  - Send the ID to Claude → will add one `<script>` tag to `<head>` in index.html
-  - No other tools needed — Clarity is the only missing analytics layer (GA4 covers events, Clarity covers behavior)
+- ~~Add Microsoft Clarity heatmaps + session recording~~ ← **DONE** (tracking ID `x7y1bk4fhc`, consent-gated via `loadClarity()` in the cookie script)
 
 ### 5. Performance
 - Compress the base64 logo image in index.html — it is ~80KB inline and delays first paint
