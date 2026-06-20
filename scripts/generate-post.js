@@ -372,6 +372,11 @@ async function main() {
   await sendApprovalEmail(post);
   console.log(`Approval email sent to ${APPROVAL_EMAIL}`);
 
+  // Hand off to Vera (social-post.js) via a temp file — keeps Nave's scope clean
+  const { writeFileSync: wf } = await import('fs');
+  wf('/tmp/social-queue.json', JSON.stringify({ slug: postForIndex.slug, facebookPost }));
+  console.log('Social queue written for Vera → /tmp/social-queue.json');
+
   await notifyDigestSubscribers(postForIndex);
 }
 
