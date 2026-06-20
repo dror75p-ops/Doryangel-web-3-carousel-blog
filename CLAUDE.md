@@ -8,7 +8,7 @@
 - Owner GitHub account: dror75p-ops
 - Owner email: office@doryangel.com (notification emails go to dror75p@gmail.com via Resend)
 
-### Last changes (as of 2026-05-17)
+### Last changes (as of 2026-06-20)
 
 - **Removed**: Owner/Tenant Portal card widget from the hero section (the tab + ledger mockup). Merged via PR #43. Reason: it distracted from the primary lead-collection CTA flow.
 - **Accessibility fixes** (merged PR #43): contact form labels linked to inputs via `for`/`id`; FAQ buttons now have `aria-expanded`; hero photo divs have `role="img"` + `aria-label`; blog carousel has `<noscript>` static fallback.
@@ -208,11 +208,79 @@ Only `chat_analyzed` events trigger the pipeline (`chat_started` and `chat_ended
 4. **Wrong event name**: Filter used `call_analyzed` but chat agents fire `chat_analyzed`. Fixed.
 5. **Wrong payload root key**: Make.com paths used `1.call.call_analysis.*` but chat agent payloads use `1.chat.chat_analysis.*`. Confirmed via 4-path debug email test — Path A (`chat.chat_analysis`) had all real data. Fixed.
 
+## Nave — Blog Auto-Publish Agent
+
+The blog agent is named **Nave** (defined as `AGENT_NAME = 'Nave'` in `scripts/generate-post.js` line 9).
+
+### Nave bugs fixed (2026-06-20)
+
+1. **Wrong approval email address**: `APPROVAL_EMAIL` was set to `office@doryangel.com` (unmanned inbox). Fixed to `dror75p@gmail.com`. This is why the June 19 post email was never received.
+2. **False failure on duplicate runs**: When a post was already published that day, `generate-post.js` called `process.exit(0)` (skip), but `build-blog.js` still ran and found nothing to commit, causing `git commit` to exit with code 1. Fixed in `blog-autopublish.yml` by adding `git diff --staged --quiet && echo "Nothing to commit — post was skipped" && exit 0` before the commit line.
+
+### Nave email output (current)
+
+Every approval email now includes a **Facebook-ready post** with direct links to all 5 DoryAngel tools:
+
+```
+📅 Compliance Calendar (free) → https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/
+📬 DoryAngel Digest (free) → https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/
+🔍 AI Property Inspector (free) → https://dror75p-ops.github.io/Transcribe_meeting/
+📊 Property P&L Dashboard ($29) → https://beta.doryangel.com/tools/pl-dashboard/
+🤝 Broker Partner Program ($50/unit/mo) → https://beta.doryangel.com/broker-partner.html
+```
+
+- For broker-partnerships posts: the Broker Partner link moves to the TOP of the list
+- The most relevant tool gets a ★ highlight
+
+## DoryAngel Tools (all 5)
+
+| Tool | URL | Price |
+|------|-----|-------|
+| Compliance Calendar | https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/ | Free |
+| DoryAngel Digest | https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/ | Free |
+| AI Property Inspector | https://dror75p-ops.github.io/Transcribe_meeting/ | Free |
+| Property P&L Dashboard | https://beta.doryangel.com/tools/pl-dashboard/ | $29 |
+| Broker Partner Program | https://beta.doryangel.com/broker-partner.html | $50/unit/mo |
+
+## Social Media — Facebook Posting (current plan)
+
+**Decision (2026-06-20)**: Start with **Publer free tier** for manual Facebook posting.
+
+### Workflow
+1. Nave generates blog post + Facebook caption with tool links → sends to `dror75p@gmail.com`
+2. Dror (or assistant) copies the Facebook caption from the email
+3. Pastes into Publer and schedules to DoryAngel Facebook Business Page
+
+### Publer free tier limits
+- 3 social accounts (enough for Facebook + Instagram + Google My Business)
+- 10 scheduled posts per account per month (~10 posts needed at 3-day cadence — right at the limit)
+- No analytics, no AI features on free tier
+
+### Social media automation options researched (for future upgrade)
+
+| Option | Cost/mo | Nave integration | GMB? | Grade |
+|--------|---------|-----------------|------|-------|
+| Publer Free | $0 | Manual copy-paste | Yes | — |
+| Buffer | $6 | Manual | No | 7/10 |
+| Publer Professional | ~$10 (NIS: ~36-45 NIS) | Manual | Yes | 8/10 |
+| Ayrshare | $29 | **Full API — Nave posts automatically** | Yes | 9/10 |
+
+**If/when upgrading**: Ayrshare is the best path for full automation — REST API can be wired directly into `generate-post.js` so posts go live automatically after each blog publish.
+
+## QA Checklist — Joy & Rafael (2026-06-20)
+
+A Google Sheet was created for non-technical testers to check beta.doryangel.com:
+- **Sheet**: "DoryAngel Website QA — Joy & Rafael"
+- **URL**: https://docs.google.com/spreadsheets/d/1QVjHZec8VJc-lxcqG6dWZ7jFlR-idxAjTTN2KDLb3uE/edit
+- **43 items** across 10 sections: Page Load, Navigation, Content, Forms, Tools & Links, Blog, Chat (Hailey), Contact & Social, Legal Pages, Overall
+- **Columns**: #, Section, Task, Joy ✅❌⚠️, Joy Notes, Rafael ✅❌⚠️, Rafael Notes
+- File is shared with Joy from Dror's Google Drive
+
 ## Cost (per blog post)
 
 ~$0.02-0.05/post (Opus 4.7), ~$2-3/month total
 
-## Status (as of 2026-06-17)
+## Status (as of 2026-06-20)
 
 This repo is now the **primary active design** and will replace the Wix website in the coming days.
 - Hamburger mobile nav is live (merged PRs #11, #12, #13)
@@ -255,8 +323,8 @@ Priority order for next sessions:
 - Consider splitting the single 2,400-line index.html into partials built at deploy time
 
 ### 6. Off-page / distribution
-- Set up Google Business Profile posts linked to each new blog post
-- Auto-share new posts to LinkedIn / Facebook (extend generate-post.js)
+- Set up Google Business Profile posts linked to each new blog post ← **IN PROGRESS** (Publer free tier setup, manual for now)
+- Auto-share new posts to LinkedIn / Facebook ← **IN PROGRESS** (Nave generates Facebook caption in every email; manual posting via Publer; full automation via Ayrshare API when ready to upgrade)
 - Build backlinks: submit to NYC landlord forums, Bronx community boards, BiggerPockets
 
 ## Outstanding / nice-to-have
