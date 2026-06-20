@@ -192,7 +192,15 @@ When asked to write a post, also produce:
 - An SEO title in field "seoTitleShort": max 48 chars, do NOT add " | DoryAngel" — the system appends it
 - An SEO description (max 155 chars, includes a hook + value prop)
 - A descriptive alt text for the hero image (used for accessibility + SEO)
-- A Facebook-optimized version (200-280 words, hook-first, 2-3 bullet takeaways, with the CTA + website link + hashtags at the bottom in the format we specify). If the post topic naturally connects to one of DoryAngel's tools (Weekly Digest, Owner Dashboard, Maintenance Tracker), add one short line near the end before the hashtags — e.g. "DoryAngel clients get this flagged automatically in their weekly digest." or "Track this in real time on the DoryAngel owner dashboard." Keep it one sentence max — don't make the post feel like an ad.
+- A Facebook-optimized version (200-280 words, hook-first, 2-3 bullet takeaways, then a closing section in this EXACT format — copy the labels and line breaks exactly):
+
+---
+🔑 Manage your property smarter → https://beta.doryangel.com
+🛠️ Free NYC landlord tools → https://beta.doryangel.com/#tools
+🤝 Broker Partner Program ($50/unit/mo) → https://beta.doryangel.com/broker-partner.html
+---
+
+Then the hashtags on the final line. If the post topic naturally connects to one of DoryAngel's tools (Weekly Digest, Owner Dashboard, Maintenance Tracker), add one short sentence before the links block — e.g. "DoryAngel clients get this flagged automatically in their weekly digest." Keep it one sentence max. For broker-partnerships posts, move the Broker Partner Program link to the TOP of the links block.
 
 Categories must be exactly one of: property-management, diy-property-management, investments, property-automation, broker-partnerships.
 
