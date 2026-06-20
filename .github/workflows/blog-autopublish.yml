@@ -35,18 +35,22 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Generate blog post and send approval email
+      - name: Nave — generate blog post and send approval email
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
-          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
-          FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
           FORCE_PUBLISH: ${{ github.event.inputs.force || 'false' }}
         run: node scripts/generate-post.js
 
       - name: Build per-post HTML pages + sitemap
         run: node scripts/build-blog.js
+
+      - name: Vera — post to Facebook Page
+        env:
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
+        run: node scripts/social-post.js
 
       - name: Commit and push new post
         env:

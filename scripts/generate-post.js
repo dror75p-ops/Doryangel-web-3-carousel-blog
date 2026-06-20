@@ -372,40 +372,12 @@ async function main() {
   await sendApprovalEmail(post);
   console.log(`Approval email sent to ${APPROVAL_EMAIL}`);
 
-  await postToFacebook(postForIndex, facebookPost);
+  // Hand off to Vera (social-post.js) via a temp file — keeps Nave's scope clean
+  const { writeFileSync: wf } = await import('fs');
+  wf('/tmp/social-queue.json', JSON.stringify({ slug: postForIndex.slug, facebookPost }));
+  console.log('Social queue written for Vera → /tmp/social-queue.json');
 
   await notifyDigestSubscribers(postForIndex);
-}
-
-const BASE_URL = 'https://dror75p-ops.github.io/Doryangel-web-3-carousel-blog';
-
-async function postToFacebook(post, facebookPost) {
-  const pageId = process.env.FACEBOOK_PAGE_ID;
-  const token  = process.env.FACEBOOK_PAGE_ACCESS_TOKEN;
-
-  if (!pageId || !token) {
-    console.log('FACEBOOK_PAGE_ID or FACEBOOK_PAGE_ACCESS_TOKEN not set — skipping Facebook post');
-    return;
-  }
-
-  const blogUrl = `${BASE_URL}/blog/${post.slug}/`;
-  const body = new URLSearchParams({
-    message:      facebookPost,
-    link:         blogUrl,
-    access_token: token,
-  });
-
-  try {
-    const res = await fetch(`https://graph.facebook.com/v22.0/${pageId}/feed`, {
-      method: 'POST',
-      body,
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error?.message ?? `HTTP ${res.status}`);
-    console.log(`Posted to Facebook — post ID: ${data.id}`);
-  } catch (err) {
-    console.warn(`Facebook post failed (${err.message}) — blog still published, email still sent`);
-  }
 }
 
 async function notifyDigestSubscribers(post) {
