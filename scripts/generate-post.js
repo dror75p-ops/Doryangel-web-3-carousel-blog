@@ -416,7 +416,10 @@ async function getGoogleAccessToken(credentials) {
   return data.access_token;
 }
 
-function buildSubscriberEmail(post, name, postUrl) {
+const UNSUBSCRIBE_WEBHOOK = 'https://hook.eu1.make.com/a3mb6f183xvhgphe2nxkfxc6pyyyan4x';
+
+function buildSubscriberEmail(post, name, postUrl, email) {
+  const unsubUrl = `${UNSUBSCRIBE_WEBHOOK}?email=${encodeURIComponent(email)}`;
   return `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;max-width:580px;margin:0 auto;color:#1A2740">
 <div style="background:#0F2847;padding:22px 28px;border-radius:8px 8px 0 0">
   <h1 style="color:white;font-size:18px;margin:0">DoryAngel Digest</h1>
@@ -428,11 +431,11 @@ function buildSubscriberEmail(post, name, postUrl) {
   <p style="color:#556070;font-size:14px;line-height:1.7;margin:0 0 24px">${post.excerpt}</p>
   <a href="${postUrl}" style="display:inline-block;background:#1E5AA8;color:white;padding:13px 26px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px">Read the full article →</a>
   <hr style="border:none;border-top:1px solid #E2E8F0;margin:28px 0 18px">
-  <p style="font-size:11px;color:#8B9BAE;margin:0;line-height:1.7">
+  <p style="font-size:11px;color:#8B9BAE;margin:0 0 10px;line-height:1.7">
     DoryAngel LLC · 557 Grand Concourse, Bronx, NY 10451<br>
-    You're receiving this because you subscribed to DoryAngel Digest.<br>
-    To unsubscribe, reply with the word <strong>UNSUBSCRIBE</strong>.
+    You're receiving this because you subscribed to DoryAngel Digest.
   </p>
+  <a href="${unsubUrl}" style="font-size:11px;color:#8B9BAE;text-decoration:underline">Unsubscribe</a>
 </div>
 </body></html>`;
 }
@@ -518,7 +521,7 @@ async function notifyDigestSubscribers(post) {
         from: 'DoryAngel Blog <onboarding@resend.dev>',
         to:   email,
         subject: `📬 New post: ${post.title}`,
-        html: buildSubscriberEmail(post, name, postUrl),
+        html: buildSubscriberEmail(post, name, postUrl, email),
       });
       sent++;
     } catch (e) {
