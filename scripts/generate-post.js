@@ -437,60 +437,97 @@ function buildSubscriberEmail(post, name, postUrl) {
 </body></html>`;
 }
 
-async function notifyDigestSubscribers(post) {
-  const saKey = process.env.GOOGLE_SA_KEY;
-  if (!saKey) {
-    console.log('GOOGLE_SA_KEY not set — skipping subscriber digest');
-    return;
-  }
-
-  try {
-    const credentials = JSON.parse(saKey);
-    const token = await getGoogleAccessToken(credentials);
-
-    const res = await fetch(
-      `https://sheets.googleapis.com/v4/spreadsheets/${SUBSCRIBER_SHEET_ID}/values/Sheet1`,
-      { headers: { 'Authorization': `Bearer ${token}` } }
-    );
-    if (!res.ok) throw new Error(`Sheets API returned ${res.status}`);
-    const data = await res.json();
-    const rows = (data.values || []).slice(1); // skip header row
-
-    // col A=name, B=email, C=topics, D=date, E=active("Yes"), F=address
-    const subscribers = rows.filter(r => {
-      const email  = (r[1] || '').trim();
-      const active = (r[4] || '').trim().toLowerCase();
-      return email.includes('@') && email.length > 6 && active === 'yes';
-    });
-
-    console.log(`Notifying ${subscribers.length} digest subscribers`);
-    if (subscribers.length === 0) return;
-
-    const postUrl = `https://dror75p-ops.github.io/Doryangel-web-3-carousel-blog/blog/${post.slug}/`;
-    let sent = 0;
-
-    for (const sub of subscribers) {
-      const email = (sub[1] || '').trim();
-      const name  = (sub[0] || '').trim() || 'there';
-      try {
-        await resend.emails.send({
-          from: 'DoryAngel Blog <onboarding@resend.dev>',
-          to:   email,
-          subject: `📬 New post: ${post.title}`,
-          html: buildSubscriberEmail(post, name, postUrl),
-        });
-        sent++;
-      } catch (e) {
-        console.warn(`  ✗ ${email}: ${e.message}`);
+function parseCSV(text) {
+  return text.trim().split(/\r?\n/).map(line => {
+    const result = [];
+    let field = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQuotes && line[i + 1] === '"') { field += '"'; i++; }
+        else { inQuotes = !inQuotes; }
+      } else if (ch === ',' && !inQuotes) {
+        result.push(field); field = '';
+      } else {
+        field += ch;
       }
     }
+    result.push(field);
+    return result;
+  });
+}
 
-    console.log(`Digest sent to ${sent}/${subscribers.length} subscribers`);
-    return { sent, total: subscribers.length };
-  } catch (err) {
-    console.warn(`Subscriber digest failed: ${err.message}`);
-    return { sent: 0, total: 0, error: err.message };
+async function notifyDigestSubscribers(post) {
+  let rows = null;
+
+  // Primary: Sheets API with service account auth
+  const saKey = process.env.GOOGLE_SA_KEY;
+  if (saKey) {
+    try {
+      const credentials = JSON.parse(saKey);
+      const token = await getGoogleAccessToken(credentials);
+      const res = await fetch(
+        `https://sheets.googleapis.com/v4/spreadsheets/${SUBSCRIBER_SHEET_ID}/values/Sheet1`,
+        { headers: { 'Authorization': `Bearer ${token}` } }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        rows = (data.values || []).slice(1);
+        console.log('Subscriber list loaded via Sheets API');
+      } else {
+        console.warn(`Sheets API returned ${res.status} — falling back to public CSV`);
+      }
+    } catch (err) {
+      console.warn(`SA auth failed (${err.message}) — falling back to public CSV`);
+    }
   }
+
+  // Fallback: public CSV export (requires sheet set to "Anyone with the link can view")
+  if (rows === null) {
+    try {
+      const csvUrl = `https://docs.google.com/spreadsheets/d/${SUBSCRIBER_SHEET_ID}/export?format=csv&gid=0`;
+      const res = await fetch(csvUrl);
+      if (!res.ok) throw new Error(`CSV export returned ${res.status}`);
+      rows = parseCSV(await res.text()).slice(1);
+      console.log('Subscriber list loaded via public CSV');
+    } catch (err) {
+      console.warn(`Subscriber digest failed: ${err.message}`);
+      return { sent: 0, total: 0, error: err.message };
+    }
+  }
+
+  // col A=name, B=email, C=topics, D=date, E=active("Yes"), F=address
+  const subscribers = rows.filter(r => {
+    const email  = (r[1] || '').trim();
+    const active = (r[4] || '').trim().toLowerCase();
+    return email.includes('@') && email.length > 6 && active === 'yes';
+  });
+
+  console.log(`Notifying ${subscribers.length} digest subscribers`);
+  if (subscribers.length === 0) return { sent: 0, total: 0 };
+
+  const postUrl = `https://dror75p-ops.github.io/Doryangel-web-3-carousel-blog/blog/${post.slug}/`;
+  let sent = 0;
+
+  for (const sub of subscribers) {
+    const email = (sub[1] || '').trim();
+    const name  = (sub[0] || '').trim() || 'there';
+    try {
+      await resend.emails.send({
+        from: 'DoryAngel Blog <onboarding@resend.dev>',
+        to:   email,
+        subject: `📬 New post: ${post.title}`,
+        html: buildSubscriberEmail(post, name, postUrl),
+      });
+      sent++;
+    } catch (e) {
+      console.warn(`  ✗ ${email}: ${e.message}`);
+    }
+  }
+
+  console.log(`Digest sent to ${sent}/${subscribers.length} subscribers`);
+  return { sent, total: subscribers.length };
 }
 
 main().catch(err => {
