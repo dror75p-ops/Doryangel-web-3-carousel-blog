@@ -3,6 +3,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { Resend } from 'resend';
 import { readFileSync, writeFileSync } from 'fs';
+import { createSign } from 'crypto';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 4 });
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -380,24 +381,105 @@ async function main() {
   await notifyDigestSubscribers(postForIndex);
 }
 
+const SUBSCRIBER_SHEET_ID = '1-9IDAD1VmlnCvTdU3JqDWahjEFQaUFtRG-WayHZ9N8o';
+
+async function getGoogleAccessToken(credentials) {
+  const now = Math.floor(Date.now() / 1000);
+  const header  = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT' })).toString('base64url');
+  const payload = Buffer.from(JSON.stringify({
+    iss: credentials.client_email,
+    scope: 'https://www.googleapis.com/auth/spreadsheets.readonly',
+    aud: 'https://oauth2.googleapis.com/token',
+    exp: now + 3600,
+    iat: now,
+  })).toString('base64url');
+  const toSign = `${header}.${payload}`;
+  const sign = createSign('RSA-SHA256');
+  sign.update(toSign);
+  const sig = sign.sign(credentials.private_key, 'base64url');
+  const jwt = `${toSign}.${sig}`;
+  const res = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${jwt}`,
+  });
+  const data = await res.json();
+  if (!data.access_token) throw new Error(`Google token error: ${JSON.stringify(data)}`);
+  return data.access_token;
+}
+
+function buildSubscriberEmail(post, name, postUrl) {
+  return `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;max-width:580px;margin:0 auto;color:#1A2740">
+<div style="background:#0F2847;padding:22px 28px;border-radius:8px 8px 0 0">
+  <h1 style="color:white;font-size:18px;margin:0">DoryAngel Digest</h1>
+  <p style="color:rgba(255,255,255,0.65);font-size:13px;margin:5px 0 0">New article just published</p>
+</div>
+<div style="padding:24px 28px;border:1px solid #E2E8F0;border-top:none;border-radius:0 0 8px 8px">
+  <p style="font-size:14px;color:#556070;margin:0 0 16px">Hi ${name},</p>
+  <h2 style="font-size:20px;color:#0F2847;margin:0 0 12px;line-height:1.4">${post.title}</h2>
+  <p style="color:#556070;font-size:14px;line-height:1.7;margin:0 0 24px">${post.excerpt}</p>
+  <a href="${postUrl}" style="display:inline-block;background:#1E5AA8;color:white;padding:13px 26px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px">Read the full article →</a>
+  <hr style="border:none;border-top:1px solid #E2E8F0;margin:28px 0 18px">
+  <p style="font-size:11px;color:#8B9BAE;margin:0;line-height:1.7">
+    DoryAngel LLC · 557 Grand Concourse, Bronx, NY 10451<br>
+    You're receiving this because you subscribed to DoryAngel Digest.<br>
+    To unsubscribe, reply with the word <strong>UNSUBSCRIBE</strong>.
+  </p>
+</div>
+</body></html>`;
+}
+
 async function notifyDigestSubscribers(post) {
-  const DIGEST_WEBHOOK = 'https://hook.eu1.make.com/wxmjj64ih7wvw4di4dyop4cwy8e75qj8';
+  const saKey = process.env.GOOGLE_SA_KEY;
+  if (!saKey) {
+    console.log('GOOGLE_SA_KEY not set — skipping subscriber digest');
+    return;
+  }
+
   try {
-    const res = await fetch(DIGEST_WEBHOOK, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        category: post.category,
-        title: post.title,
-        slug: post.slug,
-        excerpt: post.excerpt,
-        publishedDate: post.publishedDate,
-      }),
+    const credentials = JSON.parse(saKey);
+    const token = await getGoogleAccessToken(credentials);
+
+    const res = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${SUBSCRIBER_SHEET_ID}/values/Sheet1`,
+      { headers: { 'Authorization': `Bearer ${token}` } }
+    );
+    if (!res.ok) throw new Error(`Sheets API returned ${res.status}`);
+    const data = await res.json();
+    const rows = (data.values || []).slice(1); // skip header row
+
+    // col A=name, B=email, C=topics, D=date, E=active("Yes"), F=address
+    const subscribers = rows.filter(r => {
+      const email  = (r[1] || '').trim();
+      const active = (r[4] || '').trim().toLowerCase();
+      return email.includes('@') && email.length > 6 && active === 'yes';
     });
-    if (res.ok) console.log('Digest webhook triggered — subscribers will be notified');
-    else console.warn(`Digest webhook returned ${res.status}`);
+
+    console.log(`Notifying ${subscribers.length} digest subscribers`);
+    if (subscribers.length === 0) return;
+
+    const postUrl = `https://dror75p-ops.github.io/Doryangel-web-3-carousel-blog/blog/${post.slug}/`;
+    let sent = 0;
+
+    for (const sub of subscribers) {
+      const email = (sub[1] || '').trim();
+      const name  = (sub[0] || '').trim() || 'there';
+      try {
+        await resend.emails.send({
+          from: 'DoryAngel Blog <onboarding@resend.dev>',
+          to:   email,
+          subject: `📬 New post: ${post.title}`,
+          html: buildSubscriberEmail(post, name, postUrl),
+        });
+        sent++;
+      } catch (e) {
+        console.warn(`  ✗ ${email}: ${e.message}`);
+      }
+    }
+
+    console.log(`Digest sent to ${sent}/${subscribers.length} subscribers`);
   } catch (err) {
-    console.warn(`Digest webhook failed (${err.message}) — subscribers not notified`);
+    console.warn(`Subscriber digest failed: ${err.message}`);
   }
 }
 

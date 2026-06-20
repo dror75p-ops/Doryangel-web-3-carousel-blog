@@ -40,6 +40,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+          GOOGLE_SA_KEY: ${{ secrets.GOOGLE_SA_KEY }}
           FORCE_PUBLISH: ${{ github.event.inputs.force || 'false' }}
         run: node scripts/generate-post.js
 
@@ -62,4 +63,5 @@ jobs:
           git add content/blog/posts-index.json blog/ sitemap.xml
           git diff --staged --quiet && echo "Nothing to commit — post was skipped" && exit 0
           git commit -m "Auto-publish: new blog post $(date +'%Y-%m-%d')"
+          git pull --rebase origin main
           git push origin main
