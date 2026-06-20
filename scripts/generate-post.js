@@ -192,15 +192,15 @@ When asked to write a post, also produce:
 - An SEO title in field "seoTitleShort": max 48 chars, do NOT add " | DoryAngel" — the system appends it
 - An SEO description (max 155 chars, includes a hook + value prop)
 - A descriptive alt text for the hero image (used for accessibility + SEO)
-- A Facebook-optimized version (200-280 words, hook-first, 2-3 bullet takeaways, then a closing section in this EXACT format — copy the labels and line breaks exactly):
+- A Facebook-optimized version (200-280 words, hook-first, 2-3 bullet takeaways, then a closing section in this EXACT format — copy the labels, emojis, and line breaks exactly:
 
----
-🔑 Manage your property smarter → https://beta.doryangel.com
-🛠️ Free NYC landlord tools → https://beta.doryangel.com/#tools
+📅 Compliance Calendar (free) → https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/
+📬 DoryAngel Digest (free) → https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/
+🔍 AI Property Inspector (free) → https://dror75p-ops.github.io/Transcribe_meeting/
+📊 Property P&L Dashboard ($29) → https://beta.doryangel.com/tools/pl-dashboard/
 🤝 Broker Partner Program ($50/unit/mo) → https://beta.doryangel.com/broker-partner.html
----
 
-Then the hashtags on the final line. If the post topic naturally connects to one of DoryAngel's tools (Weekly Digest, Owner Dashboard, Maintenance Tracker), add one short sentence before the links block — e.g. "DoryAngel clients get this flagged automatically in their weekly digest." Keep it one sentence max. For broker-partnerships posts, move the Broker Partner Program link to the TOP of the links block.
+Then the hashtags on the final line. If the post topic naturally connects to one of these tools, bold the relevant tool line by wrapping it in ★ symbols (e.g. ★📅 Compliance Calendar...★) so it stands out. For broker-partnerships posts, move the Broker Partner Program line to the TOP of the list.
 
 Categories must be exactly one of: property-management, diy-property-management, investments, property-automation, broker-partnerships.
 
