@@ -290,8 +290,11 @@ Remember: 800-1,200 words, NYC-specific examples, pain-point focused, scannable 
   };
 }
 
-async function sendApprovalEmail(post) {
+async function sendApprovalEmail(post, digestStats) {
   const fbPost = post.facebookPost;
+  const digestLine = digestStats?.error
+    ? `<p style="margin:0;font-size:12px;color:#B91C1C;">⚠️ Subscriber emails failed: ${digestStats.error}</p>`
+    : `<p style="margin:0;font-size:12px;color:#1B6B1B;font-weight:700;">📬 ${digestStats?.sent ?? 0} subscriber${(digestStats?.sent ?? 0) !== 1 ? 's' : ''} emailed with this post</p>`;
 
   await resend.emails.send({
     from: 'DoryAngel Blog <onboarding@resend.dev>',
@@ -320,6 +323,10 @@ async function sendApprovalEmail(post) {
 
           <div style="background:#E8F8E8;border:1px solid #8FCB8F;border-radius:8px;padding:14px 16px;margin-bottom:32px;">
             <p style="margin:0;font-size:13px;color:#1B6B1B;font-weight:700;">✅ STEP 3 — Open Facebook → "Create post" → paste text + attach the image</p>
+          </div>
+
+          <div style="background:#F0FAF4;border:1px solid #8FCB8F;border-radius:8px;padding:12px 16px;margin-bottom:32px;">
+            ${digestLine}
           </div>
 
           <hr style="border:none;border-top:1px solid #E2E8F0;margin:32px 0;" />
@@ -370,15 +377,16 @@ async function main() {
   writeFileSync(indexPath, JSON.stringify(posts, null, 2));
   console.log('Added to posts-index.json');
 
-  await sendApprovalEmail(post);
+  // Run subscriber digest first so the count lands in the approval email
+  const digestStats = await notifyDigestSubscribers(postForIndex);
+
+  await sendApprovalEmail(post, digestStats);
   console.log(`Approval email sent to ${APPROVAL_EMAIL}`);
 
   // Hand off to Vera (social-post.js) via a temp file — keeps Nave's scope clean
   const { writeFileSync: wf } = await import('fs');
   wf('/tmp/social-queue.json', JSON.stringify({ slug: postForIndex.slug, facebookPost }));
   console.log('Social queue written for Vera → /tmp/social-queue.json');
-
-  await notifyDigestSubscribers(postForIndex);
 }
 
 const SUBSCRIBER_SHEET_ID = '1-9IDAD1VmlnCvTdU3JqDWahjEFQaUFtRG-WayHZ9N8o';
@@ -478,8 +486,10 @@ async function notifyDigestSubscribers(post) {
     }
 
     console.log(`Digest sent to ${sent}/${subscribers.length} subscribers`);
+    return { sent, total: subscribers.length };
   } catch (err) {
     console.warn(`Subscriber digest failed: ${err.message}`);
+    return { sent: 0, total: 0, error: err.message };
   }
 }
 
