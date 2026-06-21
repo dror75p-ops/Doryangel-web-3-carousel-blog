@@ -416,10 +416,10 @@ async function getGoogleAccessToken(credentials) {
   return data.access_token;
 }
 
-const UNSUBSCRIBE_WEBHOOK = 'https://hook.eu1.make.com/a3mb6f183xvhgphe2nxkfxc6pyyyan4x';
-
 function buildSubscriberEmail(post, name, postUrl, email) {
-  const unsubUrl = `${UNSUBSCRIBE_WEBHOOK}?email=${encodeURIComponent(email)}`;
+  const unsubSubject = encodeURIComponent('Unsubscribe me from DoryAngel Digest');
+  const unsubBody    = encodeURIComponent(`Hi,\n\nPlease remove me from the DoryAngel Digest newsletter.\n\nMy email: ${email}\n\nThank you.`);
+  const unsubUrl     = `mailto:office@doryangel.com?subject=${unsubSubject}&body=${unsubBody}`;
   return `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;max-width:580px;margin:0 auto;color:#1A2740">
 <div style="background:#0F2847;padding:22px 28px;border-radius:8px 8px 0 0">
   <h1 style="color:white;font-size:18px;margin:0">DoryAngel Digest</h1>
