@@ -73,7 +73,7 @@
 - Scroll-triggered fade-up reveals (IntersectionObserver) on hero, section titles, audience/pillars/pricing grids
 - Hero stats count up from 0 when entering viewport
 - Reviews carousel auto-scrolls every 5s when visible
-- Cookie consent banner with Google Analytics 4 (`G-P8QR4VL8NH`) — only loads after Accept
+- Cookie consent banner with Google Analytics 4 (`G-0W61NYHM78`) — only loads after Accept
 - All animations + tracking fully GDPR-compliant
 
 ## Blog architecture (current)
@@ -121,7 +121,7 @@
 - **Resend** (`RESEND_API_KEY` secret): from `onboarding@resend.dev` to `dror75p@gmail.com` (free tier limit; verify doryangel.com domain to send to office@doryangel.com)
 - **Unsplash** (`UNSPLASH_ACCESS_KEY` secret): per-category curated queries for cover images
 - **GitHub** (`GH_TOKEN` secret): the bot's token for committing to main; needs `repo` + `workflow` scopes
-- **Google Analytics 4** (`G-P8QR4VL8NH`): in `index.html`, gated by cookie consent
+- **Google Analytics 4** (`G-0W61NYHM78`): in `index.html`, gated by cookie consent (was `G-P8QR4VL8NH` before the beta.doryangel.com move, PR #79, 2026-06-16)
 - **Retell AI + Make.com lead capture**: see section below
 
 ## Retell AI lead capture
