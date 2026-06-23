@@ -208,6 +208,10 @@ Only `chat_analyzed` events trigger the pipeline (`chat_started` and `chat_ended
 4. **Wrong event name**: Filter used `call_analyzed` but chat agents fire `chat_analyzed`. Fixed.
 5. **Wrong payload root key**: Make.com paths used `1.call.call_analysis.*` but chat agent payloads use `1.chat.chat_analysis.*`. Confirmed via 4-path debug email test — Path A (`chat.chat_analysis`) had all real data. Fixed.
 
+### History of bugs fixed 2026-06-23
+
+6. **Built-in analysis fields pathed one level too deep**: `chat_summary` (col M), `chat_successful` (col N), and `user_sentiment` (col O) were mapped to `1.chat.chat_analysis.custom_analysis_data.<field>` — but these three are Retell **built-in** analysis fields, siblings of `custom_analysis_data`, not children. They returned null on every row, so column N (the success signal) was always blank and Hailey's success rate was unmeasurable. Fixed in both the Sheets mapper and the Gmail body to `1.chat.chat_analysis.<field>` (no `.custom_analysis_data`). The 14 custom-extraction fields stay under `custom_analysis_data` — only these three reserved built-ins moved. Verify: run one real chat that gives a name + phone/email; column N should now read TRUE/FALSE.
+
 ## Cost (per blog post)
 
 ~$0.02-0.05/post (Opus 4.7), ~$2-3/month total
