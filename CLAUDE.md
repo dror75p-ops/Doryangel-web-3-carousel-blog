@@ -8,6 +8,21 @@
 - Owner GitHub account: dror75p-ops
 - Owner email: office@doryangel.com (notification emails go to dror75p@gmail.com via Resend)
 
+### Last changes (as of 2026-06-24)
+
+- **Arlo PR creation fixed** (merged PR #109): replaced expired `GH_TOKEN` secret with `GITHUB_TOKEN` built-in; switched from `curl` to `gh pr create`. PRs were silently failing for weeks.
+- **Clarity dns-prefetch added** (merged PR #108): added `<link rel="dns-prefetch" href="//www.clarity.ms">` to index.html.
+- **GA4 ID reconciled in CLAUDE.md**: corrected `G-P8QR4VL8NH` → `G-0W61NYHM78` in docs (code was already correct since PR #79).
+- **Hailey success rate added to Arlo digest**: `daily-audit.js` now tracks qualified chats (name + phone/email) and shows sessions/qualified/rate% in the email.
+- **Arlo Google integrations unblocked (2026-06-24)**:
+  - GA4 Data API enabled in Cloud project `my-project-84420-translate`
+  - Google Sheets API enabled in same project
+  - Service account `doryangel-arlo@my-project-84420-translate.iam.gserviceaccount.com` added as Viewer to GA4 property DoryAngel Beta (541964179)
+  - All 5 lead sheets shared with service account as Viewer
+  - `GA4_PROPERTY_ID` (541964179) and `GOOGLE_SA_KEY` secrets updated in GitHub
+  - GitHub Actions setting "Allow GitHub Actions to create and approve pull requests" enabled
+  - GA4 confirmed working in digest (sessions today=8). Sheets 403s resolved after enabling Sheets API.
+
 ### Last changes (as of 2026-05-17)
 
 - **Removed**: Owner/Tenant Portal card widget from the hero section (the tab + ledger mockup). Merged via PR #43. Reason: it distracted from the primary lead-collection CTA flow.
