@@ -1278,6 +1278,95 @@ body.variant-dark .audience-card { background: #0F2040; }
 }
 .skip-link:focus { top: 0; }
 
+/* ===== VIDEO DIVIDER STRIP ===== */
+.video-divider {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.video-divider__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+/* YouTube iframe scaled to cover */
+.video-divider__yt {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 177.78vh; /* 16/9 * 100vh */
+  height: 100%;
+  min-width: 100%;
+  min-height: 56.25vw; /* 9/16 * 100vw */
+  transform: translate(-50%, -50%);
+  border: 0;
+}
+/* Static image fallback — shown on mobile / reduced-motion */
+.video-divider__img {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* Navy overlay */
+.video-divider__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 40, 71, 0.58);
+}
+/* Text content */
+.video-divider__content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 0 24px;
+  max-width: 720px;
+}
+.video-divider__content h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.75rem, 4vw, 3rem);
+  color: #fff;
+  line-height: 1.2;
+  margin: 0 0 20px;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.35);
+}
+.video-divider__content p {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: rgba(255,255,255,0.88);
+  margin: 0 0 28px;
+}
+.video-divider__content a {
+  display: inline-block;
+  background: #1E5AA8;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 14px 32px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.video-divider__content a:hover { background: #5B9FEA; }
+/* Mobile: hide YouTube, show image */
+@media (max-width: 768px) {
+  .video-divider { height: 360px; }
+  .video-divider__yt { display: none; }
+  .video-divider__img { display: block; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .video-divider__yt { display: none; }
+  .video-divider__img { display: block; }
+}
+
 /* ===== SCROLL TO TOP ===== */
 #scroll-top-btn {
   position: fixed;
@@ -2831,6 +2920,36 @@ retell-chat-web-component {
 
   </div>
 </section>
+
+<!-- VIDEO DIVIDER STRIP -->
+<div class="video-divider" aria-label="New York City aerial view — DoryAngel property management">
+  <div class="video-divider__bg">
+    <!-- YouTube iframe background: replace DA_VIDEO_ID with a real YouTube video ID
+         Suggested search: "New York City aerial drone footage" on YouTube
+         Example free NYC aerial: https://www.youtube.com/watch?v=ZbFothOBLqE -->
+    <iframe
+      class="video-divider__yt"
+      src="https://www.youtube.com/embed/ZbFothOBLqE?autoplay=1&mute=1&loop=1&playlist=ZbFothOBLqE&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
+      allow="autoplay; encrypted-media"
+      allowfullscreen
+      loading="lazy"
+      title="NYC aerial background"
+    ></iframe>
+    <!-- Static fallback for mobile / reduced-motion -->
+    <img
+      class="video-divider__img"
+      src="https://images.unsplash.com/photo-1546436836-07a91091f160?w=1600&q=80"
+      alt="New York City skyline"
+      loading="lazy"
+    />
+  </div>
+  <div class="video-divider__overlay"></div>
+  <div class="video-divider__content reveal">
+    <h2>Your property. Your investment.<br>Our full attention.</h2>
+    <p>NYC's trusted property management — from the Bronx to Brooklyn.</p>
+    <a href="#contact">Get Your Free Consultation →</a>
+  </div>
+</div>
 
 <!-- TESTIMONIALS -->
 <section class="testimonials-section" id="testimonials">
