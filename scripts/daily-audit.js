@@ -213,8 +213,11 @@ const LEAD_SHEETS = [
   {
     id:    '1druOTrJhRVhrbAPrGBWD8HtMNkxy-h-PiJcYEhGsuHk',
     label: 'Hailey chat leads',
-    tsCol: 0,    // "Timestamp" column
-    nameCol: 2,  // full_name (col C)
+    tsCol: 0,     // "Timestamp" column
+    nameCol: 2,   // full_name (col C)
+    chat: true,   // Hailey web-chat agent — track success rate
+    phoneCol: 3,  // callback_phone (col D)
+    emailCol: 4,  // email_address (col E)
   },
   {
     id:    '1-9IDAD1VmlnCvTdU3JqDWahjEFQaUFtRG-WayHZ9N8o',
@@ -265,13 +268,30 @@ async function getMakeStats() {
         const inPeriod = (r, cut) => new Date(r[sheet.tsCol]).getTime() >= cut;
         const isLead   = r => !!(r[sheet.nameCol]);
 
-        return {
+        const out = {
           label: sheet.label,
           day:   valid.filter(r => inPeriod(r, cutDay)   && isLead(r)).length,
           week:  valid.filter(r => inPeriod(r, cutWeek)  && isLead(r)).length,
           month: valid.filter(r => inPeriod(r, cutMonth) && isLead(r)).length,
           total: valid.filter(r => isLead(r)).length,
         };
+
+        // Hailey chat agent: success rate = qualified leads / total chat sessions.
+        // `chat_successful` is unreliable (Make.com leaves it blank), so we treat a
+        // session as "successful" when it captured a name AND a phone or email.
+        if (sheet.chat) {
+          const qualified = r =>
+            !!r[sheet.nameCol] && !!(r[sheet.phoneCol] || r[sheet.emailCol]);
+          const sessions = valid.length;              // every logged chat = one session
+          const wins     = valid.filter(qualified).length;
+          out.chat = {
+            sessions,
+            qualified: wins,
+            successRate: sessions ? Math.round((wins / sessions) * 100) : 0,
+          };
+        }
+
+        return out;
       } catch (e) {
         return { label: sheet.label, day: 0, week: 0, month: 0, total: 0, error: e.message };
       }
@@ -575,6 +595,32 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
       </tr>
     </table>
     <p style="font-size:11px;color:#8B9BAE;margin:0 0 24px;">Sources: Google Sheets via Retell voice + Hailey chat agents</p>`;
+
+    // Hailey success-rate panel
+    const hailey = make.sources.find(s => s.chat);
+    if (hailey && hailey.chat) {
+      const h = hailey.chat;
+      const rateColor = h.successRate >= 40 ? '#0D7B4E' : h.successRate >= 20 ? '#B7791F' : '#B91C1C';
+      makeSection += `
+    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">🤖 Hailey chat success rate</h3>
+    <table style="border-collapse:collapse;width:100%;margin-bottom:6px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
+      <tr style="background:#ffffff;">
+        <td style="padding:12px;text-align:center;width:33%;border-right:1px solid #E2E8F0;">
+          <div style="font-size:22px;font-weight:700;color:#0F2847;">${h.sessions}</div>
+          <div style="font-size:11px;color:#8B9BAE;text-transform:uppercase;">Chat sessions</div>
+        </td>
+        <td style="padding:12px;text-align:center;width:33%;border-right:1px solid #E2E8F0;">
+          <div style="font-size:22px;font-weight:700;color:#0F2847;">${h.qualified}</div>
+          <div style="font-size:11px;color:#8B9BAE;text-transform:uppercase;">Qualified leads</div>
+        </td>
+        <td style="padding:12px;text-align:center;width:34%;">
+          <div style="font-size:22px;font-weight:700;color:${rateColor};">${h.successRate}%</div>
+          <div style="font-size:11px;color:#8B9BAE;text-transform:uppercase;">Success rate</div>
+        </td>
+      </tr>
+    </table>
+    <p style="font-size:11px;color:#8B9BAE;margin:0 0 24px;">A chat counts as a win when it captures a name + phone or email. (Make.com leaves <code>chat_successful</code> blank, so this is the reliable proxy.)</p>`;
+    }
   } else {
     makeSection = `
     <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:12px 16px;margin-bottom:24px;">
@@ -709,6 +755,10 @@ async function main() {
   const [ga4, make] = await Promise.all([getGA4Stats(), getMakeStats()]);
   console.log(`GA4: ${ga4 ? `sessions today=${ga4.sessions.day}` : 'not configured'}`);
   console.log(`Leads: ${make ? `total=${make.totals.total}, 30d=${make.totals.month}` : 'not configured'}`);
+  if (make) {
+    const h = make.sources.find(s => s.chat);
+    if (h && h.chat) console.log(`Hailey: ${h.chat.qualified}/${h.chat.sessions} sessions = ${h.chat.successRate}% success rate`);
+  }
 
   await sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make });
   console.log(`Digest sent to ${NOTIFY_EMAIL}`);

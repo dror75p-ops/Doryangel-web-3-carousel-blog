@@ -73,7 +73,7 @@
 - Scroll-triggered fade-up reveals (IntersectionObserver) on hero, section titles, audience/pillars/pricing grids
 - Hero stats count up from 0 when entering viewport
 - Reviews carousel auto-scrolls every 5s when visible
-- Cookie consent banner with Google Analytics 4 (`G-P8QR4VL8NH`) — only loads after Accept
+- Cookie consent banner with Google Analytics 4 (`G-0W61NYHM78`) — only loads after Accept
 - All animations + tracking fully GDPR-compliant
 
 ## Blog architecture (current)
@@ -121,7 +121,7 @@
 - **Resend** (`RESEND_API_KEY` secret): from `onboarding@resend.dev` to `dror75p@gmail.com` (free tier limit; verify doryangel.com domain to send to office@doryangel.com)
 - **Unsplash** (`UNSPLASH_ACCESS_KEY` secret): per-category curated queries for cover images
 - **GitHub** (`GH_TOKEN` secret): the bot's token for committing to main; needs `repo` + `workflow` scopes
-- **Google Analytics 4** (`G-P8QR4VL8NH`): in `index.html`, gated by cookie consent
+- **Google Analytics 4** (`G-0W61NYHM78`): in `index.html`, gated by cookie consent (was `G-P8QR4VL8NH` before the beta.doryangel.com move, PR #79, 2026-06-16)
 - **Retell AI + Make.com lead capture**: see section below
 
 ## Retell AI lead capture
@@ -207,6 +207,10 @@ Only `chat_analyzed` events trigger the pipeline (`chat_started` and `chat_ended
 3. **Duplicate rows**: Filter passed both `call_ended` and `call_analyzed`, creating 2 rows per chat. Fixed: `chat_analyzed` only.
 4. **Wrong event name**: Filter used `call_analyzed` but chat agents fire `chat_analyzed`. Fixed.
 5. **Wrong payload root key**: Make.com paths used `1.call.call_analysis.*` but chat agent payloads use `1.chat.chat_analysis.*`. Confirmed via 4-path debug email test — Path A (`chat.chat_analysis`) had all real data. Fixed.
+
+### History of bugs fixed 2026-06-23
+
+6. **Built-in analysis fields pathed one level too deep**: `chat_summary` (col M), `chat_successful` (col N), and `user_sentiment` (col O) were mapped to `1.chat.chat_analysis.custom_analysis_data.<field>` — but these three are Retell **built-in** analysis fields, siblings of `custom_analysis_data`, not children. They returned null on every row, so column N (the success signal) was always blank and Hailey's success rate was unmeasurable. Fixed in both the Sheets mapper and the Gmail body to `1.chat.chat_analysis.<field>` (no `.custom_analysis_data`). The 14 custom-extraction fields stay under `custom_analysis_data` — only these three reserved built-ins moved. Verify: run one real chat that gives a name + phone/email; column N should now read TRUE/FALSE.
 
 ## Cost (per blog post)
 
