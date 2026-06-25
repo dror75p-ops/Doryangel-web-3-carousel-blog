@@ -205,6 +205,7 @@ const LEAD_SHEETS = [
     label: 'Owner leads (voice)',
     tsCol: 16,   // "Date and time" column
     nameCol: 4,  // full_name
+    tabs: ['new owners', 'vendors', 'brokers', 'looking for rent', 'anything else'],
   },
   {
     id:    '1YEFPfjyifDXsiujQHFpf871-xDdXJ93Fb6hNGXlbF60',
@@ -254,13 +255,17 @@ async function getMakeStats() {
 
     const results = await Promise.all(LEAD_SHEETS.map(async (sheet) => {
       try {
-        const res = await fetch(
-          `https://sheets.googleapis.com/v4/spreadsheets/${sheet.id}/values/Sheet1`,
-          { headers: { 'Authorization': `Bearer ${token}` } }
-        );
-        if (!res.ok) throw new Error(`${res.status}`);
-        const data = await res.json();
-        const rows = (data.values || []).slice(1); // skip header
+        const tabNames = sheet.tabs || ['Sheet1'];
+        const tabResults = await Promise.all(tabNames.map(async (tab) => {
+          const res = await fetch(
+            `https://sheets.googleapis.com/v4/spreadsheets/${sheet.id}/values/${encodeURIComponent(tab)}`,
+            { headers: { 'Authorization': `Bearer ${token}` } }
+          );
+          if (!res.ok) throw new Error(`${res.status} on tab "${tab}"`);
+          const data = await res.json();
+          return (data.values || []).slice(1); // skip header row per tab
+        }));
+        const rows = tabResults.flat();
 
         const valid = rows.filter(r => {
           const ts = r[sheet.tsCol] && new Date(r[sheet.tsCol]).getTime();
