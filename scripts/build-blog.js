@@ -31,6 +31,47 @@ function formatDate(iso) {
   });
 }
 
+function extractFAQs(markdown) {
+  const lines = markdown.split('\n');
+  const faqs = [];
+  let currentQ = null;
+  let currentALines = [];
+
+  const flush = () => {
+    if (currentQ && currentALines.length > 0) {
+      const answer = currentALines
+        .join(' ')
+        .replace(/\*\*(.+?)\*\*/g, '$1')
+        .replace(/\*(.+?)\*/g, '$1')
+        .replace(/\[(.+?)\]\(.+?\)/g, '$1')
+        .replace(/`(.+?)`/g, '$1')
+        .trim()
+        .slice(0, 500);
+      if (answer) faqs.push({ q: currentQ, a: answer });
+    }
+    currentQ = null;
+    currentALines = [];
+  };
+
+  for (const line of lines) {
+    const headingMatch = line.match(/^#{2,3}\s+(.+)$/);
+    if (headingMatch) {
+      flush();
+      const heading = headingMatch[1].trim();
+      if (heading.endsWith('?')) currentQ = heading;
+    } else if (currentQ) {
+      const stripped = line.trim();
+      if (stripped.startsWith('- ') || stripped.startsWith('* ')) {
+        currentALines.push(stripped.slice(2));
+      } else if (stripped && !stripped.startsWith('#')) {
+        currentALines.push(stripped);
+      }
+    }
+  }
+  flush();
+  return faqs;
+}
+
 function getRelatedPosts(currentPost, allPosts) {
   return allPosts
     .filter(p => p.category === currentPost.category && p.slug !== currentPost.slug)
@@ -41,6 +82,16 @@ function renderPage(post, related) {
   const url = `${SITE_URL}/blog/${post.slug}/`;
   const categoryLabel = CATEGORY_LABEL[post.category] || post.category;
   const hashtagText = (post.hashtags || []).map(t => '#' + t).join(' ');
+  const faqs = extractFAQs(post.content);
+  const faqLd = faqs.length >= 2 ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map(f => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  } : null;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -125,6 +176,9 @@ ${JSON.stringify(jsonLd, null, 2)}
 <script type="application/ld+json">
 ${JSON.stringify(breadcrumbLd, null, 2)}
 </script>
+${faqLd ? `<script type="application/ld+json">
+${JSON.stringify(faqLd, null, 2)}
+</script>` : ''}
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
