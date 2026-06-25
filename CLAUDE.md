@@ -2,6 +2,9 @@
 
 ## 🚩 START HERE NEXT SESSION (added 2026-06-25)
 
+> ⏳ **TEMPORARY NOTICE — delete this whole block once the bug below is resolved.**
+> It exists only to greet the next session; it is not permanent project memory.
+
 **Bug to fix first: blog digest signups are NOT being saved to the subscriber sheet.**
 
 New visitors who sign up for the blog digest never land in the "Newsletter subscribers"
