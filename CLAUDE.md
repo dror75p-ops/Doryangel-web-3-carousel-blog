@@ -1,34 +1,5 @@
 # DoryAngel Website — Project Memory
 
-## 🚩 START HERE NEXT SESSION (added 2026-06-25)
-
-> ⏳ **TEMPORARY NOTICE — delete this whole block once the bug below is resolved.**
-> It exists only to greet the next session; it is not permanent project memory.
-
-**Bug to fix first: blog digest signups are NOT being saved to the subscriber sheet.**
-
-New visitors who sign up for the blog digest never land in the "Newsletter subscribers"
-Google Sheet (`1-9IDAD1VmlnCvTdU3JqDWahjEFQaUFtRG-WayHZ9N8o`).
-
-Likely root cause (ties to the honeypot backlog item): the Make.com **New Subscriber**
-scenario's spam filter only passes when `{{1.honeypot}}` **equals an empty string** — but
-the signup form doesn't send a `honeypot` field at all, so the value arrives as
-undefined/null (not `""`) and the filter silently drops **every** submission.
-
-Fix (pick one):
-1. Add hidden `<input type="text" name="honeypot" value="">` to the signup form (preferred —
-   also restores spam protection), OR
-2. Loosen the Make.com filter to "honeypot is empty OR does not exist."
-
-The signup form lives in the **`Doryangel-preventive-maintenance-schedule.automation`** repo —
-this needs a session pointed at THAT repo. After fixing, submit one test signup and confirm
-the row appears in the Newsletter sheet.
-
-(Everything else is healthy: Arlo daily audit is fully green, lead sheets shared with the
-service account, unsubscribe is one-click mailto.)
-
----
-
 ## Latest version
 **Dori Angel Web.3 — Carousel Blog**
 
