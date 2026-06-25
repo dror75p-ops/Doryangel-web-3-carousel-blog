@@ -3394,11 +3394,11 @@ retell-chat-web-component {
         <div style="font-family:'DM Serif Display',serif;font-size:22px;color:white;font-weight:400;margin-bottom:6px;">DoryAngel Digest</div>
         <div style="font-size:14px;color:rgba(255,255,255,0.72);line-height:1.5;">Get notified when we publish articles that match your interests — property management, DIY tips, NYC investments.</div>
       </div>
-      <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/" target="_blank" rel="noopener"
-         style="display:inline-flex;align-items:center;gap:8px;background:white;color:#0D1E3A;padding:13px 22px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:background 0.2s;">
+      <button onclick="openToolGate('https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/','DoryAngel Digest')"
+         style="display:inline-flex;align-items:center;gap:8px;background:white;color:#0D1E3A;padding:13px 22px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:background 0.2s;cursor:pointer;border:none;font-family:inherit;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="17" height="17"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
         Subscribe Free &rarr;
-      </a>
+      </button>
     </div>
   </div>
 </section>
@@ -4347,6 +4347,19 @@ async function handleFormSubmit(e) {
     });
     const result = await response.json();
     if (result.success) {
+      const firstName = (form.querySelector('[name="first-name"]') || {}).value || '';
+      const lastName  = (form.querySelector('[name="last-name"]')  || {}).value || '';
+      const email     = (form.querySelector('[name="email"]')       || {}).value || '';
+      fetch('https://hook.eu1.make.com/8hmzcp8p8qexbtbmb90n0gn4u9a5jix7', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: (firstName + ' ' + lastName).trim(),
+          email,
+          phone:   ((form.querySelector('[name="phone"]')   || {}).value || '').trim(),
+          message: ((form.querySelector('[name="message"]') || {}).value || '').trim()
+        })
+      }).catch(function(){});
       if (typeof gtag !== 'undefined') { gtag('event', 'contact_form_submit', { event_category: 'lead', event_label: 'main_contact' }); }
       window.location.href = './thank-you.html';
     } else {
@@ -5123,9 +5136,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // open tool immediately — don't wait on network
     window.open(_toolGateUrl, '_blank', 'noopener,noreferrer');
 
-    // fire-and-forget to Web3Forms
+    // fire-and-forget to Web3Forms (owner notification)
     var data = new FormData(form);
     fetch('https://api.web3forms.com/submit', { method: 'POST', body: data }).catch(function(){});
+
+    // if this is the Digest signup, also post to Make.com for the welcome email
+    if (document.getElementById('toolGateToolName').value === 'DoryAngel Digest') {
+      fetch('https://hook.eu1.make.com/2qo6r1tr15cckv1opo8em9x89ip3ku4x', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name:  document.getElementById('toolGateName').value.trim(),
+          email: document.getElementById('toolGateEmail').value.trim()
+        })
+      }).catch(function(){});
+    }
+
     if (typeof gtag !== 'undefined') { gtag('event', 'tool_gate_submit', { event_category: 'lead', event_label: 'tool_access' }); }
 
     form.style.display = 'none';
@@ -5171,6 +5197,15 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('notifyGateEmail').style.borderColor = '';
     var data = new FormData(form);
     fetch('https://api.web3forms.com/submit', { method: 'POST', body: data }).catch(function(){});
+    // also fire confirmation email via Make.com
+    fetch('https://hook.eu1.make.com/ax96s94egahss92qjvyqo4g3vdrg86vo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email:     email,
+        tool_name: document.getElementById('notifyGateToolName').value
+      })
+    }).catch(function(){});
     form.style.display = 'none';
     document.getElementById('notifyGateSuccess').style.display = 'block';
   });
