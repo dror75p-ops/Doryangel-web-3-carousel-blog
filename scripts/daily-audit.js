@@ -16,7 +16,9 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 const NOTIFY_EMAIL = 'dror75p@gmail.com';
 const REPO = 'dror75p-ops/Doryangel-web-3-carousel-blog';
-const GH_TOKEN = process.env.GH_TOKEN;
+// Prefer the workflow's built-in GITHUB_TOKEN (auto-provisioned, never expires,
+// scoped by the workflow's `permissions` block) and fall back to a PAT if set.
+const GH_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
 const AGENT_NAME = 'Arlo';
 
 function today() { return new Date().toISOString().split('T')[0]; }
@@ -741,8 +743,15 @@ async function main() {
     const idea = await generateIssueIdea(state, openIssues);
     console.log(`Idea: ${idea.title}`);
 
-    resultLink = await createGitHubIssue(idea.title, idea.body);
-    console.log(`Issue created: ${resultLink}`);
+    // Issue creation is best-effort — a failure here (e.g. bad token) must not
+    // crash the run and block the daily digest email below.
+    try {
+      resultLink = await createGitHubIssue(idea.title, idea.body);
+      console.log(`Issue created: ${resultLink}`);
+    } catch (err) {
+      console.warn(`Issue creation failed (${err.message}) — sending digest anyway`);
+      resultLink = `https://github.com/${REPO}/issues`;
+    }
 
     writeFileSync('/tmp/audit-changed.txt', 'false');
     writeFileSync('/tmp/audit-task.txt', idea.title);
