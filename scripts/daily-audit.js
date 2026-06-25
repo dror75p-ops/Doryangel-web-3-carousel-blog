@@ -205,6 +205,7 @@ const LEAD_SHEETS = [
     label: 'Owner leads (voice)',
     tsCol: 16,   // "Date and time" column
     nameCol: 4,  // full_name
+    tabs: ['new owners', 'vendors', 'brokers', 'looking for rent', 'anything else'],
   },
   {
     id:    '1YEFPfjyifDXsiujQHFpf871-xDdXJ93Fb6hNGXlbF60',
@@ -229,7 +230,7 @@ const LEAD_SHEETS = [
   },
   {
     id:    '1KbVggQNhKbX9370zq-thBzHmN1j1R4g9YI8gKm8_R-o',
-    label: 'Website tool signups',
+    label: 'PM tool subscribers',
     tsCol: 3,    // "signup_date" column
     nameCol: 0,  // email (most reliable identifier)
   },
@@ -254,13 +255,17 @@ async function getMakeStats() {
 
     const results = await Promise.all(LEAD_SHEETS.map(async (sheet) => {
       try {
-        const res = await fetch(
-          `https://sheets.googleapis.com/v4/spreadsheets/${sheet.id}/values/Sheet1`,
-          { headers: { 'Authorization': `Bearer ${token}` } }
-        );
-        if (!res.ok) throw new Error(`${res.status}`);
-        const data = await res.json();
-        const rows = (data.values || []).slice(1); // skip header
+        const tabNames = sheet.tabs || ['Sheet1'];
+        const tabResults = await Promise.all(tabNames.map(async (tab) => {
+          const res = await fetch(
+            `https://sheets.googleapis.com/v4/spreadsheets/${sheet.id}/values/${encodeURIComponent(tab)}`,
+            { headers: { 'Authorization': `Bearer ${token}` } }
+          );
+          if (!res.ok) throw new Error(`${res.status} on tab "${tab}"`);
+          const data = await res.json();
+          return (data.values || []).slice(1); // skip header row per tab
+        }));
+        const rows = tabResults.flat();
 
         const valid = rows.filter(r => {
           const ts = r[sheet.tsCol] && new Date(r[sheet.tsCol]).getTime();
@@ -566,7 +571,8 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
   if (make) {
     const sourceRows = make.sources.map((s, i) => {
       const bg = i % 2 === 0 ? '#ffffff' : '#F8FAFB';
-      const errBadge = s.error ? ` <span style="color:#B91C1C;font-size:10px;">(${s.error})</span>` : '';
+      const errMsg   = s.error === '403' ? 'share sheet with service account' : s.error;
+      const errBadge = s.error ? ` <span style="color:#B91C1C;font-size:10px;">(${errMsg})</span>` : '';
       return `<tr style="background:${bg};">
         <td style="padding:8px 12px;color:#556070;font-size:12px;">${s.label}${errBadge}</td>
         <td style="padding:8px 12px;text-align:center;color:#0F2847;font-size:12px;font-weight:600;">${s.day}</td>
