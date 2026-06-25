@@ -1,0 +1,41 @@
+name: Fix hero image for a single post
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'Post slug (leave blank for most recent post)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  fix-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install
+      - name: Refresh image
+        env:
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+          SLUG: ${{ github.event.inputs.slug }}
+        run: node scripts/fix-single-image.js
+      - name: Rebuild blog pages
+        run: node scripts/build-blog.js
+      - name: Commit and push
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          git config user.name "DoryAngel Bot"
+          git config user.email "office@doryangel.com"
+          git remote set-url origin https://dror75p-ops:${GH_TOKEN}@github.com/dror75p-ops/Doryangel-web-3-carousel-blog.git
+          git add content/blog/posts-index.json blog/ sitemap.xml
+          git diff --staged --quiet && echo "No changes" && exit 0
+          git commit -m "Fix hero image: ${{ github.event.inputs.slug || 'most recent post' }}"
+          git pull --rebase origin main
+          git push origin main
