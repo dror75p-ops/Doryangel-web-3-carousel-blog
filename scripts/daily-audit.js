@@ -566,7 +566,8 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
   if (make) {
     const sourceRows = make.sources.map((s, i) => {
       const bg = i % 2 === 0 ? '#ffffff' : '#F8FAFB';
-      const errBadge = s.error ? ` <span style="color:#B91C1C;font-size:10px;">(${s.error})</span>` : '';
+      const errMsg   = s.error === '403' ? 'share sheet with service account' : s.error;
+      const errBadge = s.error ? ` <span style="color:#B91C1C;font-size:10px;">(${errMsg})</span>` : '';
       return `<tr style="background:${bg};">
         <td style="padding:8px 12px;color:#556070;font-size:12px;">${s.label}${errBadge}</td>
         <td style="padding:8px 12px;text-align:center;color:#0F2847;font-size:12px;font-weight:600;">${s.day}</td>
