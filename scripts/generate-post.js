@@ -130,10 +130,10 @@ const IMAGE_QUERIES = {
     'bronx residential building daylight',
   ],
   'property-automation': [
-    'smart home technology modern apartment',
-    'security camera building surveillance',
-    'IoT smart sensor home device',
-    'property technology digital dashboard screen',
+    'smart door lock apartment building entrance',
+    'security camera apartment building exterior',
+    'smart thermostat device white wall home',
+    'building keypad entry security door residential',
   ],
   'broker-partnerships': [
     'real estate broker professional handshake office',
