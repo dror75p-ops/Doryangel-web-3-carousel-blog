@@ -230,7 +230,7 @@ const LEAD_SHEETS = [
   },
   {
     id:    '1KbVggQNhKbX9370zq-thBzHmN1j1R4g9YI8gKm8_R-o',
-    label: 'Website tool signups',
+    label: 'PM tool subscribers',
     tsCol: 3,    // "signup_date" column
     nameCol: 0,  // email (most reliable identifier)
   },
