@@ -215,6 +215,28 @@ Categories must be exactly one of: property-management, diy-property-management,
 
 For broker-partnerships posts: the audience is NYC real estate brokers and agents, not landlords. Write peer-to-peer — broker talking to broker. Focus on referral income, protecting client relationships, and how DoryAngel works as an expert backstop. Lead with the broker's pain point (income stops at closing, clients call them about management problems, fear of losing relationships). Do NOT include any landlord-specific compliance content as the primary angle.`;
 
+const REVIEW_SCHEMA = {
+  type: 'object',
+  properties: {
+    scores: {
+      type: 'object',
+      properties: {
+        ANSWER_FRONT_LOAD: { type: 'string', enum: ['PASS', 'FAIL'] },
+        EEAT_VOICE:        { type: 'string', enum: ['PASS', 'FAIL'] },
+        QUESTION_HEADINGS: { type: 'string', enum: ['PASS', 'FAIL'] },
+        NYC_SPECIFICITY:   { type: 'string', enum: ['PASS', 'FAIL'] },
+        NO_CLICHES:        { type: 'string', enum: ['PASS', 'FAIL'] },
+      },
+      required: ['ANSWER_FRONT_LOAD', 'EEAT_VOICE', 'QUESTION_HEADINGS', 'NYC_SPECIFICITY', 'NO_CLICHES'],
+      additionalProperties: false,
+    },
+    feedback: { type: 'string' },
+    overall:  { type: 'string', enum: ['PASS', 'FAIL'] },
+  },
+  required: ['scores', 'feedback', 'overall'],
+  additionalProperties: false,
+};
+
 const POST_SCHEMA = {
   type: 'object',
   properties: {
@@ -230,8 +252,16 @@ const POST_SCHEMA = {
   additionalProperties: false,
 };
 
-async function generatePost(topic) {
+async function generatePost(topic, researchNotes = '', editorFeedback = '') {
   const today = formatDate(new Date());
+
+  const researchBlock = researchNotes
+    ? `\nResearch facts to weave in naturally (use as inspiration — do not copy verbatim):\n${researchNotes}\n`
+    : '';
+
+  const feedbackBlock = editorFeedback
+    ? `\nEditor feedback — fix these issues in this rewrite:\n${editorFeedback}\n`
+    : '';
 
   const message = await anthropic.messages.create({
     model: 'claude-opus-4-7',
@@ -247,7 +277,7 @@ async function generatePost(topic) {
       content: `Write a blog post on this topic: "${topic.title}"
 Target category: ${topic.category}
 Year context: 2026
-
+${researchBlock}${feedbackBlock}
 Remember: 800-1,200 words, NYC-specific examples, pain-point focused, scannable structure, no CTA in the content.`,
     }],
   });
@@ -296,6 +326,77 @@ Remember: 800-1,200 words, NYC-specific examples, pain-point focused, scannable 
     content: post.content,
     facebookPost: post.facebookPost,
   };
+}
+
+async function researchTopic(topic) {
+  try {
+    const response = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 512,
+      messages: [{
+        role: 'user',
+        content: `You are a research assistant for DoryAngel, a Bronx property management company.
+
+For the blog post: "${topic.title}" (category: ${topic.category})
+
+List 5–7 specific, concrete facts a Bronx landlord content writer should weave into this article. Include:
+- Dollar amounts (fines, rents, costs — specific NYC/Bronx figures)
+- NYC law or rule names with numbers where applicable (e.g., Local Law 11, HPD §27-2005, Good Cause Eviction Law)
+- Bronx-specific market data or neighborhood references
+- Timelines, deadlines, or court procedures relevant to this topic
+- Real statistics or percentages if applicable
+
+Be specific. Avoid vague generalities. Format: numbered list, one fact per line, no headers.`,
+      }],
+    });
+    const notes = response.content.find(b => b.type === 'text')?.text?.trim() ?? '';
+    console.log(`Research: ${notes.split('\n').filter(l => l.trim()).length} facts gathered`);
+    return notes;
+  } catch (err) {
+    console.warn(`Research step failed (${err.message}) — proceeding without`);
+    return '';
+  }
+}
+
+async function reviewPost(post, topic) {
+  const wordCount = post.content.trim().split(/\s+/).length;
+  const wordCountNote = wordCount >= 800 && wordCount <= 1200
+    ? `${wordCount} words — within target`
+    : `${wordCount} words — OUTSIDE target (800–1200), flag in feedback`;
+
+  try {
+    const response = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 512,
+      output_config: {
+        format: { type: 'json_schema', schema: REVIEW_SCHEMA },
+      },
+      messages: [{
+        role: 'user',
+        content: `Review this blog post draft for DoryAngel. Score each criterion PASS or FAIL.
+
+1. ANSWER_FRONT_LOAD: Do the first 2–3 sentences directly answer the post title as a search query?
+2. EEAT_VOICE: Does the post use at least one first-person plural experience marker ("In our experience...", "We've seen...", "Our clients...")?
+3. QUESTION_HEADINGS: Does the post have at least 2 H2 or H3 headings ending in "?"?
+4. NYC_SPECIFICITY: Does it include at least one specific NYC dollar figure, law name, neighborhood, or court process?
+5. NO_CLICHES: Is it free of: "delve", "testament", "it's worth noting", "moreover", "furthermore", "navigate the", "realm", "landscape", "crucial", "game-changer", "transformative", "unlock", "harness", "empower", "foster", "in today's world", "stands out"?
+
+Word count: ${wordCountNote}.
+Title: "${topic.title}"
+
+Content:
+${post.content}`,
+      }],
+    });
+    const text = response.content.find(b => b.type === 'text')?.text ?? '';
+    const result = JSON.parse(text);
+    const failed = Object.entries(result.scores).filter(([, v]) => v === 'FAIL').map(([k]) => k);
+    console.log(`Quality review: ${result.overall}${failed.length ? ` — failed: ${failed.join(', ')}` : ' — all checks passed'}`);
+    return result;
+  } catch (err) {
+    console.warn(`Review step failed (${err.message}) — skipping`);
+    return { scores: {}, feedback: '', overall: 'PASS' };
+  }
 }
 
 async function sendApprovalEmail(post, digestStats) {
@@ -374,10 +475,19 @@ async function main() {
   }
 
   const topic = await pickTopicWithAI(posts);
-  console.log(`Generating post about: "${topic.title}" (${topic.category})`);
+  console.log(`Topic: "${topic.title}" (${topic.category})`);
 
-  const post = await generatePost(topic);
+  const researchNotes = await researchTopic(topic);
+
+  let post = await generatePost(topic, researchNotes);
   console.log(`Generated: "${post.title}"`);
+
+  const review = await reviewPost(post, topic);
+  if (review.overall === 'FAIL') {
+    console.log(`Rewriting with feedback: ${review.feedback}`);
+    post = await generatePost(topic, researchNotes, review.feedback);
+    console.log(`Rewrite complete: "${post.title}"`);
+  }
 
   // facebookPost is for the email only — strip before persisting
   const { facebookPost, ...postForIndex } = post;
