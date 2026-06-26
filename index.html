@@ -5177,6 +5177,7 @@ function openToolGate(toolUrl, toolName) {
   document.getElementById('toolGateToolName').value = toolName;
   var submitBtn = document.querySelector('#toolGateForm button[type="submit"]');
   if (submitBtn) {
+    submitBtn.disabled = false;   // reset debounce from any prior submit
     submitBtn.innerHTML = isDigest
       ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Subscribe — It\'s Free &rarr;'
       : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Open the Tool &rarr;';
@@ -5218,6 +5219,13 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     document.getElementById('toolGateEmail').style.borderColor = '';
+
+    // Debounce: block rapid repeat submits from firing the webhook multiple times
+    var toolGateSubmitBtn = form.querySelector('button[type="submit"]');
+    if (toolGateSubmitBtn) {
+      if (toolGateSubmitBtn.disabled) return;
+      toolGateSubmitBtn.disabled = true;
+    }
 
     var isDigest = _isDigest;
 
@@ -5270,6 +5278,8 @@ function openNotifyGate(toolName) {
   document.getElementById('notifyGateToolDisplay').textContent = toolName;
   document.getElementById('notifyGateForm').style.display = 'block';
   document.getElementById('notifyGateSuccess').style.display = 'none';
+  var notifySubmitBtn = document.querySelector('#notifyGateForm button[type="submit"]');
+  if (notifySubmitBtn) notifySubmitBtn.disabled = false;   // reset debounce from any prior submit
   document.getElementById('notifyGateEmail').value = '';
   document.getElementById('notifyGateOverlay').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
@@ -5298,6 +5308,14 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     document.getElementById('notifyGateEmail').style.borderColor = '';
+
+    // Debounce: block rapid repeat submits from firing the webhook multiple times
+    var notifyGateSubmitBtn = form.querySelector('button[type="submit"]');
+    if (notifyGateSubmitBtn) {
+      if (notifyGateSubmitBtn.disabled) return;
+      notifyGateSubmitBtn.disabled = true;
+    }
+
     var data = new FormData(form);
     fetch('https://api.web3forms.com/submit', { method: 'POST', body: data }).catch(function(){});
     // also fire confirmation email via Make.com
