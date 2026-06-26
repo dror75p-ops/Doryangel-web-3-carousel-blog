@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flat-Fee vs % Property Management Calculator | DoryAngel</title>
+<meta name="description" content="Flat-fee vs. percentage property management: free calculator for Bronx & NYC landlords. See your annual savings instantly. Most save $3,000–$8,000/yr.">
+<meta name="keywords" content="flat fee vs percentage property management, property management cost Bronx, how much does property management cost, flat fee property management NYC, property management calculator">
+<link rel="canonical" href="https://beta.doryangel.com/flat-fee-vs-commission/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Flat-Fee vs % Property Management Calculator | DoryAngel">
+<meta property="og:description" content="Input your units and rent, see your annual savings instantly. DoryAngel flat-fee vs. traditional percentage management for Bronx & NYC landlords.">
+<meta property="og:url" content="https://beta.doryangel.com/flat-fee-vs-commission/">
+<meta property="og:image" content="https://beta.doryangel.com/assets/logo.jpg">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Flat-Fee vs % Property Management Calculator | DoryAngel">
+<meta name="twitter:description" content="See exactly what you'll pay: flat-fee vs. percentage management. Most Bronx landlords save $3,000–$8,000/yr.">
+<meta name="twitter:image" content="https://beta.doryangel.com/assets/logo.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
+<!-- JSON-LD: Breadcrumb + FAQ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://beta.doryangel.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Flat-Fee vs. Commission Calculator", "item": "https://beta.doryangel.com/flat-fee-vs-commission/" }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is flat-fee property management really cheaper than a percentage?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For most Bronx landlords, yes. A traditional manager charging 8–10% of rent collects a fee that grows every time your rent does. DoryAngel charges a flat $99/month for a single unit or $199/month for a 2–10 unit portfolio, no matter how high your rent climbs. On a 4-unit building renting at $2,000/unit, a 9% manager costs about $8,640 a year while DoryAngel costs $2,388 — a savings of roughly $6,250."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What's included in DoryAngel's flat fee?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Tenant placement and screening, online rent collection, maintenance coordination, and monthly owner statements are included in every plan. The Professional plan adds 24/7 emergency response, regulatory compliance monitoring, a live owner dashboard, and an annual inspection. There are no setup fees and no long-term contracts."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are there hidden fees with the flat-fee model?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. The flat monthly fee is the fee. Percentage managers often layer on leasing fees, renewal fees, markups on maintenance, and 'administrative' charges that can double the headline rate. DoryAngel's pricing is published up front and does not change as your rent rises."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does percentage-based management ever make sense?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Percentage pricing can suit a single low-rent unit where 8–10% happens to be less than a flat fee, or very hands-off owners of large luxury portfolios. For the typical Bronx 1–10 unit landlord renting at market rates, a flat fee is almost always the cheaper, more predictable choice."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How accurate is this calculator?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It uses DoryAngel's published flat-fee pricing ($99/month for one unit, $199/month for 2–10 units) and compares it to a percentage you choose between 6% and 12% of collected rent. Your actual quote depends on services selected and property specifics — request a free estimate for an exact figure."
+      }
+    }
+  ]
+}
+</script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #0D1E3A;
+  --blue: #3A7BDD;
+  --blue-light: #5B9FEA;
+  --blue-dim: #EBF3FD;
+  --grey: #8B9BAE;
+  --grey-light: #F4F7FA;
+  --grey-mid: #E2E8F0;
+  --text: #1A2740;
+  --text-muted: #556070;
+  --white: #FFFFFF;
+  --green: #1E9E6A;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(13,30,58,0.08);
+  --shadow-lg: 0 12px 48px rgba(13,30,58,0.14);
+}
+html { scroll-behavior: smooth; scroll-padding-top: 120px; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  background: var(--white);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--blue); }
+
+/* skip link */
+.skip-link {
+  position: absolute; left: -999px; top: 0; z-index: 999;
+  background: var(--navy); color: #fff; padding: 10px 16px; border-radius: 0 0 8px 0;
+}
+.skip-link:focus { left: 0; }
+
+/* ANNOUNCE BAR */
+.announce-bar {
+  background: var(--navy); color: #fff;
+  text-align: center; padding: 9px 20px;
+  font-size: 13px; font-weight: 500;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 302;
+  line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.announce-bar strong { font-weight: 700; }
+.announce-bar a { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+.announce-bar a:hover { opacity: 0.85; }
+
+/* NAV */
+nav {
+  position: fixed; top: 40px; left: 0; right: 0; z-index: 100;
+  background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--grey-mid);
+  padding: 10px 32px;
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+}
+.nav-logo { display: inline-flex; align-items: center; min-height: 40px; }
+.nav-logo img { height: 40px; object-fit: contain; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+.nav-logo:hover img { transform: scale(1.08) rotate(-3deg); }
+.nav-links { display: flex; gap: 26px; list-style: none; align-items: center; }
+.nav-links a {
+  font-size: 14px; font-weight: 500; color: var(--text-muted);
+  text-decoration: none; letter-spacing: 0.01em; transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--navy); }
+.nav-cta {
+  background: transparent; color: var(--navy);
+  padding: 9px 18px; border-radius: 7px;
+  font-size: 13px; font-weight: 700; text-decoration: none;
+  border: 1.5px solid var(--navy); letter-spacing: 0.02em;
+  transition: background 0.2s, color 0.2s; white-space: nowrap;
+}
+.nav-cta:hover { background: var(--navy); color: #fff; }
+@media (max-width: 860px) {
+  .nav-links { display: none; }
+}
+
+/* HERO */
+.lp-hero {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(58,123,221,0.10) 0%, transparent 70%),
+    linear-gradient(180deg, #F4F8FF 0%, #FFFFFF 100%);
+  border-bottom: 1px solid var(--grey-mid);
+  padding: 150px 24px 60px;
+  text-align: center;
+}
+.lp-hero-inner { max-width: 760px; margin: 0 auto; }
+.lp-eyebrow {
+  display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--blue);
+  background: var(--blue-dim); padding: 6px 14px; border-radius: 999px; margin-bottom: 20px;
+}
+.lp-hero h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(30px, 5.5vw, 46px); color: var(--navy);
+  line-height: 1.12; margin-bottom: 18px;
+}
+.lp-hero h1 em { color: var(--blue); font-style: italic; }
+.lp-hero p { font-size: 17px; color: var(--text-muted); max-width: 620px; margin: 0 auto; }
+
+/* SECTION SHELL */
+.lp-section { max-width: 1040px; margin: 0 auto; padding: 64px 24px; }
+.lp-section h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(26px, 4vw, 36px); color: var(--navy);
+  line-height: 1.18; margin-bottom: 12px; text-align: center;
+}
+.lp-section .lp-sub { text-align: center; color: var(--text-muted); max-width: 620px; margin: 0 auto 40px; font-size: 16px; }
+
+/* CALCULATOR */
+.calc-wrap {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  background: #fff; border: 1px solid var(--grey-mid); border-radius: 18px;
+  overflow: hidden; box-shadow: var(--shadow-lg);
+}
+.calc-inputs { padding: 36px 34px; background: var(--grey-light); border-right: 1px solid var(--grey-mid); }
+.calc-results { padding: 36px 34px; }
+.calc-field { margin-bottom: 26px; }
+.calc-field label { display: block; font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.calc-field .calc-hint { font-size: 12px; color: var(--grey); margin-bottom: 12px; }
+.calc-field input[type=range] { width: 100%; accent-color: var(--blue); height: 6px; }
+.calc-readout { font-size: 22px; font-weight: 700; color: var(--blue); font-variant-numeric: tabular-nums; }
+.calc-readout span { font-size: 14px; color: var(--text-muted); font-weight: 500; }
+.calc-row-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--grey); margin-top: 4px; }
+
+.calc-vs { display: grid; gap: 14px; margin-bottom: 24px; }
+.calc-card { border-radius: 12px; padding: 18px 20px; }
+.calc-card.trad { background: #FCEEEE; border: 1px solid #F3D2D2; }
+.calc-card.flat { background: #E9F6EF; border: 1px solid #C7E9D6; }
+.calc-card .calc-card-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.calc-card.trad .calc-card-label { color: #C0392B; }
+.calc-card.flat .calc-card-label { color: var(--green); }
+.calc-card .calc-card-amt { font-family: 'DM Serif Display', serif; font-size: 32px; color: var(--navy); line-height: 1.1; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.calc-card .calc-card-amt small { font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text-muted); font-weight: 500; }
+.calc-savings {
+  background: linear-gradient(135deg, var(--navy) 0%, #1a3a6e 100%);
+  border-radius: 12px; padding: 22px 20px; text-align: center; color: #fff;
+}
+.calc-savings .calc-savings-label { font-size: 13px; color: rgba(255,255,255,0.7); font-weight: 600; }
+.calc-savings .calc-savings-amt { font-family: 'DM Serif Display', serif; font-size: 40px; line-height: 1.05; margin: 4px 0; color: #fff; font-variant-numeric: tabular-nums; }
+.calc-savings .calc-savings-sub { font-size: 13px; color: rgba(255,255,255,0.7); }
+.calc-cta { display: inline-block; margin-top: 18px; width: 100%; text-align: center; background: var(--blue); color: #fff; text-decoration: none; padding: 13px 22px; border-radius: 9px; font-weight: 700; font-size: 15px; transition: background 0.2s, transform 0.15s; }
+.calc-cta:hover { background: #2B6CC7; transform: translateY(-2px); }
+.calc-note { font-size: 12px; color: var(--grey); text-align: center; margin-top: 14px; line-height: 1.5; }
+@media (max-width: 720px) {
+  .calc-wrap { grid-template-columns: 1fr; }
+  .calc-inputs { border-right: none; border-bottom: 1px solid var(--grey-mid); }
+}
+
+/* COMPARISON TABLE */
+.cmp-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--grey-mid); border-radius: 14px; overflow: hidden; }
+.cmp-table th, .cmp-table td { padding: 15px 18px; text-align: left; font-size: 15px; border-bottom: 1px solid var(--grey-mid); }
+.cmp-table thead th { background: var(--navy); color: #fff; font-size: 14px; }
+.cmp-table thead th:first-child { background: var(--navy); }
+.cmp-table td:first-child { font-weight: 600; color: var(--navy); }
+.cmp-table .yes { color: var(--green); font-weight: 700; }
+.cmp-table .no { color: #C0392B; font-weight: 700; }
+.cmp-table tbody tr:last-child td { border-bottom: none; }
+.cmp-table-wrap { overflow-x: auto; }
+
+/* EXAMPLES */
+.ex-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.ex-card { background: #fff; border: 1px solid var(--grey-mid); border-radius: 14px; padding: 24px 22px; box-shadow: var(--shadow); }
+.ex-card h3 { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--navy); margin-bottom: 2px; }
+.ex-card .ex-meta { font-size: 13px; color: var(--grey); margin-bottom: 16px; }
+.ex-row { display: flex; justify-content: space-between; font-size: 14px; padding: 7px 0; border-bottom: 1px dashed var(--grey-mid); }
+.ex-row span:last-child { font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; }
+.ex-row.trad span:last-child { color: #C0392B; }
+.ex-row.flat span:last-child { color: var(--green); }
+.ex-save { margin-top: 14px; background: var(--blue-dim); border-radius: 9px; padding: 12px; text-align: center; }
+.ex-save .ex-save-amt { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--blue); font-variant-numeric: tabular-nums; }
+.ex-save .ex-save-label { font-size: 12px; color: var(--text-muted); }
+@media (max-width: 760px) { .ex-grid { grid-template-columns: 1fr; } }
+
+/* FAQ */
+.faq-item { border: 1px solid var(--grey-mid); border-radius: 12px; margin-bottom: 12px; overflow: hidden; background: #fff; }
+.faq-q { width: 100%; text-align: left; background: none; border: none; padding: 18px 22px; font-size: 16px; font-weight: 600; color: var(--navy); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-family: inherit; }
+.faq-q .faq-icon { flex-shrink: 0; transition: transform 0.25s; color: var(--blue); font-size: 20px; }
+.faq-q[aria-expanded="true"] .faq-icon { transform: rotate(45deg); }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+.faq-a-inner { padding: 0 22px 20px; color: var(--text-muted); font-size: 15px; }
+
+/* LEAD CTA */
+.lead-wrap { background: linear-gradient(135deg, var(--navy) 0%, #1a3a6e 100%); border-radius: 18px; padding: 44px 36px; color: #fff; text-align: center; }
+.lead-wrap h2 { color: #fff; }
+.lead-wrap .lp-sub { color: rgba(255,255,255,0.72); }
+.lead-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 540px; margin: 0 auto; }
+.lead-form input { width: 100%; padding: 13px 16px; border-radius: 9px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: #fff; font-size: 15px; font-family: inherit; }
+.lead-form input::placeholder { color: rgba(255,255,255,0.55); }
+.lead-form input:focus { outline: 2px solid var(--blue-light); background: rgba(255,255,255,0.14); }
+.lead-form .lead-full { grid-column: 1 / -1; }
+.lead-form button { grid-column: 1 / -1; background: var(--blue); color: #fff; border: none; padding: 14px; border-radius: 9px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.2s, transform 0.15s; }
+.lead-form button:hover { background: #2B6CC7; transform: translateY(-2px); }
+.lead-note { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 14px; }
+@media (max-width: 560px) { .lead-form { grid-template-columns: 1fr; } }
+
+/* FOOTER */
+footer { background: var(--navy); padding: 60px 32px 36px; }
+.footer-inner { max-width: 1200px; margin: 0 auto; }
+.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.footer-logo-wrap { background: #fff; display: inline-block; border-radius: 8px; padding: 6px 12px; margin-bottom: 4px; }
+.footer-logo-wrap img { height: 36px; display: block; }
+.footer-desc { font-size: 14px; color: rgba(255,255,255,0.65); line-height: 1.7; margin-top: 16px; max-width: 280px; }
+.footer-col h4 { font-size: 13px; font-weight: 700; color: #fff; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 18px; }
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 10px; }
+.footer-col ul li a { font-size: 14px; color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.2s; }
+.footer-col ul li a:hover { color: #fff; }
+.footer-bottom { padding-top: 28px; }
+.footer-copy { font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 6px; }
+.footer-copy a { color: rgba(255,255,255,0.5); }
+@media (max-width: 900px) { .footer-top { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .footer-top { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<a href="#calc" class="skip-link">Skip to calculator</a>
+
+<!-- ANNOUNCE BAR -->
+<div class="announce-bar">
+  <strong>NYC Landlords:</strong>
+  Save $3,000–$8,000/year vs. percentage-based managers.
+  <a href="../#contact">Get your free property audit &rarr;</a>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="../" class="nav-logo"><img src="../assets/logo.jpg" alt="DoryAngel"></a>
+  <ul class="nav-links">
+    <li><a href="../#services">Services</a></li>
+    <li><a href="../#pricing">Pricing</a></li>
+    <li><a href="../#testimonials">Reviews</a></li>
+    <li><a href="../#faq">FAQ</a></li>
+    <li><a href="../#blog">Blog</a></li>
+  </ul>
+  <a href="../#contact" class="nav-cta">Free Property Audit</a>
+</nav>
+
+<!-- HERO -->
+<header class="lp-hero">
+  <div class="lp-hero-inner">
+    <span class="lp-eyebrow">Flat Fee vs. Commission</span>
+    <h1>See exactly what you'll pay<br><em>before</em> you hire a manager.</h1>
+    <p>Most NYC property managers charge 8–10% of your rent — a fee that grows every year. DoryAngel charges a flat monthly rate. Use the calculator below to see your real annual savings.</p>
+  </div>
+</header>
+
+<!-- CALCULATOR -->
+<section class="lp-section" id="calc">
+  <h2>Your savings calculator</h2>
+  <p class="lp-sub">Move the sliders to match your property. Numbers update instantly — no email required to see your result.</p>
+
+  <div class="calc-wrap">
+    <div class="calc-inputs">
+      <div class="calc-field">
+        <label for="units">Number of units</label>
+        <div class="calc-hint">Studios, apartments, or family units you rent out.</div>
+        <input type="range" id="units" min="1" max="10" step="1" value="4">
+        <div class="calc-readout"><span id="unitsOut">4</span> <span>units</span></div>
+        <div class="calc-row-labels"><span>1</span><span>10</span></div>
+      </div>
+      <div class="calc-field">
+        <label for="rent">Average monthly rent per unit</label>
+        <div class="calc-hint">What one unit rents for each month.</div>
+        <input type="range" id="rent" min="1200" max="5000" step="50" value="2000">
+        <div class="calc-readout">$<span id="rentOut">2,000</span> <span>/unit/mo</span></div>
+        <div class="calc-row-labels"><span>$1,200</span><span>$5,000</span></div>
+      </div>
+      <div class="calc-field">
+        <label for="rate">Traditional manager's commission</label>
+        <div class="calc-hint">The % of rent a percentage-based firm charges.</div>
+        <input type="range" id="rate" min="6" max="12" step="0.5" value="9">
+        <div class="calc-readout"><span id="rateOut">9</span><span>% of rent</span></div>
+        <div class="calc-row-labels"><span>6%</span><span>12%</span></div>
+      </div>
+    </div>
+
+    <div class="calc-results">
+      <div class="calc-vs">
+        <div class="calc-card trad">
+          <div class="calc-card-label">Traditional % manager</div>
+          <div class="calc-card-amt">$<span id="tradOut">8,640</span><small>/year</small></div>
+        </div>
+        <div class="calc-card flat">
+          <div class="calc-card-label">DoryAngel flat fee</div>
+          <div class="calc-card-amt">$<span id="flatOut">2,388</span><small>/year</small></div>
+        </div>
+      </div>
+      <div class="calc-savings">
+        <div class="calc-savings-label">You save with DoryAngel</div>
+        <div class="calc-savings-amt">$<span id="saveOut">6,252</span></div>
+        <div class="calc-savings-sub">per year · <span id="fiveOut">$31,260</span> over 5 years</div>
+      </div>
+      <a href="#estimate" class="calc-cta">Get my free, exact estimate &rarr;</a>
+      <p class="calc-note">Based on DoryAngel's published pricing: $99/mo for a single unit, $199/mo flat for 2–10 unit portfolios. Got more than 10 units? <a href="../#contact">Ask about portfolio pricing.</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON TABLE -->
+<section class="lp-section" style="padding-top:0;">
+  <h2>What you actually get</h2>
+  <p class="lp-sub">The headline percentage is rarely the whole story. Here's how the two models compare line by line.</p>
+  <div class="cmp-table-wrap">
+    <table class="cmp-table">
+      <thead>
+        <tr><th>&nbsp;</th><th>Traditional % Manager</th><th>DoryAngel Flat Fee</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Monthly cost</td><td>8–10% of every rent check, forever</td><td class="yes">Fixed $99–$199/mo</td></tr>
+        <tr><td>Cost when your rent goes up</td><td class="no">Goes up too</td><td class="yes">Stays the same</td></tr>
+        <tr><td>Tenant placement &amp; screening</td><td>Often a separate leasing fee</td><td class="yes">Included</td></tr>
+        <tr><td>Maintenance markups</td><td class="no">Common (10–20% on top)</td><td class="yes">No markup</td></tr>
+        <tr><td>Lease renewal fee</td><td class="no">Frequently charged</td><td class="yes">Included</td></tr>
+        <tr><td>Live owner dashboard</td><td>Rarely</td><td class="yes">Included (Pro)</td></tr>
+        <tr><td>Long-term contract</td><td class="no">Usually required</td><td class="yes">None</td></tr>
+        <tr><td>Setup / onboarding fee</td><td class="no">Often $200–$500</td><td class="yes">$0</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- BRONX EXAMPLES -->
+<section class="lp-section" style="padding-top:0;">
+  <h2>Real Bronx examples</h2>
+  <p class="lp-sub">Typical small-portfolio properties across the borough, at a 9% comparison rate. Anonymized, representative figures.</p>
+  <div class="ex-grid">
+    <div class="ex-card">
+      <h3>Mott Haven 2-family</h3>
+      <div class="ex-meta">2 units · $2,100/unit/mo</div>
+      <div class="ex-row"><span>Monthly rent collected</span><span>$4,200</span></div>
+      <div class="ex-row trad"><span>9% manager / year</span><span>$4,536</span></div>
+      <div class="ex-row flat"><span>DoryAngel / year</span><span>$2,388</span></div>
+      <div class="ex-save"><div class="ex-save-amt">$2,148</div><div class="ex-save-label">saved per year</div></div>
+    </div>
+    <div class="ex-card">
+      <h3>Fordham 4-unit</h3>
+      <div class="ex-meta">4 units · $2,000/unit/mo</div>
+      <div class="ex-row"><span>Monthly rent collected</span><span>$8,000</span></div>
+      <div class="ex-row trad"><span>9% manager / year</span><span>$8,640</span></div>
+      <div class="ex-row flat"><span>DoryAngel / year</span><span>$2,388</span></div>
+      <div class="ex-save"><div class="ex-save-amt">$6,252</div><div class="ex-save-label">saved per year</div></div>
+    </div>
+    <div class="ex-card">
+      <h3>Riverdale 6-unit</h3>
+      <div class="ex-meta">6 units · $2,400/unit/mo</div>
+      <div class="ex-row"><span>Monthly rent collected</span><span>$14,400</span></div>
+      <div class="ex-row trad"><span>9% manager / year</span><span>$15,552</span></div>
+      <div class="ex-row flat"><span>DoryAngel / year</span><span>$2,388</span></div>
+      <div class="ex-save"><div class="ex-save-amt">$13,164</div><div class="ex-save-label">saved per year</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="lp-section" style="padding-top:0;">
+  <h2>Common questions</h2>
+  <p class="lp-sub">Straight answers on how flat-fee management compares to the percentage model.</p>
+  <div id="faqList">
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false"><span>Is flat-fee property management really cheaper than a percentage?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">For most Bronx landlords, yes. A manager charging 8–10% of rent collects a fee that grows every time your rent does. DoryAngel charges a flat $99/month for a single unit or $199/month for a 2–10 unit portfolio, no matter how high your rent climbs. On a 4-unit building at $2,000/unit, a 9% manager costs about $8,640/year while DoryAngel costs $2,388 — roughly $6,250 saved.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false"><span>What's included in DoryAngel's flat fee?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">Tenant placement and screening, online rent collection, maintenance coordination, and monthly owner statements are in every plan. The Professional plan adds 24/7 emergency response, regulatory compliance monitoring, a live owner dashboard, and an annual inspection. No setup fees, no long-term contracts.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false"><span>Are there hidden fees with the flat-fee model?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">No. The flat monthly fee is the fee. Percentage managers often layer on leasing fees, renewal fees, maintenance markups, and administrative charges that can double the headline rate. DoryAngel's pricing is published up front and doesn't change as your rent rises.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false"><span>Does percentage-based management ever make sense?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">It can suit a single low-rent unit where 8–10% happens to be less than a flat fee, or very hands-off owners of large luxury portfolios. For the typical Bronx 1–10 unit landlord at market rents, a flat fee is almost always the cheaper, more predictable choice.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false"><span>How accurate is this calculator?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">It uses DoryAngel's published flat-fee pricing ($99/mo for one unit, $199/mo for 2–10 units) versus a percentage you choose between 6% and 12% of collected rent. Your actual quote depends on services selected and property specifics — request a free estimate for an exact figure.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- LEAD CAPTURE -->
+<section class="lp-section" id="estimate">
+  <div class="lead-wrap">
+    <h2>Get your free, exact estimate</h2>
+    <p class="lp-sub">Tell us about your property and we'll send a precise flat-fee quote — usually within one business day. No obligation.</p>
+    <form class="lead-form" action="https://api.web3forms.com/submit" method="POST">
+      <input type="hidden" name="access_key" value="6991fa6b-8f6c-4c24-9167-b7ee52026a98">
+      <input type="hidden" name="subject" value="New Savings Estimate Request — Flat-Fee Calculator">
+      <input type="hidden" name="from_name" value="DoryAngel Website">
+      <input type="hidden" name="source" value="flat-fee-vs-commission calculator">
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <input type="hidden" name="redirect" value="https://beta.doryangel.com/thank-you.html">
+      <input type="text" name="name" class="lead-full" placeholder="Your name" required autocomplete="name">
+      <input type="email" name="email" placeholder="Email address" required autocomplete="email">
+      <input type="tel" name="phone" placeholder="Phone (optional)" autocomplete="tel">
+      <input type="text" name="property" class="lead-full" placeholder="Property address or # of units" autocomplete="street-address">
+      <button type="submit">Send me my estimate &rarr;</button>
+    </form>
+    <p class="lead-note">🔒 We never share your details. Unsubscribe any time.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo-wrap"><img src="../assets/logo.jpg" alt="DoryAngel"></div>
+        <p class="footer-desc">Professional property management in New York City since 2010. Enhancing asset value through technology and trusted service.</p>
+        <a href="tel:+15168474999" style="display:inline-flex;align-items:center;gap:12px;margin-top:16px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:12px 20px;text-decoration:none;color:#fff;font-size:14px;font-weight:600;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92v2z"/></svg>
+          Call: (516) 847-4999
+        </a>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="../#services">Property Owners</a></li>
+          <li><a href="../#services">Tenants</a></li>
+          <li><a href="../#services">Brokers</a></li>
+          <li><a href="../#pricing">Pricing</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="../#blog">Blog</a></li>
+          <li><a href="../#faq">FAQ</a></li>
+          <li><a href="../#testimonials">Reviews</a></li>
+          <li><a href="../#contact">Free Audit</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="../privacy.html">Privacy Policy</a></li>
+          <li><a href="../disclaimer.html">Disclaimer</a></li>
+          <li><a href="../sms-consent.html">SMS Consent</a></li>
+          <li><a href="../terms.html">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 DoryAngel LLC. All rights reserved. Licensed Property Manager, New York.</p>
+      <p class="footer-copy">Not a licensed real estate broker. See <a href="../terms.html">Terms</a> · <a href="../privacy.html">Privacy</a>. Savings figures are illustrative estimates based on published pricing and the comparison rate you select; actual results vary.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── Calculator ─────────────────────────────────────────────── */
+(function () {
+  var unitsEl = document.getElementById('units');
+  var rentEl  = document.getElementById('rent');
+  var rateEl  = document.getElementById('rate');
+
+  var unitsOut = document.getElementById('unitsOut');
+  var rentOut  = document.getElementById('rentOut');
+  var rateOut  = document.getElementById('rateOut');
+  var tradOut  = document.getElementById('tradOut');
+  var flatOut  = document.getElementById('flatOut');
+  var saveOut  = document.getElementById('saveOut');
+  var fiveOut  = document.getElementById('fiveOut');
+
+  function fmt(n) { return Math.round(n).toLocaleString('en-US'); }
+
+  // DoryAngel published flat fee: $99/mo single unit, $199/mo flat for 2–10 units.
+  function flatMonthly(units) { return units <= 1 ? 99 : 199; }
+
+  function update() {
+    var units = parseInt(unitsEl.value, 10);
+    var rent  = parseInt(rentEl.value, 10);
+    var rate  = parseFloat(rateEl.value);
+
+    var monthlyRent = units * rent;
+    var tradAnnual  = monthlyRent * (rate / 100) * 12;
+    var flatAnnual  = flatMonthly(units) * 12;
+    var save        = Math.max(0, tradAnnual - flatAnnual);
+
+    unitsOut.textContent = units;
+    rentOut.textContent  = fmt(rent);
+    rateOut.textContent  = rate;
+    tradOut.textContent  = fmt(tradAnnual);
+    flatOut.textContent  = fmt(flatAnnual);
+    saveOut.textContent  = fmt(save);
+    fiveOut.textContent  = '$' + fmt(save * 5);
+
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'calculator_interaction', { event_category: 'engagement', event_label: 'flat_fee_calc' });
+    }
+  }
+
+  [unitsEl, rentEl, rateEl].forEach(function (el) {
+    el.addEventListener('input', update);
+  });
+  update();
+})();
+
+/* ── FAQ accordion ──────────────────────────────────────────── */
+(function () {
+  document.querySelectorAll('.faq-q').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      var ans = btn.nextElementSibling;
+      btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+      ans.style.maxHeight = open ? null : ans.scrollHeight + 'px';
+    });
+  });
+})();
+</script>
+</body>
+</html>
