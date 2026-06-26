@@ -5098,9 +5098,19 @@ var _toolGateUrl = '';
 
 function openToolGate(toolUrl, toolName) {
   _toolGateUrl = toolUrl;
-  document.getElementById('toolGateTitle').textContent = toolName;
-  document.getElementById('toolGateSubject').value = 'Free Tool Access: ' + toolName;
+  var isDigest = (toolName === 'DoryAngel Digest');
+  document.getElementById('toolGateTitle').textContent = isDigest ? 'DoryAngel Digest — Free Weekly Insights' : toolName;
+  document.getElementById('toolGateSub').textContent = isDigest
+    ? 'NYC landlord tips, rental law updates, and tax-saving tricks — every week, free.'
+    : 'We\'ll also send you NYC landlord tips — unsubscribe any time.';
+  document.getElementById('toolGateSubject').value = isDigest ? 'Digest Signup: ' + toolName : 'Free Tool Access: ' + toolName;
   document.getElementById('toolGateToolName').value = toolName;
+  var submitBtn = document.querySelector('#toolGateForm button[type="submit"]');
+  if (submitBtn) {
+    submitBtn.innerHTML = isDigest
+      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Subscribe — It\'s Free &rarr;'
+      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Open the Tool &rarr;';
+  }
   document.getElementById('toolGateForm').style.display = 'block';
   document.getElementById('toolGateSuccess').style.display = 'none';
   document.getElementById('toolGateEmail').value = '';
@@ -5133,15 +5143,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     document.getElementById('toolGateEmail').style.borderColor = '';
 
-    // open tool immediately — don't wait on network
-    window.open(_toolGateUrl, '_blank', 'noopener,noreferrer');
+    var isDigest = document.getElementById('toolGateToolName').value === 'DoryAngel Digest';
+
+    // For actual tools, open in new tab. Skip for newsletter — no URL to open.
+    if (!isDigest) {
+      window.open(_toolGateUrl, '_blank', 'noopener,noreferrer');
+    }
 
     // fire-and-forget to Web3Forms (owner notification)
     var data = new FormData(form);
     fetch('https://api.web3forms.com/submit', { method: 'POST', body: data }).catch(function(){});
 
     // if this is the Digest signup, also post to Make.com for the welcome email
-    if (document.getElementById('toolGateToolName').value === 'DoryAngel Digest') {
+    if (isDigest) {
       fetch('https://hook.eu1.make.com/2qo6r1tr15cckv1opo8em9x89ip3ku4x', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -5152,7 +5166,15 @@ document.addEventListener('DOMContentLoaded', function() {
       }).catch(function(){});
     }
 
-    if (typeof gtag !== 'undefined') { gtag('event', 'tool_gate_submit', { event_category: 'lead', event_label: 'tool_access' }); }
+    if (typeof gtag !== 'undefined') { gtag('event', 'tool_gate_submit', { event_category: 'lead', event_label: isDigest ? 'digest_signup' : 'tool_access' }); }
+
+    // Update success message based on flow type
+    var successMsg = document.querySelector('#toolGateSuccess p');
+    if (successMsg) {
+      successMsg.innerHTML = isDigest
+        ? 'You\'re subscribed! Check your inbox for your first issue.<br>Unsubscribe any time.'
+        : 'The tool is opening now in a new tab.<br>Check your inbox for tips from DoryAngel.';
+    }
 
     form.style.display = 'none';
     document.getElementById('toolGateSuccess').style.display = 'block';
