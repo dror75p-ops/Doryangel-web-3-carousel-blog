@@ -509,6 +509,10 @@ async function main() {
 
 const SUBSCRIBER_SHEET_ID = '1-9IDAD1VmlnCvTdU3JqDWahjEFQaUFtRG-WayHZ9N8o';
 
+// Make.com "DoryAngel Digest — New Post Broadcast" scenario (sends via Gmail / office@doryangel.com).
+// One POST per matched subscriber; the scenario emails them the new post.
+const DIGEST_BROADCAST_WEBHOOK = 'https://hook.eu1.make.com/rbh91p9c72r0qypeuhmjvlsey3hutzgr';
+
 async function getGoogleAccessToken(credentials) {
   const now = Math.floor(Date.now() / 1000);
   const header  = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT' })).toString('base64url');
@@ -532,30 +536,6 @@ async function getGoogleAccessToken(credentials) {
   const data = await res.json();
   if (!data.access_token) throw new Error(`Google token error: ${JSON.stringify(data)}`);
   return data.access_token;
-}
-
-function buildSubscriberEmail(post, name, postUrl, email) {
-  const unsubSubject = encodeURIComponent('Unsubscribe me from DoryAngel Digest');
-  const unsubBody    = encodeURIComponent(`Hi,\n\nPlease remove me from the DoryAngel Digest newsletter.\n\nMy email: ${email}\n\nThank you.`);
-  const unsubUrl     = `mailto:office@doryangel.com?subject=${unsubSubject}&body=${unsubBody}`;
-  return `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;max-width:580px;margin:0 auto;color:#1A2740">
-<div style="background:#0F2847;padding:22px 28px;border-radius:8px 8px 0 0">
-  <h1 style="color:white;font-size:18px;margin:0">DoryAngel Digest</h1>
-  <p style="color:rgba(255,255,255,0.65);font-size:13px;margin:5px 0 0">New article just published</p>
-</div>
-<div style="padding:24px 28px;border:1px solid #E2E8F0;border-top:none;border-radius:0 0 8px 8px">
-  <p style="font-size:14px;color:#556070;margin:0 0 16px">Hi ${name},</p>
-  <h2 style="font-size:20px;color:#0F2847;margin:0 0 12px;line-height:1.4">${post.title}</h2>
-  <p style="color:#556070;font-size:14px;line-height:1.7;margin:0 0 24px">${post.excerpt}</p>
-  <a href="${postUrl}" style="display:inline-block;background:#1E5AA8;color:white;padding:13px 26px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px">Read the full article →</a>
-  <hr style="border:none;border-top:1px solid #E2E8F0;margin:28px 0 18px">
-  <p style="font-size:11px;color:#8B9BAE;margin:0 0 10px;line-height:1.7">
-    DoryAngel LLC · 557 Grand Concourse, Bronx, NY 10451<br>
-    You're receiving this because you subscribed to DoryAngel Digest.
-  </p>
-  <a href="${unsubUrl}" style="font-size:11px;color:#8B9BAE;text-decoration:underline">Unsubscribe</a>
-</div>
-</body></html>`;
 }
 
 function parseCSV(text) {
@@ -619,35 +599,53 @@ async function notifyDigestSubscribers(post) {
   }
 
   // col A=name, B=email, C=topics, D=date, E=active("Yes"), F=address
+  // Topic segmentation: column C holds the comma-separated category slugs the
+  // subscriber chose at signup. A subscriber receives this post if either:
+  //   - they selected no topics (no preference → gets every post), or
+  //   - this post's category is one of their selected topics (exact match).
+  const postCategory = (post.category || '').trim().toLowerCase();
+  let skippedByTopic = 0;
   const subscribers = rows.filter(r => {
     const email  = (r[1] || '').trim();
     const active = (r[4] || '').trim().toLowerCase();
-    return email.includes('@') && email.length > 6 && active === 'yes';
+    if (!(email.includes('@') && email.length > 6 && active === 'yes')) return false;
+
+    const topicList = (r[2] || '')
+      .split(',')
+      .map(t => t.trim().toLowerCase())
+      .filter(Boolean);
+    if (topicList.length === 0) return true;        // no preference → all posts
+    const match = topicList.includes(postCategory); // exact slug match, not substring
+    if (!match) skippedByTopic++;
+    return match;
   });
 
-  console.log(`Notifying ${subscribers.length} digest subscribers`);
+  console.log(`Notifying ${subscribers.length} digest subscribers for "${postCategory}" (${skippedByTopic} skipped — topic mismatch)`);
   if (subscribers.length === 0) return { sent: 0, total: 0 };
 
-  const postUrl = `https://dror75p-ops.github.io/Doryangel-web-3-carousel-blog/blog/${post.slug}/`;
+  const postUrl = `https://beta.doryangel.com/blog/${post.slug}/`;
   let sent = 0;
 
+  // Delivery goes through the Make.com broadcast scenario (Gmail / office@doryangel.com)
+  // rather than Resend — the Resend sandbox domain can only reach the account owner,
+  // whereas the Gmail channel reliably delivers to any subscriber.
   for (const sub of subscribers) {
     const email = (sub[1] || '').trim();
-    const name  = (sub[0] || '').trim() || 'there';
+    const name  = (sub[0] || '').trim();
     try {
-      await resend.emails.send({
-        from: 'DoryAngel Blog <onboarding@resend.dev>',
-        to:   email,
-        subject: `📬 New post: ${post.title}`,
-        html: buildSubscriberEmail(post, name, postUrl, email),
+      const res = await fetch(DIGEST_BROADCAST_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, title: post.title, excerpt: post.excerpt, url: postUrl }),
       });
+      if (!res.ok) throw new Error(`broadcast webhook returned ${res.status}`);
       sent++;
     } catch (e) {
       console.warn(`  ✗ ${email}: ${e.message}`);
     }
   }
 
-  console.log(`Digest sent to ${sent}/${subscribers.length} subscribers`);
+  console.log(`Digest broadcast queued for ${sent}/${subscribers.length} subscribers`);
   return { sent, total: subscribers.length };
 }
 

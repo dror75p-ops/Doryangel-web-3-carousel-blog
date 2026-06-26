@@ -10,7 +10,12 @@
 
 ### Last changes (as of 2026-05-17)
 
-- **Flat-fee vs. % calculator landing page** (2026-06-26): new `flat-fee-vs-commission/index.html` — interactive savings calculator (units × rent × commission %), comparison table, 3 real Bronx examples (Mott Haven / Fordham / Riverdale), FAQ + FAQPage/BreadcrumbList JSON-LD, and a Web3Forms lead-capture form. Calculator is anchored to published pricing ($99/mo single unit, $199/mo flat for 2–10 units) — do NOT invent other numbers. Linked from the pricing section of `index.html` and added to `sitemap.xml`. Consolidates Arlo issues #119/#125/#126/#127.
+- **Digest topic segmentation, end-to-end** (2026-06-26): subscribers now pick interests at signup and only receive matching posts.
+  - **Signup**: the Digest tool-gate modal (`index.html`) shows a Digest-only topic picker (the 4 blog categories) and POSTs a `topics` array to the Make signup webhook → stored in the subscriber sheet's `topic` column.
+  - **Send**: `scripts/generate-post.js` → `notifyDigestSubscribers()` filters subscribers by exact topic-slug match (no-topics = gets all posts) and delivers via a new Make.com **Gmail** broadcast scenario — NOT Resend. The Resend sandbox domain (`onboarding@resend.dev`) only reaches the account owner, so the subscriber blast must go through Gmail (`office@doryangel.com`). Post links use canonical `beta.doryangel.com`.
+  - Also relaxed the Digest signup filter to accept **email-only** signups (name optional) — previously no-name signups were silently dropped from both the sheet and the welcome email.
+- **Bronx Landlord Tax Deduction Checklist lead magnet** (2026-06-26): `tax-checklist/index.html` (landing) + `tax-checklist/checklist.html` (28 deductions). Form posts to ONE backend — the Make.com "Tax Checklist" scenario (welcome email + owner notify + Google Sheet log). The homepage entry is a 4th `.tool-card` in the DIY toolkit grid (not a banner). Web3Forms was removed from this form to stop duplicate owner emails.
+- **Flat-fee vs. % calculator landing page** (2026-06-26): new `flat-fee-vs-commission/index.html` — interactive savings calculator (units × rent × commission %), comparison table, 3 real Bronx examples (Mott Haven / Fordham / Riverdale), FAQ + FAQPage/BreadcrumbList JSON-LD, and a Web3Forms lead-capture form. Calculator is anchored to published pricing ($99/mo single unit, $199/mo flat for 2–10 units) — do NOT invent other numbers. Linked from the pricing section of `index.html` (a styled CTA card) and added to `sitemap.xml`. Consolidates Arlo issues #119/#125/#126/#127.
 - **Removed**: Owner/Tenant Portal card widget from the hero section (the tab + ledger mockup). Merged via PR #43. Reason: it distracted from the primary lead-collection CTA flow.
 - **Accessibility fixes** (merged PR #43): contact form labels linked to inputs via `for`/`id`; FAQ buttons now have `aria-expanded`; hero photo divs have `role="img"` + `aria-label`; blog carousel has `<noscript>` static fallback.
 - **Logo promo flip** (pending PR): hamburger button removed from the flip animation — now always static. Logo flips every 5 seconds (first at 5s after load), shows promo for 3s, then flips back.
@@ -45,7 +50,8 @@
 - `index.html` — Full website (self-contained, all CSS inline, all JS inline at bottom)
 - `blog-loader.js` — Renders blog cards on the home page; each card links to `/blog/[slug]/`
 - `content/blog/posts-index.json` — Source of truth for all posts
-- `scripts/generate-post.js` — Auto-publish: Claude API → Unsplash → Resend email
+- `scripts/generate-post.js` — Agent **Nave**: generates the post (Claude API → Unsplash) → writes `posts-index.json` → fires the topic-segmented digest broadcast (Make/Gmail) → Resend approval email to owner → hands a social queue to Vera
+- `scripts/social-post.js` — Agent **Vera**: posts the new article to the Facebook Page (reads `/tmp/social-queue.json` from Nave). Does NOT touch subscribers.
 - `scripts/build-blog.js` — Generates per-post HTML pages from the JSON
 - `scripts/migrate-posts-once.js` — One-time schema migration (kept for reference)
 - `scripts/refresh-images.js` — One-shot workflow to refresh all post hero images
@@ -84,7 +90,7 @@
 - **SEO per post**: `<title>`, meta description, canonical, Open Graph, Twitter Card, JSON-LD BlogPosting schema
 - **Featured post** flag on JSON for the larger card on the index
 - **Post page** has: full-width hero image, sticky CTA, markdown body, CTA block, "Continue reading" related posts (3 from same category)
-- **Auto-publish workflow** runs `generate-post.js` → `build-blog.js` → commits all together every 3 days
+- **Auto-publish workflow** (`blog-autopublish.yml`, every 3 days): Nave (`generate-post.js`, also sends the topic-segmented digest) → `build-blog.js` → Vera (`social-post.js`, Facebook) → commit all to main. The digest broadcast needs no new secret (the Make webhook is a public URL); it reads subscribers via `GOOGLE_SA_KEY` (or public CSV fallback). Note: the digest fires before the post page is committed/deployed, so a clicked link can 404 for the ~1–2 min until GitHub Pages rebuilds — pre-existing, low-impact.
 
 ### Post schema (current)
 
@@ -119,11 +125,24 @@
 ## Key integrations
 
 - **Anthropic API** (`ANTHROPIC_API_KEY` secret): `claude-opus-4-7`, structured outputs, prompt caching
-- **Resend** (`RESEND_API_KEY` secret): from `onboarding@resend.dev` to `dror75p@gmail.com` (free tier limit; verify doryangel.com domain to send to office@doryangel.com)
+- **Resend** (`RESEND_API_KEY` secret): from `onboarding@resend.dev` — **owner-facing emails only** (Nave's approval email, daily-audit report) go to `dror75p@gmail.com`. The sandbox domain can ONLY reach the account owner, so it is NOT used for subscriber-facing email. Verify doryangel.com in Resend to lift this.
 - **Unsplash** (`UNSPLASH_ACCESS_KEY` secret): per-category curated queries for cover images
 - **GitHub** (`GH_TOKEN` secret): the bot's token for committing to main; needs `repo` + `workflow` scopes
 - **Google Analytics 4** (`G-0W61NYHM78`): in `index.html`, gated by cookie consent (was `G-P8QR4VL8NH` before the beta.doryangel.com move, PR #79, 2026-06-16)
 - **Retell AI + Make.com lead capture**: see section below
+
+### Make.com scenarios (team 998919, org 6531616, eu1)
+
+All subscriber-facing email is sent here via the **Gmail** connection (`office@doryangel.com`, conn 5113797) — reliable to any inbox. The **Google** connection (`office@doryangel.com`, conn 5113631) writes the sheets.
+
+| Scenario | ID | Webhook (`hook.eu1.make.com/…`) | Does |
+|---|---|---|---|
+| DoryAngel Digest — New Subscriber | 5549170 | `2qo6r1tr15cckv1opo8em9x89ip3ku4x` | signup → sheet `1-9IDAD1…` + welcome email. Filter accepts **email-only** (name optional). Maps `topics` (col C). |
+| DoryAngel Digest — New Post Broadcast | 6347243 | `rbh91p9c72r0qypeuhmjvlsey3hutzgr` | one POST per matched subscriber from `generate-post.js` → Gmail sends them the new post. **This is the recurring digest send.** |
+| DoryAngel Tax Checklist — Download & Welcome Email | 6346876 | `l1ydothnj57j2ngk6952oam9wds2wgk1` | checklist signup → welcome email + owner notify + sheet `1KbVggQ…` (tagged `Tax Checklist`) |
+| DoryAngel Chat — New Leads | 5578524 | (Retell) | see Retell section below |
+
+Subscriber sheets are owned by `dror75p@gmail.com`, shared with `office@doryangel.com`. Digest subscribers: sheet `1-9IDAD1VmlnCvTdU3JqDWahjEFQaUFtRG-WayHZ9N8o` (cols: name, email, topic, date, active, address).
 
 ## Retell AI lead capture
 

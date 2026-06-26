@@ -1765,6 +1765,24 @@ body.variant-dark .audience-card { background: #0F2040; }
 .toolgate-note {
   font-size: 11px; color: #9CA3AF; text-align: center; margin-top: 10px;
 }
+.toolgate-topics-field { margin-bottom: 14px; }
+.toolgate-topics-field .tg-topics-label {
+  display: block; font-size: 12px; font-weight: 700;
+  color: #374151; margin-bottom: 7px; letter-spacing: .03em;
+}
+.tg-topics { display: flex; flex-wrap: wrap; gap: 8px; }
+.tg-topic {
+  display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+  font-size: 13px; font-weight: 600; color: #374151;
+  border: 1.5px solid #E5E9F0; border-radius: 100px; padding: 7px 13px;
+  background: #fff; transition: border-color .15s, background .15s, color .15s;
+  user-select: none;
+}
+.tg-topic input { position: absolute; opacity: 0; width: 0; height: 0; }
+.tg-topic:has(input:checked) {
+  border-color: #1E5AA8; background: #EBF3FD; color: #0F2847;
+}
+.tg-topic:focus-within { border-color: #1E5AA8; }
 .toolgate-success {
   text-align: center; padding: 16px 0 8px;
 }
@@ -2024,6 +2042,16 @@ retell-chat-web-component {
         <div class="toolgate-field">
           <label for="toolGateEmail">Email address <span style="color:#D14343;">*</span></label>
           <input type="email" id="toolGateEmail" name="email" placeholder="you@email.com" required autocomplete="email">
+        </div>
+        <!-- Digest-only: topic interests -->
+        <div class="toolgate-topics-field" id="toolGateTopicsField" style="display:none;">
+          <span class="tg-topics-label">What are you interested in? <span style="font-weight:400;color:#9CA3AF;">(pick any — optional)</span></span>
+          <div class="tg-topics">
+            <label class="tg-topic"><input type="checkbox" name="topic" value="property-management">Property Management</label>
+            <label class="tg-topic"><input type="checkbox" name="topic" value="diy-property-management">DIY Landlording</label>
+            <label class="tg-topic"><input type="checkbox" name="topic" value="investments">Investments</label>
+            <label class="tg-topic"><input type="checkbox" name="topic" value="property-automation">Automation</label>
+          </div>
         </div>
         <button type="submit" class="toolgate-submit">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -5153,6 +5181,12 @@ function openToolGate(toolUrl, toolName) {
       ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Subscribe — It\'s Free &rarr;'
       : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Open the Tool &rarr;';
   }
+  // Topic interests are only relevant to the Digest newsletter
+  var topicsField = document.getElementById('toolGateTopicsField');
+  if (topicsField) {
+    topicsField.style.display = isDigest ? 'block' : 'none';
+    Array.prototype.forEach.call(topicsField.querySelectorAll('input[name="topic"]'), function (c) { c.checked = false; });
+  }
   document.getElementById('toolGateForm').style.display = 'block';
   document.getElementById('toolGateSuccess').style.display = 'none';
   document.getElementById('toolGateEmail').value = '';
@@ -5198,12 +5232,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // if this is the Digest signup, also post to Make.com for the welcome email
     if (isDigest) {
+      var topics = Array.prototype.map.call(
+        form.querySelectorAll('input[name="topic"]:checked'),
+        function (c) { return c.value; }
+      );
       fetch('https://hook.eu1.make.com/2qo6r1tr15cckv1opo8em9x89ip3ku4x', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name:  document.getElementById('toolGateName').value.trim(),
-          email: document.getElementById('toolGateEmail').value.trim()
+          name:   document.getElementById('toolGateName').value.trim(),
+          email:  document.getElementById('toolGateEmail').value.trim(),
+          topics: topics
         })
       }).catch(function(){});
     }
