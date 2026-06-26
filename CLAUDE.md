@@ -10,6 +10,7 @@
 
 ### Last changes (as of 2026-05-17)
 
+- **Flat-fee vs. % calculator landing page** (2026-06-26): new `flat-fee-vs-commission/index.html` — interactive savings calculator (units × rent × commission %), comparison table, 3 real Bronx examples (Mott Haven / Fordham / Riverdale), FAQ + FAQPage/BreadcrumbList JSON-LD, and a Web3Forms lead-capture form. Calculator is anchored to published pricing ($99/mo single unit, $199/mo flat for 2–10 units) — do NOT invent other numbers. Linked from the pricing section of `index.html` and added to `sitemap.xml`. Consolidates Arlo issues #119/#125/#126/#127.
 - **Removed**: Owner/Tenant Portal card widget from the hero section (the tab + ledger mockup). Merged via PR #43. Reason: it distracted from the primary lead-collection CTA flow.
 - **Accessibility fixes** (merged PR #43): contact form labels linked to inputs via `for`/`id`; FAQ buttons now have `aria-expanded`; hero photo divs have `role="img"` + `aria-label`; blog carousel has `<noscript>` static fallback.
 - **Logo promo flip** (pending PR): hamburger button removed from the flip animation — now always static. Logo flips every 5 seconds (first at 5s after load), shows promo for 3s, then flips back.
