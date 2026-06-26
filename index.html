@@ -2035,7 +2035,7 @@ retell-chat-web-component {
       <div id="toolGateSuccess" class="toolgate-success" style="display:none;">
         <div class="toolgate-success-icon">✓</div>
         <h5>You're in!</h5>
-        <p>The tool is opening now in a new tab.<br>Check your inbox for tips from DoryAngel.</p>
+        <p id="toolGateSuccessMsg">The tool is opening now in a new tab.<br>Check your inbox for tips from DoryAngel.</p>
         <button onclick="closeToolGate()" style="margin-top:16px;background:var(--blue);color:#fff;border:none;padding:10px 22px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">Close</button>
       </div>
     </div>
@@ -4171,7 +4171,7 @@ retell-chat-web-component {
         <ul>
           <li><a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener noreferrer">Preventive Maintenance &amp; Compliance</a></li>
           <li><a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener noreferrer">Owner &amp; Tenant Portal (Buildium)</a></li>
-          <li><a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/" target="_blank" rel="noopener noreferrer">DoryAngel Digest</a></li>
+          <li><a href="#" onclick="openToolGate('https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/','DoryAngel Digest');return false;">DoryAngel Digest</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -5095,10 +5095,12 @@ async function handleFormSubmit(e) {
 <script>
 /* ── TOOL GATE — free tool email capture ─────────────────────────── */
 var _toolGateUrl = '';
+var _isDigest = false;
 
 function openToolGate(toolUrl, toolName) {
   _toolGateUrl = toolUrl;
-  var isDigest = (toolName === 'DoryAngel Digest');
+  _isDigest = (toolName === 'DoryAngel Digest');
+  var isDigest = _isDigest;
   document.getElementById('toolGateTitle').textContent = isDigest ? 'DoryAngel Digest — Free Weekly Insights' : toolName;
   document.getElementById('toolGateSub').textContent = isDigest
     ? 'NYC landlord tips, rental law updates, and tax-saving tricks — every week, free.'
@@ -5143,7 +5145,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     document.getElementById('toolGateEmail').style.borderColor = '';
 
-    var isDigest = document.getElementById('toolGateToolName').value === 'DoryAngel Digest';
+    var isDigest = _isDigest;
 
     // For actual tools, open in new tab. Skip for newsletter — no URL to open.
     if (!isDigest) {
@@ -5169,7 +5171,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof gtag !== 'undefined') { gtag('event', 'tool_gate_submit', { event_category: 'lead', event_label: isDigest ? 'digest_signup' : 'tool_access' }); }
 
     // Update success message based on flow type
-    var successMsg = document.querySelector('#toolGateSuccess p');
+    var successMsg = document.getElementById('toolGateSuccessMsg');
     if (successMsg) {
       successMsg.innerHTML = isDigest
         ? 'You\'re subscribed! Check your inbox for your first issue.<br>Unsubscribe any time.'
