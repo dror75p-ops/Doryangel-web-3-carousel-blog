@@ -362,10 +362,7 @@
       <h2>Get Your Free Checklist</h2>
       <p>Instant access — no spam, unsubscribe any time.</p>
       <form id="lpForm" novalidate>
-        <input type="hidden" name="access_key" value="6991fa6b-8f6c-4c24-9167-b7ee52026a98">
         <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <input type="hidden" name="subject" value="Tax Checklist Download">
-        <input type="hidden" name="from_name" value="DoryAngel Website">
         <div class="lp-field">
           <label for="lpName">First name</label>
           <input type="text" id="lpName" name="name" placeholder="e.g. Mark" autocomplete="given-name">
@@ -614,8 +611,8 @@ document.getElementById('lpForm').addEventListener('submit', async function(e) {
   btn.disabled = true;
   btn.textContent = 'Sending…';
   var name = document.getElementById('lpName').value.trim();
-  var data = new FormData(this);
-  fetch('https://api.web3forms.com/submit', { method: 'POST', body: data }).catch(function(){});
+  // Single backend: Make.com sends the subscriber welcome email,
+  // notifies office@doryangel.com, and logs the lead to Google Sheets.
   fetch('https://hook.eu1.make.com/l1ydothnj57j2ngk6952oam9wds2wgk1', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
