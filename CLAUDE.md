@@ -4,7 +4,7 @@
 **Dori Angel Web.3 — Carousel Blog**
 
 - GitHub repo: https://github.com/dror75p-ops/Doryangel-web-3-carousel-blog
-- Live URL: https://dror75p-ops.github.io/Doryangel-web-3-carousel-blog/
+- Live URL (production): https://beta.doryangel.com/ — GitHub Pages served via the `beta.doryangel.com` custom domain. The raw `dror75p-ops.github.io/Doryangel-web-3-carousel-blog/` URL still resolves but is NOT canonical; use beta.doryangel.com for canonicals, sitemap, OG, and any in-app links to this site's own pages.
 - Owner GitHub account: dror75p-ops
 - Owner email: office@doryangel.com (notification emails go to dror75p@gmail.com via Resend)
 
@@ -20,9 +20,9 @@
 - **Accessibility fixes** (merged PR #43): contact form labels linked to inputs via `for`/`id`; FAQ buttons now have `aria-expanded`; hero photo divs have `role="img"` + `aria-label`; blog carousel has `<noscript>` static fallback.
 - **Logo promo flip** (pending PR): hamburger button removed from the flip animation — now always static. Logo flips every 5 seconds (first at 5s after load), shows promo for 3s, then flips back.
 
-### Hosting status (as of 2026-05-16)
+### Hosting status (as of 2026-06-26)
 
-- **Production**: GitHub Pages at the URL above. This is the canonical live site.
+- **Production**: GitHub Pages served at **https://beta.doryangel.com/** (custom domain). This is the canonical live site — all canonicals/sitemap/OG and same-site links use `beta.doryangel.com`. (Separate micro-app tools — Compliance Calendar, Digest landing, AI Property Inspector, owner-portal-reports — keep their own `dror75p-ops.github.io/...` URLs; they are NOT pages on beta.doryangel.com.)
 - **Vercel**: the owner also publishes to Vercel, but the Vercel deployment is **not** production yet. Treat any Vercel URL as preview/staging only until the owner explicitly says to flip.
 - **Custom domain (doryangel.com)**: not yet pointed at this repo. Pending.
 - **When the owner says "move to Vercel" or "go live on doryangel.com"**, these files need a coordinated update in one PR — do NOT update them piecemeal before then:
