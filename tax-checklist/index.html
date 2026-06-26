@@ -616,7 +616,7 @@ document.getElementById('lpForm').addEventListener('submit', async function(e) {
   var name = document.getElementById('lpName').value.trim();
   var data = new FormData(this);
   fetch('https://api.web3forms.com/submit', { method: 'POST', body: data }).catch(function(){});
-  fetch('https://hook.eu1.make.com/tax-checklist-placeholder', {
+  fetch('https://hook.eu1.make.com/l1ydothnj57j2ngk6952oam9wds2wgk1', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name: name, email: email, source: 'tax-checklist-landing' })
