@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2025 Bronx Landlord Tax Deduction Checklist | DoryAngel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0F2847;
+      --blue: #1E5AA8;
+      --blue-dim: #EBF3FD;
+      --green: #15803D;
+      --green-light: #DCFCE7;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: #1a1a1a;
+      background: #f4f6f9;
+      padding: 24px 16px 48px;
+    }
+    .page {
+      max-width: 780px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    }
+
+    /* ── HEADER ── */
+    .cl-header {
+      background: linear-gradient(135deg, var(--navy), #1a3d6e);
+      padding: 32px 36px 28px;
+      color: #fff;
+      position: relative;
+    }
+    .cl-header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .cl-brand { font-family: 'DM Serif Display', serif; font-size: 18px; opacity: .85; }
+    .cl-badge {
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .cl-header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(20px, 4vw, 30px);
+      margin: 16px 0 8px;
+      line-height: 1.2;
+    }
+    .cl-header p { font-size: 14px; opacity: .75; max-width: 520px; }
+
+    /* ── PRINT BUTTON ── */
+    .cl-print-bar {
+      background: var(--blue-dim);
+      padding: 12px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .cl-print-note { font-size: 13px; color: #4B5563; }
+    .cl-print-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--navy);
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      font-family: inherit;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 18px;
+      cursor: pointer;
+    }
+    .cl-print-btn:hover { background: var(--blue); }
+
+    /* ── BODY ── */
+    .cl-body { padding: 32px 36px 36px; }
+    .cl-intro {
+      background: var(--green-light);
+      border-left: 4px solid var(--green);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 32px;
+      font-size: 13px;
+      color: #166534;
+      line-height: 1.6;
+    }
+    .cl-intro strong { font-weight: 700; }
+
+    /* ── CATEGORY ── */
+    .cl-category { margin-bottom: 32px; }
+    .cl-category-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px;
+      color: var(--navy);
+      border-bottom: 2px solid var(--blue-dim);
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .cl-category-icon {
+      width: 30px;
+      height: 30px;
+      background: var(--navy);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ── ITEM ── */
+    .cl-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      transition: background .1s;
+    }
+    .cl-item:hover { background: #F8FAFC; }
+    .cl-checkbox {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #CBD5E1;
+      border-radius: 5px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .1s, border-color .1s;
+    }
+    .cl-checkbox.checked {
+      background: var(--green);
+      border-color: var(--green);
+    }
+    .cl-item-text { flex: 1; }
+    .cl-item-name { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 2px; }
+    .cl-item-desc { font-size: 12px; color: #6B7280; line-height: 1.5; }
+    .cl-item-badges { margin-top: 4px; display: flex; gap: 5px; flex-wrap: wrap; }
+    .cl-badge-tag {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .cl-badge-missed { background: #FEF3C7; color: #92400E; }
+    .cl-badge-bronx { background: #EDE9FE; color: #5B21B6; }
+    .cl-badge-big { background: #DBEAFE; color: #1E40AF; }
+
+    /* ── FOOTER ── */
+    .cl-footer {
+      background: var(--navy);
+      padding: 20px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .cl-footer p { font-size: 12px; color: rgba(255,255,255,0.5); }
+    .cl-footer a { color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 600; }
+    .cl-footer a:hover { color: #fff; }
+
+    /* ── PRINT ── */
+    @media print {
+      body { background: #fff; padding: 0; }
+      .page { box-shadow: none; border-radius: 0; }
+      .cl-print-bar { display: none; }
+      .cl-item { break-inside: avoid; }
+      .cl-category { break-inside: avoid; }
+    }
+
+    @media (max-width: 520px) {
+      .cl-header { padding: 24px 20px 20px; }
+      .cl-body { padding: 24px 20px; }
+      .cl-print-bar { padding: 12px 20px; }
+      .cl-footer { padding: 16px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="cl-header">
+    <div class="cl-header-top">
+      <span class="cl-brand">DoryAngel</span>
+      <span class="cl-badge">2025 Edition</span>
+    </div>
+    <h1>Bronx Landlord Tax Deduction Checklist</h1>
+    <p>28 deductions to review with your CPA — including NYC-specific items most landlords miss. Check each one as you go.</p>
+  </div>
+
+  <!-- PRINT BAR -->
+  <div class="cl-print-bar">
+    <span class="cl-print-note">Tip: Print this page and bring it to your CPA appointment.</span>
+    <button class="cl-print-btn" onclick="window.print()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print / Save as PDF
+    </button>
+  </div>
+
+  <!-- BODY -->
+  <div class="cl-body">
+
+    <div class="cl-intro">
+      <strong>How to use this checklist:</strong> Go through each item with your CPA or tax preparer. Check the box when you've confirmed the deduction and gathered the required documentation. Items marked <span style="background:#FEF3C7;color:#92400E;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700;">OFTEN MISSED</span> are deductions landlords frequently forget to claim. Items marked <span style="background:#EDE9FE;color:#5B21B6;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700;">BRONX</span> apply specifically to NYC/Bronx landlords.
+    </div>
+
+    <!-- CATEGORY 1 -->
+    <div class="cl-category">
+      <div class="cl-category-title">
+        <div class="cl-category-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="16" height="16"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        Property Operating Expenses
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Repairs & Maintenance</div>
+          <div class="cl-item-desc">All costs to keep the property in working condition — plumbing, electrical, painting, flooring repairs. Must be repairs, not improvements.</div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Utilities Paid by Landlord</div>
+          <div class="cl-item-desc">Heat, electricity, gas, water paid in common areas or units where landlord covers them.</div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">NYC Water & Sewer Charges</div>
+          <div class="cl-item-desc">DEP water and sewer bills paid by the landlord are fully deductible operating expenses.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-bronx">Bronx</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Insurance Premiums</div>
+          <div class="cl-item-desc">Fire, liability, umbrella, flood, and loss-of-rent insurance. All premiums on rental property are deductible.</div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Pest Control</div>
+          <div class="cl-item-desc">Routine exterminator costs and emergency pest treatments. Required under NYC Housing Code — deductible in full.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Security System & Cameras</div>
+          <div class="cl-item-desc">Monthly monitoring fees and installation costs for building security systems.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Landscaping & Snow Removal</div>
+          <div class="cl-item-desc">Seasonal lawn care, tree trimming, and snow/ice removal services. Snow removal is especially relevant for Bronx properties.</div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Locksmith & Key Replacement</div>
+          <div class="cl-item-desc">Lock changes between tenants, key duplication, lockout calls. Frequently overlooked but fully deductible.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORY 2 -->
+    <div class="cl-category">
+      <div class="cl-category-title">
+        <div class="cl-category-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="16" height="16"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        Bronx & NYC-Specific Deductions
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">HPD & DOB Violation Removal Costs</div>
+          <div class="cl-item-desc">Costs paid to remediate HPD or DOB violations — contractor fees, re-inspection fees, filing costs.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-bronx">Bronx</span><span class="cl-badge-tag cl-badge-missed">Often missed</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Lead Paint Inspection & Remediation</div>
+          <div class="cl-item-desc">Required under NYC Local Law 1 for buildings with children under 6. Inspection and abatement costs are deductible.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-bronx">Bronx</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">DHCR Registration Fees</div>
+          <div class="cl-item-desc">Annual DHCR apartment registration fees for rent-stabilized units. Deductible as an operating cost.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-bronx">Bronx</span><span class="cl-badge-tag cl-badge-missed">Often missed</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Boiler Certification & Maintenance</div>
+          <div class="cl-item-desc">Annual boiler inspection, certification, and repair costs. Required by NYC law — deductible in full.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-bronx">Bronx</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Elevator Inspection & Maintenance</div>
+          <div class="cl-item-desc">DOB-required elevator inspections, annual maintenance contracts, and repair costs for buildings with elevators.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-bronx">Bronx</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Fire Safety System Testing & Certification</div>
+          <div class="cl-item-desc">Sprinkler testing, smoke detector compliance, fire escape inspections required by NYC Fire Code.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-bronx">Bronx</span><span class="cl-badge-tag cl-badge-missed">Often missed</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Section 8 / NYCHA Compliance Costs</div>
+          <div class="cl-item-desc">Costs for NYCHA inspections, repairs required to pass HQS inspection, and Section 8 paperwork fees.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-bronx">Bronx</span><span class="cl-badge-tag cl-badge-missed">Often missed</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORY 3 -->
+    <div class="cl-category">
+      <div class="cl-category-title">
+        <div class="cl-category-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="16" height="16"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        Professional & Management Services
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Property Management Fees</div>
+          <div class="cl-item-desc">All fees paid to a property management company — monthly flat-fee or percentage-based. Fully deductible.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-big">High value</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Legal Fees</div>
+          <div class="cl-item-desc">Lease drafting, eviction proceedings, tenant disputes, lease review. Court filing fees are also deductible.</div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Tax Preparation & CPA Fees</div>
+          <div class="cl-item-desc">Fees paid to your accountant or tax preparer for rental property tax returns. Deduct the portion attributable to rental income.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Tenant Screening & Background Check Fees</div>
+          <div class="cl-item-desc">Credit check, background screening, and tenant application fees paid by the landlord.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Advertising & Vacancy Marketing</div>
+          <div class="cl-item-desc">Listing fees on Zillow, StreetEasy, broker commissions for finding tenants, signage, photography.</div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Bookkeeping Software & Subscriptions</div>
+          <div class="cl-item-desc">QuickBooks, Stessa, AppFolio, Buildium, or any software used to manage rental finances.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Landlord Association Memberships & Education</div>
+          <div class="cl-item-desc">CHIP, REBNY, or other landlord/RE association dues. Educational courses directly related to rental management.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORY 4 -->
+    <div class="cl-category">
+      <div class="cl-category-title">
+        <div class="cl-category-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="16" height="16"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        </div>
+        Long-Term & High-Value Deductions
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Depreciation (27.5-Year Schedule)</div>
+          <div class="cl-item-desc">The building's value (not land) is depreciated over 27.5 years. This is often the single largest rental deduction — make sure it's being taken every year.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-big">High value</span><span class="cl-badge-tag cl-badge-missed">Often missed</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Mortgage Interest</div>
+          <div class="cl-item-desc">All mortgage interest paid on loans secured by the rental property. Confirm your 1098 is allocated correctly if you have mixed-use properties.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-big">High value</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Real Property Taxes</div>
+          <div class="cl-item-desc">NYC property taxes paid during the year. Verify you're paying the correct class rate (Class 2 for most Bronx rental properties).</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-big">High value</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Capital Improvements (Depreciated Separately)</div>
+          <div class="cl-item-desc">New roof, HVAC, windows, kitchen remodel — these are depreciated over useful life (5–39 years) rather than expensed immediately. Must be tracked separately from repairs.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-big">High value</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Home Office Deduction</div>
+          <div class="cl-item-desc">If you manage your rental from a dedicated home office space, you can deduct a proportional share of home expenses. Must be used exclusively and regularly for management.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Vehicle Mileage & Travel to Property</div>
+          <div class="cl-item-desc">Driving to inspect, repair, or manage your property is deductible at the IRS standard mileage rate (67¢/mile in 2024). Keep a mileage log.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div>
+        </div>
+      </div>
+
+      <div class="cl-item">
+        <div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div>
+        <div class="cl-item-text">
+          <div class="cl-item-name">Bad Debt Deduction (Uncollected Rent)</div>
+          <div class="cl-item-desc">If you reported rent as income but never collected it (accrual basis), you can deduct it as a bad debt when it becomes uncollectible.</div>
+          <div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA BLOCK -->
+    <div style="background:linear-gradient(135deg,var(--navy),#1a3d6e);border-radius:14px;padding:28px 24px;text-align:center;margin-top:8px;">
+      <p style="font-family:'DM Serif Display',serif;font-size:20px;color:#fff;margin-bottom:8px;">Questions about your specific properties?</p>
+      <p style="font-size:14px;color:rgba(255,255,255,0.75);margin-bottom:18px;">DoryAngel manages Bronx properties on a flat-fee model — our team knows which deductions apply to your buildings specifically.</p>
+      <a href="../#contact" style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--navy);font-weight:700;font-size:14px;border-radius:9px;padding:12px 22px;text-decoration:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="15" height="15"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 15a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 4.21h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 11a16 16 0 0 0 6 6l.93-.93a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 18.4z"/></svg>
+        Schedule a Free Property Review
+      </a>
+    </div>
+
+  </div><!-- /cl-body -->
+
+  <!-- FOOTER -->
+  <div class="cl-footer">
+    <p>© 2025 DoryAngel LLC · NYC Property Management</p>
+    <a href="../">Back to DoryAngel.com →</a>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+// Persist checkbox state in sessionStorage
+document.querySelectorAll('.cl-checkbox').forEach(function(cb, i) {
+  var key = 'cl-check-' + i;
+  if (sessionStorage.getItem(key) === '1') cb.classList.add('checked');
+  cb.addEventListener('click', function() {
+    sessionStorage.setItem(key, cb.classList.contains('checked') ? '1' : '0');
+  });
+});
+</script>
+
+</body>
+</html>
