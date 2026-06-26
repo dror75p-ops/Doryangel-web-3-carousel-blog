@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2025 Bronx Landlord Tax Deduction Checklist | DoryAngel</title>
+  <link rel="icon" href="../assets/logo-icon.jpg" type="image/jpeg">
+  <link rel="apple-touch-icon" href="../assets/logo-icon.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0D1E3A;
+      --blue: #3A7BDD;
+      --blue-dim: #EBF3FD;
+      --grey-mid: #E2E8F0;
+      --text-muted: #556070;
+    }
+    body { font-family: 'DM Sans', sans-serif; color: #1a1a1a; background: #f4f6f9; padding-top: 98px; padding-bottom: 0; }
+
+    /* ── SKIP LINK ── */
+    .skip-link { position: absolute; top: -48px; left: 12px; z-index: 99999; background: var(--navy); color: #fff; padding: 10px 18px; border-radius: 0 0 8px 8px; font-size: 14px; font-weight: 600; text-decoration: none; transition: top 0.2s ease; }
+    .skip-link:focus { top: 0; }
+
+    /* ── ANNOUNCE BAR ── */
+    .announce-bar { background: #0D1E3A; color: #fff; text-align: center; padding: 9px 20px; font-size: 13px; font-weight: 500; position: fixed; top: 0; left: 0; right: 0; z-index: 302; line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease; }
+    .announce-bar.bar-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+    .announce-bar strong { font-weight: 700; }
+    .announce-bar a { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+    .announce-bar a:hover { opacity: 0.85; }
+    @media (max-width: 540px) { .announce-bar { font-size: 11px; padding-right: 32px; } }
+
+    /* ── NAV ── */
+    nav { position: fixed; top: 40px; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid var(--grey-mid); padding: 10px 40px 0; display: flex; flex-direction: column; align-items: center; transition: top 0.35s cubic-bezier(0.4,0,0.2,1); }
+    nav.bar-hidden { top: 0; }
+    .nav-logo { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; }
+    .nav-logo img { height: 40px; object-fit: contain; transform-origin: 50% 80%; animation: logoWalkIn 1.1s cubic-bezier(0.16,1,0.3,1) both, logoBreathe 5s ease-in-out 1.5s infinite; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+    .nav-logo:hover img { animation-play-state: paused; transform: scale(1.08) rotate(-3deg); }
+    @keyframes logoWalkIn { 0% { opacity:0;transform:translateX(-30px) scale(0.8);} 60% { opacity:1;transform:translateX(4px) scale(1.04);} 100% { opacity:1;transform:translateX(0) scale(1);} }
+    @keyframes logoBreathe { 0%,100% { transform:scale(1);filter:drop-shadow(0 0 0px transparent);} 50% { transform:scale(1.025);filter:drop-shadow(0 0 8px rgba(91,159,234,0.65));} }
+    @media (prefers-reduced-motion: reduce) { .nav-logo img { animation: none !important; } }
+    .nav-bottom { display: flex; align-items: center; justify-content: center; gap: 20px; padding: 8px 0; flex-wrap: wrap; width: 100%; }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a { font-size: 14px; font-weight: 500; color: var(--text-muted); text-decoration: none; letter-spacing: 0.01em; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--navy); }
+    .nav-divider { width: 1px; height: 18px; background: var(--grey-mid); }
+    .nav-cta { background: transparent; color: var(--navy); padding: 8px 18px; border-radius: 7px; font-size: 13px; font-weight: 700; text-decoration: none; border: 1.5px solid var(--navy); letter-spacing: 0.02em; transition: background 0.2s, color 0.2s; white-space: nowrap; }
+    .nav-cta:hover { background: var(--navy); color: white; }
+    .hamburger-btn { display: none; align-items: center; justify-content: center; width: 44px; height: 44px; background: #3A7BDD; border: none; border-radius: 8px; cursor: pointer; flex-shrink: 0; transition: background 0.2s; }
+    .hamburger-btn:hover { background: #2e69c7; }
+    .hamburger-btn svg { display: block; pointer-events: none; }
+    .nav-has-dropdown { position: relative; }
+    .nav-dropdown { display: none; position: absolute; top: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: #fff; border-radius: 14px; box-shadow: 0 8px 40px rgba(13,30,58,0.14); padding: 20px; min-width: 290px; z-index: 300; border: 1px solid #E5E7EB; }
+    .nav-has-dropdown:hover .nav-dropdown { display: block; }
+    .nav-dd-label { font-size: 10px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: #9CA3AF; margin: 0 0 8px 4px; }
+    .nav-dd-link { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; text-decoration: none; color: #232323; font-size: 13.5px; font-weight: 500; transition: background .15s; }
+    .nav-dd-link:hover { background: #F3F4F6; }
+    .dd-dot { width: 8px; height: 8px; border-radius: 50%; background: #3E8FD4; flex-shrink: 0; }
+    .dd-dot-soon { background: #D1D5DB; }
+    .dd-dot-premium { background: linear-gradient(135deg,#C97B2F,#E8A35A); }
+    .nav-dd-sep { border: none; border-top: 1px solid #E5E7EB; margin: 12px 0; }
+    .nav-dd-soon { display: flex; align-items: center; gap: 10px; padding: 8px 10px; color: #9CA3AF; font-size: 13px; cursor: default; }
+    .nav-dd-tag { font-size: 9px; font-weight: 700; background: #FEF3C7; color: #92400E; padding: 2px 7px; border-radius: 4px; margin-left: auto; letter-spacing: 0.06em; }
+    .nav-overlay { display: none; position: fixed; inset: 0; z-index: 300; background: rgba(13,30,58,0.55); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+    .nav-overlay.is-open { display: block; }
+    .nav-drawer { position: fixed; top: 0; right: 0; bottom: 0; z-index: 301; width: min(340px, 90vw); background: #ffffff; transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.16,1,0.3,1); display: flex; flex-direction: column; padding: 56px 24px 32px; overflow-y: auto; box-shadow: -4px 0 32px rgba(13,30,58,0.12); }
+    .nav-drawer.is-open { transform: translateX(0); }
+    .drawer-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid #E5E7EB; }
+    .drawer-close-btn { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: #F3F4F6; border: none; border-radius: 8px; color: #232323; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+    .drawer-close-btn:hover { background: #E5E7EB; }
+    .drawer-logo-wrap { display: flex; flex-direction: column; gap: 2px; }
+    .drawer-logo-wrap img { height: 32px; object-fit: contain; }
+    .drawer-links { list-style: none; margin: 10px 0 0; display: flex; flex-direction: column; gap: 0; }
+    .drawer-links a { display: block; font-size: 14px; font-weight: 600; color: #0D1E3A; text-decoration: none; padding: 6px 10px; border-radius: 7px; transition: background 0.15s, color 0.15s; }
+    .drawer-links a:active { background: #EAF4FB; color: #3E8FD4; }
+    @media (hover: hover) { .drawer-links a:hover { background: #EAF4FB; color: #3E8FD4; } }
+    .drawer-sep { height: 1px; background: #E5E7EB; margin: 8px 0; }
+    .drawer-tool-card { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 9px; border: 1.5px solid #E5E7EB; background: #F9FAFB; text-decoration: none; margin-bottom: 8px; transition: border-color 0.2s, background 0.2s; }
+    .drawer-tool-card:hover { border-color: #3E8FD4; background: #EAF4FB; }
+    .drawer-tool-card-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .drawer-tool-card-body { flex: 1; min-width: 0; }
+    .drawer-tool-card-title { font-size: 13px; font-weight: 700; color: #0D1E3A; line-height: 1.3; }
+    .drawer-tool-card-sub { font-size: 11px; color: #8B9BAE; margin-top: 1px; }
+    .drawer-tool-card-arrow { color: #B0BEC8; flex-shrink: 0; }
+    .drawer-ctas { display: flex; flex-direction: column; gap: 10px; }
+    .drawer-cta-book { display: block; text-align: center; background: #3E8FD4; color: #ffffff; padding: 14px 20px; border-radius: 8px; font-size: 15px; font-weight: 700; text-decoration: none; transition: background 0.2s; }
+    .drawer-cta-book:hover { background: #2B7FC4; color: #fff; }
+    .drawer-cta-portal { display: block; text-align: center; background: transparent; color: #3E8FD4; padding: 13px 20px; border-radius: 8px; font-size: 15px; font-weight: 600; text-decoration: none; border: 1.5px solid #3E8FD4; transition: border-color 0.2s, background 0.2s, color 0.2s; }
+    .drawer-cta-portal:hover { background: #EAF4FB; }
+    @media (prefers-reduced-motion: reduce) { .nav-drawer { transition: none !important; } }
+
+    /* ── FOOTER ── */
+    footer { background: var(--navy); padding: 60px 40px 36px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .footer-logo-wrap { background: white; display: inline-block; border-radius: 8px; padding: 6px 12px; margin-bottom: 4px; }
+    .footer-logo-wrap img { height: 36px; display: block; }
+    .footer-desc { font-size: 14px; color: rgba(255,255,255,0.65); line-height: 1.7; margin-top: 16px; max-width: 280px; }
+    .footer-col h4 { font-size: 13px; font-weight: 700; color: white; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 18px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul li a { font-size: 14px; color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.2s; }
+    .footer-col ul li a:hover { color: white; }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 28px; flex-wrap: wrap; gap: 12px; }
+    .footer-copy { font-size: 13px; color: rgba(255,255,255,0.55); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 8px 16px 0; }
+      .nav-links { display: none; }
+      .nav-bottom { gap: 8px; padding: 6px 0; flex-wrap: nowrap; align-items: center; }
+      .nav-divider { display: none; }
+      .nav-cta { flex: 1; min-width: 0; font-size: 13px; padding: 10px 14px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; text-align: center; }
+      .hamburger-btn { display: flex; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .footer-top { grid-template-columns: 1fr; }
+      footer { padding: 48px 24px 28px; }
+    }
+
+    /* ── CHECKLIST CONTENT ── */
+    .cl-wrap { padding: 24px 16px 48px; }
+    .page { max-width: 780px; margin: 0 auto; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.10); }
+    .cl-header { background: linear-gradient(135deg, #0F2847, #1a3d6e); padding: 32px 36px 28px; color: #fff; position: relative; }
+    .cl-header-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .cl-brand { font-family: 'DM Serif Display', serif; font-size: 18px; opacity: .85; }
+    .cl-badge { font-size: 11px; font-weight: 700; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); padding: 4px 10px; border-radius: 20px; letter-spacing: 0.06em; text-transform: uppercase; }
+    .cl-header h1 { font-family: 'DM Serif Display', serif; font-size: clamp(20px, 4vw, 30px); margin: 16px 0 8px; line-height: 1.2; }
+    .cl-header p { font-size: 14px; opacity: .75; max-width: 520px; }
+    .cl-print-bar { background: #EBF3FD; padding: 12px 36px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    .cl-print-note { font-size: 13px; color: #4B5563; }
+    .cl-print-btn { display: inline-flex; align-items: center; gap: 7px; background: #0F2847; color: #fff; font-weight: 700; font-size: 13px; font-family: inherit; border: none; border-radius: 8px; padding: 9px 18px; cursor: pointer; }
+    .cl-print-btn:hover { background: #1E5AA8; }
+    .cl-body { padding: 32px 36px 36px; }
+    .cl-intro { background: #DCFCE7; border-left: 4px solid #15803D; border-radius: 8px; padding: 14px 16px; margin-bottom: 32px; font-size: 13px; color: #166534; line-height: 1.6; }
+    .cl-intro strong { font-weight: 700; }
+    .cl-category { margin-bottom: 32px; }
+    .cl-category-title { font-family: 'DM Serif Display', serif; font-size: 18px; color: #0F2847; border-bottom: 2px solid #EBF3FD; padding-bottom: 8px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+    .cl-category-icon { width: 30px; height: 30px; background: #0F2847; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .cl-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; border-radius: 8px; margin-bottom: 6px; transition: background .1s; }
+    .cl-item:hover { background: #F8FAFC; }
+    .cl-checkbox { width: 20px; height: 20px; border: 2px solid #CBD5E1; border-radius: 5px; flex-shrink: 0; margin-top: 1px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .1s, border-color .1s; }
+    .cl-checkbox.checked { background: #15803D; border-color: #15803D; }
+    .cl-item-text { flex: 1; }
+    .cl-item-name { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 2px; }
+    .cl-item-desc { font-size: 12px; color: #6B7280; line-height: 1.5; }
+    .cl-item-badges { margin-top: 4px; display: flex; gap: 5px; flex-wrap: wrap; }
+    .cl-badge-tag { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; }
+    .cl-badge-missed { background: #FEF3C7; color: #92400E; }
+    .cl-badge-bronx { background: #EDE9FE; color: #5B21B6; }
+    .cl-badge-big { background: #DBEAFE; color: #1E40AF; }
+    @media print {
+      body { background: #fff; padding-top: 0; }
+      .announce-bar, nav, .nav-overlay, .nav-drawer, footer { display: none !important; }
+      .cl-wrap { padding: 0; }
+      .page { box-shadow: none; border-radius: 0; }
+      .cl-print-bar { display: none; }
+      .cl-item { break-inside: avoid; }
+      .cl-category { break-inside: avoid; }
+    }
+    @media (max-width: 520px) {
+      .cl-header { padding: 24px 20px 20px; }
+      .cl-body { padding: 24px 20px; }
+      .cl-print-bar { padding: 12px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<!-- ANNOUNCE BAR -->
+<div class="announce-bar">
+  <strong>NYC Landlords:</strong>
+  Save $3,000–$8,000/year vs. percentage-based managers.
+  <a href="../#contact">Get your free property audit &rarr;</a>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="../" class="nav-logo">
+    <img src="../assets/logo.jpg" alt="DoryAngel">
+  </a>
+  <div class="nav-bottom">
+    <ul class="nav-links">
+      <li><a href="../#services">Services</a></li>
+      <li><a href="../#about">About</a></li>
+      <li><a href="../#pricing">Pricing</a></li>
+      <li><a href="../#testimonials">Reviews</a></li>
+      <li><a href="../#faq">FAQ</a></li>
+      <li><a href="../#blog">Blog</a></li>
+      <li class="nav-has-dropdown">
+        <a href="../#tools">Tools &#9662;</a>
+        <div class="nav-dropdown">
+          <p class="nav-dd-label">DIY Landlord Toolkit — Free</p>
+          <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" class="nav-dd-link">
+            <span class="dd-dot"></span> Compliance Calendar
+          </a>
+          <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/" target="_blank" rel="noopener" class="nav-dd-link">
+            <span class="dd-dot" style="background:#1E5AA8;"></span> DoryAngel Digest <span class="nav-dd-tag" style="background:#EEF4FF;color:#1E5AA8;">Free</span>
+          </a>
+          <a href="../#tools" class="nav-dd-link">
+            <span class="dd-dot" style="background:#3A7BDD;"></span> AI Property Inspector <span class="nav-dd-tag" style="background:#EBF3FD;color:#3A7BDD;">Free</span>
+          </a>
+          <a href="../#tools" class="nav-dd-link">
+            <span class="dd-dot dd-dot-premium"></span> Property P&amp;L Dashboard <span class="nav-dd-tag" style="background:#FBF1E6;color:#C97B2F;">$29</span>
+          </a>
+          <hr class="nav-dd-sep">
+          <p class="nav-dd-label">Coming Soon</p>
+          <span class="nav-dd-soon"><span class="dd-dot dd-dot-soon"></span> Vendor &amp; Tenant Triage Automation <span class="nav-dd-tag">Next</span></span>
+          <span class="nav-dd-soon"><span class="dd-dot dd-dot-soon"></span> Tenant Screening Tool <span class="nav-dd-tag">After</span></span>
+          <hr class="nav-dd-sep">
+          <p class="nav-dd-label">For Brokers</p>
+          <a href="../broker-partner.html" class="nav-dd-link" style="color:#1E5AA8;font-weight:600;">
+            <span class="dd-dot" style="background:#1E5AA8;"></span> Broker Partner Program <span class="nav-dd-tag" style="background:#EEF4FF;color:#1E5AA8;">$50/unit</span>
+          </a>
+          <hr class="nav-dd-sep">
+          <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" class="nav-dd-link" style="color:#6B7280;">
+            <span class="dd-dot" style="background:#D1D5DB;"></span> Owner &amp; Tenant Portal (Buildium)
+          </a>
+        </div>
+      </li>
+      <li><a href="../#contact">Contact</a></li>
+      <li><a href="https://share.google/FcmXTN7BpxR9m3XoZ" target="_blank" rel="noopener">Brochure</a></li>
+    </ul>
+    <div class="nav-divider"></div>
+    <a href="../#contact" class="nav-cta">Free Property Audit</a>
+    <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer">
+      <svg width="22" height="16" viewBox="0 0 22 16" fill="none" aria-hidden="true">
+        <rect y="0" width="22" height="2.5" rx="1.25" fill="white"/>
+        <rect y="6.75" width="22" height="2.5" rx="1.25" fill="white"/>
+        <rect y="13.5" width="22" height="2.5" rx="1.25" fill="white"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- NAV OVERLAY -->
+<div class="nav-overlay" id="navOverlay" aria-hidden="true"></div>
+
+<!-- NAV DRAWER -->
+<div class="nav-drawer" id="navDrawer" role="dialog" aria-label="Navigation menu" aria-modal="true">
+  <div class="drawer-header">
+    <div class="drawer-logo-wrap">
+      <img id="drawer-logo" src="" alt="DoryAngel" />
+    </div>
+    <button class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+        <line x1="2" y1="2" x2="16" y2="16" stroke="#232323" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="16" y1="2" x2="2" y2="16" stroke="#232323" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+  <ul class="drawer-links">
+    <li><a href="../#services">Services</a></li>
+    <li><a href="../#pricing">Pricing</a></li>
+    <li><a href="../#about">About</a></li>
+    <li><a href="../#testimonials">Reviews</a></li>
+    <li><a href="../#faq">FAQ</a></li>
+    <li><a href="../#blog">Blog</a></li>
+    <li><a href="../#contact">Contact</a></li>
+  </ul>
+  <div class="drawer-sep"></div>
+  <div style="padding: 0 0 8px;">
+    <p style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#3E8FD4;margin:0 0 10px;">DIY Landlord Toolkit</p>
+    <a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener" class="drawer-tool-card">
+      <div class="drawer-tool-card-icon" style="background:#EAF4FB;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#3E8FD4" stroke-width="1.8" width="20" height="20"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
+      </div>
+      <div class="drawer-tool-card-body">
+        <div class="drawer-tool-card-title">Preventive Maintenance &amp; Compliance</div>
+        <div class="drawer-tool-card-sub">Free monthly calendar for NYC landlords</div>
+      </div>
+      <svg class="drawer-tool-card-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M5 8h6M9 5l3 3-3 3"/></svg>
+    </a>
+    <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" class="drawer-tool-card">
+      <div class="drawer-tool-card-icon" style="background:#F0FDF4;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="1.8" width="20" height="20"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 00-2 2v2h12V5a2 2 0 00-2-2z"/><path d="M12 12v4M10 14h4"/></svg>
+      </div>
+      <div class="drawer-tool-card-body">
+        <div class="drawer-tool-card-title">Owner &amp; Tenant Portal</div>
+        <div class="drawer-tool-card-sub">Powered by Buildium · 24/7 access</div>
+      </div>
+      <svg class="drawer-tool-card-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M5 8h6M9 5l3 3-3 3"/></svg>
+    </a>
+    <div style="height:1px;background:#E5E7EB;margin:10px 0;"></div>
+    <p style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#1E5AA8;margin:0 0 8px;">For Brokers</p>
+    <a href="../broker-partner.html" class="drawer-tool-card" style="border:1.5px solid #C7DEFF;background:#F0F6FF;">
+      <div class="drawer-tool-card-icon" style="background:#EEF4FF;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1E5AA8" stroke-width="1.8" width="20" height="20"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div class="drawer-tool-card-body">
+        <div class="drawer-tool-card-title">Broker Partner Program <span style="font-size:9px;font-weight:700;background:#EEF4FF;color:#1E5AA8;padding:1px 5px;border-radius:3px;margin-left:4px;">$50/unit/mo</span></div>
+        <div class="drawer-tool-card-sub">Earn passive income on every unit you place</div>
+      </div>
+      <svg class="drawer-tool-card-arrow" viewBox="0 0 16 16" fill="none" stroke="#1E5AA8" stroke-width="2" width="14" height="14"><path d="M5 8h6M9 5l3 3-3 3"/></svg>
+    </a>
+  </div>
+  <div class="drawer-sep"></div>
+  <div class="drawer-ctas">
+    <a href="../#contact" class="drawer-cta-book" onclick="document.getElementById('navDrawer').classList.remove('is-open');document.getElementById('navOverlay').setAttribute('aria-hidden','true');">Free Property Audit</a>
+    <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" class="drawer-cta-portal">Tenant Portal</a>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="cl-wrap" id="main-content">
+<div class="page">
+
+  <div class="cl-header">
+    <div class="cl-header-top">
+      <span class="cl-brand">DoryAngel</span>
+      <span class="cl-badge">2025 Edition</span>
+    </div>
+    <h1>Bronx Landlord Tax Deduction Checklist</h1>
+    <p>28 deductions to review with your CPA — including NYC-specific items most landlords miss. Check each one as you go.</p>
+  </div>
+
+  <div class="cl-print-bar">
+    <span class="cl-print-note">Tip: Print this page and bring it to your CPA appointment.</span>
+    <button class="cl-print-btn" onclick="window.print()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print / Save as PDF
+    </button>
+  </div>
+
+  <div class="cl-body">
+    <div class="cl-intro">
+      <strong>How to use this checklist:</strong> Go through each item with your CPA or tax preparer. Check the box when you've confirmed the deduction and gathered the required documentation. Items marked <span style="background:#FEF3C7;color:#92400E;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700;">OFTEN MISSED</span> are deductions landlords frequently forget to claim. Items marked <span style="background:#EDE9FE;color:#5B21B6;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700;">BRONX</span> apply specifically to NYC/Bronx landlords.
+    </div>
+
+    <!-- CATEGORY 1 -->
+    <div class="cl-category">
+      <div class="cl-category-title">
+        <div class="cl-category-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="16" height="16"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        Property Operating Expenses
+      </div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Repairs &amp; Maintenance</div><div class="cl-item-desc">All costs to keep the property in working condition — plumbing, electrical, painting, flooring repairs. Must be repairs, not improvements.</div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Utilities Paid by Landlord</div><div class="cl-item-desc">Heat, electricity, gas, water paid in common areas or units where landlord covers them.</div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">NYC Water &amp; Sewer Charges</div><div class="cl-item-desc">DEP water and sewer bills paid by the landlord are fully deductible operating expenses.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-bronx">Bronx</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Insurance Premiums</div><div class="cl-item-desc">Fire, liability, umbrella, flood, and loss-of-rent insurance. All premiums on rental property are deductible.</div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Pest Control</div><div class="cl-item-desc">Routine exterminator costs and emergency pest treatments. Required under NYC Housing Code — deductible in full.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Security System &amp; Cameras</div><div class="cl-item-desc">Monthly monitoring fees and installation costs for building security systems.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Landscaping &amp; Snow Removal</div><div class="cl-item-desc">Seasonal lawn care, tree trimming, and snow/ice removal services.</div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Locksmith &amp; Key Replacement</div><div class="cl-item-desc">Lock changes between tenants, key duplication, lockout calls. Frequently overlooked but fully deductible.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div></div></div>
+    </div>
+
+    <!-- CATEGORY 2 -->
+    <div class="cl-category">
+      <div class="cl-category-title">
+        <div class="cl-category-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="16" height="16"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        Bronx &amp; NYC-Specific Deductions
+      </div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">HPD &amp; DOB Violation Removal Costs</div><div class="cl-item-desc">Costs paid to remediate HPD or DOB violations — contractor fees, re-inspection fees, filing costs.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-bronx">Bronx</span><span class="cl-badge-tag cl-badge-missed">Often missed</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Lead Paint Inspection &amp; Remediation</div><div class="cl-item-desc">Required under NYC Local Law 1 for buildings with children under 6. Inspection and abatement costs are deductible.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-bronx">Bronx</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">DHCR Registration Fees</div><div class="cl-item-desc">Annual DHCR apartment registration fees for rent-stabilized units. Deductible as an operating cost.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-bronx">Bronx</span><span class="cl-badge-tag cl-badge-missed">Often missed</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Boiler Certification &amp; Maintenance</div><div class="cl-item-desc">Annual boiler inspection, certification, and repair costs. Required by NYC law — deductible in full.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-bronx">Bronx</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Elevator Inspection &amp; Maintenance</div><div class="cl-item-desc">DOB-required elevator inspections, annual maintenance contracts, and repair costs.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-bronx">Bronx</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Fire Safety System Testing &amp; Certification</div><div class="cl-item-desc">Sprinkler testing, smoke detector compliance, fire escape inspections required by NYC Fire Code.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-bronx">Bronx</span><span class="cl-badge-tag cl-badge-missed">Often missed</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Section 8 / NYCHA Compliance Costs</div><div class="cl-item-desc">Costs for NYCHA inspections, repairs required to pass HQS inspection, and Section 8 paperwork fees.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-bronx">Bronx</span><span class="cl-badge-tag cl-badge-missed">Often missed</span></div></div></div>
+    </div>
+
+    <!-- CATEGORY 3 -->
+    <div class="cl-category">
+      <div class="cl-category-title">
+        <div class="cl-category-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="16" height="16"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        Professional &amp; Management Services
+      </div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Property Management Fees</div><div class="cl-item-desc">All fees paid to a property management company — monthly flat-fee or percentage-based. Fully deductible.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-big">High value</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Legal Fees</div><div class="cl-item-desc">Lease drafting, eviction proceedings, tenant disputes, lease review. Court filing fees also deductible.</div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Tax Preparation &amp; CPA Fees</div><div class="cl-item-desc">Fees paid to your accountant or tax preparer for rental property tax returns.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Tenant Screening &amp; Background Check Fees</div><div class="cl-item-desc">Credit check, background screening, and tenant application fees paid by the landlord.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Advertising &amp; Vacancy Marketing</div><div class="cl-item-desc">Listing fees on Zillow, StreetEasy, broker commissions for finding tenants, signage, photography.</div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Bookkeeping Software &amp; Subscriptions</div><div class="cl-item-desc">QuickBooks, Stessa, AppFolio, Buildium, or any software used to manage rental finances.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Landlord Association Memberships &amp; Education</div><div class="cl-item-desc">CHIP, REBNY, or other landlord/RE association dues. Educational courses directly related to rental management.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div></div></div>
+    </div>
+
+    <!-- CATEGORY 4 -->
+    <div class="cl-category">
+      <div class="cl-category-title">
+        <div class="cl-category-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="16" height="16"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+        Long-Term &amp; High-Value Deductions
+      </div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Depreciation (27.5-Year Schedule)</div><div class="cl-item-desc">The building's value (not land) is depreciated over 27.5 years. Often the single largest rental deduction — make sure it's taken every year.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-big">High value</span><span class="cl-badge-tag cl-badge-missed">Often missed</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Mortgage Interest</div><div class="cl-item-desc">All mortgage interest paid on loans secured by the rental property. Confirm your 1098 is allocated correctly if you have mixed-use properties.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-big">High value</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Real Property Taxes</div><div class="cl-item-desc">NYC property taxes paid during the year. Verify you're paying the correct class rate (Class 2 for most Bronx rental properties).</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-big">High value</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Capital Improvements (Depreciated Separately)</div><div class="cl-item-desc">New roof, HVAC, windows, kitchen remodel — depreciated over useful life (5–39 years) rather than expensed immediately.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-big">High value</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Home Office Deduction</div><div class="cl-item-desc">If you manage your rental from a dedicated home office space, you can deduct a proportional share of home expenses.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Vehicle Mileage &amp; Travel to Property</div><div class="cl-item-desc">Driving to inspect, repair, or manage your property is deductible at the IRS standard mileage rate (67¢/mile in 2024). Keep a mileage log.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div></div></div>
+      <div class="cl-item"><div class="cl-checkbox" onclick="this.classList.toggle('checked')"></div><div class="cl-item-text"><div class="cl-item-name">Bad Debt Deduction (Uncollected Rent)</div><div class="cl-item-desc">If you reported rent as income but never collected it (accrual basis), you can deduct it as a bad debt when it becomes uncollectible.</div><div class="cl-item-badges"><span class="cl-badge-tag cl-badge-missed">Often missed</span></div></div></div>
+    </div>
+
+    <!-- CTA BLOCK -->
+    <div style="background:linear-gradient(135deg,#0F2847,#1a3d6e);border-radius:14px;padding:28px 24px;text-align:center;margin-top:8px;">
+      <p style="font-family:'DM Serif Display',serif;font-size:20px;color:#fff;margin-bottom:8px;">Questions about your specific properties?</p>
+      <p style="font-size:14px;color:rgba(255,255,255,0.75);margin-bottom:18px;">DoryAngel manages Bronx properties on a flat-fee model — our team knows which deductions apply to your buildings specifically.</p>
+      <a href="../#contact" style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:#0F2847;font-weight:700;font-size:14px;border-radius:9px;padding:12px 22px;text-decoration:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="15" height="15"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 15a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 4.21h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 11a16 16 0 0 0 6 6l.93-.93a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 18.4z"/></svg>
+        Schedule a Free Property Review
+      </a>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo-wrap">
+          <img src="../assets/logo.jpg" alt="DoryAngel">
+        </div>
+        <p class="footer-desc">Professional property management in New York City since 2010. Enhancing asset value through technology and trusted service.</p>
+        <a href="https://www.facebook.com/DoryAngelPM" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:12px;margin-top:16px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:12px 20px;text-decoration:none;color:white;font-size:14px;font-weight:600;" onmouseover="this.style.background='rgba(255,255,255,0.16)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#4267B2"/><path d="M16.5 3H14c-2.2 0-3.5 1.3-3.5 3.5V9H8v3h2.5v7h3V12H16l.5-3h-3V6.8c0-.8.4-1.3 1.3-1.3H16.5V3z" fill="white"/></svg>
+          Follow us on Facebook
+        </a>
+        <a href="tel:+15168474999" style="display:inline-flex;align-items:center;gap:12px;margin-top:12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:12px 20px;text-decoration:none;color:white;font-size:14px;font-weight:600;" onmouseover="this.style.background='rgba(255,255,255,0.16)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92v2z"/></svg>
+          Call: (516) 847-4999
+        </a>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="../#services">Property Owners</a></li>
+          <li><a href="../#services">Tenants</a></li>
+          <li><a href="../#services">Brokers</a></li>
+          <li><a href="../#contact">Vendors</a></li>
+          <li><a href="../#contact">Virtual PM</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Doryangel Property Automation</h4>
+        <ul>
+          <li><a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/" target="_blank" rel="noopener noreferrer">Preventive Maintenance &amp; Compliance</a></li>
+          <li><a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener noreferrer">Owner &amp; Tenant Portal (Buildium)</a></li>
+          <li><a href="https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/" target="_blank" rel="noopener noreferrer">DoryAngel Digest</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="../privacy.html">Privacy Policy</a></li>
+          <li><a href="../disclaimer.html">Disclaimer</a></li>
+          <li><a href="../sms-consent.html">SMS Consent</a></li>
+          <li><a href="../terms.html">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 DoryAngel LLC. All rights reserved. Licensed Property Manager, New York.</p>
+      <p class="footer-copy">Not a licensed real estate broker. See <a href="../terms.html" style="color:rgba(255,255,255,0.5)">Terms</a> · <a href="../privacy.html" style="color:rgba(255,255,255,0.5)">Privacy</a> · <a href="https://www.facebook.com/DoryAngelPM" target="_blank" rel="noopener" style="color:rgba(255,255,255,0.5)">Facebook</a></p>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('.cl-checkbox').forEach(function(cb, i) {
+  var key = 'cl-check-' + i;
+  if (sessionStorage.getItem(key) === '1') cb.classList.add('checked');
+  cb.addEventListener('click', function() {
+    sessionStorage.setItem(key, cb.classList.contains('checked') ? '1' : '0');
+  });
+});
+
+(function () {
+  var drawerLogoImg = document.getElementById('drawer-logo');
+  var navLogoImg = document.querySelector('.nav-logo img');
+  if (drawerLogoImg && navLogoImg) { drawerLogoImg.src = navLogoImg.src; }
+  (function () {
+    var bar = document.querySelector('.announce-bar');
+    var nav = document.querySelector('nav');
+    var hidden = false;
+    function onScroll() {
+      if (window.scrollY > 40 && !hidden) {
+        hidden = true; bar.classList.add('bar-hidden'); nav.classList.add('bar-hidden');
+      } else if (window.scrollY <= 10 && hidden) {
+        hidden = false; bar.classList.remove('bar-hidden'); nav.classList.remove('bar-hidden');
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+  var btn = document.getElementById('hamburgerBtn');
+  var overlay = document.getElementById('navOverlay');
+  var drawer = document.getElementById('navDrawer');
+  var closeBtn = document.getElementById('drawerCloseBtn');
+  function openDrawer() { drawer.classList.add('is-open'); overlay.classList.add('is-open'); btn.setAttribute('aria-expanded','true'); overlay.removeAttribute('aria-hidden'); document.body.style.overflow = 'hidden'; closeBtn.focus(); }
+  function closeDrawer() { drawer.classList.remove('is-open'); overlay.classList.remove('is-open'); btn.setAttribute('aria-expanded','false'); overlay.setAttribute('aria-hidden','true'); document.body.style.overflow = ''; btn.focus(); }
+  btn.addEventListener('click', openDrawer);
+  overlay.addEventListener('click', closeDrawer);
+  closeBtn.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && drawer.classList.contains('is-open')) closeDrawer(); });
+})();
+</script>
+</body>
+</html>
