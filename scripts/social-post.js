@@ -4,7 +4,7 @@
 import { readFileSync, existsSync } from 'fs';
 
 const AGENT_NAME  = 'Vera';
-const BASE_URL    = 'https://dror75p-ops.github.io/Doryangel-web-3-carousel-blog';
+const BASE_URL    = 'https://beta.doryangel.com';
 const QUEUE_FILE  = '/tmp/social-queue.json';
 
 async function postToFacebook(slug, caption) {
