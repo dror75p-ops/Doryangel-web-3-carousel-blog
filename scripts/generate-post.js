@@ -89,10 +89,13 @@ Reply ONLY with valid JSON: {"title": "...", "category": "..."}`,
 function generateSlug(title) {
   return title
     .toLowerCase()
+    .replace(/[‐-―−]/g, ' ')  // em/en/figure dashes + minus → space, so "tenants—smart" → "tenants-smart" not "tenantssmart"
     .replace(/[^a-z0-9\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
-    .slice(0, 60);
+    .replace(/^-+|-+$/g, '')                  // trim leading/trailing hyphens before slicing
+    .slice(0, 60)
+    .replace(/-+$/g, '');                     // re-trim if the 60-char cut landed on a hyphen
 }
 
 function formatDate(date) { return date.toISOString().split('T')[0]; }
