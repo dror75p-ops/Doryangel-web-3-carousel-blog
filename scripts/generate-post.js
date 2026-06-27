@@ -621,6 +621,13 @@ async function notifyDigestSubscribers(post) {
   if (subscribers.length === 0) return { sent: 0, total: 0 };
 
   const postUrl = `https://beta.doryangel.com/blog/${post.slug}/`;
+  // Shared secret so the public broadcast webhook can't be triggered by anyone but
+  // this server-side job. The Make scenario filter drops any POST whose `secret`
+  // field doesn't match. (Server-to-server only — never expose this in client code.)
+  const webhookSecret = process.env.DIGEST_WEBHOOK_SECRET || '';
+  if (!webhookSecret) {
+    console.warn('  ⚠ DIGEST_WEBHOOK_SECRET not set — broadcast may be rejected once the Make filter requires it');
+  }
   let sent = 0;
 
   // Delivery goes through the Make.com broadcast scenario (Gmail / office@doryangel.com)
@@ -633,7 +640,7 @@ async function notifyDigestSubscribers(post) {
       const res = await fetch(DIGEST_BROADCAST_WEBHOOK, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, title: post.title, excerpt: post.excerpt, url: postUrl }),
+        body: JSON.stringify({ secret: webhookSecret, name, email, title: post.title, excerpt: post.excerpt, url: postUrl }),
       });
       if (!res.ok) throw new Error(`broadcast webhook returned ${res.status}`);
       sent++;

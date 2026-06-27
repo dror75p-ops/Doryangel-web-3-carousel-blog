@@ -41,6 +41,7 @@ jobs:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
           GOOGLE_SA_KEY: ${{ secrets.GOOGLE_SA_KEY }}
+          DIGEST_WEBHOOK_SECRET: ${{ secrets.DIGEST_WEBHOOK_SECRET }}
           FORCE_PUBLISH: ${{ github.event.inputs.force || 'false' }}
         run: node scripts/generate-post.js
 
