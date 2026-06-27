@@ -5239,14 +5239,13 @@ document.addEventListener('DOMContentLoaded', function() {
     fetch('https://api.web3forms.com/submit', { method: 'POST', body: data }).catch(function(){});
 
     // if this is the Digest signup, also post to Make.com for the welcome email.
-    // topics is sent as a comma-joined STRING (not an array) — a nested array in
-    // the JSON body doesn't match the webhook's flat data structure and makes
-    // Make fail to parse the whole payload, silently dropping the signup.
+    // topics is an array of category slugs; the Make scenario flattens it with
+    // join() before writing the sheet, matching the external digest signup page.
     if (isDigest) {
       var topics = Array.prototype.map.call(
         form.querySelectorAll('input[name="topic"]:checked'),
         function (c) { return c.value; }
-      ).join(', ');
+      );
       fetch('https://hook.eu1.make.com/2qo6r1tr15cckv1opo8em9x89ip3ku4x', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
