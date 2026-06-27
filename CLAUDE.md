@@ -8,8 +8,16 @@
 - Owner GitHub account: dror75p-ops
 - Owner email: office@doryangel.com (notification emails go to dror75p@gmail.com via Resend)
 
-### Last changes (as of 2026-05-17)
+### Last changes (as of 2026-06-27)
 
+- **Digest hardening + ops** (2026-06-27): fixed a chain of bugs found while making the Digest blast actually deliver, plus a security pass.
+  - **Sheet writes use `RAW`** (signup + tax-checklist `addRow`): blocks Google Sheets **formula injection** (a submitted `=...` name is stored as literal text, not executed).
+  - **Topics must be `join()`-ed before the sheet**: a raw `topics` **array** in the addRow value caused `400 INVALID_ARGUMENT: list_value` and **auto-deactivated the scenario**. Mapper col C = `{{join(1.topics, ", ")}}`. The homepage form sends `topics` as an array (matches the external digest page).
+  - **Make filter gotcha — avoid `number:greaterThan` / `length()`**: those conditions silently evaluated false and blocked EVERY valid submission (both the signup and the broadcast scenarios). Filters now use only `text:contain` / `text:notcontain`. Disposable-domain spam list restored that way.
+  - **Broadcast relay hardened**: filter requires the post URL to `startwith https://beta.doryangel.com/`, and `name`/`title`/`excerpt` are HTML-stripped via `replace()` → the public webhook can't be abused to send arbitrary-link phishing from `office@doryangel.com`.
+  - **Gate forms debounce** (`index.html` tool-gate + notify-gate): submit button disabled on first click to stop webhook double-fire.
+  - **Signup sheets stamp date + time** now (`YYYY-MM-DD HH:mm:ss`, Asia/Jerusalem) instead of date-only — both Digest + Tax Checklist.
+  - Verified live: Nave run → post committed → broadcast emailed all active subscribers (dror75p, somerlev) → delivered. `joyg@doryangel.com` + `raphael.doryangel@gmail.com` added to the digest sheet by hand (sandbox can't reach the Make webhook to add via the form; no Sheets-write tool available).
 - **Digest topic segmentation, end-to-end** (2026-06-26): subscribers now pick interests at signup and only receive matching posts.
   - **Signup**: the Digest tool-gate modal (`index.html`) shows a Digest-only topic picker (the 4 blog categories) and POSTs a `topics` array to the Make signup webhook → stored in the subscriber sheet's `topic` column.
   - **Send**: `scripts/generate-post.js` → `notifyDigestSubscribers()` emails **every active subscriber** (de-duped by email), delivering via a Make.com **Gmail** broadcast scenario — NOT Resend. The Resend sandbox domain (`onboarding@resend.dev`) only reaches the account owner, so the subscriber blast must go through Gmail (`office@doryangel.com`). Post links use canonical `beta.doryangel.com`. NOTE (2026-06-27): switched from strict per-topic segmentation to **reach-first (send-to-all-active)** because the small list + Nave's preference for underrepresented categories (property-automation, broker-partnerships — which had zero subscribers) meant most blasts emailed 0 people. Topic preferences are still collected in the sheet (column C); re-enable the exact topic-slug match in `notifyDigestSubscribers()` once the list is large enough to benefit.
