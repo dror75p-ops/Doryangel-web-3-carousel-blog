@@ -599,28 +599,22 @@ async function notifyDigestSubscribers(post) {
   }
 
   // col A=name, B=email, C=topics, D=date, E=active("Yes"), F=address
-  // Topic segmentation: column C holds the comma-separated category slugs the
-  // subscriber chose at signup. A subscriber receives this post if either:
-  //   - they selected no topics (no preference → gets every post), or
-  //   - this post's category is one of their selected topics (exact match).
-  const postCategory = (post.category || '').trim().toLowerCase();
-  let skippedByTopic = 0;
+  // Reach-first: every ACTIVE subscriber receives every post. Topic preferences
+  // (column C) are still collected at signup, so strict per-topic segmentation
+  // can be switched back on later once the list is large enough to benefit from
+  // it (see notes in CLAUDE.md). De-dupe by email so a subscriber listed on
+  // multiple rows only gets one copy per post.
+  const seen = new Set();
   const subscribers = rows.filter(r => {
-    const email  = (r[1] || '').trim();
+    const email  = (r[1] || '').trim().toLowerCase();
     const active = (r[4] || '').trim().toLowerCase();
     if (!(email.includes('@') && email.length > 6 && active === 'yes')) return false;
-
-    const topicList = (r[2] || '')
-      .split(',')
-      .map(t => t.trim().toLowerCase())
-      .filter(Boolean);
-    if (topicList.length === 0) return true;        // no preference → all posts
-    const match = topicList.includes(postCategory); // exact slug match, not substring
-    if (!match) skippedByTopic++;
-    return match;
+    if (seen.has(email)) return false;   // already queued this address
+    seen.add(email);
+    return true;
   });
 
-  console.log(`Notifying ${subscribers.length} digest subscribers for "${postCategory}" (${skippedByTopic} skipped — topic mismatch)`);
+  console.log(`Notifying ${subscribers.length} active digest subscribers`);
   if (subscribers.length === 0) return { sent: 0, total: 0 };
 
   const postUrl = `https://beta.doryangel.com/blog/${post.slug}/`;
