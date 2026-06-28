@@ -371,6 +371,7 @@
           <label for="lpEmail">Email address <span style="color:#D14343;">*</span></label>
           <input type="email" id="lpEmail" name="email" placeholder="you@email.com" required autocomplete="email">
         </div>
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAADr7qlYcZ_8Gw2v3" data-theme="light" data-refresh-expired="auto" style="margin:0 0 14px;"></div>
         <button type="submit" class="lp-submit" id="lpSubmitBtn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Send Me the Checklist
@@ -597,6 +598,8 @@
   </div>
 </footer>
 
+<!-- Cloudflare Turnstile — bot protection for the lead form -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>
 document.getElementById('lpForm').addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -611,12 +614,13 @@ document.getElementById('lpForm').addEventListener('submit', async function(e) {
   btn.disabled = true;
   btn.textContent = 'Sending…';
   var name = document.getElementById('lpName').value.trim();
+  var cfToken = (document.querySelector('#lpForm [name="cf-turnstile-response"]') || {}).value || '';
   // Single backend: Make.com sends the subscriber welcome email,
   // notifies office@doryangel.com, and logs the lead to Google Sheets.
   fetch('https://hook.eu1.make.com/l1ydothnj57j2ngk6952oam9wds2wgk1', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: name, email: email, source: 'tax-checklist-landing' })
+    body: JSON.stringify({ name: name, email: email, source: 'tax-checklist-landing', turnstileToken: cfToken })
   }).catch(function(){});
   document.getElementById('lpFormWrap').style.display = 'none';
   document.getElementById('lpSuccess').style.display = 'block';
