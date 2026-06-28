@@ -24,7 +24,7 @@ Retell chat "Hailey" (agent_88fd2bc14215e7210629dfafda) ends + is analyzed
     → Gmail: to dror75p@gmail.com
 ```
 
-Mobile "Call AI" button (`tel:+15167743249`) is a SEPARATE voice channel — not connected to this pipeline.
+Mobile "Call AI" button (`tel:+15168474999`) is a SEPARATE voice channel — not connected to this pipeline.
 
 ## Required artifacts before changing anything
 

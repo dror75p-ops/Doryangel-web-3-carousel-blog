@@ -63,7 +63,12 @@
     {"@type": "City", "name": "Yonkers"},
     {"@type": "City", "name": "Mount Vernon"},
     {"@type": "City", "name": "New Rochelle"},
-    {"@type": "AdministrativeArea", "name": "North Jersey"}
+    {"@type": "AdministrativeArea", "name": "North Jersey"},
+    {"@type": "Place", "name": "Fordham, Bronx"},
+    {"@type": "Place", "name": "Mott Haven, Bronx"},
+    {"@type": "Place", "name": "Pelham Bay, Bronx"},
+    {"@type": "Place", "name": "Riverdale, Bronx"},
+    {"@type": "Place", "name": "Concourse, Bronx"}
   ],
   "hasOfferCatalog": {
     "@type": "OfferCatalog",
@@ -71,6 +76,60 @@
     "itemListElement": [
       {"@type": "Offer", "name": "Starter Plan", "price": "99", "priceCurrency": "USD"},
       {"@type": "Offer", "name": "Professional Plan", "price": "199", "priceCurrency": "USD"}
+    ]
+  }
+}
+</script>
+
+<!-- JSON-LD Service — flat-fee property management + sub-services for local SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Property Management",
+  "name": "Flat-Fee Property Management",
+  "description": "Flat-fee property management for NYC landlords — a transparent monthly fee instead of a percentage of rent. Serving the Bronx, Queens, Yonkers, Mount Vernon, New Rochelle & North Jersey from $99/month.",
+  "url": "https://beta.doryangel.com",
+  "provider": {
+    "@type": "RealEstateAgent",
+    "name": "DoryAngel LLC",
+    "url": "https://beta.doryangel.com",
+    "telephone": "+15168474999",
+    "email": "office@doryangel.com"
+  },
+  "areaServed": [
+    {"@type": "City", "name": "Bronx"},
+    {"@type": "City", "name": "Queens"},
+    {"@type": "City", "name": "Yonkers"},
+    {"@type": "City", "name": "Mount Vernon"},
+    {"@type": "City", "name": "New Rochelle"},
+    {"@type": "AdministrativeArea", "name": "North Jersey"},
+    {"@type": "Place", "name": "Fordham, Bronx"},
+    {"@type": "Place", "name": "Mott Haven, Bronx"},
+    {"@type": "Place", "name": "Pelham Bay, Bronx"},
+    {"@type": "Place", "name": "Riverdale, Bronx"},
+    {"@type": "Place", "name": "Concourse, Bronx"}
+  ],
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "USD",
+    "price": "99",
+    "priceSpecification": {
+      "@type": "PriceSpecification",
+      "minPrice": "99",
+      "maxPrice": "199",
+      "priceCurrency": "USD",
+      "unitText": "MONTH"
+    }
+  },
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Property Management Services",
+    "itemListElement": [
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Tenant Screening", "description": "Credit, background, and rental-history checks for prospective NYC tenants."}},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Rent Collection", "description": "Automated monthly rent collection and owner payouts."}},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Maintenance Coordination", "description": "24/7 repair and maintenance coordination with vetted Bronx contractors."}},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Compliance & Inspections", "description": "NYC local-law compliance tracking, filings, and unit inspections."}}
     ]
   }
 }

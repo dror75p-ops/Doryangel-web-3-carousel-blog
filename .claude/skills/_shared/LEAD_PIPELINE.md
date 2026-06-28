@@ -49,7 +49,7 @@ Both Make connections use the `office@doryangel.com` Google account.
 ## Important context
 
 - **Simulation mode does NOT fire real webhooks.** Only real chat sessions on the live site trigger the Make scenario.
-- The **mobile "Call AI" button** (`tel:+15167743249`) is a separate voice channel, NOT connected to this pipeline.
+- The **mobile "Call AI" button** (`tel:+15168474999`) is a separate voice channel, NOT connected to this pipeline.
 - The 14 lead fields are configured in Retell as **Post-Chat Data Extraction**, which is why they live under `custom_analysis_data` — not under `retell_llm_dynamic_variables`.
 
 ## Source
