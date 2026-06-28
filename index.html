@@ -157,13 +157,16 @@
   --shadow-lg: 0 12px 48px rgba(13,30,58,0.14);
 }
 
-html { scroll-behavior: smooth; scroll-padding-top: 120px; }
+html { scroll-behavior: smooth; scroll-padding-top: 120px; overflow-x: hidden; overflow-x: clip; }
 body {
   font-family: 'DM Sans', sans-serif;
   color: var(--text);
   background: var(--white);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 /* NAV */
