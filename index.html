@@ -4412,6 +4412,7 @@ async function handleFormSubmit(e) {
   btn.disabled = true;
   try {
     const data = new FormData(form);
+    data.delete('cf-turnstile-response');  // keep the Turnstile token out of the Web3Forms POST — Web3Forms rejects an unconfigured token
     const response = await fetch(form.action, {
       method: 'POST',
       body: data,
@@ -5242,6 +5243,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // fire-and-forget to Web3Forms (owner notification)
     var data = new FormData(form);
+    data.delete('cf-turnstile-response');  // keep the Turnstile token out of the Web3Forms POST — Web3Forms rejects an unconfigured token
     fetch('https://api.web3forms.com/submit', { method: 'POST', body: data }).catch(function(){});
 
     // if this is the Digest signup, also post to Make.com for the welcome email.
