@@ -14,10 +14,10 @@ const APPROVAL_EMAIL = 'dror75p@gmail.com';
 const FALLBACK_TOPICS = [
   { title: '5 Free Tools Every DIY Landlord in the Bronx Needs', category: 'diy-property-management' },
   { title: 'The Top 3 Mistakes Bronx Landlords Make Managing Their Own Properties', category: 'property-management' },
-  { title: 'What to Look for in a Bronx Property Management Company', category: 'property-management' },
+  { title: 'What Should a Bronx Property Manager Actually Do for You?', category: 'property-management' },
   { title: 'Is Buying a Rental Property in the Bronx Still a Good Investment?', category: 'investments' },
-  { title: 'Why Bronx Landlords Are Switching to Flat-Fee Property Management', category: 'property-management' },
-  { title: 'How Much Does Property Management Cost in the Bronx?', category: 'property-management' },
+  { title: 'Flat-Fee PM in the Bronx: What $99/Unit Actually Means', category: 'property-management' },
+  { title: 'How Much Is Inefficient Management Costing Your Bronx or Queens Rental?', category: 'property-management' },
   { title: 'Should Bronx Landlords Self-Manage or Hire a Property Manager?', category: 'diy-property-management' },
   { title: "How to Handle a Tenant Who Doesn't Pay Rent in the Bronx", category: 'diy-property-management' },
   { title: 'What Bronx Landlords Need to Know About HPD Lead Paint Rules', category: 'property-management' },
@@ -25,7 +25,7 @@ const FALLBACK_TOPICS = [
   { title: 'How Bronx Landlords Can Cut Vacancy Time in Half', category: 'diy-property-management' },
   { title: 'The Bronx Landlord Guide to NYC Housing Court in 2026', category: 'diy-property-management' },
   { title: '3 Bronx Neighborhoods With the Best Rental ROI in 2026', category: 'investments' },
-  { title: 'How to Screen Tenants the Right Way in the Bronx', category: 'property-management' },
+  { title: 'How to Screen Bronx Tenants Without Getting Sued', category: 'property-management' },
   { title: '5 Smart Sensors Every Bronx Landlord Should Install in 2026', category: 'property-automation' },
   { title: 'How AI Security Cameras Are Reducing Vacancy Crimes in NYC Rental Buildings', category: 'property-automation' },
   { title: 'Can a Bronx Landlord Automate Rent Collection with Smart Tech?', category: 'property-automation' },
@@ -62,7 +62,14 @@ Recent posts to avoid repeating:
 ${recentTitles}
 
 Rules:
-- Title MUST reference the Bronx specifically — no other NYC borough or city
+- Geography: anchor every title to the Bronx as the primary location. A second adjacent borough (Queens or Manhattan) MAY be included when it reads naturally — e.g. "...Your Bronx or Queens Rental?". Never use a non-Bronx borough or city alone.
+- WINNING TITLE FORMULA (validated by real traffic): lead with the OWNER'S pain or cost and address the owner directly with "you"/"your". Include a concrete number, dollar figure, or NYC law. These outperform service-description titles.
+  Gold-standard examples to emulate the SHAPE of:
+    • "How Much Is Inefficient Management Costing Your Bronx or Queens Rental?"
+    • "What Should a Property Manager Actually Do for You?"
+    • "How to Screen Tenants in NYC Without Getting Sued"
+    • "Flat-Fee PM in the Bronx: What $99/Unit Actually Means"
+  Avoid generic, geo-less, marketing-speak titles (these got zero traffic): "Maximizing Returns with Management Investment Strategies", "The Power of Transparent Management Practices".
 - Title must be a question OR start with a number — but VARY the opening word. Do NOT start with "Are", "Is", "Can", or "How" if more than one of the last 5 titles already uses that word
 - Address a real landlord pain point; use seasonal relevance where fitting
 - Category must be exactly one of: property-management, diy-property-management, investments, property-automation, broker-partnerships
@@ -174,9 +181,9 @@ const SYSTEM_PROMPT = `You are a content writer for DoryAngel LLC, a NYC propert
 
 CRITICAL RULES — what works for our audience (validated by real traffic data):
 
-1. Title formula: must be either a question OR start with a number ("5 Free Tools...", "Top 3 Mistakes..."). Always reference the Bronx specifically — no other borough or city.
+1. Title formula (validated by real traffic): must be either a question OR start with a number ("5 Free Tools...", "Top 3 Mistakes..."). Lead with the OWNER'S pain or cost and address the owner directly with "you"/"your" — problem-first beats service-description. Anchor to the Bronx as the primary location; a second adjacent borough (Queens or Manhattan) may be included when natural (e.g. "...Your Bronx or Queens Rental?"), but never a non-Bronx borough alone. Gold-standard shapes to emulate: "How Much Is Inefficient Management Costing Your Bronx or Queens Rental?", "What Should a Property Manager Actually Do for You?", "How to Screen Tenants in NYC Without Getting Sued", "Flat-Fee PM in the Bronx: What $99/Unit Actually Means". Never write generic, geo-less, marketing-speak titles ("Maximizing Returns with Management Investment Strategies", "The Power of Transparent Management Practices") — these got zero traffic.
 
-2. Pain-point excerpts: 1-2 sentences focused on a real landlord pain point — money lost, tenant trouble, compliance fines. NOT abstract or marketing-speak.
+2. Pain-point excerpts: 1-2 sentences focused on a real landlord pain point — money lost, tenant trouble, compliance fines. NOT abstract or marketing-speak. The excerpt's pain must match the title's pain.
 
 3. Word count: 800-1,200 words for the body content. Below 500 = zero traffic. We need depth.
 

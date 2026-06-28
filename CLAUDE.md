@@ -10,6 +10,11 @@
 
 ### Last changes (as of 2026-06-28)
 
+- **Nave title-formula tuning from doryangel.com traffic data** (2026-06-28): the owner's traffic analysis of the old doryangel.com showed the top posts were all **owner-targeted, problem-first** titles with a geo anchor + concrete number/cost ("How Much Is Inefficient Management Costing Your Bronx or Queens Rental?", "How to Screen Tenants in NYC Without Getting Sued", "Flat-Fee PM: What $99/Unit Actually Means", "What Should a Property Manager Actually Do for You?"). Generic, geo-less, marketing-speak titles got zero traffic. Folded this into Nave (`scripts/generate-post.js`):
+  - **Topic-picker prompt + `SYSTEM_PROMPT` rule 1**: added the "winning title formula" (lead with the owner's pain/cost, address them as "you/your", include a number/$/law) with the 4 proven exemplars + the two zero-traffic anti-patterns.
+  - **Geo rule relaxed**: Bronx stays the *primary* anchor, but an adjacent borough (Queens/Manhattan) is now allowed when natural — the #1 traffic post was "Bronx or Queens". Previously titles were strict Bronx-only.
+  - **`FALLBACK_TOPICS`**: 4 property-management entries upgraded in place to the proven shapes (category counts unchanged).
+  - **Deliberately NOT changed (owner's call):** the category-preference bias (line ~69) still "strongly prefers" investments/automation/broker-partnerships, even though the data shows owner-PM/DIY drives the traffic and broker posts target brokers (the non-converting audience). Reweighting that mix is the obvious next lever if traffic doesn't move — left as-is for now per owner decision. This change is framing-only.
 - **Security hardening + Turnstile + email rebrand** (2026-06-28): lead-pipeline security pass plus a brand polish of every transactional email. PRs #149 (Turnstile client + broadcast secret + slug fix), #150 (Web3Forms hotfix), #151 (Tools menu) — all merged to main.
   - **Cloudflare Turnstile on the lead forms**: widget added to the **contact**, **digest signup**, and **tax checklist** forms (`index.html`, `tax-checklist/index.html`). The challenge token is sent to Make as **`turnstileToken`** — a hyphen-free key, because Make's expression parser reads the hyphens in `cf-turnstile-response` as minus. **Server-side siteverify is ENFORCED on contact (6335620) + tax (6346876)**: an `http:ActionSendData` module POSTs `secret`+`response` to `challenges.cloudflare.com/turnstile/v0/siteverify`, and the downstream email/sheet modules are gated on `{{N.data.success}} = true`. Widget is registered for hostnames `beta.doryangel.com` + `doryangel.com`. The **site key is public** (it's in the page HTML); the **secret key lives only in the Make HTTP module + Cloudflare** — not in the repo. Verified live on beta: both verified submissions deliver.
     - **Digest is deliberately NOT server-gated** (left client-only): its signup webhook (5549170) is shared with the external `dror75p-ops.github.io/...digest/` landing page, which has no Turnstile — hard-gating would silently drop those signups. Revisit if that page is retired or gets its own Turnstile.
@@ -146,12 +151,13 @@ Open question to confirm at migration time: is beta being *renamed* to the apex 
 
 ### Content rules (data-validated by real traffic)
 
-- Title format: question OR numbered list, MUST include a NYC city
+- Title format: question OR numbered list. **Winning formula (validated by real doryangel.com traffic):** problem-first — lead with the OWNER'S pain/cost and address them directly ("your", "you"), e.g. "How Much Is Inefficient Management Costing Your Bronx or Queens Rental?". Owner-targeted beats broker/tenant-targeted; service-description titles ("What to Look for in a PM Company") underperform.
+- Geo anchor: Bronx is the **primary** location, but a second **adjacent** borough (Queens/Manhattan) is allowed when natural (e.g. "Bronx or Queens") — the top traffic post used exactly that. Never a non-Bronx borough/city alone. (Changed 2026-06-28 from the old strict Bronx-only rule.)
 - Word count: 800-1,200 (below 500 = zero traffic)
 - NYC-specific dollar figures or law/borough references required
 - Tone: expert, trustworthy, practical
 - No CTA in the body — auto-appended by build-blog.js
-- Don't write generic AI-sounding pieces ("Power of Transparent Management Practices")
+- Don't write generic AI-sounding pieces ("Power of Transparent Management Practices", "Maximizing Returns with Management Investment Strategies" — both got zero traffic)
 
 ## Key integrations
 
