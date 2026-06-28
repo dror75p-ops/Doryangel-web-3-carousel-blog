@@ -26,7 +26,7 @@
   - **Digest Turnstile decision** — currently client-only. Options: gate it (breaks the external `github.io` signup page), keep client-only, or add Turnstile to that external page (separate repo, not in this session's scope).
   - **Owner dashboard tasks (not code, only the owner can do):** set hard **budget caps** on Make.com + Anthropic; **verify `doryangel.com` in Resend** (lifts the sandbox-domain limit). Optional: add the stable Vercel hostname to the Turnstile widget if you want it to render on Vercel previews.
   - Re-enable strict per-topic digest segmentation once the subscriber list is large enough (see Digest segmentation note below).
-  - Arlo issue #117 (Astoria-is-in-Queens factual error) still open.
+  - Arlo issue #117: Astoria-is-in-Queens factual error corrected in the issue body (Astoria removed; real Bronx neighborhoods listed); scope revised to 2–3 guides and acceptance criteria rewritten as concrete deliverables. Issue intentionally kept open as a scoped content task (the guides aren't written yet). Note: the live site never contained the error — Astoria only appears in Queens/Manhattan posts, correctly placed.
 
 - **Digest hardening + ops** (2026-06-27): fixed a chain of bugs found while making the Digest blast actually deliver, plus a security pass.
   - **Sheet writes use `RAW`** (signup + tax-checklist `addRow`): blocks Google Sheets **formula injection** (a submitted `=...` name is stored as literal text, not executed).
