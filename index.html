@@ -2053,6 +2053,7 @@ retell-chat-web-component {
             <label class="tg-topic"><input type="checkbox" name="topic" value="property-automation">Automation</label>
           </div>
         </div>
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAADr7qlYcZ_8Gw2v3" data-theme="light" data-refresh-expired="auto" style="margin:4px 0 14px;"></div>
         <button type="submit" class="toolgate-submit">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           Open the Tool &rarr;
@@ -4189,6 +4190,7 @@ retell-chat-web-component {
               By providing your phone number and submitting this form, you consent to receive calls and/or text messages from <strong>DoryAngel LLC</strong> regarding your inquiry. Message and data rates may apply. You may opt out at any time by replying STOP or contacting us at <a href="mailto:office@doryangel.com">office@doryangel.com</a>. Your information will never be sold or shared with third parties. See our <a href="./terms.html">Terms &amp; Conditions</a> and <a href="./privacy.html">Privacy Policy</a>.
             </label>
           </div>
+          <div class="cf-turnstile" data-sitekey="0x4AAAAAADr7qlYcZ_8Gw2v3" data-theme="light" data-refresh-expired="auto" style="margin:0 0 14px;"></div>
           <button type="submit" class="form-submit">Send My Inquiry →</button>
         </form>
       </div>
@@ -4399,6 +4401,8 @@ function filterFaq(cat, btn) {
 </script>
 
 
+<!-- Cloudflare Turnstile — bot protection for the lead forms -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>
 async function handleFormSubmit(e) {
   e.preventDefault();
@@ -4418,6 +4422,7 @@ async function handleFormSubmit(e) {
       const firstName = (form.querySelector('[name="first-name"]') || {}).value || '';
       const lastName  = (form.querySelector('[name="last-name"]')  || {}).value || '';
       const email     = (form.querySelector('[name="email"]')       || {}).value || '';
+      const cfToken   = (form.querySelector('[name="cf-turnstile-response"]') || {}).value || '';
       fetch('https://hook.eu1.make.com/8hmzcp8p8qexbtbmb90n0gn4u9a5jix7', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -4425,7 +4430,8 @@ async function handleFormSubmit(e) {
           name: (firstName + ' ' + lastName).trim(),
           email,
           phone:   ((form.querySelector('[name="phone"]')   || {}).value || '').trim(),
-          message: ((form.querySelector('[name="message"]') || {}).value || '').trim()
+          message: ((form.querySelector('[name="message"]') || {}).value || '').trim(),
+          turnstileToken: cfToken
         })
       }).catch(function(){});
       if (typeof gtag !== 'undefined') { gtag('event', 'contact_form_submit', { event_category: 'lead', event_label: 'main_contact' }); }
@@ -5246,13 +5252,15 @@ document.addEventListener('DOMContentLoaded', function() {
         form.querySelectorAll('input[name="topic"]:checked'),
         function (c) { return c.value; }
       );
+      var cfToken = (form.querySelector('[name="cf-turnstile-response"]') || {}).value || '';
       fetch('https://hook.eu1.make.com/2qo6r1tr15cckv1opo8em9x89ip3ku4x', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name:   document.getElementById('toolGateName').value.trim(),
           email:  document.getElementById('toolGateEmail').value.trim(),
-          topics: topics
+          topics: topics,
+          turnstileToken: cfToken
         })
       }).catch(function(){});
     }
@@ -5266,6 +5274,8 @@ document.addEventListener('DOMContentLoaded', function() {
         ? 'You\'re subscribed! Check your inbox for your first issue.<br>Unsubscribe any time.'
         : 'The tool is opening now in a new tab.<br>Check your inbox for tips from DoryAngel.';
     }
+
+    if (window.turnstile) { try { turnstile.reset(form.querySelector('.cf-turnstile')); } catch (err) {} }
 
     form.style.display = 'none';
     document.getElementById('toolGateSuccess').style.display = 'block';
