@@ -147,14 +147,15 @@ async function getGA4Stats() {
 // so the old-site column has sessions + unique visitors only.
 const WIX_MEASUREMENTS = ['TOTAL_SESSIONS', 'TOTAL_UNIQUE_VISITORS'];
 
-async function fetchWixRange(apiKey, siteId, startDate, endDate) {
+async function fetchWixRange(apiKey, siteId, accountId, startDate, endDate) {
   const params = new URLSearchParams();
   WIX_MEASUREMENTS.forEach(m => params.append('measurementTypes', m));
   params.append('dateRange.startDate', startDate);
   params.append('dateRange.endDate', endDate); // exclusive — endDate itself is not included
   const res = await fetch(`https://www.wixapis.com/analytics/v2/site-analytics/data?${params}`, {
     headers: {
-      'Authorization': apiKey,        // Wix REST API keys go in Authorization as-is (no "Bearer")
+      'Authorization': apiKey,         // Wix REST API keys go in Authorization as-is (no "Bearer")
+      'wix-account-id': accountId,     // required for API-key auth — without it Wix returns 403
       'wix-site-id': siteId,
     },
   });
@@ -173,16 +174,20 @@ async function fetchWixRange(apiKey, siteId, startDate, endDate) {
   };
 }
 
+// DoryAngel Wix account ID (identifier, not a secret). Overridable via WIX_ACCOUNT_ID.
+const WIX_ACCOUNT_ID = '13792945-5f7b-46a7-911d-f46598f78638';
+
 async function getWixStats() {
-  const apiKey = process.env.WIX_API_KEY;
-  const siteId = process.env.WIX_SITE_ID;
+  const apiKey    = process.env.WIX_API_KEY;
+  const siteId    = process.env.WIX_SITE_ID;
+  const accountId = process.env.WIX_ACCOUNT_ID || WIX_ACCOUNT_ID;
   if (!apiKey || !siteId) return null;
 
   try {
     const end = today();
     const [week, month] = await Promise.all([
-      fetchWixRange(apiKey, siteId, daysAgoISO(7), end),
-      fetchWixRange(apiKey, siteId, daysAgoISO(30), end),
+      fetchWixRange(apiKey, siteId, accountId, daysAgoISO(7), end),
+      fetchWixRange(apiKey, siteId, accountId, daysAgoISO(30), end),
     ]);
     return {
       sessions:  { week: week.sessions, month: month.sessions },
