@@ -8,8 +8,12 @@
 - Owner GitHub account: dror75p-ops
 - Owner email: office@doryangel.com (notification emails go to dror75p@gmail.com via Resend)
 
-### Last changes (as of 2026-06-28)
+### Last changes (as of 2026-06-29)
 
+- **New agent "Tally" — traffic comparison beta vs old doryangel.com** (2026-06-29): `scripts/traffic-compare.js` + `.github/workflows/traffic-compare.yml` (`workflow_dispatch`). On demand, it pulls **beta.doryangel.com from GA4** (reusing Arlo's `getGoogleAccessToken` + `getGA4Stats`, duplicated so Tally stays standalone) and **old doryangel.com from the Wix Analytics Data API**, then emails a digest (Arlo style) with: a side-by-side sessions/users/pageviews table (7d + 30d), a Claude **plain-language read**, **marketing next steps** grounded in the real top pages + category mix + the validated title formula, and a **PageSpeed (Lighthouse) performance compare** for both URLs. Read-only — no site edits, PRs, or issues. Degrades gracefully: each missing source shows a "not connected" panel and the digest still sends.
+  - **Owner setup needed for the Wix side:** create a **Wix API key** (Wix dashboard → API Keys, Analytics read) and add `WIX_API_KEY` + `WIX_SITE_ID` (`097f69b7-226e-45f1-8d8c-eec28753d2db`) as GitHub secrets. GA4 works immediately (reuses Arlo's `GOOGLE_SA_KEY` + `GA4_PROPERTY_ID`). Optional `PAGESPEED_API_KEY` raises PageSpeed rate limits (anonymous calls can 429).
+  - **Verify-at-first-run:** the exact Wix Analytics endpoint/measurement enum in `fetchWixRange()` couldn't be confirmed against the Wix docs during build (the Wix MCP docs tool was behind an approval gate) — confirm `https://www.wixapis.com/analytics-data/v1/data/query` + the `TOTAL_SESSIONS/TOTAL_UNIQUE_VISITORS/TOTAL_PAGE_VIEWS` enum once the API key is live; on any mismatch Tally just shows "Wix not connected" until corrected.
+  - **v2 (deferred):** traffic→leads tie-in via Arlo's `getMakeStats()`.
 - **Nave title-formula tuning from doryangel.com traffic data** (2026-06-28): the owner's traffic analysis of the old doryangel.com showed the top posts were all **owner-targeted, problem-first** titles with a geo anchor + concrete number/cost ("How Much Is Inefficient Management Costing Your Bronx or Queens Rental?", "How to Screen Tenants in NYC Without Getting Sued", "Flat-Fee PM: What $99/Unit Actually Means", "What Should a Property Manager Actually Do for You?"). Generic, geo-less, marketing-speak titles got zero traffic. Folded this into Nave (`scripts/generate-post.js`):
   - **Topic-picker prompt + `SYSTEM_PROMPT` rule 1**: added the "winning title formula" (lead with the owner's pain/cost, address them as "you/your", include a number/$/law) with the 4 proven exemplars + the two zero-traffic anti-patterns.
   - **Geo rule relaxed**: Bronx stays the *primary* anchor, but an adjacent borough (Queens/Manhattan) is now allowed when natural — the #1 traffic post was "Bronx or Queens". Previously titles were strict Bronx-only.
@@ -91,9 +95,12 @@ Open question to confirm at migration time: is beta being *renamed* to the apex 
 - `scripts/build-blog.js` — Generates per-post HTML pages from the JSON
 - `scripts/migrate-posts-once.js` — One-time schema migration (kept for reference)
 - `scripts/refresh-images.js` — One-shot workflow to refresh all post hero images
+- `scripts/daily-audit.js` — Agent **Arlo**: daily website audit (auto-fixes + GitHub Issues + owner digest email). Reads GA4 (beta) via `GOOGLE_SA_KEY` + `GA4_PROPERTY_ID`.
+- `scripts/traffic-compare.js` — Agent **Tally**: on-demand traffic comparison **beta.doryangel.com (GA4) vs old doryangel.com (Wix)** → emails a digest with a side-by-side table + a Claude plain-language read + marketing next steps + a PageSpeed (Lighthouse) performance compare. **Read-only** (no site edits/PRs/issues); degrades gracefully when a source's secret is missing. Reuses Arlo's GA4 helpers (duplicated to stay standalone).
 - `blog/[slug]/index.html` — Auto-generated per-post pages (NEVER hand-edit; rerun build-blog.js)
 - `.github/workflows/blog-autopublish.yml` — Cron-triggered every 3 days at 14:00 UTC
 - `.github/workflows/refresh-images.yml` — Manual one-shot for image refresh
+- `.github/workflows/traffic-compare.yml` — **Tally**, `workflow_dispatch` (manual "Run workflow"). Needs a one-time owner setup for the Wix side: create a **Wix API key** (Wix dashboard → API Keys, Analytics read) and add `WIX_API_KEY` + `WIX_SITE_ID` (`097f69b7-226e-45f1-8d8c-eec28753d2db`) as GitHub secrets. GA4 reuses Arlo's existing secrets. Optional `PAGESPEED_API_KEY` raises PageSpeed rate limits.
 - `sitemap.xml`, `robots.txt` — SEO
 - `.gitignore` — node_modules, .env, .DS_Store, logs, /tmp/
 
