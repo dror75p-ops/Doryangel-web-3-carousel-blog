@@ -137,36 +137,39 @@ async function getGA4Stats() {
 }
 
 // ─── Wix Analytics (old doryangel.com) ───────────────────────────────────────
-// Reads the Wix Analytics Data REST API with a Wix API key (WIX_API_KEY) scoped
-// to the site (WIX_SITE_ID). NOTE: the exact endpoint/measurement-enum could not
-// be confirmed against the Wix docs during build (the Wix MCP docs tool was behind
-// an approval gate). Any error here → null → "Wix not connected" panel; verify the
-// endpoint/shape below once WIX_API_KEY is provisioned, then re-run.
-const WIX_MEASUREMENTS = ['TOTAL_SESSIONS', 'TOTAL_UNIQUE_VISITORS', 'TOTAL_PAGE_VIEWS'];
+// Reads the Wix Analytics Data API with a Wix API key (WIX_API_KEY) scoped to the
+// site (WIX_SITE_ID). Endpoint/params confirmed from Wix's published SDK
+// (@wix/auto_sdk_analytics-data_analytics-data): GET /analytics/v2/site-analytics/data
+// with `measurementTypes` (repeatable) + `dateRange.startDate`/`dateRange.endDate`
+// (ISO-8601, endDate exclusive). Wix only retains 62 days of analytics. Valid
+// measurement enums: TOTAL_SALES, TOTAL_ORDERS, CLICKS_TO_CONTACT, TOTAL_SESSIONS,
+// TOTAL_FORMS_SUBMITTED, TOTAL_UNIQUE_VISITORS — note there is NO page-views metric,
+// so the old-site column has sessions + unique visitors only.
+const WIX_MEASUREMENTS = ['TOTAL_SESSIONS', 'TOTAL_UNIQUE_VISITORS'];
 
 async function fetchWixRange(apiKey, siteId, startDate, endDate) {
-  const res = await fetch('https://www.wixapis.com/analytics-data/v1/data/query', {
-    method: 'POST',
+  const params = new URLSearchParams();
+  WIX_MEASUREMENTS.forEach(m => params.append('measurementTypes', m));
+  params.append('dateRange.startDate', startDate);
+  params.append('dateRange.endDate', endDate); // exclusive — endDate itself is not included
+  const res = await fetch(`https://www.wixapis.com/analytics/v2/site-analytics/data?${params}`, {
     headers: {
       'Authorization': apiKey,        // Wix REST API keys go in Authorization as-is (no "Bearer")
       'wix-site-id': siteId,
-      'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ dateRange: { startDate, endDate }, measurementTypes: WIX_MEASUREMENTS }),
   });
   if (!res.ok) throw new Error(`Wix ${res.status}: ${(await res.text()).slice(0, 200)}`);
   const json = await res.json();
 
-  // Expected shape: { data: [ { type: 'TOTAL_SESSIONS', total: N, values: [...] }, ... ] }
+  // Shape: { data: [ { type: 'TOTAL_SESSIONS', total: N, values: [{date,value}] }, ... ] }
   const byType = {};
   (json.data || []).forEach(d => {
     const total = (d.total ?? (d.values || []).reduce((a, v) => a + (v.value || 0), 0));
     byType[d.type] = Math.round(total) || 0;
   });
   return {
-    sessions:  byType['TOTAL_SESSIONS'] ?? 0,
-    users:     byType['TOTAL_UNIQUE_VISITORS'] ?? 0,
-    pageviews: byType['TOTAL_PAGE_VIEWS'] ?? 0,
+    sessions: byType['TOTAL_SESSIONS'] ?? 0,
+    users:    byType['TOTAL_UNIQUE_VISITORS'] ?? 0,
   };
 }
 
@@ -182,9 +185,9 @@ async function getWixStats() {
       fetchWixRange(apiKey, siteId, daysAgoISO(30), end),
     ]);
     return {
-      sessions:  { week: week.sessions,  month: month.sessions  },
-      users:     { week: week.users,     month: month.users     },
-      pageviews: { week: week.pageviews, month: month.pageviews },
+      sessions:  { week: week.sessions, month: month.sessions },
+      users:     { week: week.users,    month: month.users    },
+      pageviews: { week: null,          month: null           }, // Wix API has no page-views metric
     };
   } catch (err) {
     console.warn(`Wix fetch failed: ${err.message}`);
@@ -307,7 +310,7 @@ function comparisonTable(ga4, wix) {
     ${row('Unique users', 'users')}
     ${row('Page views', 'pageviews')}
   </table>
-  <p style="font-size:11px;color:#8B9BAE;margin:0 0 24px;">beta = beta.doryangel.com (GA4) · old = doryangel.com (Wix). GA4 and Wix count sessions/visitors slightly differently — read trends, not exact parity.</p>`;
+  <p style="font-size:11px;color:#8B9BAE;margin:0 0 24px;">beta = beta.doryangel.com (GA4) · old = doryangel.com (Wix). GA4 and Wix count sessions/visitors slightly differently — read trends, not exact parity. Wix's Analytics Data API doesn't expose page views, so that row is GA4-only.</p>`;
 }
 
 function performanceTable(betaPerf, oldPerf) {
