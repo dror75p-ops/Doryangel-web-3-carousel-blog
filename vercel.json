@@ -564,6 +564,11 @@
       "source": "/blog",
       "destination": "/#blog",
       "permanent": true
+    },
+    {
+      "source": "/broker-partner",
+      "destination": "/broker-partner.html",
+      "permanent": true
     }
   ]
 }
