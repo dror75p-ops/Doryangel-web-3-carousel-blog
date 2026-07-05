@@ -145,8 +145,8 @@
 
 :root {
   --navy: #0D1E3A;
-  --blue: #3A7BDD;
-  --blue-light: #5B9FEA;
+  --blue: #1A5BB5;
+  --blue-light: #1A5BB5BB;
   --blue-dim: #EBF3FD;
   --grey: #8B9BAE;
   --grey-light: #F4F7FA;
@@ -266,8 +266,9 @@ nav.bar-hidden { top: 0; }
 }
 .hero {
   padding: 190px 40px 110px;
-  max-width: 1200px; margin: 0 auto;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+  max-width: 800px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr; gap: 80px; align-items: center;
+  text-align: center;
 }
 .hero-eyebrow {
   font-size: 12px; font-weight: 600; letter-spacing: 0.12em;
@@ -295,10 +296,10 @@ nav.bar-hidden { top: 0; }
 .hero-sub {
   font-size: 18px; color: var(--text-muted);
   line-height: 1.7; margin-bottom: 40px;
-  max-width: 480px;
+  max-width: 100%;
   text-wrap: pretty;
 }
-.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
 .btn-primary {
   background: var(--blue); color: white;
   padding: 14px 28px; border-radius: 8px;
@@ -321,6 +322,7 @@ nav.bar-hidden { top: 0; }
 .hero-stats {
   display: flex; gap: 32px; margin-top: 52px;
   padding-top: 32px; border-top: 1px solid var(--grey-mid);
+  justify-content: center;
 }
 .stat-item { }
 .stat-num {
@@ -329,10 +331,10 @@ nav.bar-hidden { top: 0; }
 }
 .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 
-/* HERO VISUAL */
+/* HERO VISUAL (hidden — hero uses the centered layout) */
 .hero-visual {
   position: relative;
-  display: flex; align-items: center; justify-content: center;
+  display: none; align-items: center; justify-content: center;
 }
 .hero-card-stack {
   position: relative; width: 100%; max-width: 420px;
@@ -1074,65 +1076,6 @@ footer {
   padding-top: 28px; flex-wrap: wrap; gap: 12px;
 }
 .footer-copy { font-size: 13px; color: rgba(255,255,255,0.55); }
-
-/* TWEAKS PANEL */
-#tweaks-panel {
-  display: none;
-  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-  background: white; border-radius: 14px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
-  padding: 24px; width: 280px;
-  border: 1px solid var(--grey-mid);
-}
-#tweaks-panel.visible { display: block; }
-#tweaks-panel h3 {
-  font-size: 14px; font-weight: 700; color: var(--navy);
-  margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center;
-}
-.tweak-group { margin-bottom: 18px; }
-.tweak-group label {
-  display: block; font-size: 12px; font-weight: 600; color: var(--text-muted);
-  margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em;
-}
-.tweak-options { display: flex; gap: 8px; flex-wrap: wrap; }
-.tweak-btn {
-  padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;
-  border: 1.5px solid var(--grey-mid); cursor: pointer; background: white;
-  color: var(--text-muted); transition: all 0.15s;
-}
-.tweak-btn.active, .tweak-btn:hover {
-  border-color: var(--blue); background: var(--blue-dim); color: var(--blue);
-}
-.tweak-toggle {
-  display: flex; align-items: center; gap: 10px;
-}
-.tweak-toggle input[type="checkbox"] {
-  width: 36px; height: 20px; cursor: pointer;
-}
-
-/* DARK VARIANT */
-body.variant-dark {
-  --grey-light: #0A1628;
-  --white: #0D1E3A;
-  --text: #E8EEF6;
-  --text-muted: #8B9BAE;
-  --grey-mid: rgba(255,255,255,0.1);
-  --blue-dim: rgba(58,123,221,0.12);
-}
-body.variant-dark .hero-wrap {
-  background: linear-gradient(180deg, #0A1628 0%, #0D1E3A 100%);
-  border-bottom-color: rgba(255,255,255,0.08);
-}
-body.variant-dark nav {
-  background: rgba(13,30,58,0.95);
-  border-bottom-color: rgba(255,255,255,0.08);
-}
-body.variant-dark .hero-card, body.variant-dark .contact-form {
-  background: #0F2040; border-color: rgba(255,255,255,0.1);
-}
-body.variant-dark .pillar-item { background: #0F2040; }
-body.variant-dark .testimonial-card { background: rgba(255,255,255,0.04); }
-body.variant-dark .audience-card { background: #0F2040; }
 
 /* GEOMETRIC ACCENT */
 .geo-bg {
@@ -4333,67 +4276,6 @@ retell-chat-web-component {
 
 
 <script>
-const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "variant": "light",
-  "heroStyle": "centered",
-  "accentColor": "#1A5BB5",
-  "showStats": true
-}/*EDITMODE-END*/;
-
-function setVariant(v, btn) {
-  document.body.classList.toggle('variant-dark', v === 'dark');
-  updateBtnGroup(btn);
-  persist('variant', v);
-}
-function setHero(style, btn) {
-  const hero = document.querySelector('.hero');
-  const visual = document.querySelector('.hero-visual');
-  const sub = document.querySelector('.hero-sub');
-  const stats = document.querySelector('.hero-stats');
-  const actions = document.querySelector('.hero-actions');
-  if (!hero) return;
-  if (style === 'centered') {
-    hero.style.gridTemplateColumns = '1fr';
-    hero.style.textAlign = 'center';
-    hero.style.maxWidth = '800px';
-    if (visual) visual.style.display = 'none';
-    if (sub) sub.style.maxWidth = '100%';
-    if (stats) stats.style.justifyContent = 'center';
-    if (actions) actions.style.justifyContent = 'center';
-  } else {
-    hero.style.gridTemplateColumns = '1fr 1fr';
-    hero.style.textAlign = '';
-    hero.style.maxWidth = '1200px';
-    if (visual) visual.style.display = '';
-    if (sub) sub.style.maxWidth = '';
-    if (stats) stats.style.justifyContent = '';
-    if (actions) actions.style.justifyContent = '';
-  }
-  if (btn && btn.parentNode) updateBtnGroup(btn);
-  persist('heroStyle', style);
-}
-function setAccent(color, btn) {
-  document.documentElement.style.setProperty('--blue', color);
-  // Recalculate dim
-  document.documentElement.style.setProperty('--blue-light', color + 'BB');
-  updateBtnGroup(btn);
-  persist('accentColor', color);
-}
-function toggleStats(show, btn) {
-  const stats = document.querySelector('.hero-stats');
-  stats.style.display = show ? '' : 'none';
-  updateBtnGroup(btn);
-  persist('showStats', show);
-}
-function updateBtnGroup(activeBtn) {
-  if (!activeBtn || !activeBtn.parentNode) return;
-  const siblings = activeBtn.parentNode.querySelectorAll('.tweak-btn');
-  siblings.forEach(b => b.classList.remove('active'));
-  activeBtn.classList.add('active');
-}
-function persist(key, val) {
-  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { [key]: val } }, '*');
-}
 // Reviews carousel
 function expandReview(id, btn) {
   const el = document.getElementById(id);
@@ -4441,15 +4323,6 @@ function filterFaq(cat, btn) {
     else item.classList.add('hidden');
   });
 }
-// Apply saved defaults
-(function() {
-  const d = TWEAK_DEFAULTS;
-  if (d.variant === 'dark') document.body.classList.add('variant-dark');
-  if (d.heroStyle === 'centered') setHero('centered', document.createElement('button'));
-  if (d.accentColor && d.accentColor !== '#3A7BDD') setAccent(d.accentColor, document.createElement('button'));
-  if (!d.showStats) { const s = document.querySelector('.hero-stats'); if(s) s.style.display='none'; }
-})();
-
 </script>
 
 
