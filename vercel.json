@@ -1,0 +1,569 @@
+{
+  "redirects": [
+    {
+      "source": "/post/how-to-handle-a-rent-increase-in-nyc-without-losing-your-tenant-2026-rent-freeze-update",
+      "destination": "/blog/nyc-rent-stabilization-rules-every-landlord-must-know/",
+      "permanent": true
+    },
+    {
+      "source": "/post/understanding-property-management-roles-what-you-need-to-know",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/is-buying-a-multi-family-in-yonkers-or-mount-vernon-better-than-the-bronx-in-2026",
+      "destination": "/blog/yonkers-vs-bronx-which-is-the-better-rental-investment-in-20/",
+      "permanent": true
+    },
+    {
+      "source": "/post/why-bronx-and-queens-landlords-are-choosing-flat-fee-management-over-percentage-based-in-2026",
+      "destination": "/blog/flat-fee-property-management-vs-percentage/",
+      "permanent": true
+    },
+    {
+      "source": "/post/how-many-hours-does-self-managing-a-queens-rental-really-take",
+      "destination": "/flat-fee-vs-commission/",
+      "permanent": true
+    },
+    {
+      "source": "/post/renewing-a-lease-in-the-bronx-this-summer-check-these-4-things-first",
+      "destination": "/blog/5-summer-lease-renewal-opportunities-bronx-landlords-are-mis/",
+      "permanent": true
+    },
+    {
+      "source": "/post/flat-fee-property-management-in-the-bronx-what-99-unit-actually-means",
+      "destination": "/blog/flat-fee-property-management-vs-percentage/",
+      "permanent": true
+    },
+    {
+      "source": "/post/is-a-two-family-house-in-yonkers-still-a-smart-first-investment-in-2026",
+      "destination": "/blog/yonkers-vs-bronx-which-is-the-better-rental-investment-in-20/",
+      "permanent": true
+    },
+    {
+      "source": "/post/owning-a-bronx-rental-shouldn-t-eat-your-nights-and-weekends",
+      "destination": "/blog/flat-fee-property-management-vs-percentage/",
+      "permanent": true
+    },
+    {
+      "source": "/post/streamlining-operations-with-consulting-for-property-management",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/choosing-the-best-property-evaluation-services-for-your-home",
+      "destination": "/blog/preventative-maintenance-strategies-that-save-bronx-property/",
+      "permanent": true
+    },
+    {
+      "source": "/post/the-importance-of-property-inspections-maintaining-property-value-through-regular-inspections",
+      "destination": "/blog/preventative-maintenance-strategies-that-save-bronx-property/",
+      "permanent": true
+    },
+    {
+      "source": "/post/how-to-write-a-lease-agreement-in-new-york-that-actually-protects-you",
+      "destination": "/blog/good-cause-eviction-nyc-landlord-guide/",
+      "permanent": true
+    },
+    {
+      "source": "/post/effective-property-support-services-for-your-needs",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/improving-property-efficiency-with-professional-property-management-solutions",
+      "destination": "/blog/bronx-landlord-property-dashboard-real-numbers/",
+      "permanent": true
+    },
+    {
+      "source": "/post/how-to-screen-tenants-in-nyc-without-getting-sued-a-bronx-landlord-s-checklist",
+      "destination": "/blog/tenant-screening-bronx-landlord-guide/",
+      "permanent": true
+    },
+    {
+      "source": "/post/is-buying-a-rental-property-in-the-bronx-still-a-good-investment-in-2026",
+      "destination": "/blog/bronx-rental-investment-roi-2026/",
+      "permanent": true
+    },
+    {
+      "source": "/post/why-bronx-landlords-are-switching-to-flat-fee-property-management-in-2026",
+      "destination": "/blog/flat-fee-property-management-vs-percentage/",
+      "permanent": true
+    },
+    {
+      "source": "/post/how-to-handle-tenant-complaints-without-losing-your-mind-or-your-tenant",
+      "destination": "/blog/5-summer-tenant-complaints-bronx-landlords-should-log-now-to/",
+      "permanent": true
+    },
+    {
+      "source": "/post/the-power-of-transparent-management-practices-in-property-management",
+      "destination": "/blog/bronx-landlord-property-dashboard-real-numbers/",
+      "permanent": true
+    },
+    {
+      "source": "/post/maximizing-returns-with-management-investment-strategies",
+      "destination": "/blog/bronx-rental-investment-roi-2026/",
+      "permanent": true
+    },
+    {
+      "source": "/post/what-bronx-landlords-need-to-know-about-hpd-lead-paint-rules-in-2026",
+      "destination": "/blog/nyc-local-law-compliance-guide-2026/",
+      "permanent": true
+    },
+    {
+      "source": "/post/real-estate-investment-faq-10-questions-nyc-property-investors-should-ask",
+      "destination": "/blog/bronx-rental-investment-roi-2026/",
+      "permanent": true
+    },
+    {
+      "source": "/post/property-management-faq-14-questions-every-owner-should-ask-before-hiring-a-manager",
+      "destination": "/#faq",
+      "permanent": true
+    },
+    {
+      "source": "/post/diy-property-management-faq-10-questions-every-nyc-landlord-should-ask-before-self-managing",
+      "destination": "/#faq",
+      "permanent": true
+    },
+    {
+      "source": "/post/diy-property-management-in-nyc-a-complete-guide-for-landlords-who-want-to-self-manage",
+      "destination": "/#tools",
+      "permanent": true
+    },
+    {
+      "source": "/post/property-management-faq-for-nyc-landlords-24-questions-every-property-owner-should-ask",
+      "destination": "/#faq",
+      "permanent": true
+    },
+    {
+      "source": "/post/the-top-3-mistakes-bronx-landlords-make-when-managing-their-own-properties",
+      "destination": "/blog/what-bronx-brokers-tell-self-managing-landlord-clients/",
+      "permanent": true
+    },
+    {
+      "source": "/post/why-more-new-rochelle-landlords-are-outsourcing-property-management",
+      "destination": "/blog/what-every-new-rochelle-landlord-needs-to-know-about-propert/",
+      "permanent": true
+    },
+    {
+      "source": "/post/new-landlord-in-mount-vernon-here-s-what-you-need-before-your-first-tenant",
+      "destination": "/blog/how-mount-vernon-landlords-can-cut-vacancy-time-in-half/",
+      "permanent": true
+    },
+    {
+      "source": "/post/property-management-fees-in-queens-vs-the-bronx-what-landlords-need-to-know",
+      "destination": "/blog/flat-fee-property-management-vs-percentage/",
+      "permanent": true
+    },
+    {
+      "source": "/post/how-to-prepare-your-yonkers-rental-property-for-a-new-tenant",
+      "destination": "/blog/how-do-you-prepare-a-queens-rental-for-spring-turnover-seaso/",
+      "permanent": true
+    },
+    {
+      "source": "/post/should-you-self-manage-or-hire-a-property-manager-a-cost-breakdown",
+      "destination": "/flat-fee-vs-commission/",
+      "permanent": true
+    },
+    {
+      "source": "/post/what-are-the-best-ways-to-find-quality-tenants-in-the-bronx",
+      "destination": "/blog/tenant-screening-bronx-landlord-guide/",
+      "permanent": true
+    },
+    {
+      "source": "/post/how-to-handle-a-tenant-who-doesn-t-pay-rent-in-nyc",
+      "destination": "/blog/nyc-housing-court-and-the-eviction-process-explained-for-lan/",
+      "permanent": true
+    },
+    {
+      "source": "/post/5-signs-it-s-time-to-fire-your-property-management-company",
+      "destination": "/blog/flat-fee-property-management-vs-percentage/",
+      "permanent": true
+    },
+    {
+      "source": "/post/what-happens-if-you-don-t-have-a-property-manager-for-your-rental",
+      "destination": "/blog/why-bronx-landlords-miss-building-problems-until-too-late/",
+      "permanent": true
+    },
+    {
+      "source": "/post/can-my-tenant-refuse-a-property-inspection-in-new-york",
+      "destination": "/blog/rent-control-tenant-screening-rules-bronx-landlords/",
+      "permanent": true
+    },
+    {
+      "source": "/post/how-much-does-property-management-cost-in-the-bronx-in-2026",
+      "destination": "/blog/flat-fee-property-management-vs-percentage/",
+      "permanent": true
+    },
+    {
+      "source": "/post/5-free-tools-every-diy-landlord-in-the-bronx-needs-in-2026",
+      "destination": "/blog/technology-tools-that-help-nyc-property-owners-save-time-and/",
+      "permanent": true
+    },
+    {
+      "source": "/post/why-yonkers-property-owners-are-switching-to-professional-management-in-2026",
+      "destination": "/blog/yonkers-vs-bronx-which-is-the-better-rental-investment-in-20/",
+      "permanent": true
+    },
+    {
+      "source": "/post/comprehensive-property-consulting-services-your-guide-to-effective-residential-management",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/exploring-inspection-services-for-properties",
+      "destination": "/blog/preventative-maintenance-strategies-that-save-bronx-property/",
+      "permanent": true
+    },
+    {
+      "source": "/post/optimizing-operations-with-management-consulting-for-properties",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/comprehensive-guide-to-property-management-services-overview-2",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/what-to-look-for-in-a-bronx-property-management-company-in-2026",
+      "destination": "/blog/flat-fee-property-management-vs-percentage/",
+      "permanent": true
+    },
+    {
+      "source": "/post/understanding-the-role-of-a-property-management-firm",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/how-to-manage-your-own-property-and-save-on-management-fees",
+      "destination": "/blog/technology-tools-that-help-nyc-property-owners-save-time-and/",
+      "permanent": true
+    },
+    {
+      "source": "/post/effective-strategies-for-managing-residential-properties-1",
+      "destination": "/blog/technology-tools-that-help-nyc-property-owners-save-time-and/",
+      "permanent": true
+    },
+    {
+      "source": "/post/services-offered-by-property-consulting-firms-1",
+      "destination": "/blog/flat-fee-property-management-vs-percentage/",
+      "permanent": true
+    },
+    {
+      "source": "/post/driving-transparency-in-property-management-with-transparent-property-practices-2",
+      "destination": "/blog/bronx-landlord-property-dashboard-real-numbers/",
+      "permanent": true
+    },
+    {
+      "source": "/post/maximizing-returns-on-property-management-investments-enhancing-property-investments-for-residentia",
+      "destination": "/blog/bronx-rental-investment-roi-2026/",
+      "permanent": true
+    },
+    {
+      "source": "/post/comprehensive-guide-to-property-inspection-solutions",
+      "destination": "/blog/preventative-maintenance-strategies-that-save-bronx-property/",
+      "permanent": true
+    },
+    {
+      "source": "/post/the-importance-of-regular-property-inspections-a-property-inspection-guide",
+      "destination": "/blog/preventative-maintenance-strategies-that-save-bronx-property/",
+      "permanent": true
+    },
+    {
+      "source": "/post/why-modern-property-management-companies-excel-modern-property-management-strategies",
+      "destination": "/blog/technology-tools-that-help-nyc-property-owners-save-time-and/",
+      "permanent": true
+    },
+    {
+      "source": "/post/boosting-efficiency-with-property-management-technology-trends",
+      "destination": "/blog/technology-tools-that-help-nyc-property-owners-save-time-and/",
+      "permanent": true
+    },
+    {
+      "source": "/post/how-technology-is-revolutionizing-property-management",
+      "destination": "/blog/technology-tools-that-help-nyc-property-owners-save-time-and/",
+      "permanent": true
+    },
+    {
+      "source": "/post/benefits-of-doryangel-property-management-services-1",
+      "destination": "/blog/bronx-rental-investment-roi-2026/",
+      "permanent": true
+    },
+    {
+      "source": "/post/why-professional-property-management-can-make-a-difference",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/property-management-with-advanced-technology-professional-service-at-competitive-prices",
+      "destination": "/blog/technology-tools-that-help-nyc-property-owners-save-time-and/",
+      "permanent": true
+    },
+    {
+      "source": "/post/doryangel-high-technology-with-a-human-touch-for-your-investment",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/merits-of-hiring-a-property-management-company-like-doryangel-management",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/quick-tips-for-new-landlord-from-our-property-management-software-provider-1",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/key-principles-of-doryangel-management",
+      "destination": "/#about",
+      "permanent": true
+    },
+    {
+      "source": "/post/choose-your-property-management-team-wisely",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/strategies-for-brokers-to-grow-in-real-estate",
+      "destination": "/broker-partner.html",
+      "permanent": true
+    },
+    {
+      "source": "/post/high-quality-tenants-what-traits-should-you-look-for-when-picking-tenants-1",
+      "destination": "/blog/tenant-screening-bronx-landlord-guide/",
+      "permanent": true
+    },
+    {
+      "source": "/post/understanding-the-importance-of-regular-property-inspections-1",
+      "destination": "/blog/nyc-local-law-compliance-guide-2026/",
+      "permanent": true
+    },
+    {
+      "source": "/post/unlocking-excellence-in-property-management-with-doryangel-consulting",
+      "destination": "/blog/how-to-reduce-vacancy-rates-in-your-bronx-rental-property/",
+      "permanent": true
+    },
+    {
+      "source": "/post/unlocking-the-benefits-of-doryangel-s-advanced-services-for-your-business",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/doryangel-property-management-6",
+      "destination": "/blog/nyc-housing-court-and-the-eviction-process-explained-for-lan/",
+      "permanent": true
+    },
+    {
+      "source": "/post/how-brokers-grow-with-us",
+      "destination": "/blog/how-bronx-brokers-earn-passive-referral-income/",
+      "permanent": true
+    },
+    {
+      "source": "/post/high-quality-tenants-what-traits-should-you-look-for-when-picking-tenants",
+      "destination": "/blog/tenant-screening-bronx-landlord-guide/",
+      "permanent": true
+    },
+    {
+      "source": "/post/unlocking-success-expert-strategies-for-efficient-property-management-consulting-in-the-bronx-nyc",
+      "destination": "/blog/bronx-rental-investment-roi-2026/",
+      "permanent": true
+    },
+    {
+      "source": "/post/benefits-of-doryangel-property-management-services",
+      "destination": "/blog/nyc-rent-stabilization-rules-every-landlord-must-know/",
+      "permanent": true
+    },
+    {
+      "source": "/post/navigating-success-in-real-estate-the-essential-role-of-property-management-consulting",
+      "destination": "/blog/good-cause-eviction-nyc-landlord-guide/",
+      "permanent": true
+    },
+    {
+      "source": "/post/unlocking-success-with-doryangel-property-management-consulting-services",
+      "destination": "/blog/what-every-new-rochelle-landlord-needs-to-know-about-propert/",
+      "permanent": true
+    },
+    {
+      "source": "/post/essential-benefits-of-choosing-doryangel-management-maintenance-services-for-your-property",
+      "destination": "/blog/rent-control-tenant-screening-rules-bronx-landlords/",
+      "permanent": true
+    },
+    {
+      "source": "/post/handling-property-maintenance-in-doryangel-mangament",
+      "destination": "/blog/preventative-maintenance-strategies-that-save-bronx-property/",
+      "permanent": true
+    },
+    {
+      "source": "/post/property-management-services-1",
+      "destination": "/blog/why-bronx-landlords-miss-building-problems-until-too-late/",
+      "permanent": true
+    },
+    {
+      "source": "/post/top-tips-for-choosing-the-right-property-management-services",
+      "destination": "/blog/how-mount-vernon-landlords-can-cut-vacancy-time-in-half/",
+      "permanent": true
+    },
+    {
+      "source": "/post/doryangel-management-property-services",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/understanding-the-basics-of-managing-residential-properties",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/property-management-services",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/doryangel-management-llc-services",
+      "destination": "/blog/flat-fee-property-management-vs-percentage/",
+      "permanent": true
+    },
+    {
+      "source": "/post/pros-and-cons-of-rental-properties-with-less-t",
+      "destination": "/blog/bronx-rental-investment-roi-2026/",
+      "permanent": true
+    },
+    {
+      "source": "/post/understanding-the-importance-of-regular-property-inspections",
+      "destination": "/blog/preventative-maintenance-strategies-that-save-bronx-property/",
+      "permanent": true
+    },
+    {
+      "source": "/post/copy-of-doryangel-property-management-llc",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/doryangel-property-management",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/doryangel-management-llc-property-management",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/2018/06/25/whether-you-own-2-rental-properties-or-200-doryangel-can-manage-them-for-you-stress-free",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/2018/04/15/efficiently-reduce-the-burden-of-property-management-with-dory-angel-llc",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/2018/02/28/what-are-the-risks-of-leaving-a-property-vacant",
+      "destination": "/blog/how-to-reduce-vacancy-rates-in-your-bronx-rental-property/",
+      "permanent": true
+    },
+    {
+      "source": "/post/2018/02/28/high-quality-tenants-what-traits-should-you-look-for-when-picking-tenants",
+      "destination": "/blog/tenant-screening-bronx-landlord-guide/",
+      "permanent": true
+    },
+    {
+      "source": "/post/why-a-property-manager-is-a-broker-s-best-friend",
+      "destination": "/broker-partner.html",
+      "permanent": true
+    },
+    {
+      "source": "/post/2017/11/20/strategies-for-brokers-to-grow-in-real-estate",
+      "destination": "/broker-partner.html",
+      "permanent": true
+    },
+    {
+      "source": "/post/2017/11/06/how-brokers-grow-with-us",
+      "destination": "/broker-partner.html",
+      "permanent": true
+    },
+    {
+      "source": "/post/property-management-firm-10-questions-that-determine-if-you-would-need-one",
+      "destination": "/#faq",
+      "permanent": true
+    },
+    {
+      "source": "/post/2017/07/23/choose-your-management",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/2017/06/30/property-management-the-right-way",
+      "destination": "/blog/flat-fee-property-management-vs-percentage/",
+      "permanent": true
+    },
+    {
+      "source": "/post/2017/04/27/late-fees-we-can-do-better",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/2017/04/05/choose-your-property-management-team-wisely",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/2016/12/16/all-about-our-services",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/2016/12/11/great-property-for-rent",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/2016/11/24/happy-thanksgiving",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/2016/11/06/do-you-wish-to-be-a-real-estate-investor-know-more-about-real-estate-investments",
+      "destination": "/blog/bronx-rental-investment-roi-2026/",
+      "permanent": true
+    },
+    {
+      "source": "/post/2016/11/07/merits-of-hiring-a-property-management-company",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/2016/10/24/doryangel-high-technology-with-a-human-touch-for-your-investment",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/2016/10/09/quick-tips-for-new-landlord-from-our-property-management-software-provider",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/2016/10/09/doryangel-provide-advanced-services",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/2016/10/09/doryangel-present-its-advanced-call-center",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/post/:path*",
+      "destination": "/#blog",
+      "permanent": true
+    },
+    {
+      "source": "/blog",
+      "destination": "/#blog",
+      "permanent": true
+    }
+  ]
+}
