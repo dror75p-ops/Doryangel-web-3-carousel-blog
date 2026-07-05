@@ -1,0 +1,10 @@
+# Dev artifacts — keep in the repo, but do not deploy to production
+project/
+chats/
+scripts/
+.claude/
+.github/
+CLAUDE.md
+README.md
+package.json
+package-lock.json
