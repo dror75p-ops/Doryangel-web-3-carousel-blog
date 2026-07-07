@@ -570,5 +570,32 @@
       "destination": "/broker-partner.html",
       "permanent": true
     }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://*.clarity.ms https://challenges.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://elfsightcdn.com https://*.elfsightcdn.com https://static.elfsight.com https://*.elfsight.com https://cdn.userway.org https://*.userway.org https://dashboard.retellai.com https://*.retellai.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://elfsightcdn.com https://*.elfsightcdn.com https://cdn.userway.org https://unpkg.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https: wss:; frame-src https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com https://*.retellai.com https://*.elfsight.com https://*.userway.org; media-src 'self' blob: https:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com https://hook.eu1.make.com; frame-ancestors 'none'; upgrade-insecure-requests"
+        }
+      ]
+    }
   ]
 }

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://doryangel.com/sitemap.xml
+Sitemap: https://www.doryangel.com/sitemap.xml
