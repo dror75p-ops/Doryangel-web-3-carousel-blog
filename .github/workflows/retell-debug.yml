@@ -1,0 +1,47 @@
+name: Retell Debug (temporary)
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "URL to test (default: repo served locally)"
+        required: false
+        default: "local"
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Inspect widget JS for endpoints and disclaimer logic
+        run: |
+          curl -sS https://dashboard.retellai.com/retell-widget-v2.js -o /tmp/widget.js
+          echo "widget.js size: $(wc -c < /tmp/widget.js) bytes"
+          echo "--- URLs referenced in widget ---"
+          grep -oE 'https://[A-Za-z0-9./_?=-]+' /tmp/widget.js | sort -u | head -40 || true
+          echo "--- disclaimer/terms/consent/accept context ---"
+          grep -oiE '.{60}(disclaimer|consent|accept).{120}' /tmp/widget.js | head -20 || true
+          echo "--- create-chat context ---"
+          grep -oiE '.{40}(create[-_]?chat|/chat).{100}' /tmp/widget.js | head -20 || true
+
+      - name: Serve site locally
+        if: ${{ github.event.inputs.target == 'local' }}
+        run: |
+          (python3 -m http.server 8080 >/dev/null 2>&1 &)
+          sleep 2
+          curl -s -o /dev/null -w "local server: %{http_code}\n" http://localhost:8080/
+
+      - name: Browser reproduction
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install playwright-core >/dev/null 2>&1
+          CHROME_PATH="$(command -v google-chrome || command -v chromium-browser || command -v chromium)"
+          echo "using chrome at: $CHROME_PATH"
+          if [ "${{ github.event.inputs.target }}" = "local" ]; then
+            export TARGET_URL="http://localhost:8080/"
+          else
+            export TARGET_URL="${{ github.event.inputs.target }}"
+          fi
+          CHROME_PATH="$CHROME_PATH" node scripts/retell-debug.mjs
