@@ -1,12 +1,9 @@
 name: Retell Debug (temporary)
 
 on:
-  workflow_dispatch:
-    inputs:
-      target:
-        description: "URL to test (default: repo served locally)"
-        required: false
-        default: "local"
+  push:
+    branches:
+      - claude/rettel-agent-repo-chat-hfk7rf
 
 jobs:
   debug:
@@ -27,7 +24,7 @@ jobs:
           grep -oiE '.{40}(create[-_]?chat|/chat).{100}' /tmp/widget.js | head -20 || true
 
       - name: Serve site locally
-        if: ${{ github.event.inputs.target == 'local' }}
+        if: true
         run: |
           (python3 -m http.server 8080 >/dev/null 2>&1 &)
           sleep 2
@@ -39,9 +36,9 @@ jobs:
           npm install playwright-core >/dev/null 2>&1
           CHROME_PATH="$(command -v google-chrome || command -v chromium-browser || command -v chromium)"
           echo "using chrome at: $CHROME_PATH"
-          if [ "${{ github.event.inputs.target }}" = "local" ]; then
+          if true; then
             export TARGET_URL="http://localhost:8080/"
           else
-            export TARGET_URL="${{ github.event.inputs.target }}"
+            export TARGET_URL="http://localhost:8080/"
           fi
           CHROME_PATH="$CHROME_PATH" node scripts/retell-debug.mjs
