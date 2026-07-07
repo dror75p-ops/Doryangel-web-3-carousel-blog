@@ -216,8 +216,8 @@ When asked to write a post, also produce:
 📅 Compliance Calendar (free) → https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/
 📬 DoryAngel Digest (free) → https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/
 🔍 AI Property Inspector (free) → https://dror75p-ops.github.io/Transcribe_meeting/
-📊 Property P&L Dashboard ($29) → https://beta.doryangel.com/tools/pl-dashboard/
-🤝 Broker Partner Program ($50/unit/mo) → https://beta.doryangel.com/broker-partner.html
+📊 Property P&L Dashboard ($29) → https://www.doryangel.com/tools/pl-dashboard/
+🤝 Broker Partner Program ($50/unit/mo) → https://www.doryangel.com/broker-partner.html
 
 Then the hashtags on the final line. If the post topic naturally connects to one of these tools, bold the relevant tool line by wrapping it in ★ symbols (e.g. ★📅 Compliance Calendar...★) so it stands out. For broker-partnerships posts, move the Broker Partner Program line to the TOP of the list.
 
@@ -627,7 +627,7 @@ async function notifyDigestSubscribers(post) {
   console.log(`Notifying ${subscribers.length} active digest subscribers`);
   if (subscribers.length === 0) return { sent: 0, total: 0 };
 
-  const postUrl = `https://beta.doryangel.com/blog/${post.slug}/`;
+  const postUrl = `https://www.doryangel.com/blog/${post.slug}/`;
   // Shared secret so the public broadcast webhook can't be triggered by anyone but
   // this server-side job. The Make scenario filter drops any POST whose `secret`
   // field doesn't match. (Server-to-server only — never expose this in client code.)
