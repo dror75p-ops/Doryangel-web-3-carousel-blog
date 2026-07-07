@@ -15,7 +15,7 @@
       "flatfee",
       "doryangel"
     ],
-    "featured": false,
+    "featured": true,
     "seoTitle": "DIY vs Flat-Fee PM for Bronx Landlords | DoryAngel",
     "seoDescription": "The real cost of self-managing a Bronx rental — lost hours, repair premiums, vacancy, DHCR risk — versus flat-fee property management at $99–$199/mo.",
     "author": "DoryAngel Team",
@@ -433,7 +433,7 @@
       "rentalincome",
       "doryangel"
     ],
-    "featured": true,
+    "featured": false,
     "seoTitle": "3 Ways Bronx Landlords Beat Summer Vacancies | DoryAngel",
     "seoDescription": "A 30-day Bronx vacancy costs ~$4,700. Here are 3 legal, NYC-specific strategies to turn summer empty months into real rental income.",
     "author": "DoryAngel Team",
