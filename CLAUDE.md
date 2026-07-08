@@ -61,9 +61,10 @@
 
 1. **Google Search Console** — "Change of address" beta → www, then resubmit `sitemap.xml`.
 2. **Resend** — verify `doryangel.com` as the sending domain (lifts the sandbox-domain limit; lets owner email send from the brand domain).
-3. **Make.com email templates** (welcome/broadcast/tax) — repoint any remaining old `beta.` subdomain links to `www.doryangel.com` (templates live in Make, not in this repo).
-4. **Broadcast scenario 6347243 filter** — it requires post URLs to start with the old `https://beta.` subdomain URL; update the filter prefix to `https://www.doryangel.com/` or every future digest blast will silently send to 0.
+3. ~~**Make.com email templates**~~ — **DONE** (verified via Make API 2026-07-08: welcome 5549170, broadcast 6347243, and tax 6346876 templates all link to `www.doryangel.com`; repointed in the 2026-07-07 cutover session).
+4. ~~**Broadcast scenario 6347243 filter**~~ — **DONE** (verified via Make API 2026-07-08: filter requires `https://www.doryangel.com/` prefix + shared secret; scenario active; matches `postUrl` in `generate-post.js:630`).
 5. **Turnstile widget hostnames** — ensure `www.doryangel.com` is registered (beta/apex were; add www if missing).
+6. **Auto-publish re-enabled 2026-07-08** (`blog-autopublish.yml.disabled` → `.yml`, disabled during cutover by #175). Cron unchanged: 14:00 UTC on days 1,4,7,… — first post-cutover run lands Jul 10. Nave's SYSTEM_PROMPT already states the correct $99/unit/month pricing.
 
 ## Workflow rules
 
