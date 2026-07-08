@@ -574,6 +574,11 @@
       "source": "/broker-partner",
       "destination": "/broker-partner.html",
       "permanent": true
+    },
+    {
+      "source": "/post/:slug*",
+      "destination": "/",
+      "permanent": true
     }
   ],
   "headers": [
