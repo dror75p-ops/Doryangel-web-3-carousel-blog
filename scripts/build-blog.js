@@ -394,6 +394,9 @@ ${relatedHtml}
   <p style="margin-top:6px;">557 Grand Concourse Ave #4123, Bronx NY 10451</p>
 </footer>
 
+<script defer src="/_vercel/insights/script.js"></script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+
 </body>
 </html>
 `;
