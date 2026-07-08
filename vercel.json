@@ -1,6 +1,11 @@
 {
   "redirects": [
     {
+      "source": "/property-management",
+      "destination": "/",
+      "permanent": true
+    },
+    {
       "source": "/post/how-to-handle-a-rent-increase-in-nyc-without-losing-your-tenant-2026-rent-freeze-update",
       "destination": "/blog/nyc-rent-stabilization-rules-every-landlord-must-know/",
       "permanent": true
