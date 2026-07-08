@@ -77,7 +77,7 @@
       "name": "How accurate is this calculator?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "It uses DoryAngel's published flat-fee pricing ($99/month for one unit, $199/month for 2–10 units) and compares it to a percentage you choose between 6% and 12% of collected rent. Your actual quote depends on services selected and property specifics — request a free estimate for an exact figure."
+        "text": "It uses DoryAngel's published flat-fee pricing ($99 per unit per month) and compares it to a percentage you choose between 6% and 12% of collected rent. Your actual quote depends on services selected and property specifics — request a free estimate for an exact figure."
       }
     }
   ]
@@ -481,16 +481,16 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
         </div>
         <div class="calc-card flat">
           <div class="calc-card-label">DoryAngel flat fee</div>
-          <div class="calc-card-amt">$<span id="flatOut">2,388</span><small>/year</small></div>
+          <div class="calc-card-amt">$<span id="flatOut">4,752</span><small>/year</small></div>
         </div>
       </div>
       <div class="calc-savings">
         <div class="calc-savings-label">You save with DoryAngel</div>
-        <div class="calc-savings-amt">$<span id="saveOut">6,252</span></div>
-        <div class="calc-savings-sub">per year · <span id="fiveOut">$31,260</span> over 5 years</div>
+        <div class="calc-savings-amt">$<span id="saveOut">3,888</span></div>
+        <div class="calc-savings-sub">per year · <span id="fiveOut">$19,440</span> over 5 years</div>
       </div>
       <a href="#estimate" class="calc-cta">Get my free, exact estimate &rarr;</a>
-      <p class="calc-note">Based on DoryAngel's published pricing: $99/mo for a single unit, $199/mo flat for 2–10 unit portfolios. Got more than 10 units? <a href="../#contact">Ask about portfolio pricing.</a></p>
+      <p class="calc-note">Based on DoryAngel's published pricing: $99 per unit per month. Got more than 10 units? <a href="../#contact">Ask about portfolio pricing.</a></p>
     </div>
   </div>
 </section>
@@ -573,7 +573,7 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
     </div>
     <div class="faq-item">
       <button class="faq-q" aria-expanded="false"><span>How accurate is this calculator?</span><span class="faq-icon">+</span></button>
-      <div class="faq-a"><div class="faq-a-inner">It uses DoryAngel's published flat-fee pricing ($99/mo for one unit, $199/mo for 2–10 units) versus a percentage you choose between 6% and 12% of collected rent. Your actual quote depends on services selected and property specifics — request a free estimate for an exact figure.</div></div>
+      <div class="faq-a"><div class="faq-a-inner">It uses DoryAngel's published flat-fee pricing ($99 per unit per month) versus a percentage you choose between 6% and 12% of collected rent. Your actual quote depends on services selected and property specifics — request a free estimate for an exact figure.</div></div>
     </div>
   </div>
 </section>
@@ -664,8 +664,8 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
 
   function fmt(n) { return Math.round(n).toLocaleString('en-US'); }
 
-  // DoryAngel published flat fee: $99/mo single unit, $199/mo flat for 2–10 units.
-  function flatMonthly(units) { return units <= 1 ? 99 : 199; }
+  // DoryAngel published pricing: $99 per unit per month, all portfolio sizes.
+  function flatMonthly(units) { return units * 99; }
 
   function update() {
     var units = parseInt(unitsEl.value, 10);
