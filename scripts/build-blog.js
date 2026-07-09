@@ -397,6 +397,9 @@ ${relatedHtml}
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 
+<!-- Consent-gated GA4 + Clarity (shared loader) -->
+<script src="/analytics.js"></script>
+
 </body>
 </html>
 `;
