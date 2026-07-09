@@ -185,25 +185,30 @@ The mobile "Call AI" button (`tel:+15167743249`) is a separate voice channel and
 
 ### Retell chat widget (index.html)
 
-Embedded just before `</body>`:
+Embedded just before `</body>` (upgraded to **widget v2** — title "Ask anything", bubble bottom-left on mobile):
 ```html
-<!-- Retell AI Chat Widget — Hailey lead capture -->
+<!-- Retell AI Chat Widget — Hailey lead capture (v2) -->
 <script
   id="retell-widget"
-  src="https://dashboard.retellai.com/retell-widget.js"
+  src="https://dashboard.retellai.com/retell-widget-v2.js"
   type="module"
   data-public-key="public_key_274f92a0516ded273d147"
   data-agent-id="agent_88fd2bc14215e7210629dfafda"
-  data-title="Chat with Hailey"
+  data-title="Ask anything"
   data-color="#1E5AA8"
   data-bot-name="Hailey"
   data-popup-message="Hi! I'm Hailey — ask me anything about DoryAngel's property management."
   data-show-ai-popup="true"
   data-show-ai-popup-time="8"
+  data-chat-bubble-position="left"
 ></script>
 ```
 
 **Important**: Retell simulation mode does NOT fire webhooks. Only real chat sessions (widget on the live site) fire real `chat_analyzed` webhooks.
+
+**Public-key domain allowlist gotcha (hit 2026-07-07, post-DNS-cutover)**: the Retell public key has an allowed-domains list in the Retell dashboard. If the site's hostname isn't on it, `POST api.retellai.com/create-chat` returns `401 "Public key is not allowed for this domain"` — the widget still renders but shows generic "Retell" branding (no Hailey title/greeting) and silently ignores messages, and NO webhook (not even `chat_started`) reaches Make. This killed chat after the www.doryangel.com cutover until the owner added `www.doryangel.com` to the key's allowed domains. If the site's hostname ever changes again, update that allowlist FIRST (same class of issue as the Turnstile hostname registration). Diagnosed by driving the live site with headless Chrome in a GitHub Actions runner (the CCR sandbox's network policy can't reach retellai.com or the live site); the throwaway harness was `scripts/retell-debug.mjs` + `.github/workflows/retell-debug.yml` on branch `claude/rettel-agent-repo-chat-hfk7rf` — removed after verification, recover from that branch's history if needed.
+
+**Widget v2 mount point**: `retell-widget-v2.js` mounts a plain `<div id="retell-widget-root">` — NOT the v1 `<retell-chat-web-component>` custom element. The shadow-DOM viewport-fix script in `index.html` still targets the v1 element name, so it's currently dead code (harmless; remove or retarget whenever that area is next touched).
 
 ### Architecture
 
