@@ -1,6 +1,12 @@
 {
   "redirects": [
     {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "beta.doryangel.com" }],
+      "destination": "https://www.doryangel.com/:path*",
+      "permanent": true
+    },
+    {
       "source": "/property-management",
       "destination": "/",
       "permanent": true
