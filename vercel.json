@@ -7,6 +7,11 @@
       "permanent": true
     },
     {
+      "source": "/blog/how-mount-vernon-landlords-can-cut-vacancy-time-in-half",
+      "destination": "/blog/how-bronx-landlords-can-cut-vacancy-time-in-half/",
+      "permanent": true
+    },
+    {
       "source": "/property-management",
       "destination": "/",
       "permanent": true
