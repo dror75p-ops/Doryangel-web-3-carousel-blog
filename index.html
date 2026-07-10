@@ -4366,7 +4366,7 @@ async function handleFormSubmit(e) {
           turnstileToken: cfToken
         })
       }).catch(function(){});
-      if (typeof gtag !== 'undefined') { gtag('event', 'contact_form_submit', { event_category: 'lead', event_label: 'main_contact' }); }
+      if (typeof gtag !== 'undefined') { gtag('event', 'generate_lead', { event_category: 'lead', event_label: 'main_contact' }); }
       window.location.href = './thank-you.html';
     } else {
       btn.textContent = 'Error – please call (516) 847-4999';
@@ -4802,30 +4802,44 @@ async function handleFormSubmit(e) {
     })(window, document, "clarity", "script", "x7y1bk4fhc");
   }
 
-  function loadGA() {
-    if (window.__gaLoaded) return;
-    window.__gaLoaded = true;
+  var consent = null;
+  try { consent = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+  var startGranted = consent === 'accepted';
+
+  // Consent Mode v2 (advanced): GA loads on every visit but defaults all storage
+  // to "denied". In the denied state GA sets NO cookies and sends only cookieless
+  // pings, which stays GDPR-safe while still letting GA4 measure/model traffic and
+  // conversions from visitors who never touch the banner (the majority). Clarity
+  // stays fully gated behind Accept — it has no cookieless mode.
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: startGranted ? 'granted' : 'denied'
+  });
+  (function () {
     var s = document.createElement('script');
     s.async = true;
     s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
     document.head.appendChild(s);
-    window.dataLayer = window.dataLayer || [];
-    window.gtag = function () { window.dataLayer.push(arguments); };
-    window.gtag('js', new Date());
-    window.gtag('config', GA_ID, { anonymize_ip: true });
-  }
+  })();
+  gtag('js', new Date());
+  gtag('config', GA_ID, { anonymize_ip: true });
 
-  function loadAnalytics() {
-    loadGA();
+  function grant() {
+    gtag('consent', 'update', {
+      ad_storage: 'granted', ad_user_data: 'granted',
+      ad_personalization: 'granted', analytics_storage: 'granted'
+    });
     loadClarity();
   }
 
   var banner = document.getElementById('cookie-banner');
-  var consent = null;
-  try { consent = localStorage.getItem(STORAGE_KEY); } catch (e) {}
 
   if (consent === 'accepted') {
-    loadAnalytics();
+    loadClarity();
   } else if (consent !== 'rejected') {
     setTimeout(function () { banner.classList.add('visible'); }, 1200);
   }
@@ -4833,11 +4847,12 @@ async function handleFormSubmit(e) {
   document.getElementById('cookie-accept').onclick = function () {
     try { localStorage.setItem(STORAGE_KEY, 'accepted'); } catch (e) {}
     banner.classList.remove('visible');
-    loadAnalytics();
+    grant();
   };
   document.getElementById('cookie-reject').onclick = function () {
     try { localStorage.setItem(STORAGE_KEY, 'rejected'); } catch (e) {}
     banner.classList.remove('visible');
+    gtag('consent', 'update', { analytics_storage: 'denied' });
   };
 })();
 </script>
