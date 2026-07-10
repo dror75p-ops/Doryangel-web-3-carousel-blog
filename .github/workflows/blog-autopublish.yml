@@ -12,6 +12,11 @@ on:
         required: false
         default: 'false'
         type: string
+      dry_run:
+        description: 'Dry run: generate a post and print it to the log only — no publish, no emails, no Facebook post'
+        required: false
+        default: 'false'
+        type: string
 
 concurrency:
   group: blog-publish
@@ -44,18 +49,22 @@ jobs:
           GOOGLE_SA_KEY: ${{ secrets.GOOGLE_SA_KEY }}
           DIGEST_WEBHOOK_SECRET: ${{ secrets.DIGEST_WEBHOOK_SECRET }}
           FORCE_PUBLISH: ${{ github.event.inputs.force || 'false' }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
         run: node scripts/generate-post.js
 
       - name: Build per-post HTML pages + sitemap
+        if: ${{ github.event.inputs.dry_run != 'true' }}
         run: node scripts/build-blog.js
 
       - name: Vera — post to Facebook Page
+        if: ${{ github.event.inputs.dry_run != 'true' }}
         env:
           FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
           FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
         run: node scripts/social-post.js
 
       - name: Commit and push new post
+        if: ${{ github.event.inputs.dry_run != 'true' }}
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |

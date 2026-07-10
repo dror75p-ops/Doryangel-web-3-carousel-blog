@@ -476,9 +476,9 @@ async function main() {
   const posts = JSON.parse(readFileSync(indexPath, 'utf8'));
 
   // Guard: skip if a post was already published today (prevents double-runs on schedule)
-  // Bypass with FORCE_PUBLISH=true for manual test runs
+  // Bypass with FORCE_PUBLISH=true (or DRY_RUN=true, which never publishes anyway)
   const today = formatDate(new Date());
-  if (posts[0]?.publishedDate === today && process.env.FORCE_PUBLISH !== 'true') {
+  if (posts[0]?.publishedDate === today && process.env.FORCE_PUBLISH !== 'true' && process.env.DRY_RUN !== 'true') {
     console.log(`Post already published today (${today}) — skipping to avoid duplicate.`);
     console.log('To override, set FORCE_PUBLISH=true');
     process.exit(0);
@@ -501,6 +501,24 @@ async function main() {
 
   // facebookPost is for the email only — strip before persisting
   const { facebookPost, ...postForIndex } = post;
+
+  // DRY_RUN: generate + print only. No index write, no subscriber emails,
+  // no approval email, no Facebook/Instagram queue. For previewing tone/output.
+  if (process.env.DRY_RUN === 'true') {
+    console.log('\n===== DRY RUN — nothing published (no index write, no subscriber emails, no approval email, no social post) =====\n');
+    console.log(`TITLE:    ${postForIndex.title}`);
+    console.log(`CATEGORY: ${postForIndex.category}`);
+    console.log(`SLUG:     ${postForIndex.slug}`);
+    console.log(`EXCERPT:  ${postForIndex.excerpt}`);
+    console.log(`READ:     ${postForIndex.minutesToRead} min`);
+    console.log('\n----- BODY (markdown) -----\n');
+    console.log(postForIndex.content);
+    console.log('\n----- FACEBOOK / INSTAGRAM CAPTION -----\n');
+    console.log(facebookPost);
+    console.log('\n===== END DRY RUN =====\n');
+    return;
+  }
+
   posts.unshift(postForIndex);
   writeFileSync(indexPath, JSON.stringify(posts, null, 2));
   console.log('Added to posts-index.json');
