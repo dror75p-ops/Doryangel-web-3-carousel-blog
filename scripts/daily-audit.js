@@ -94,6 +94,49 @@ async function getOpenIssues() {
   }
 }
 
+// ─── Duplicate-issue detection ────────────────────────────────────────────────
+// Arlo kept re-filing the same "Bronx cost hub / calculator" idea every few days
+// because the model treated "avoid duplicating" as a soft suggestion. This is a
+// hard gate: compare the generated title against every open issue title by
+// significant-word overlap (Jaccard) and reject near-duplicates.
+
+// Omnipresent brand/geo/filler words carry no signal — stripping them keeps the
+// overlap score focused on the distinctive part of each title.
+const TITLE_STOPWORDS = new Set([
+  'build', 'create', 'add', 'content', 'page', 'guide', 'new', 'strategy',
+  'bronx', 'landlord', 'landlords', 'property', 'management', 'doryangel',
+  'nyc', 'the', 'and', 'for', 'with', 'your', 'you', 'vs',
+]);
+
+function significantTokens(title) {
+  return new Set(
+    (title || '').toLowerCase()
+      .replace(/[^a-z0-9]+/g, ' ')
+      .split(' ')
+      .filter(w => w.length >= 3 && !TITLE_STOPWORDS.has(w))
+  );
+}
+
+function jaccard(a, b) {
+  if (!a.size || !b.size) return 0;
+  let inter = 0;
+  for (const w of a) if (b.has(w)) inter++;
+  return inter / (a.size + b.size - inter);
+}
+
+// Returns { title, score } of the most-similar open issue if it crosses the
+// threshold, else null. 0.4 catches the observed repeats ("internal linking hub"
+// variants, "expense calculator" variants) without blocking genuinely new ideas.
+function findDuplicate(newTitle, openTitles, threshold = 0.4) {
+  const nt = significantTokens(newTitle);
+  let best = null, bestScore = 0;
+  for (const t of openTitles) {
+    const score = jaccard(nt, significantTokens(t));
+    if (score > bestScore) { bestScore = score; best = t; }
+  }
+  return bestScore >= threshold ? { title: best, score: bestScore } : null;
+}
+
 // ─── Google Analytics 4 ───────────────────────────────────────────────────────
 
 async function getGoogleAccessToken(credentials, scope = 'https://www.googleapis.com/auth/analytics.readonly') {
@@ -439,11 +482,19 @@ Current website state:
 - Most recent posts: ${state.recentPosts.map(p => `"${p.title}" (${p.category})`).join(', ')}
 - Recent activity: ${state.gitLog.split('\n').slice(0, 8).join(' | ')}
 
-Open improvement issues already created (avoid duplicating these):
+Open improvement issues already created (DO NOT duplicate these — they are still open and unbuilt):
 ${openIssueTitles.length ? openIssueTitles.map(t => `- ${t}`).join('\n') : '- None yet'}
 
 Generate ONE specific, high-value website improvement task that is NOT already in the open issues list.
 Focus on what would most increase organic traffic, leads, or conversions for a Bronx property management company.
+
+CRITICAL — these themes are ALREADY heavily covered by open issues and/or shipped pages. Do NOT propose another variant of any of them:
+- Cost / ROI / expense / "savings" CALCULATORS or interactive cost tools — a live one already exists at /flat-fee-vs-commission/.
+- Internal-linking HUB, pillar, or "content hub" pages (several are already open).
+- "DoryAngel vs. DIY" comparison content.
+- Bronx neighborhood-specific guides.
+- A dedicated FAQ page.
+Pick something genuinely different in KIND from both the open-issues list above and these covered themes — if your idea rhymes with any open issue, choose a different category entirely.
 
 Options to consider (pick the single best one for today):
 - Content: specific blog post topic or content series idea
@@ -477,10 +528,12 @@ Return ONLY valid JSON (no markdown, no explanation outside the JSON):
 async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make }) {
   const { stats, categoryCounts, postCount } = state;
 
-  const resultColor     = resultType === 'code' ? '#E8F8E8' : '#E7F3FF';
-  const resultBorder    = resultType === 'code' ? '#8FCB8F' : '#8FBCEB';
-  const resultTextColor = resultType === 'code' ? '#1B6B1B' : '#1B4F8A';
-  const resultIcon      = resultType === 'code' ? '✅ Implemented — PR opened' : '📋 GitHub Issue created';
+  const resultColor     = resultType === 'code' ? '#E8F8E8' : resultType === 'skipped' ? '#F4F7FA' : '#E7F3FF';
+  const resultBorder    = resultType === 'code' ? '#8FCB8F' : resultType === 'skipped' ? '#CBD5E0' : '#8FBCEB';
+  const resultTextColor = resultType === 'code' ? '#1B6B1B' : resultType === 'skipped' ? '#556070' : '#1B4F8A';
+  const resultIcon      = resultType === 'code' ? '✅ Implemented — PR opened'
+    : resultType === 'skipped' ? '⏭️ No new issue — backlog already covers it'
+    : '📋 GitHub Issue created';
 
   // ── Activity table rows ──────────────────────────────────────────────────────
   function statRow(label, { day, week, month }, color, bg) {
@@ -746,25 +799,43 @@ async function main() {
     const openIssues = await getOpenIssues();
     console.log(`Open issues: ${openIssues.length}`);
 
-    const idea = await generateIssueIdea(state, openIssues);
-    console.log(`Idea: ${idea.title}`);
+    // Generate an idea, rejecting near-duplicates of the open backlog. Retry a
+    // few times, then skip issue creation for the day rather than file a repeat.
+    let idea = null, duplicate = null;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      const candidate = await generateIssueIdea(state, openIssues);
+      duplicate = findDuplicate(candidate.title, openIssues);
+      if (!duplicate) { idea = candidate; break; }
+      console.warn(`Attempt ${attempt}: "${candidate.title}" duplicates "${duplicate.title}" (score ${duplicate.score.toFixed(2)}) — regenerating`);
+    }
 
-    // Issue creation is best-effort — a failure here (e.g. bad token) must not
-    // crash the run and block the daily digest email below.
-    try {
-      resultLink = await createGitHubIssue(idea.title, idea.body);
-      console.log(`Issue created: ${resultLink}`);
-    } catch (err) {
-      console.warn(`Issue creation failed (${err.message}) — sending digest anyway`);
+    if (idea) {
+      console.log(`Idea: ${idea.title}`);
+
+      // Issue creation is best-effort — a failure here (e.g. bad token) must not
+      // crash the run and block the daily digest email below.
+      try {
+        resultLink = await createGitHubIssue(idea.title, idea.body);
+        console.log(`Issue created: ${resultLink}`);
+      } catch (err) {
+        console.warn(`Issue creation failed (${err.message}) — sending digest anyway`);
+        resultLink = `https://github.com/${REPO}/issues`;
+      }
+
+      taskLabel = idea.title;
+      taskWhy = idea.why_today;
+      resultType = 'issue';
+    } else {
+      // Every candidate rhymed with something already open — don't grow the pile.
+      console.log('All generated ideas duplicated open issues — skipping issue creation today');
       resultLink = `https://github.com/${REPO}/issues`;
+      taskLabel = 'No new issue — backlog already covers today’s idea';
+      taskWhy = `Arlo’s suggestions overlapped an existing open issue (closest: "${duplicate?.title}"). Skipped to avoid a duplicate. There are ${openIssues.length} open automation issues — triage those before adding more.`;
+      resultType = 'skipped';
     }
 
     writeFileSync('/tmp/audit-changed.txt', 'false');
-    writeFileSync('/tmp/audit-task.txt', idea.title);
-
-    taskLabel = idea.title;
-    taskWhy = idea.why_today;
-    resultType = 'issue';
+    writeFileSync('/tmp/audit-task.txt', taskLabel);
   }
 
   const [ga4, make] = await Promise.all([getGA4Stats(), getMakeStats()]);
