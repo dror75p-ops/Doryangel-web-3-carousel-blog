@@ -64,7 +64,7 @@
 3. ~~**Make.com email templates**~~ — **DONE** (verified via Make API 2026-07-08: welcome 5549170, broadcast 6347243, and tax 6346876 templates all link to `www.doryangel.com`; repointed in the 2026-07-07 cutover session).
 4. ~~**Broadcast scenario 6347243 filter**~~ — **DONE** (verified via Make API 2026-07-08: filter requires `https://www.doryangel.com/` prefix + shared secret; scenario active; matches `postUrl` in `generate-post.js:630`).
 5. **Turnstile widget hostnames** — ensure `www.doryangel.com` is registered (beta/apex were; add www if missing).
-6. **Auto-publish re-enabled 2026-07-08** (`blog-autopublish.yml.disabled` → `.yml`, disabled during cutover by #175). Cron unchanged: 14:00 UTC on days 1,4,7,… — first post-cutover run lands Jul 10. Nave's SYSTEM_PROMPT already states the correct $99/unit/month pricing.
+6. **Auto-publish cadence bumped to every 2 days + re-enabled 2026-07-10** (`blog-autopublish.yml.disabled` → `.yml`; it had been disabled again after the 2026-07-08 re-enable). Cron is now 14:00 UTC on **odd calendar days** (`1,3,5,…,31`) instead of every-3-days `1,4,7,…`. Nave's SYSTEM_PROMPT already states the correct $99/unit/month pricing. **Instagram distribution stays MANUAL for now** (owner's call) — no IG API/token wired into Vera. Instead, Nave's approval email was relabeled "Facebook & Instagram" and STEP 3 now tells the owner to post the same saved image + copied caption to both (IG link isn't clickable → "link in bio"). If auto-IG is wanted later: Vera (`social-post.js`) needs a 2-step Graph publish (create media container → media_publish) plus an `INSTAGRAM_ACCOUNT_ID` secret and an IG-scoped token, and Nave must add `heroImage` to the `/tmp/social-queue.json` handoff (currently only `slug` + `facebookPost`).
 
 ## Workflow rules
 
@@ -88,7 +88,7 @@
 - `scripts/migrate-posts-once.js` — One-time schema migration (kept for reference)
 - `scripts/refresh-images.js` — One-shot workflow to refresh all post hero images
 - `blog/[slug]/index.html` — Auto-generated per-post pages (NEVER hand-edit; rerun build-blog.js)
-- `.github/workflows/blog-autopublish.yml` — Cron-triggered every 3 days at 14:00 UTC
+- `.github/workflows/blog-autopublish.yml` — Cron-triggered every 2 days at 14:00 UTC (odd calendar days)
 - `.github/workflows/refresh-images.yml` — Manual one-shot for image refresh
 - `sitemap.xml`, `robots.txt` — SEO
 - `.gitignore` — node_modules, .env, .DS_Store, logs, /tmp/
@@ -278,7 +278,7 @@ Only `chat_analyzed` events trigger the pipeline (`chat_started` and `chat_ended
 
 This repo is now the **primary active design** and will replace the Wix website in the coming days.
 - Hamburger mobile nav is live (merged PRs #11, #12, #13)
-- Auto-publish blog pipeline running every 3 days
+- Auto-publish blog pipeline running every 2 days
 - Daily website audit automation live (PR #87) — runs every 9 AM EST, auto-fixes + creates GitHub Issues
 - Microsoft Clarity live (ID `x7y1bk4fhc`, consent-gated)
 - LocalBusiness + RealEstateAgent JSON-LD schema live in `<head>`
@@ -296,7 +296,7 @@ Priority order for next sessions:
 
 ### 2. Content velocity
 - Import the 10 priority posts from the developer guide (real-traffic-tested topics)
-- Consider bumping auto-publish to every 2 days (change cron in blog-autopublish.yml)
+- ~~Consider bumping auto-publish to every 2 days (change cron in blog-autopublish.yml)~~ ← **DONE 2026-07-10** (odd calendar days)
 - Add an `investments` and `diy-property-management` featured post (currently likely missing)
 
 ### 3. Technical SEO

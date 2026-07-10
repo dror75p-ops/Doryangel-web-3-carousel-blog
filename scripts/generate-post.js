@@ -418,12 +418,12 @@ async function sendApprovalEmail(post, digestStats) {
   await resend.emails.send({
     from: 'DoryAngel Blog <onboarding@resend.dev>',
     to: APPROVAL_EMAIL,
-    subject: `📘 Facebook-ready: "${post.title}"`,
+    subject: `📱 Social-ready (Facebook + Instagram): "${post.title}"`,
     html: `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#1A2740;">
         <div style="background:#0F2847;padding:20px 24px;border-radius:8px 8px 0 0;">
-          <h1 style="color:white;font-size:18px;margin:0;">📘 Ready to post to Facebook</h1>
-          <p style="color:rgba(255,255,255,0.7);font-size:13px;margin:6px 0 0;">2 long-presses → done</p>
+          <h1 style="color:white;font-size:18px;margin:0;">📱 Ready to post — Facebook &amp; Instagram</h1>
+          <p style="color:rgba(255,255,255,0.7);font-size:13px;margin:6px 0 0;">Same image + caption for both</p>
         </div>
         <div style="padding:20px;border:1px solid #E2E8F0;border-top:none;border-radius:0 0 8px 8px;">
 
@@ -441,7 +441,7 @@ async function sendApprovalEmail(post, digestStats) {
           </div>
 
           <div style="background:#E8F8E8;border:1px solid #8FCB8F;border-radius:8px;padding:14px 16px;margin-bottom:32px;">
-            <p style="margin:0;font-size:13px;color:#1B6B1B;font-weight:700;">✅ STEP 3 — Open Facebook → "Create post" → paste text + attach the image</p>
+            <p style="margin:0;font-size:13px;color:#1B6B1B;font-weight:700;">✅ STEP 3 — Post it: Facebook "Create post" AND Instagram "New post" → attach the saved image + paste the caption (on Instagram the link isn't clickable — that's fine, it drives to "link in bio")</p>
           </div>
 
           <div style="background:#F0FAF4;border:1px solid #8FCB8F;border-radius:8px;padding:12px 16px;margin-bottom:32px;">
