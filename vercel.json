@@ -12,6 +12,11 @@
       "permanent": true
     },
     {
+      "source": "/blog/what-every-new-rochelle-landlord-needs-to-know-about-propert",
+      "destination": "/blog/what-bronx-landlords-need-to-know-about-property-taxes-2026/",
+      "permanent": true
+    },
+    {
       "source": "/property-management",
       "destination": "/",
       "permanent": true
