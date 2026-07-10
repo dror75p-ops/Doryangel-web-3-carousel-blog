@@ -151,7 +151,7 @@
 - Geo anchor: Bronx is the **primary** location, but a second **adjacent** borough (Queens/Manhattan) is allowed when natural (e.g. "Bronx or Queens") — the top traffic post used exactly that. Never a non-Bronx borough/city alone. (Changed 2026-06-28 from the old strict Bronx-only rule.)
 - Word count: 800-1,200 (below 500 = zero traffic)
 - NYC-specific dollar figures or law/borough references required
-- Tone: expert, trustworthy, practical
+- Tone: warm, caring, and reassuring toward the homeowner (a trusted neighbor who has their back) — while still expert, trustworthy, and practical. Lead with a touch of empathy, keep it grounded in specifics (fluffy feel-good copy gets zero traffic).
 - No CTA in the body — auto-appended by build-blog.js
 - Don't write generic AI-sounding pieces ("Power of Transparent Management Practices", "Maximizing Returns with Management Investment Strategies" — both got zero traffic)
 
