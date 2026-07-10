@@ -22,10 +22,15 @@
     s.async = true;
     s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
     document.head.appendChild(s);
-    window.dataLayer = window.dataLayer || [];
-    window.gtag = function () { window.dataLayer.push(arguments); };
     window.gtag('js', new Date());
     window.gtag('config', GA_ID, { anonymize_ip: true });
+  }
+
+  function grantConsent() {
+    window.gtag('consent', 'update', {
+      ad_storage: 'granted', ad_user_data: 'granted',
+      ad_personalization: 'granted', analytics_storage: 'granted'
+    });
   }
 
   function loadClarity() {
@@ -36,11 +41,6 @@
       t = l.createElement(r); t.async = 1; t.src = 'https://www.clarity.ms/tag/' + i;
       y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
     })(window, document, 'clarity', 'script', CLARITY_ID);
-  }
-
-  function loadAnalytics() {
-    loadGA();
-    loadClarity();
   }
 
   function injectBannerStyles() {
@@ -96,12 +96,25 @@
   function init() {
     var consent = null;
     try { consent = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+    var startGranted = consent === 'accepted';
+
+    // Consent Mode v2 (advanced): GA loads on every page but defaults storage to
+    // "denied" — no cookies, only cookieless pings — so undecided visitors (the
+    // majority) are still measured GDPR-safely. Clarity stays gated behind Accept.
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('consent', 'default', {
+      ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied',
+      analytics_storage: startGranted ? 'granted' : 'denied'
+    });
+    loadGA();
 
     if (consent === 'accepted') {
-      loadAnalytics();
+      loadClarity();
       return;
     }
     if (consent === 'rejected') {
+      window.gtag('consent', 'update', { analytics_storage: 'denied' });
       return;
     }
 
@@ -112,11 +125,13 @@
     document.getElementById('cookie-accept').onclick = function () {
       try { localStorage.setItem(STORAGE_KEY, 'accepted'); } catch (e) {}
       banner.classList.remove('visible');
-      loadAnalytics();
+      grantConsent();
+      loadClarity();
     };
     document.getElementById('cookie-reject').onclick = function () {
       try { localStorage.setItem(STORAGE_KEY, 'rejected'); } catch (e) {}
       banner.classList.remove('visible');
+      window.gtag('consent', 'update', { analytics_storage: 'denied' });
     };
   }
 
