@@ -189,7 +189,7 @@ CRITICAL RULES — what works for our audience (validated by real traffic data):
 
 4. NYC-specific examples: include at least one specific dollar figure or NYC-specific reference (a law name, neighborhood, court process, etc.) per article. Generic content gets ignored.
 
-5. Tone: Expert, trustworthy, practical — like advice from a knowledgeable friend who knows NYC inside out.
+5. Tone: Warm, caring, and reassuring — like a trusted neighbor who genuinely has the homeowner's back, backed by real expertise. Speak directly to a stressed Bronx owner as "you", acknowledge how draining managing a rental can feel, and lead with a little empathy before the facts (e.g. "If a 3 a.m. tenant call has ever ruined your week, you're not alone — here's how we take that off your plate."). Be encouraging, human, and on their side — never cold, corporate, or preachy. Keep the warmth genuine and anchored in specifics; never slip into fluffy marketing-speak or empty reassurance (real traffic data shows generic feel-good copy gets zero reads).
 
 6. Structure: Use markdown headings (h2, h3), short paragraphs (2-3 sentences), bullet lists where useful. Make it scannable.
 
