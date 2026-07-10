@@ -411,14 +411,17 @@ ${post.content}`,
 
 async function sendApprovalEmail(post, digestStats) {
   const fbPost = post.facebookPost;
-  const digestLine = digestStats?.error
+  const isDryRun = digestStats?.dryRun === true;
+  const digestLine = isDryRun
+    ? `<p style="margin:0;font-size:12px;color:#8B6F1A;font-weight:700;">🧪 DRY RUN — preview only. This post was NOT published and NO subscribers were emailed.</p>`
+    : digestStats?.error
     ? `<p style="margin:0;font-size:12px;color:#B91C1C;">⚠️ Subscriber emails failed: ${digestStats.error}</p>`
     : `<p style="margin:0;font-size:12px;color:#1B6B1B;font-weight:700;">📬 ${digestStats?.sent ?? 0} subscriber${(digestStats?.sent ?? 0) !== 1 ? 's' : ''} emailed with this post</p>`;
 
   await resend.emails.send({
     from: 'DoryAngel Blog <onboarding@resend.dev>',
     to: APPROVAL_EMAIL,
-    subject: `📱 Social-ready (Facebook + Instagram): "${post.title}"`,
+    subject: `${isDryRun ? '🧪 [DRY RUN] ' : ''}📱 Social-ready (Facebook + Instagram): "${post.title}"`,
     html: `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#1A2740;">
         <div style="background:#0F2847;padding:20px 24px;border-radius:8px 8px 0 0;">
@@ -502,10 +505,11 @@ async function main() {
   // facebookPost is for the email only — strip before persisting
   const { facebookPost, ...postForIndex } = post;
 
-  // DRY_RUN: generate + print only. No index write, no subscriber emails,
-  // no approval email, no Facebook/Instagram queue. For previewing tone/output.
+  // DRY_RUN: generate + print + send the owner approval email ONLY.
+  // No index write, no subscriber broadcast, no Facebook/Instagram queue —
+  // safe preview of the post and the approval email (tone, image, caption).
   if (process.env.DRY_RUN === 'true') {
-    console.log('\n===== DRY RUN — nothing published (no index write, no subscriber emails, no approval email, no social post) =====\n');
+    console.log('\n===== DRY RUN — not published (no index write, no subscriber broadcast, no social post) =====\n');
     console.log(`TITLE:    ${postForIndex.title}`);
     console.log(`CATEGORY: ${postForIndex.category}`);
     console.log(`SLUG:     ${postForIndex.slug}`);
@@ -516,6 +520,8 @@ async function main() {
     console.log('\n----- FACEBOOK / INSTAGRAM CAPTION -----\n');
     console.log(facebookPost);
     console.log('\n===== END DRY RUN =====\n');
+    await sendApprovalEmail(post, { dryRun: true });
+    console.log(`Dry-run approval email sent to ${APPROVAL_EMAIL} (preview only — not published)`);
     return;
   }
 
