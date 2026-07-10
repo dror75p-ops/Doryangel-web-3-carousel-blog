@@ -961,7 +961,7 @@ section { padding: 96px 40px; }
 /* CONTACT */
 .contact-section { background: var(--grey-light); }
 .contact-layout {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 80px;
   margin-top: 56px; align-items: start;
 }
 .contact-info h3 {
@@ -1006,6 +1006,9 @@ section { padding: 96px 40px; }
   border-color: var(--blue); box-shadow: 0 0 0 3px rgba(58,123,221,0.12);
 }
 .form-group textarea { resize: vertical; min-height: 110px; }
+/* Keep the fixed-width Cloudflare Turnstile iframe (300px) from stretching the
+   form / spilling off the right edge on narrow phones */
+.cf-turnstile { max-width: 100%; overflow: hidden; }
 .form-submit {
   width: 100%; padding: 14px;
   background: var(--blue); color: white;
@@ -1200,7 +1203,7 @@ footer {
   .audience-grid { grid-template-columns: 1fr 1fr; }
   .pillars-grid { grid-template-columns: 1fr 1fr; }
   .testimonials-grid { grid-template-columns: 1fr; }
-  .contact-layout { grid-template-columns: 1fr; gap: 40px; }
+  .contact-layout { grid-template-columns: minmax(0, 1fr); gap: 40px; }
   .footer-top { grid-template-columns: 1fr 1fr; }
   .footer-logo-wrap { background: white; display: inline-block; border-radius: 6px; padding: 6px 10px; }
   section { padding: 64px 20px; }
