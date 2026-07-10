@@ -7,6 +7,21 @@
       "permanent": true
     },
     {
+      "source": "/blog/how-mount-vernon-landlords-can-cut-vacancy-time-in-half",
+      "destination": "/blog/how-bronx-landlords-can-cut-vacancy-time-in-half/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/what-every-new-rochelle-landlord-needs-to-know-about-propert",
+      "destination": "/blog/what-bronx-landlords-need-to-know-about-property-taxes-2026/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/nyc-local-law-compliance-updates-every-bronx-landlord-should",
+      "destination": "/blog/nyc-local-law-compliance-guide-2026/",
+      "permanent": true
+    },
+    {
       "source": "/property-management",
       "destination": "/",
       "permanent": true
