@@ -138,6 +138,7 @@
 <link rel="dns-prefetch" href="https://www.google-analytics.com">
 <link rel="dns-prefetch" href="https://www.clarity.ms">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 
 <style>
@@ -5315,21 +5316,43 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- Retell AI Chat Widget — Hailey lead capture (v2) -->
-<script
-  id="retell-widget"
-  src="https://dashboard.retellai.com/retell-widget-v2.js"
-  type="module"
-  data-public-key="public_key_274f92a0516ded273d147"
-  data-agent-id="agent_88fd2bc14215e7210629dfafda"
-  data-title="Ask anything"
-  data-color="#1E5AA8"
-  data-bot-name="Hailey"
-  data-popup-message="Hi! I'm Hailey — ask me anything about DoryAngel's property management."
-  data-show-ai-popup="true"
-  data-show-ai-popup-time="8"
-  data-chat-bubble-position="left"
-></script>
+<!-- Retell AI Chat Widget — Hailey lead capture (v2).
+     Loaded on first interaction (with an idle/timeout fallback) so the chat SDK
+     stays off the critical rendering path. Passive visitors still get it within
+     a few seconds, so no lead is lost — it just no longer competes with first paint. -->
+<script>
+(function () {
+  var loaded = false;
+  function loadRetell() {
+    if (loaded) return;
+    loaded = true;
+    var s = document.createElement('script');
+    s.id = 'retell-widget';
+    s.src = 'https://dashboard.retellai.com/retell-widget-v2.js';
+    s.type = 'module';
+    var attrs = {
+      'data-public-key': 'public_key_274f92a0516ded273d147',
+      'data-agent-id': 'agent_88fd2bc14215e7210629dfafda',
+      'data-title': 'Ask anything',
+      'data-color': '#1E5AA8',
+      'data-bot-name': 'Hailey',
+      'data-popup-message': "Hi! I'm Hailey — ask me anything about DoryAngel's property management.",
+      'data-show-ai-popup': 'true',
+      'data-show-ai-popup-time': '8',
+      'data-chat-bubble-position': 'left'
+    };
+    for (var k in attrs) { s.setAttribute(k, attrs[k]); }
+    document.body.appendChild(s);
+    remove();
+  }
+  var evts = ['scroll', 'pointerdown', 'touchstart', 'keydown', 'mousemove'];
+  function remove() { evts.forEach(function (e) { window.removeEventListener(e, loadRetell); }); }
+  evts.forEach(function (e) { window.addEventListener(e, loadRetell, { once: true, passive: true }); });
+  // Fallback so fully passive visitors still get the chat bubble.
+  if ('requestIdleCallback' in window) { requestIdleCallback(loadRetell, { timeout: 5000 }); }
+  else { window.addEventListener('load', function () { setTimeout(loadRetell, 3500); }); }
+})();
+</script>
 
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
