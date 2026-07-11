@@ -1,0 +1,30 @@
+name: clarity-debug
+# Throwaway: probe the Microsoft Clarity Data Export API from a runner
+# (open network), since the dev sandbox cannot reach clarity.ms.
+# Remove after verification.
+on:
+  workflow_dispatch:
+    inputs:
+      token:
+        description: "Clarity Data Export API token (bearer). Leave blank to use the tag id x7y1bk4fhc."
+        required: false
+        default: ""
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Clarity Data Export API
+        run: |
+          TOKEN="${{ github.event.inputs.token }}"
+          if [ -z "$TOKEN" ]; then TOKEN="x7y1bk4fhc"; fi
+          echo "Using token of length ${#TOKEN}"
+          for DAYS in 1 3; do
+            echo "======================================================"
+            echo "GET project-live-insights numOfDays=$DAYS dimension1=OS"
+            echo "------------------------------------------------------"
+            curl -sS -w "\nHTTP_STATUS:%{http_code}\n" \
+              -H "Authorization: Bearer $TOKEN" \
+              "https://www.clarity.ms/export-data/api/v1/project-live-insights?numOfDays=$DAYS&dimension1=OS" \
+              || echo "curl failed"
+          done
