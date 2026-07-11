@@ -1,0 +1,53 @@
+name: lighthouse-debug
+# Throwaway: run Lighthouse against the live site from a runner (open network),
+# since the dev sandbox cannot reach www.doryangel.com. Remove after verification.
+on:
+  push:
+    branches:
+      - claude/doryangel-performance-clarity-y8jaxs
+    paths:
+      - .github/workflows/lighthouse-debug.yml
+
+jobs:
+  lh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Lighthouse
+        run: npm install -g lighthouse@11
+
+      - name: Run Lighthouse (mobile + desktop)
+        run: |
+          URL="https://www.doryangel.com/"
+          FLAGS="--headless=new --no-sandbox --disable-gpu"
+          run_one () {
+            local NAME="$1"; shift
+            echo "############################################################"
+            echo "## $NAME  —  $URL"
+            echo "############################################################"
+            lighthouse "$URL" \
+              --quiet \
+              --only-categories=performance \
+              --chrome-flags="$FLAGS" \
+              --output=json --output-path=./lh.json "$@" || { echo "lighthouse failed"; return; }
+            node -e '
+              const r = require("./lh.json");
+              const a = r.audits;
+              const pct = Math.round(r.categories.performance.score * 100);
+              const g = id => (a[id] && a[id].displayValue) || "n/a";
+              console.log("Performance score : " + pct + " / 100");
+              console.log("First Contentful Paint (FCP) : " + g("first-contentful-paint"));
+              console.log("Largest Contentful Paint (LCP): " + g("largest-contentful-paint"));
+              console.log("Total Blocking Time (TBT)     : " + g("total-blocking-time"));
+              console.log("Cumulative Layout Shift (CLS) : " + g("cumulative-layout-shift"));
+              console.log("Speed Index                   : " + g("speed-index"));
+              console.log("Time to Interactive (TTI)     : " + g("interactive"));
+              const opps = Object.values(a)
+                .filter(x => x.details && x.details.type === "opportunity" && x.numericValue > 100)
+                .sort((x,y) => y.numericValue - x.numericValue)
+                .slice(0,6)
+                .map(x => "  - " + x.title + " (~" + Math.round(x.numericValue) + " ms)");
+              if (opps.length) { console.log("Top opportunities:"); console.log(opps.join("\n")); }
+            '
+          }
+          run_one "MOBILE (default throttling)"
+          run_one "DESKTOP" --preset=desktop
