@@ -520,6 +520,8 @@ section { padding: 96px 40px; }
   cursor: pointer; text-decoration: none; color: inherit;
   display: block; overflow: hidden;
 }
+/* <picture> is layout-transparent so its <img> inherits the same box/styles as a bare <img> */
+picture { display: contents; }
 .audience-card-photo {
   margin: -32px -28px 24px;
   height: 180px; border-radius: var(--radius) var(--radius) 0 0; overflow: hidden;
@@ -2438,12 +2440,12 @@ retell-chat-web-component {
 <!-- HERO -->
 <div class="hero-wrap" id="main-content">
 <div class="hero-skyline" id="hero-skyline" aria-hidden="true">
-  <div class="hero-photo active" role="img" aria-label="NYC residential street with apartment buildings" style="background-image:url('https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=1600&q=80&fit=crop')"></div>
-  <div class="hero-photo" role="img" aria-label="Modern apartment building facade in New York City" style="background-image:url('https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=1600&q=80&fit=crop')"></div>
-  <div class="hero-photo" role="img" aria-label="NYC neighborhood with brownstone buildings" style="background-image:url('https://images.unsplash.com/photo-1518391846015-55a9cc003b25?w=1600&q=80&fit=crop')"></div>
-  <div class="hero-photo" role="img" aria-label="Bronx residential property exterior" style="background-image:url('https://images.unsplash.com/photo-1538970272646-f61fabb3a8a2?w=1600&q=80&fit=crop')"></div>
-  <div class="hero-photo" role="img" aria-label="NYC high-rise residential tower architecture" style="background-image:url('./assets/photo-hero-nyc-tower.jpg')"></div>
-  <div class="hero-photo" role="img" aria-label="Brick rowhouse in a New York City neighborhood with a for-sale sign" style="background-image:url('./assets/photo-hero-for-sale.jpg')"></div>
+  <div class="hero-photo active" role="img" aria-label="NYC residential street with apartment buildings" style="background-image:url('https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=1600&q=70&auto=format,compress&fit=crop')"></div>
+  <div class="hero-photo" role="img" aria-label="Modern apartment building facade in New York City" style="background-image:url('https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=1600&q=70&auto=format,compress&fit=crop')"></div>
+  <div class="hero-photo" role="img" aria-label="NYC neighborhood with brownstone buildings" style="background-image:url('https://images.unsplash.com/photo-1518391846015-55a9cc003b25?w=1600&q=70&auto=format,compress&fit=crop')"></div>
+  <div class="hero-photo" role="img" aria-label="Bronx residential property exterior" style="background-image:url('https://images.unsplash.com/photo-1538970272646-f61fabb3a8a2?w=1600&q=70&auto=format,compress&fit=crop')"></div>
+  <div class="hero-photo" role="img" aria-label="NYC high-rise residential tower architecture" style="background-image:url('./assets/photo-hero-nyc-tower.jpg');background-image:image-set(url('./assets/photo-hero-nyc-tower.webp') type('image/webp'), url('./assets/photo-hero-nyc-tower.jpg') type('image/jpeg'))"></div>
+  <div class="hero-photo" role="img" aria-label="Brick rowhouse in a New York City neighborhood with a for-sale sign" style="background-image:url('./assets/photo-hero-for-sale.jpg');background-image:image-set(url('./assets/photo-hero-for-sale.webp') type('image/webp'), url('./assets/photo-hero-for-sale.jpg') type('image/jpeg'))"></div>
 </div>
 <div class="hero">
   <div class="hero-content">
@@ -2536,7 +2538,10 @@ retell-chat-web-component {
       <!-- Owners -->
       <a href="#pricing" class="audience-card">
         <div class="audience-card-photo">
-          <img src="./assets/photo-owners-signing.jpg" alt="Property owners signing a management agreement with their DoryAngel manager" loading="lazy">
+          <picture>
+            <source srcset="./assets/photo-owners-signing.webp" type="image/webp">
+            <img src="./assets/photo-owners-signing.jpg" alt="Property owners signing a management agreement with their DoryAngel manager" loading="lazy" decoding="async">
+          </picture>
         </div>
         <div class="audience-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2555,7 +2560,10 @@ retell-chat-web-component {
       <!-- Tenants -->
       <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener noreferrer" class="audience-card">
         <div class="audience-card-photo">
-          <img src="./assets/photo-tenants-nyc-home.jpg" alt="A real NYC residential home managed by DoryAngel" loading="lazy">
+          <picture>
+            <source srcset="./assets/photo-tenants-nyc-home.webp" type="image/webp">
+            <img src="./assets/photo-tenants-nyc-home.jpg" alt="A real NYC residential home managed by DoryAngel" loading="lazy" decoding="async">
+          </picture>
         </div>
         <div class="audience-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2574,7 +2582,10 @@ retell-chat-web-component {
       <!-- Brokers -->
       <a href="broker-partner.html" class="audience-card">
         <div class="audience-card-photo">
-          <img src="./assets/photo-brokers-consultation.jpg" alt="Real estate broker and client reviewing a property management proposal" loading="lazy">
+          <picture>
+            <source srcset="./assets/photo-brokers-consultation.webp" type="image/webp">
+            <img src="./assets/photo-brokers-consultation.jpg" alt="Real estate broker and client reviewing a property management proposal" loading="lazy" decoding="async">
+          </picture>
         </div>
         <div class="audience-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2594,7 +2605,10 @@ retell-chat-web-component {
       <!-- Vendors -->
       <a href="#contact" class="audience-card">
         <div class="audience-card-photo">
-          <img src="./assets/photo-vendors-maintenance.jpg" alt="Maintenance technician servicing an apartment unit for a DoryAngel property" loading="lazy">
+          <picture>
+            <source srcset="./assets/photo-vendors-maintenance.webp" type="image/webp">
+            <img src="./assets/photo-vendors-maintenance.jpg" alt="Maintenance technician servicing an apartment unit for a DoryAngel property" loading="lazy" decoding="async">
+          </picture>
         </div>
         <div class="audience-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2621,10 +2635,14 @@ retell-chat-web-component {
 
     <div style="display:flex;gap:48px;align-items:center;margin-top:40px;margin-bottom:56px;flex-wrap:wrap;">
       <div style="flex:0 0 360px;max-width:100%;">
-        <img src="./assets/photo-owner-checklist.jpg"
-             alt="Property manager reviewing a property visit checklist on a tablet"
-             loading="lazy"
-             style="width:100%;border-radius:16px;box-shadow:var(--shadow-lg);display:block;object-fit:cover;">
+        <picture>
+          <source srcset="./assets/photo-owner-checklist.webp" type="image/webp">
+          <img src="./assets/photo-owner-checklist.jpg"
+               alt="Property manager reviewing a property visit checklist on a tablet"
+               loading="lazy"
+               decoding="async"
+               style="width:100%;border-radius:16px;box-shadow:var(--shadow-lg);display:block;object-fit:cover;">
+        </picture>
       </div>
       <div style="flex:1;min-width:240px;">
         <p style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--navy);line-height:1.4;margin-bottom:20px;">"We don't just manage properties — we protect your investment, so you can focus on what matters."</p>
@@ -3113,7 +3131,7 @@ retell-chat-web-component {
     <!-- Static fallback for mobile / reduced-motion -->
     <img
       class="video-divider__img"
-      src="https://images.unsplash.com/photo-1546436836-07a91091f160?w=1600&q=80"
+      src="https://images.unsplash.com/photo-1546436836-07a91091f160?w=1600&q=70&auto=format,compress"
       alt="New York City skyline"
       loading="lazy"
     />
@@ -3425,7 +3443,7 @@ retell-chat-web-component {
     <noscript>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;margin-top:32px;">
         <a href="/blog/how-much-will-spring-flooding-cost-bronx-landlords-in-2026-a/" style="text-decoration:none;border-radius:12px;overflow:hidden;border:1px solid #E2E8F0;display:block;">
-          <img src="https://images.unsplash.com/photo-1657727534671-f0c753f3a098?w=600&q=80&fit=crop" alt="Flooded basement apartment in a Bronx multi-family building" style="width:100%;height:180px;object-fit:cover;display:block;">
+          <img src="https://images.unsplash.com/photo-1657727534671-f0c753f3a098?w=600&q=70&auto=format,compress&fit=crop" alt="Flooded basement apartment in a Bronx multi-family building" loading="lazy" decoding="async" style="width:100%;height:180px;object-fit:cover;display:block;">
           <div style="padding:16px 20px;">
             <div style="font-size:11px;font-weight:700;color:#1E5AA8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Property Management · 4 min read</div>
             <div style="font-size:16px;font-weight:700;color:#0F2847;line-height:1.35;margin-bottom:8px;">How Much Will Spring Flooding Cost Bronx Landlords in 2026? A Drainage Prevention Guide</div>
@@ -3433,7 +3451,7 @@ retell-chat-web-component {
           </div>
         </a>
         <a href="/blog/are-your-bronx-rental-units-spring-ready-the-essential-exter/" style="text-decoration:none;border-radius:12px;overflow:hidden;border:1px solid #E2E8F0;display:block;">
-          <img src="https://images.unsplash.com/photo-1573878220075-17bb8dad878d?w=600&q=80&fit=crop" alt="Bronx multi-family rental building exterior being inspected for spring maintenance" style="width:100%;height:180px;object-fit:cover;display:block;">
+          <img src="https://images.unsplash.com/photo-1573878220075-17bb8dad878d?w=600&q=70&auto=format,compress&fit=crop" alt="Bronx multi-family rental building exterior being inspected for spring maintenance" loading="lazy" decoding="async" style="width:100%;height:180px;object-fit:cover;display:block;">
           <div style="padding:16px 20px;">
             <div style="font-size:11px;font-weight:700;color:#1E5AA8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Property Management · 5 min read</div>
             <div style="font-size:16px;font-weight:700;color:#0F2847;line-height:1.35;margin-bottom:8px;">Are Your Bronx Rental Units Spring-Ready? The Essential Exterior Inspection Guide for 2026</div>
@@ -3441,7 +3459,7 @@ retell-chat-web-component {
           </div>
         </a>
         <a href="/blog/how-ai-security-cameras-are-reducing-vacancy-crimes-in-nyc-re/" style="text-decoration:none;border-radius:12px;overflow:hidden;border:1px solid #E2E8F0;display:block;">
-          <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&q=80&fit=crop" alt="Modern AI security camera mounted on a brick building exterior in an urban neighborhood" style="width:100%;height:180px;object-fit:cover;display:block;">
+          <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&q=70&auto=format,compress&fit=crop" alt="Modern AI security camera mounted on a brick building exterior in an urban neighborhood" loading="lazy" decoding="async" style="width:100%;height:180px;object-fit:cover;display:block;">
           <div style="padding:16px 20px;">
             <div style="font-size:11px;font-weight:700;color:#1E5AA8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Property Automation · 6 min read</div>
             <div style="font-size:16px;font-weight:700;color:#0F2847;line-height:1.35;margin-bottom:8px;">How AI Security Cameras Are Reducing Vacancy Crimes in NYC Rental Buildings</div>
@@ -4071,10 +4089,14 @@ retell-chat-web-component {
 
     <div class="contact-layout">
       <div class="contact-info">
-        <img src="./assets/photo-contact-professional.jpg"
-             alt="DoryAngel property management professional ready to help"
-             loading="lazy"
-             style="width:100%;height:220px;object-fit:cover;object-position:center top;border-radius:12px;margin-bottom:28px;display:block;">
+        <picture>
+          <source srcset="./assets/photo-contact-professional.webp" type="image/webp">
+          <img src="./assets/photo-contact-professional.jpg"
+               alt="DoryAngel property management professional ready to help"
+               loading="lazy"
+               decoding="async"
+               style="width:100%;height:220px;object-fit:cover;object-position:center top;border-radius:12px;margin-bottom:28px;display:block;">
+        </picture>
         <h3>Let's talk about your property</h3>
         <p>Whether you're looking to hand off management, explore our flat-fee plans, or just have questions — our team is ready to help. No pressure, no commitment.</p>
 
