@@ -343,7 +343,7 @@ footer.post-footer a { color: white; text-decoration: none; }
 <body>
 
 <nav class="post-nav">
-  <a href="../../#blog" class="back">← All articles</a>
+  <a href="../" class="back">← All articles</a>
   <a href="${BOOKING_URL}" target="_blank" class="cta">Book Free Consultation</a>
 </nav>
 
@@ -377,7 +377,7 @@ footer.post-footer a { color: white; text-decoration: none; }
     <ul>
       <li><a href="${SITE_URL}/#pricing">View flat-fee pricing plans — from $99/month →</a></li>
       <li><a href="${SITE_URL}/#services">Full list of property management services →</a></li>
-      <li><a href="${SITE_URL}/#blog">More articles for NYC landlords →</a></li>
+      <li><a href="${SITE_URL}/blog/">More articles for NYC landlords →</a></li>
       <li><a href="${CONTACT_URL}">Request a free property audit →</a></li>
     </ul>
   </div>
@@ -405,9 +405,205 @@ ${relatedHtml}
 `;
 }
 
+const CATEGORY_ORDER = ['property-management', 'diy-property-management', 'investments', 'property-automation'];
+
+function labelForCategory(cat) {
+  return CATEGORY_LABEL[cat] || String(cat).replace(/-/g, ' ').replace(/\b\w/g, m => m.toUpperCase());
+}
+
+// Order categories by the canonical list first, then any others as they appear.
+function orderedCategories(sortedPosts) {
+  const seen = new Set();
+  const cats = [];
+  for (const c of CATEGORY_ORDER) {
+    if (sortedPosts.some(p => p.category === c)) { cats.push(c); seen.add(c); }
+  }
+  for (const p of sortedPosts) {
+    if (!seen.has(p.category)) { cats.push(p.category); seen.add(p.category); }
+  }
+  return cats;
+}
+
+// Static, fully-crawlable blog index. Gives every post a plain-HTML internal
+// link (the JS carousel on the homepage is invisible to non-rendering crawlers),
+// which is the fix for "Crawled - currently not indexed" on the post URLs.
+function renderHub(posts) {
+  const url = `${SITE_URL}/blog/`;
+  const sorted = [...posts].sort((a, b) => new Date(b.publishedDate) - new Date(a.publishedDate));
+  const total = sorted.length;
+  const cats = orderedCategories(sorted);
+
+  const sectionsHtml = cats.map(cat => {
+    const items = sorted.filter(p => p.category === cat);
+    return `
+    <section class="hub-cat">
+      <h2 class="hub-cat-title">${escape(labelForCategory(cat))} <span class="hub-cat-count">${items.length}</span></h2>
+      <ul class="hub-list">
+        ${items.map(p => `
+        <li class="hub-item">
+          <a class="hub-link" href="/blog/${p.slug}/">
+            <span class="hub-item-title">${escape(p.title)}</span>
+            <span class="hub-item-meta">${formatDate(p.publishedDate)} &middot; ${p.minutesToRead || 5} min read</span>
+          </a>
+          <p class="hub-item-excerpt">${escape(p.excerpt)}</p>
+        </li>`).join('')}
+      </ul>
+    </section>`;
+  }).join('');
+
+  const collectionLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'DoryAngel Blog — Bronx & NYC Property Management Guides',
+    url,
+    description: `Guides for Bronx and NYC landlords on property management, tenant screening, NYC law, investments and automation. ${total} articles from DoryAngel.`,
+    isPartOf: { '@type': 'WebSite', name: COMPANY_NAME, url: SITE_URL },
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: sorted.map((p, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        url: `${SITE_URL}/blog/${p.slug}/`,
+        name: p.title,
+      })),
+    },
+  };
+
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: url },
+    ],
+  };
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DoryAngel Blog | Bronx &amp; NYC Property Management Guides</title>
+<meta name="description" content="Practical guides for Bronx &amp; NYC landlords: flat-fee property management, tenant screening, NYC law, investments and automation. ${total} articles from the DoryAngel team.">
+<link rel="canonical" href="${url}">
+<meta name="robots" content="index, follow">
+<meta name="geo.region" content="US-NY">
+<meta name="geo.placename" content="Bronx, New York City">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="DoryAngel Blog | Bronx &amp; NYC Property Management Guides">
+<meta property="og:description" content="Practical guides for Bronx &amp; NYC landlords: property management, tenant screening, NYC law, investments and automation.">
+<meta property="og:image" content="${SITE_URL}/assets/logo.jpg">
+<meta property="og:url" content="${url}">
+<meta property="og:site_name" content="${COMPANY_NAME}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DoryAngel Blog | Bronx &amp; NYC Property Management Guides">
+<meta name="twitter:description" content="Practical guides for Bronx &amp; NYC landlords: property management, tenant screening, NYC law, investments and automation.">
+<meta name="twitter:image" content="${SITE_URL}/assets/logo.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+${JSON.stringify(collectionLd, null, 2)}
+</script>
+<script type="application/ld+json">
+${JSON.stringify(breadcrumbLd, null, 2)}
+</script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #0F2847; --blue: #1E5AA8; --blue-light: #5B9FEA; --blue-dim: #EBF3FD;
+  --grey: #8B9BAE; --grey-light: #F4F7FA; --grey-mid: #E2E8F0;
+  --text: #1A2740; --text-muted: #556070;
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; color: var(--text); background: white; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+a { color: var(--blue); }
+
+.post-nav {
+  border-bottom: 1px solid var(--grey-mid); padding: 14px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: blur(10px); background: rgba(255,255,255,0.95);
+}
+.post-nav a.back { color: var(--navy); font-weight: 600; font-size: 14px; text-decoration: none; }
+.post-nav a.cta { background: var(--blue); color: white; text-decoration: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 13px; transition: background 0.2s; }
+.post-nav a.cta:hover { background: var(--navy); }
+
+.hub-head { background: var(--navy); color: white; padding: 56px 24px; text-align: center; }
+.hub-head .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--blue-light); margin-bottom: 14px; }
+.hub-head h1 { font-family: 'DM Serif Display', serif; font-size: clamp(30px, 5vw, 48px); font-weight: 400; line-height: 1.15; margin-bottom: 16px; }
+.hub-head p { font-size: 17px; color: rgba(255,255,255,0.82); max-width: 620px; margin: 0 auto; }
+
+main.hub { max-width: 860px; margin: 0 auto; padding: 48px 24px 24px; }
+.hub-cat { margin-bottom: 48px; }
+.hub-cat-title { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: 26px; color: var(--navy); padding-bottom: 12px; border-bottom: 2px solid var(--blue-dim); margin-bottom: 20px; display: flex; align-items: baseline; gap: 10px; }
+.hub-cat-count { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; color: var(--blue); background: var(--blue-dim); border-radius: 100px; padding: 2px 10px; }
+.hub-list { list-style: none; }
+.hub-item { padding: 18px 0; border-bottom: 1px solid var(--grey-mid); }
+.hub-item:last-child { border-bottom: none; }
+.hub-link { display: flex; flex-direction: column; gap: 4px; text-decoration: none; }
+.hub-item-title { font-size: 19px; font-weight: 700; color: var(--navy); line-height: 1.35; }
+.hub-link:hover .hub-item-title { color: var(--blue); text-decoration: underline; }
+.hub-item-meta { font-size: 12px; color: var(--text-muted); }
+.hub-item-excerpt { font-size: 15px; color: var(--text-muted); line-height: 1.6; margin-top: 6px; }
+
+.hub-cta { background: var(--blue-dim); border-radius: 14px; padding: 32px 28px; text-align: center; margin: 8px auto 64px; max-width: 860px; }
+.hub-cta .t { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--navy); margin-bottom: 10px; }
+.hub-cta p { font-size: 15px; color: var(--text-muted); margin-bottom: 20px; }
+.hub-cta a.btn { background: var(--blue); color: white; padding: 14px 28px; border-radius: 8px; font-size: 15px; font-weight: 700; text-decoration: none; display: inline-block; }
+.hub-cta a.btn:hover { background: var(--navy); }
+
+footer.post-footer { text-align: center; padding: 32px 24px; background: var(--navy); color: rgba(255,255,255,0.7); font-size: 13px; }
+footer.post-footer a { color: white; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<nav class="post-nav">
+  <a href="/" class="back">&larr; DoryAngel home</a>
+  <a href="${BOOKING_URL}" target="_blank" class="cta">Book Free Consultation</a>
+</nav>
+
+<header class="hub-head">
+  <div class="eyebrow">Property Insights</div>
+  <h1>The DoryAngel Blog</h1>
+  <p>Practical, no-fluff guides for Bronx &amp; NYC landlords — property management, tenant screening, NYC law, investments and automation. ${total} articles and counting.</p>
+</header>
+
+<main class="hub">
+${sectionsHtml}
+</main>
+
+<div class="hub-cta">
+  <div class="t">Managing rental property in NYC?</div>
+  <p>DoryAngel handles everything for a flat <strong>$99/unit/month</strong> — no hidden fees, no percentage tricks.</p>
+  <a class="btn" href="${CONTACT_URL}">Get a Free Consultation &rarr;</a>
+</div>
+
+<footer class="post-footer">
+  <p>${COMPANY_NAME} &middot; <a href="mailto:office@doryangel.com">office@doryangel.com</a> &middot; (516) 847-4999</p>
+  <p style="margin-top:6px;">557 Grand Concourse Ave #4123, Bronx NY 10451</p>
+</footer>
+
+<script defer src="/_vercel/insights/script.js"></script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+<script src="/analytics.js"></script>
+
+</body>
+</html>
+`;
+}
+
 function buildSitemap(posts) {
+  const newestPost = posts.reduce((a, b) =>
+    new Date(a.publishedDate) > new Date(b.publishedDate) ? a : b
+  );
   const urls = [
     `  <url><loc>${SITE_URL}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>`,
+    `  <url><loc>${SITE_URL}/blog/</loc><lastmod>${newestPost.publishedDate}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>`,
     `  <url><loc>${SITE_URL}/broker-partner.html</loc><lastmod>2026-05-23</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
     `  <url><loc>${SITE_URL}/flat-fee-vs-commission/</loc><lastmod>2026-07-08</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
     `  <url><loc>${SITE_URL}/tax-checklist/</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
@@ -436,5 +632,6 @@ for (const post of posts) {
   count++;
 }
 
+writeFileSync('./blog/index.html', renderHub(posts));
 writeFileSync('./sitemap.xml', buildSitemap(posts));
-console.log(`Built ${count} blog post pages + sitemap.xml`);
+console.log(`Built ${count} blog post pages + /blog/ hub + sitemap.xml`);
