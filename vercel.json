@@ -1,6 +1,126 @@
 {
   "redirects": [
     {
+      "source": "/blog/whats-your-bronx-buildings-summer-peak-power-usage-costing-y",
+      "destination": "/blog/why-are-your-bronx-buildings-august-utility-bills-40-higher/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/whats-your-bronx-buildings-summer-peak-power-usage-costing-y/",
+      "destination": "/blog/why-are-your-bronx-buildings-august-utility-bills-40-higher/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/5-summer-utility-surges-costing-bronx-landlords-thousandsand",
+      "destination": "/blog/why-are-your-bronx-buildings-august-utility-bills-40-higher/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/5-summer-utility-surges-costing-bronx-landlords-thousandsand/",
+      "destination": "/blog/why-are-your-bronx-buildings-august-utility-bills-40-higher/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/are-bronx-landlords-ready-for-july-utility-spikes-a-smart-me",
+      "destination": "/blog/why-are-your-bronx-buildings-august-utility-bills-40-higher/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/are-bronx-landlords-ready-for-july-utility-spikes-a-smart-me/",
+      "destination": "/blog/why-are-your-bronx-buildings-august-utility-bills-40-higher/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/5-summer-ac-breakdowns-costing-bronx-landlords-tenantssmart-",
+      "destination": "/blog/why-do-bronx-landlords-lose-thousands-every-summer-to-ac-bre/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/5-summer-ac-breakdowns-costing-bronx-landlords-tenantssmart-/",
+      "destination": "/blog/why-do-bronx-landlords-lose-thousands-every-summer-to-ac-bre/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/are-bronx-landlords-losing-summer-tenants-to-ac-failures-a-c",
+      "destination": "/blog/why-do-bronx-landlords-lose-thousands-every-summer-to-ac-bre/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/are-bronx-landlords-losing-summer-tenants-to-ac-failures-a-c/",
+      "destination": "/blog/why-do-bronx-landlords-lose-thousands-every-summer-to-ac-bre/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/whats-your-bronx-buildings-july-august-vacancy-cost-if-you-d",
+      "destination": "/blog/why-are-bronx-landlords-losing-summer-rental-income-to-seaso/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/whats-your-bronx-buildings-july-august-vacancy-cost-if-you-d/",
+      "destination": "/blog/why-are-bronx-landlords-losing-summer-rental-income-to-seaso/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/3-ways-bronx-landlords-can-partner-with-brokers-to-fill-summ",
+      "destination": "/blog/why-are-bronx-landlords-losing-summer-rental-income-to-seaso/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/3-ways-bronx-landlords-can-partner-with-brokers-to-fill-summ/",
+      "destination": "/blog/why-are-bronx-landlords-losing-summer-rental-income-to-seaso/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/are-bronx-landlords-losing-money-on-summer-vacancies-3-alter",
+      "destination": "/blog/why-are-bronx-landlords-losing-summer-rental-income-to-seaso/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/are-bronx-landlords-losing-money-on-summer-vacancies-3-alter/",
+      "destination": "/blog/why-are-bronx-landlords-losing-summer-rental-income-to-seaso/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/what-summer-lease-expirations-mean-for-bronx-landlord-invest",
+      "destination": "/blog/5-summer-lease-renewal-opportunities-bronx-landlords-are-mis/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/what-summer-lease-expirations-mean-for-bronx-landlord-invest/",
+      "destination": "/blog/5-summer-lease-renewal-opportunities-bronx-landlords-are-mis/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/3-summer-lease-termination-mistakes-costing-bronx-landlords-",
+      "destination": "/blog/5-summer-lease-renewal-opportunities-bronx-landlords-are-mis/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/3-summer-lease-termination-mistakes-costing-bronx-landlords-/",
+      "destination": "/blog/5-summer-lease-renewal-opportunities-bronx-landlords-are-mis/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/are-bronx-landlords-overlooking-flood-risk-insurance-as-a-su",
+      "destination": "/blog/what-summer-flooding-in-your-bronx-building-could-cost-you-i/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/are-bronx-landlords-overlooking-flood-risk-insurance-as-a-su/",
+      "destination": "/blog/what-summer-flooding-in-your-bronx-building-could-cost-you-i/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/why-summer-tenant-turnover-in-the-bronx-is-the-perfect-time-",
+      "destination": "/blog/are-bronx-landlords-capitalizing-on-summer-turnover-to-upgra/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/why-summer-tenant-turnover-in-the-bronx-is-the-perfect-time-/",
+      "destination": "/blog/are-bronx-landlords-capitalizing-on-summer-turnover-to-upgra/",
+      "permanent": true
+    },
+    {
       "source": "/:path*",
       "has": [{ "type": "host", "value": "beta.doryangel.com" }],
       "destination": "https://www.doryangel.com/:path*",
