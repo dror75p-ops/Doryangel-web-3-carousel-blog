@@ -2026,8 +2026,6 @@ retell-chat-web-component {
   }
 }
 </style>
-<!-- Markdown parser for blog posts -->
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" async></script>
 <!-- TOOL GATE MODAL (email capture for free tools) -->
 <div class="toolgate-overlay hidden" id="toolGateOverlay" role="dialog" aria-modal="true" aria-label="Get free tool access">
   <div class="toolgate-modal" id="toolGateModal">
@@ -5099,9 +5097,28 @@ async function handleFormSubmit(e) {
 })();
 </script>
 
-<!-- Elfsight Sales Notification -->
-<script src="https://elfsightcdn.com/platform.js" async></script>
+<!-- Elfsight Sales Notification — platform.js loaded on first interaction (idle/timeout
+     fallback) so this non-critical widget stays off the initial render path. -->
 <div class="elfsight-app-3cd752ff-ea7c-46bb-ba23-c42e75fd88dc" data-elfsight-app-lazy></div>
+<script>
+(function () {
+  var loaded = false;
+  function loadElfsight() {
+    if (loaded) return;
+    loaded = true;
+    var s = document.createElement('script');
+    s.src = 'https://elfsightcdn.com/platform.js';
+    s.async = true;
+    document.body.appendChild(s);
+    remove();
+  }
+  var evts = ['scroll', 'pointerdown', 'touchstart', 'keydown', 'mousemove'];
+  function remove() { evts.forEach(function (e) { window.removeEventListener(e, loadElfsight); }); }
+  evts.forEach(function (e) { window.addEventListener(e, loadElfsight, { once: true, passive: true }); });
+  if ('requestIdleCallback' in window) { requestIdleCallback(loadElfsight, { timeout: 6000 }); }
+  else { window.addEventListener('load', function () { setTimeout(loadElfsight, 4000); }); }
+})();
+</script>
 
 <script>
 /* Constrain Elfsight notification to viewport on mobile using MutationObserver.
