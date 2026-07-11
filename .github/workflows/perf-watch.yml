@@ -1,0 +1,59 @@
+name: perf-watch
+# Throwaway: detect the PR #203 deploy (marked.js removed + Elfsight deferred),
+# then run Lighthouse. Re-triggered by pushing to this branch.
+on:
+  push:
+    branches:
+      - claude/perf-probe
+    paths:
+      - .github/workflows/perf-watch.yml
+      - .perf-nonce
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Is the PR #203 build live?
+        id: check
+        run: |
+          HTML=$(curl -sS --max-time 25 "https://www.doryangel.com/?cb=$RANDOM")
+          LM=$(curl -sSI --max-time 25 "https://www.doryangel.com/?cb=$RANDOM" | grep -i '^last-modified' | tr -d '\r')
+          HAS_MARKED=$(printf '%s' "$HTML" | grep -c 'marked.min.js' || true)
+          HAS_ELF_DEFER=$(printf '%s' "$HTML" | grep -c 'loadElfsight' || true)
+          echo "last-modified: $LM"
+          echo "marked.min.js present: $HAS_MARKED (want 0) | Elfsight deferred: $HAS_ELF_DEFER (want >=1)"
+          if [ "$HAS_MARKED" -eq 0 ] && [ "$HAS_ELF_DEFER" -ge 1 ]; then
+            echo "live=yes" >> "$GITHUB_OUTPUT"; echo ">>> PR #203 build IS LIVE"
+          else
+            echo "live=no" >> "$GITHUB_OUTPUT"; echo ">>> Not deployed yet"
+          fi
+
+      - name: Install Lighthouse
+        if: steps.check.outputs.live == 'yes'
+        run: npm install -g lighthouse@11
+
+      - name: Measure live (mobile x3 median + desktop)
+        if: steps.check.outputs.live == 'yes'
+        run: |
+          FLAGS="--headless=new --no-sandbox --disable-gpu"
+          one () {
+            lighthouse "https://www.doryangel.com/?lh=$RANDOM" --quiet --only-categories=performance \
+              --chrome-flags="$FLAGS" --output=json --output-path=./lh.json "$@" 2>/dev/null || { echo "lh failed"; return; }
+            node -e '
+              const r=require("./lh.json"),a=r.audits,g=id=>(a[id]&&a[id].displayValue)||"n/a";
+              console.log(Math.round(r.categories.performance.score*100)+"|FCP "+g("first-contentful-paint")+" LCP "+g("largest-contentful-paint")+" TBT "+g("total-blocking-time")+" TTI "+g("interactive"));
+            '
+          }
+          echo "==== MOBILE (3 runs) ===="
+          ms=""
+          for i in 1 2 3; do line=$(one); echo "  run $i: score ${line%%|*}  (${line#*|})"; ms="$ms ${line%%|*}"; done
+          echo "MOBILE median score: $(echo $ms | tr ' ' '\n' | sort -n | awk '{v[NR]=$1} END{print v[2]}')"
+          echo "==== DESKTOP ===="
+          line=$(one --preset=desktop); echo "  score ${line%%|*}  (${line#*|})"
+          echo "==== remaining top opportunities (mobile) ===="
+          lighthouse "https://www.doryangel.com/?lh=$RANDOM" --quiet --only-categories=performance --chrome-flags="$FLAGS" --output=json --output-path=./lh.json 2>/dev/null
+          node -e '
+            const a=require("./lh.json").audits;
+            const o=Object.values(a).filter(x=>x.details&&x.details.type==="opportunity"&&x.numericValue>100).sort((x,y)=>y.numericValue-x.numericValue).slice(0,5).map(x=>"  - "+x.title+" (~"+Math.round(x.numericValue)+" ms)");
+            console.log(o.join("\n"));
+          '
