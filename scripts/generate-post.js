@@ -11,31 +11,40 @@ const AGENT_NAME = 'Nave';
 const APPROVAL_EMAIL = 'dror75p@gmail.com';
 
 // Fallback topics used if AI topic selection fails
+// Ordered owner-first: the round-robin fallback (existingPosts.length % length)
+// should keep the mix skewed toward the owner-facing property-management /
+// DIY topics that actually earn search traffic. Automation & broker are kept
+// for occasional coverage only.
 const FALLBACK_TOPICS = [
-  { title: '5 Free Tools Every DIY Landlord in the Bronx Needs', category: 'diy-property-management' },
+  // --- property-management (owner-facing) ---
   { title: 'The Top 3 Mistakes Bronx Landlords Make Managing Their Own Properties', category: 'property-management' },
   { title: 'What Should a Bronx Property Manager Actually Do for You?', category: 'property-management' },
-  { title: 'Is Buying a Rental Property in the Bronx Still a Good Investment?', category: 'investments' },
   { title: 'Flat-Fee PM in the Bronx: What $99/Unit Actually Means', category: 'property-management' },
   { title: 'How Much Is Inefficient Management Costing Your Bronx or Queens Rental?', category: 'property-management' },
-  { title: 'Should Bronx Landlords Self-Manage or Hire a Property Manager?', category: 'diy-property-management' },
-  { title: "How to Handle a Tenant Who Doesn't Pay Rent in the Bronx", category: 'diy-property-management' },
   { title: 'What Bronx Landlords Need to Know About HPD Lead Paint Rules', category: 'property-management' },
   { title: '4 Signs Your Bronx Rental Property Needs Professional Management', category: 'property-management' },
+  { title: 'How to Screen Bronx Tenants Without Getting Sued', category: 'property-management' },
+  { title: 'What Should a Bronx Landlord Expect From a Property Manager for $99 a Unit?', category: 'property-management' },
+  { title: 'How Much Rent Are You Losing to Slow Tenant Turnover in Your Bronx Building?', category: 'property-management' },
+  { title: 'How Do You Switch Property Managers in the Bronx Without Losing a Month of Rent?', category: 'property-management' },
+  // --- diy-property-management (owner-facing) ---
+  { title: '5 Free Tools Every DIY Landlord in the Bronx Needs', category: 'diy-property-management' },
+  { title: 'Should Bronx Landlords Self-Manage or Hire a Property Manager?', category: 'diy-property-management' },
+  { title: "How to Handle a Tenant Who Doesn't Pay Rent in the Bronx", category: 'diy-property-management' },
   { title: 'How Bronx Landlords Can Cut Vacancy Time in Half', category: 'diy-property-management' },
   { title: 'The Bronx Landlord Guide to NYC Housing Court in 2026', category: 'diy-property-management' },
+  { title: 'How Many Hours a Month Does Self-Managing a Bronx Rental Really Take?', category: 'diy-property-management' },
+  { title: 'What Does a Bronx Lease Need to Include to Actually Protect You in 2026?', category: 'diy-property-management' },
+  // --- investments (occasional) ---
+  { title: 'Is Buying a Rental Property in the Bronx Still a Good Investment?', category: 'investments' },
   { title: '3 Bronx Neighborhoods With the Best Rental ROI in 2026', category: 'investments' },
-  { title: 'How to Screen Bronx Tenants Without Getting Sued', category: 'property-management' },
+  { title: 'How Much Cash Flow Should a Bronx Multi-Family Actually Produce in 2026?', category: 'investments' },
+  // --- property-automation (sparing) ---
   { title: '5 Smart Sensors Every Bronx Landlord Should Install in 2026', category: 'property-automation' },
   { title: 'How AI Security Cameras Are Reducing Vacancy Crimes in NYC Rental Buildings', category: 'property-automation' },
-  { title: 'Can a Bronx Landlord Automate Rent Collection with Smart Tech?', category: 'property-automation' },
-  { title: '3 IoT Devices That Pay for Themselves in Your Bronx Rental Property', category: 'property-automation' },
-  { title: 'How Bronx Landlords Are Using Smart Locks to Cut Vacancy Turnaround Time', category: 'property-automation' },
+  // --- broker-partnerships (sparing) ---
   { title: 'How Do Bronx Real Estate Brokers Earn Referral Income After the Deal Closes?', category: 'broker-partnerships' },
-  { title: 'What Should a Bronx Broker Tell a Client Who Wants to Self-Manage a 6-Unit Building?', category: 'broker-partnerships' },
   { title: '5 Signs Your Bronx Investor Client Needs a Property Manager — Not Just a New Agent', category: 'broker-partnerships' },
-  { title: 'Can a Bronx Broker Grow a Referral Business Without Adding to Their Workload?', category: 'broker-partnerships' },
-  { title: 'How Does the DoryAngel Broker Referral Program Work in NYC?', category: 'broker-partnerships' },
 ];
 
 function getSeason(month) {
@@ -73,7 +82,11 @@ Rules:
 - Title must be a question OR start with a number — but VARY the opening word. Do NOT start with "Are", "Is", "Can", or "How" if more than one of the last 5 titles already uses that word
 - Address a real landlord pain point; use seasonal relevance where fitting
 - Category must be exactly one of: property-management, diy-property-management, investments, property-automation, broker-partnerships
-- IMPORTANT: strongly prefer "investments", "property-automation", or "broker-partnerships" — these are underrepresented. Use "property-management" or "diy-property-management" only if no suitable angle exists in the preferred categories for this season
+- CATEGORY PREFERENCE (data-driven by real search traffic): the site's organic clicks come almost entirely from owner-facing "property management bronx" searches. Weight new topics accordingly:
+    • DEFAULT to "property-management" or "diy-property-management" (owner-facing) — pick one of these unless a genuinely strong angle in another category fits this season. These are the categories that actually convert.
+    • Use "investments" occasionally, when a concrete Bronx ROI / market / rent-vs-buy angle fits the season.
+    • Use "property-automation" or "broker-partnerships" only sparingly and only for a genuinely fresh angle — automation targets a speculative audience and broker posts target agents (not the owners who convert), so do NOT default to them.
+    • To keep variety, avoid repeating the SAME category as the last 2 posts shown above; but when in doubt, choose owner-facing property-management.
 - "broker-partnerships" posts target NYC real estate brokers/agents as referral partners — topics should cover referral income, how to advise landlord clients, or how the DoryAngel partner program works
 
 Reply ONLY with valid JSON: {"title": "...", "category": "..."}`,
