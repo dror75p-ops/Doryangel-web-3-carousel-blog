@@ -1,0 +1,43 @@
+name: coverage-probe (throwaway)
+
+on:
+  push:
+    branches: [claude/doryangel-traffic-decline-xp2g4p]
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Per-URL indexability of all blog posts
+        run: |
+          set +e
+          UA="Mozilla/5.0 coverage-probe"
+          echo "Fetching sitemap..."
+          curl -sS -A "$UA" "https://www.doryangel.com/sitemap.xml" -o /tmp/sm.xml
+          # Extract only the /blog/ loc URLs
+          grep -oE 'https://www\.doryangel\.com/blog/[^<]+' /tmp/sm.xml | sort -u > /tmp/urls.txt
+          total=$(wc -l < /tmp/urls.txt)
+          echo "Blog URLs in sitemap: $total"
+          echo ""
+          printf '%-6s %-9s %-9s %s\n' "STATUS" "NOINDEX" "SELFCAN" "URL"
+          echo "-------------------------------------------------------------------"
+          bad=0
+          while IFS= read -r url; do
+            code=$(curl -sS -A "$UA" -o /tmp/p.html -w '%{http_code}' -L "$url")
+            # noindex?
+            if grep -iq 'noindex' /tmp/p.html; then noidx="YES-BAD"; else noidx="no"; fi
+            # canonical value
+            can=$(grep -ioE '<link[^>]*rel=["'"'"']canonical["'"'"'][^>]*>' /tmp/p.html | head -1 \
+                  | grep -ioE 'href=["'"'"'][^"'"'"']*' | sed -E 's/href=["'"'"']//')
+            if [ "$can" = "$url" ]; then selfcan="self"; else selfcan="DIFF"; fi
+            flag=""
+            if [ "$code" != "200" ] || [ "$noidx" = "YES-BAD" ] || [ "$selfcan" = "DIFF" ]; then
+              flag="  <== CHECK"; bad=$((bad+1))
+            fi
+            printf '%-6s %-9s %-9s %s%s\n' "$code" "$noidx" "$selfcan" "${url#https://www.doryangel.com}" "$flag"
+            if [ "$selfcan" = "DIFF" ]; then echo "        canonical-> $can"; fi
+          done < /tmp/urls.txt
+          echo "-------------------------------------------------------------------"
+          echo "Flagged (non-200 / noindex / canonical mismatch): $bad of $total"
+          echo "done."
