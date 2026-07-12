@@ -45,6 +45,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GA4_PROPERTY_ID: ${{ secrets.GA4_PROPERTY_ID }}
           GOOGLE_SA_KEY: ${{ secrets.GOOGLE_SA_KEY }}
+          CLARITY_API_TOKEN: ${{ secrets.CLARITY_API_TOKEN }}
         run: node scripts/daily-audit.js
 
       - name: Commit improvements and open PR
