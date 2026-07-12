@@ -322,6 +322,68 @@ async function getMakeStats() {
   }
 }
 
+// ─── Microsoft Clarity behavioral insights ────────────────────────────────────
+// One call to the live-insights endpoint (last 3 days) returns traffic, scroll
+// depth, engagement, and the friction signals (dead/rage/quickback clicks,
+// script errors) plus top pages + device breakdown. Consent-gated on our site,
+// so it captures only cookie-accepters and structurally undercounts — treat it
+// as directional behavior, not volume. Returns null when the token is absent
+// (integration stays dormant until CLARITY_API_TOKEN is set).
+async function getClarityStats() {
+  const token = process.env.CLARITY_API_TOKEN;
+  if (!token) return null;
+  try {
+    const res = await fetch(
+      'https://www.clarity.ms/export-data/api/v1/project-live-insights?numOfDays=3',
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    if (!res.ok) throw new Error(`Clarity ${res.status}`);
+    const data = await res.json();
+
+    const byName = {};
+    for (const m of data) byName[m.metricName] = m.information || [];
+    const first = (arr) => (arr && arr[0]) || {};
+
+    const traffic = first(byName.Traffic);
+    const scroll  = first(byName.ScrollDepth);
+    const eng     = first(byName.EngagementTime);
+    // Friction metrics carry a total count (subTotal) + % of sessions affected.
+    const friction = (name) => {
+      const info = first(byName[name]);
+      return { count: +(info.subTotal || 0), pctSessions: info.sessionsWithMetricPercentage || 0 };
+    };
+    const topPages = (byName.PopularPages || [])
+      .map(p => ({ url: p.url, visits: +(p.visitsCount || 0) }))
+      .sort((a, b) => b.visits - a.visits).slice(0, 5);
+    const devices = (byName.Device || [])
+      .map(d => ({ name: d.name, sessions: +(d.sessionsCount || 0) }));
+    const sources = (byName.ReferrerUrl || [])
+      .map(r => ({ name: r.name || 'direct', sessions: +(r.sessionsCount || 0) }))
+      .sort((a, b) => b.sessions - a.sessions).slice(0, 5);
+
+    return {
+      windowDays: 3,
+      sessions:        +(traffic.totalSessionCount || 0),
+      botSessions:     +(traffic.totalBotSessionCount || 0),
+      users:           +(traffic.distinctUserCount || 0),
+      pagesPerSession: Math.round((traffic.pagesPerSessionPercentage || 0) * 100) / 100,
+      avgScrollDepth:  scroll.averageScrollDepth ?? null,
+      engagementSec:   +(eng.totalTime || 0),
+      activeSec:       +(eng.activeTime || 0),
+      deadClicks:      friction('DeadClickCount'),
+      rageClicks:      friction('RageClickCount'),
+      quickbacks:      friction('QuickbackClick'),
+      scriptErrors:    friction('ScriptErrorCount'),
+      topPages,
+      devices,
+      sources,
+    };
+  } catch (err) {
+    console.warn(`Clarity fetch failed: ${err.message}`);
+    return null;
+  }
+}
+
 // ─── Auto-implementable improvements (highest priority first) ─────────────────
 
 const AUTO_TASKS = [
@@ -428,9 +490,19 @@ async function createGitHubIssue(title, body) {
 
 // ─── Claude — generate a fresh issue idea ─────────────────────────────────────
 
-async function generateIssueIdea(state, openIssueTitles) {
+async function generateIssueIdea(state, openIssueTitles, ga4, clarity) {
   const catSummary = Object.entries(state.categoryCounts)
     .map(([c, n]) => `${c}: ${n} posts`).join(', ');
+
+  const ga4Line = ga4
+    ? `${ga4.sessions.month} sessions / ${ga4.users.month} users (30d); top pages: ${ga4.topPages.slice(0, 3).map(p => `${p.path} (${p.sessions})`).join(', ') || 'n/a'}`
+    : 'not connected';
+
+  const clarityLine = clarity
+    ? `${clarity.sessions} sessions / ${clarity.users} users (last 3d — consent-gated, so it UNDERCOUNTS and skews to power users; treat as directional, not volume). `
+      + `Avg scroll depth ${clarity.avgScrollDepth ?? 'n/a'}%. Friction: dead-clicks ${clarity.deadClicks.pctSessions}% of sessions, rage-clicks ${clarity.rageClicks.pctSessions}%, quickbacks ${clarity.quickbacks.pctSessions}%, script-errors ${clarity.scriptErrors.pctSessions}%. `
+      + `Top pages: ${clarity.topPages.slice(0, 3).map(p => `${p.url} (${p.visits})`).join(', ') || 'n/a'}`
+    : 'not connected';
 
   const prompt = `You are the growth advisor for DoryAngel LLC, a NYC flat-fee property management company targeting Bronx landlords.
 
@@ -438,6 +510,12 @@ Current website state:
 - Blog posts: ${state.postCount} total — ${catSummary}
 - Most recent posts: ${state.recentPosts.map(p => `"${p.title}" (${p.category})`).join(', ')}
 - Recent activity: ${state.gitLog.split('\n').slice(0, 8).join(' | ')}
+
+Real user analytics — GROUND your suggestion in this actual behavior, don't guess:
+- GA4 traffic: ${ga4Line}
+- Clarity behavior: ${clarityLine}
+
+If the behavioral data reveals a concrete UX problem — low scroll depth on a key page, meaningful dead/rage clicks, high quickbacks (instant bounces), or script errors — PRIORITIZE a task that fixes it, and cite the specific number in your "## Why". Only fall back to a generic growth idea when the behavioral data shows no clear problem. Ignore metrics that are near-zero on a tiny sample.
 
 Open improvement issues already created (avoid duplicating these):
 ${openIssueTitles.length ? openIssueTitles.map(t => `- ${t}`).join('\n') : '- None yet'}
@@ -474,7 +552,7 @@ Return ONLY valid JSON (no markdown, no explanation outside the JSON):
 
 // ─── Email digest ─────────────────────────────────────────────────────────────
 
-async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make }) {
+async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make, clarity }) {
   const { stats, categoryCounts, postCount } = state;
 
   const resultColor     = resultType === 'code' ? '#E8F8E8' : '#E7F3FF';
@@ -563,6 +641,69 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
     <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:12px 16px;margin-bottom:24px;">
       <p style="margin:0;color:#92400E;font-size:12px;font-weight:700;">🔌 GA4 not connected</p>
       <p style="margin:4px 0 0;color:#92400E;font-size:12px;">Add <code>GA4_PROPERTY_ID</code> and <code>GOOGLE_SA_KEY</code> as GitHub secrets to see traffic data here.</p>
+    </div>`;
+  }
+
+  // ── Clarity behavioral section ────────────────────────────────────────────────
+  let claritySection = '';
+  if (clarity) {
+    const devLine = clarity.devices.map(d => `${d.name} ${d.sessions}`).join(' · ') || '—';
+    const pageRows = clarity.topPages.map((p, i) => {
+      const bg = i % 2 === 0 ? '#ffffff' : '#F8FAFB';
+      const label = p.url.length > 46 ? p.url.slice(0, 46) + '…' : p.url;
+      return `<tr style="background:${bg};">
+        <td style="padding:5px 12px;color:#556070;font-size:12px;font-family:monospace;">${label}</td>
+        <td style="padding:5px 12px;text-align:right;font-weight:700;color:#0F2847;font-size:12px;">${p.visits}</td>
+      </tr>`;
+    }).join('');
+    const frictionCell = (lbl, m) => {
+      const color = m.pctSessions >= 20 ? '#B91C1C' : m.pctSessions >= 5 ? '#B7791F' : '#0F2847';
+      return `<td style="padding:10px 6px;text-align:center;border-right:1px solid #E2E8F0;">
+        <div style="font-size:18px;font-weight:700;color:${color};">${m.pctSessions}%</div>
+        <div style="font-size:10px;color:#8B9BAE;text-transform:uppercase;">${lbl}</div>
+      </td>`;
+    };
+    claritySection = `
+    <!-- Clarity behavior -->
+    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">🖱 User behavior (Clarity, last ${clarity.windowDays}d)</h3>
+    <table style="border-collapse:collapse;width:100%;margin-bottom:6px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
+      <tr style="background:#ffffff;">
+        <td style="padding:12px;text-align:center;width:33%;border-right:1px solid #E2E8F0;">
+          <div style="font-size:22px;font-weight:700;color:#0F2847;">${clarity.sessions}</div>
+          <div style="font-size:11px;color:#8B9BAE;text-transform:uppercase;">Sessions</div>
+        </td>
+        <td style="padding:12px;text-align:center;width:33%;border-right:1px solid #E2E8F0;">
+          <div style="font-size:22px;font-weight:700;color:#0F2847;">${clarity.users}</div>
+          <div style="font-size:11px;color:#8B9BAE;text-transform:uppercase;">Users</div>
+        </td>
+        <td style="padding:12px;text-align:center;width:34%;">
+          <div style="font-size:22px;font-weight:700;color:#1E5AA8;">${clarity.avgScrollDepth ?? '—'}%</div>
+          <div style="font-size:11px;color:#8B9BAE;text-transform:uppercase;">Avg scroll</div>
+        </td>
+      </tr>
+    </table>
+    <p style="font-size:11px;color:#8B9BAE;margin:0 0 8px;">Friction — % of sessions affected (lower is better)</p>
+    <table style="border-collapse:collapse;width:100%;margin-bottom:8px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
+      <tr style="background:#ffffff;">
+        ${frictionCell('Dead clicks', clarity.deadClicks)}
+        ${frictionCell('Rage clicks', clarity.rageClicks)}
+        ${frictionCell('Quickbacks', clarity.quickbacks)}
+        <td style="padding:10px 6px;text-align:center;">
+          <div style="font-size:18px;font-weight:700;color:${clarity.scriptErrors.pctSessions >= 5 ? '#B91C1C' : '#0F2847'};">${clarity.scriptErrors.pctSessions}%</div>
+          <div style="font-size:10px;color:#8B9BAE;text-transform:uppercase;">Script errors</div>
+        </td>
+      </tr>
+    </table>
+    <p style="font-size:11px;color:#8B9BAE;margin:0 0 8px;">Top pages · devices: ${devLine}</p>
+    <table style="border-collapse:collapse;width:100%;margin-bottom:20px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
+      ${pageRows}
+    </table>
+    <p style="font-size:11px;color:#8B9BAE;margin:-12px 0 24px;font-style:italic;">Consent-gated — captures only cookie-accepters, so it undercounts. Directional behavior, not volume.</p>`;
+  } else {
+    claritySection = `
+    <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:12px 16px;margin-bottom:24px;">
+      <p style="margin:0;color:#92400E;font-size:12px;font-weight:700;">🔌 Clarity not connected</p>
+      <p style="margin:4px 0 0;color:#92400E;font-size:12px;">Add a <code>CLARITY_API_TOKEN</code> GitHub secret (Clarity → Settings → Data export) to feed user-behavior signals into Arlo.</p>
     </div>`;
   }
 
@@ -686,6 +827,9 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
     <!-- GA4 traffic -->
     ${ga4Section}
 
+    <!-- Clarity user behavior -->
+    ${claritySection}
+
     <!-- Make.com Hailey leads -->
     ${makeSection}
 
@@ -714,6 +858,17 @@ async function main() {
   const state = readState();
   console.log(`Posts: ${state.postCount} | Categories: ${JSON.stringify(state.categoryCounts)}`);
   console.log(`Checks: ${JSON.stringify(state.checks)}`);
+
+  // Pull live analytics up front so Arlo's idea generator can learn from real
+  // user behavior (GA4 traffic + Clarity friction signals), not just guess.
+  const [ga4, make, clarity] = await Promise.all([getGA4Stats(), getMakeStats(), getClarityStats()]);
+  console.log(`GA4: ${ga4 ? `sessions today=${ga4.sessions.day}` : 'not configured'}`);
+  console.log(`Leads: ${make ? `total=${make.totals.total}, 30d=${make.totals.month}` : 'not configured'}`);
+  console.log(`Clarity: ${clarity ? `${clarity.sessions} sessions/3d, scroll ${clarity.avgScrollDepth}%` : 'not configured'}`);
+  if (make) {
+    const h = make.sources.find(s => s.chat);
+    if (h && h.chat) console.log(`Hailey: ${h.chat.qualified}/${h.chat.sessions} sessions = ${h.chat.successRate}% success rate`);
+  }
 
   // Find the first pending auto-task
   const pendingTask = AUTO_TASKS.find(t => t.isNeeded(state));
@@ -746,7 +901,7 @@ async function main() {
     const openIssues = await getOpenIssues();
     console.log(`Open issues: ${openIssues.length}`);
 
-    const idea = await generateIssueIdea(state, openIssues);
+    const idea = await generateIssueIdea(state, openIssues, ga4, clarity);
     console.log(`Idea: ${idea.title}`);
 
     // Issue creation is best-effort — a failure here (e.g. bad token) must not
@@ -767,15 +922,7 @@ async function main() {
     resultType = 'issue';
   }
 
-  const [ga4, make] = await Promise.all([getGA4Stats(), getMakeStats()]);
-  console.log(`GA4: ${ga4 ? `sessions today=${ga4.sessions.day}` : 'not configured'}`);
-  console.log(`Leads: ${make ? `total=${make.totals.total}, 30d=${make.totals.month}` : 'not configured'}`);
-  if (make) {
-    const h = make.sources.find(s => s.chat);
-    if (h && h.chat) console.log(`Hailey: ${h.chat.qualified}/${h.chat.sessions} sessions = ${h.chat.successRate}% success rate`);
-  }
-
-  await sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make });
+  await sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make, clarity });
   console.log(`Digest sent to ${NOTIFY_EMAIL}`);
 }
 
