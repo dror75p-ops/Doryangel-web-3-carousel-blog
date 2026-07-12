@@ -54,10 +54,72 @@ function getSeason(month) {
   return 'winter';
 }
 
-async function pickTopicWithAI(existingPosts) {
+// Clarity per-category attention signal: pulls last-3-day scroll depth +
+// engagement per blog URL, maps each URL to its post category, and aggregates
+// so Nave can lean toward the categories that actually hold readers. Consent-
+// gated + 3-day window = thin data, so the picker is told to treat it as
+// directional and ignore tiny samples. Returns null when the token is absent.
+async function getClarityCategorySignals(existingPosts) {
+  const token = process.env.CLARITY_API_TOKEN;
+  if (!token) return null;
+  try {
+    const res = await fetch(
+      'https://www.clarity.ms/export-data/api/v1/project-live-insights?numOfDays=3&dimension1=URL',
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    if (!res.ok) throw new Error(`Clarity ${res.status}`);
+    const data = await res.json();
+
+    const byName = {};
+    for (const m of data) byName[m.metricName] = m.information || [];
+
+    const catBySlug = {};
+    for (const p of existingPosts) catBySlug[p.slug] = p.category;
+    const catForUrl = (u) => {
+      const m = (u || '').match(/\/blog\/([^/]+)\/?/);
+      return m ? catBySlug[m[1]] : null;
+    };
+
+    const agg = {}; // category -> { scrollSum, scrollN, engSec, sessions }
+    const bump = (c) => (agg[c] = agg[c] || { scrollSum: 0, scrollN: 0, engSec: 0, sessions: 0 });
+    for (const r of (byName.ScrollDepth || [])) {
+      const c = catForUrl(r.Url);
+      if (c && r.averageScrollDepth != null) { const a = bump(c); a.scrollSum += r.averageScrollDepth; a.scrollN += 1; }
+    }
+    for (const r of (byName.EngagementTime || [])) {
+      const c = catForUrl(r.Url); if (c) bump(c).engSec += +(r.totalTime || 0);
+    }
+    for (const r of (byName.Traffic || [])) {
+      const c = catForUrl(r.Url); if (c) bump(c).sessions += +(r.totalSessionCount || 0);
+    }
+
+    const categories = Object.entries(agg)
+      .map(([category, v]) => ({
+        category,
+        avgScroll: v.scrollN ? Math.round(v.scrollSum / v.scrollN) : null,
+        engSec: v.engSec,
+        sessions: v.sessions,
+      }))
+      .filter(c => c.sessions > 0 || c.avgScroll != null)
+      .sort((a, b) => (b.avgScroll || 0) - (a.avgScroll || 0));
+
+    return categories.length ? { windowDays: 3, categories } : null;
+  } catch (err) {
+    console.warn(`Clarity topic signals failed: ${err.message}`);
+    return null;
+  }
+}
+
+async function pickTopicWithAI(existingPosts, claritySignals) {
   const today = formatDate(new Date());
   const season = getSeason(new Date().getMonth() + 1);
   const recentTitles = existingPosts.slice(0, 10).map(p => `- ${p.title}`).join('\n') || 'None yet';
+
+  const engagementLine = claritySignals && claritySignals.categories.length
+    ? claritySignals.categories
+        .map(c => `${c.category} ${c.avgScroll != null ? c.avgScroll + '% scroll' : 'no scroll data'} (${c.sessions} sess)`)
+        .join(', ')
+    : null;
 
   try {
     const response = await anthropic.messages.create({
@@ -88,6 +150,7 @@ Rules:
     • Use "property-automation" or "broker-partnerships" only sparingly and only for a genuinely fresh angle — automation targets a speculative audience and broker posts target agents (not the owners who convert), so do NOT default to them.
     • To keep variety, avoid repeating the SAME category as the last 2 posts shown above; but when in doubt, choose owner-facing property-management.
 - "broker-partnerships" posts target NYC real estate brokers/agents as referral partners — topics should cover referral income, how to advise landlord clients, or how the DoryAngel partner program works
+${engagementLine ? `- ENGAGEMENT SIGNAL (Clarity, last ${claritySignals.windowDays}d — consent-gated + short window, so it is THIN; treat as directional and IGNORE categories with only a handful of sessions): how well each blog category held readers, by average scroll depth — ${engagementLine}. When two categories are otherwise equally good candidates for today, prefer the one that holds attention better. Do NOT override the owner-facing category preference above based on a few sessions.` : ''}
 
 Reply ONLY with valid JSON: {"title": "...", "category": "..."}`,
       }],
@@ -500,7 +563,11 @@ async function main() {
     process.exit(0);
   }
 
-  const topic = await pickTopicWithAI(posts);
+  const claritySignals = await getClarityCategorySignals(posts);
+  if (claritySignals) {
+    console.log(`Clarity signal: ${claritySignals.categories.map(c => `${c.category}=${c.avgScroll}%/${c.sessions}s`).join(', ')}`);
+  }
+  const topic = await pickTopicWithAI(posts, claritySignals);
   console.log(`Topic: "${topic.title}" (${topic.category})`);
 
   const researchNotes = await researchTopic(topic);

@@ -48,6 +48,7 @@ jobs:
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
           GOOGLE_SA_KEY: ${{ secrets.GOOGLE_SA_KEY }}
           DIGEST_WEBHOOK_SECRET: ${{ secrets.DIGEST_WEBHOOK_SECRET }}
+          CLARITY_API_TOKEN: ${{ secrets.CLARITY_API_TOKEN }}
           FORCE_PUBLISH: ${{ github.event.inputs.force || 'false' }}
           DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
         run: node scripts/generate-post.js
