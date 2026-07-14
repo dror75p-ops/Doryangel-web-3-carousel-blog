@@ -750,6 +750,11 @@
       "source": "/propertyinspectionsmanagement",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
     }
   ],
   "headers": [
