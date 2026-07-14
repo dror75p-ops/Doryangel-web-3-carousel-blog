@@ -720,6 +720,36 @@
       "source": "/post/:slug*",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/portfolio",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/cash-purchase",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/vpm-call-center",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/brokers-1",
+      "destination": "/broker-partner.html",
+      "permanent": true
+    },
+    {
+      "source": "/blog-1",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
+      "source": "/propertyinspectionsmanagement",
+      "destination": "/",
+      "permanent": true
     }
   ],
   "headers": [
