@@ -283,6 +283,8 @@ This repo is now the **primary active design** and will replace the Wix website 
 - Auto-publish blog pipeline running every 2 days
 - Daily website audit automation live (PR #87) — runs every 9 AM EST, auto-fixes + creates GitHub Issues
 - Microsoft Clarity live (ID `x7y1bk4fhc`, consent-gated)
+  - **Nave reads a Clarity engagement signal** (`getClarityCategorySignals()` in `scripts/generate-post.js`, added 2026-07-11, secret `CLARITY_API_TOKEN`): pulls the last-3-day per-blog-URL scroll depth/engagement, maps each URL to its post category, and passes it to the topic-picker as a **tiebreaker only** (explicitly told never to override the owner-facing category preference). Fails soft — returns `null` (no signal) if the token is missing, the API errors, or no per-category data comes back, and the picker runs fine without it.
+  - **Why the signal is often empty right now (do NOT misdiagnose as a bug):** the site moved to **Vercel / `www.doryangel.com` on 2026-07-07** (platform transfer off the old host). Clarity data is tied to the live site, so the rolling 3-day export sits on top of a fresh cutover and is naturally **thin/settling**. Expect the Clarity signal to stay null or sparse for a couple of weeks post-move; only treat an empty signal as a real problem once post-Vercel traffic has had time to accumulate. (Current null path logs nothing — adding a one-line diagnostic to the token-missing / API-error / 0-categories branches is the cheap way to tell "thin data" from a real mismatch when it's next investigated.)
 - LocalBusiness + RealEstateAgent JSON-LD schema live in `<head>`
 - Client testimonials section added (PR #85)
 - GitHub Pages live at the URL above; custom domain switch pending
