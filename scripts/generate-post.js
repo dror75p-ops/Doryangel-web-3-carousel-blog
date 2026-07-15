@@ -63,7 +63,10 @@ function getSeason(month) {
 // directional and ignore tiny samples. Returns null when the token is absent.
 async function getClarityCategorySignals(existingPosts) {
   const token = process.env.CLARITY_API_TOKEN;
-  if (!token) return null;
+  if (!token) {
+    console.log('Clarity: CLARITY_API_TOKEN not set — engagement signal skipped');
+    return null;
+  }
   try {
     const res = await fetch(
       'https://www.clarity.ms/export-data/api/v1/project-live-insights?numOfDays=3&dimension1=URL',
@@ -105,7 +108,12 @@ async function getClarityCategorySignals(existingPosts) {
       .filter(c => c.sessions > 0 || c.avgScroll != null)
       .sort((a, b) => (b.avgScroll || 0) - (a.avgScroll || 0));
 
-    return categories.length ? { windowDays: 3, categories } : null;
+    if (!categories.length) {
+      const urlRows = (byName.Traffic || []).length || (byName.ScrollDepth || []).length;
+      console.log(`Clarity: API OK but 0 blog-category signals (raw URL rows: ${urlRows}) — likely thin data post-Vercel-move (2026-07-07) or no blog traffic in the 3-day window`);
+      return null;
+    }
+    return { windowDays: 3, categories };
   } catch (err) {
     console.warn(`Clarity topic signals failed: ${err.message}`);
     return null;
@@ -295,7 +303,7 @@ When asked to write a post, also produce:
 📅 Compliance Calendar (free) → https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/
 📬 DoryAngel Digest (free) → https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/
 🔍 AI Property Inspector (free) → https://dror75p-ops.github.io/Transcribe_meeting/
-📊 Property P&L Dashboard ($29) → https://www.doryangel.com/tools/pl-dashboard/
+📊 Property P&L Dashboard ($7.99) → https://www.doryangel.com/tools/pl-dashboard/
 🤝 Broker Partner Program ($50/unit/mo) → https://www.doryangel.com/broker-partner.html
 
 Then the hashtags on the final line. If the post topic naturally connects to one of these tools, bold the relevant tool line by wrapping it in ★ symbols (e.g. ★📅 Compliance Calendar...★) so it stands out. For broker-partnerships posts, move the Broker Partner Program line to the TOP of the list.

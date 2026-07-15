@@ -76,7 +76,7 @@
 - Open PR via `gh` / GitHub API
 - Hand the PR URL to the user so they can review in the GitHub mobile app
 - Wait for the user to merge before changes go live
-- Exception: auto-publish workflow runs as the DoryAngel Bot and commits directly to main on its 3-day schedule
+- Exception: auto-publish workflow runs as the DoryAngel Bot and commits directly to main on its 2-day schedule
 - Exception: trivial one-line tweaks if the user explicitly says "just push it"
 
 ## What's in this repo
@@ -124,7 +124,7 @@
 - **SEO per post**: `<title>`, meta description, canonical, Open Graph, Twitter Card, JSON-LD BlogPosting schema
 - **Featured post** flag on JSON for the larger card on the index
 - **Post page** has: full-width hero image, sticky CTA, markdown body, CTA block, "Continue reading" related posts (3 from same category)
-- **Auto-publish workflow** (`blog-autopublish.yml`, every 3 days): Nave (`generate-post.js`, also sends the topic-segmented digest) → `build-blog.js` → Vera (`social-post.js`, Facebook) → commit all to main. The digest broadcast needs no new secret (the Make webhook is a public URL); it reads subscribers via `GOOGLE_SA_KEY` (or public CSV fallback). Note: the digest fires before the post page is committed/deployed, so a clicked link can 404 for the ~1–2 min until GitHub Pages rebuilds — pre-existing, low-impact.
+- **Auto-publish workflow** (`blog-autopublish.yml`, every 2 days): Nave (`generate-post.js`, also sends the topic-segmented digest) → `build-blog.js` → Vera (`social-post.js`, Facebook) → commit all to main. The digest broadcast needs no new secret (the Make webhook is a public URL); it reads subscribers via `GOOGLE_SA_KEY` (or public CSV fallback). Note: the digest fires before the post page is committed/deployed, so a clicked link can 404 for the ~1–2 min until Vercel redeploys — pre-existing, low-impact.
 
 ### Post schema (current)
 
