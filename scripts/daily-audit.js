@@ -550,6 +550,41 @@ Return ONLY valid JSON (no markdown, no explanation outside the JSON):
   return JSON.parse(match[0]);
 }
 
+// Hard dedupe gate: the prompt-level "avoid duplicating these" instruction is
+// unreliable (the model re-proposes the same hub/calculator idea in different
+// words). This SEMANTIC check runs after generation and blocks filing when the
+// new idea is substantially the same work as an existing open issue. Fails open
+// (returns null) on any error so a hiccup never blocks a genuinely new idea.
+async function findDuplicateOpenIssue(idea, openIssueTitles) {
+  if (!openIssueTitles.length) return null;
+  const prompt = `You are a strict deduplication gate for a website-improvement backlog.
+
+NEW idea title: "${idea.title}"
+NEW idea summary: ${String(idea.body || '').replace(/\s+/g, ' ').slice(0, 600)}
+
+EXISTING open issues:
+${openIssueTitles.map((t, i) => `${i + 1}. ${t}`).join('\n')}
+
+Does the NEW idea deliver substantially the SAME work as any EXISTING issue — same page, hub, tool, or content topic — even if worded differently? Treat any pillar/hub/internal-linking idea as a duplicate of any other pillar/hub/internal-linking idea, and any cost/ROI/savings calculator as a duplicate of any other. Only answer false if the core deliverable is genuinely different.
+
+Return ONLY JSON: {"duplicate": true|false, "of": "<exact existing title, or empty>"}`;
+  try {
+    const msg = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 200,
+      messages: [{ role: 'user', content: prompt }],
+    });
+    const text = msg.content.find(b => b.type === 'text')?.text ?? '{}';
+    const m = text.match(/\{[\s\S]*\}/);
+    if (!m) return null;
+    const parsed = JSON.parse(m[0]);
+    return parsed.duplicate ? (parsed.of || 'an existing open issue') : null;
+  } catch (err) {
+    console.warn(`Dedupe gate check failed (${err.message}) — filing anyway`);
+    return null;
+  }
+}
+
 // ─── Email digest ─────────────────────────────────────────────────────────────
 
 async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make, clarity }) {
@@ -904,21 +939,29 @@ async function main() {
     const idea = await generateIssueIdea(state, openIssues, ga4, clarity);
     console.log(`Idea: ${idea.title}`);
 
-    // Issue creation is best-effort — a failure here (e.g. bad token) must not
-    // crash the run and block the daily digest email below.
-    try {
-      resultLink = await createGitHubIssue(idea.title, idea.body);
-      console.log(`Issue created: ${resultLink}`);
-    } catch (err) {
-      console.warn(`Issue creation failed (${err.message}) — sending digest anyway`);
+    // Hard dedupe gate — if the idea duplicates an open issue, do NOT file it.
+    const dupOf = await findDuplicateOpenIssue(idea, openIssues);
+    if (dupOf) {
+      console.log(`Dedupe gate: idea duplicates existing issue "${dupOf}" — not filing a new one.`);
       resultLink = `https://github.com/${REPO}/issues`;
+      taskLabel = idea.title;
+      taskWhy = `Deduped — overlaps the existing open issue "${dupOf}", so Arlo did not file a duplicate.`;
+    } else {
+      // Issue creation is best-effort — a failure here (e.g. bad token) must not
+      // crash the run and block the daily digest email below.
+      try {
+        resultLink = await createGitHubIssue(idea.title, idea.body);
+        console.log(`Issue created: ${resultLink}`);
+      } catch (err) {
+        console.warn(`Issue creation failed (${err.message}) — sending digest anyway`);
+        resultLink = `https://github.com/${REPO}/issues`;
+      }
+      taskLabel = idea.title;
+      taskWhy = idea.why_today;
     }
 
     writeFileSync('/tmp/audit-changed.txt', 'false');
     writeFileSync('/tmp/audit-task.txt', idea.title);
-
-    taskLabel = idea.title;
-    taskWhy = idea.why_today;
     resultType = 'issue';
   }
 
