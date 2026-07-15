@@ -607,6 +607,7 @@ function buildSitemap(posts) {
     `  <url><loc>${SITE_URL}/broker-partner.html</loc><lastmod>2026-05-23</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
     `  <url><loc>${SITE_URL}/flat-fee-vs-commission/</loc><lastmod>2026-07-08</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
     `  <url><loc>${SITE_URL}/tax-checklist/</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
+    `  <url><loc>${SITE_URL}/faq/</loc><lastmod>2026-07-15</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
     ...posts.map(p =>
       `  <url><loc>${SITE_URL}/blog/${p.slug}/</loc><lastmod>${p.publishedDate}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`
     ),
