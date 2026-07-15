@@ -336,13 +336,104 @@ footer.post-footer a { color: white; text-decoration: none; }
 
   </div>
 
-  <div class="cta-block">
-    <div class="city">Managing rental property in NYC?</div>
-    <p>DoryAngel handles everything for a flat <strong>$99/unit/month</strong> — no hidden fees, no percentage tricks. Bronx, Manhattan, Queens, Brooklyn.</p>
-    <a class="btn" href="https://www.doryangel.com/#contact">
-      Get a Free Consultation →
-    </a>
-  </div>
+  <style>
+.dcta{position:relative;overflow:hidden;margin:48px 0 0;border-radius:18px;padding:36px 30px;color:#fff;background:linear-gradient(135deg,#0a2540 0%,#123a63 45%,#1565c0 100%);box-shadow:0 20px 50px -12px rgba(10,37,64,.55);}
+.dcta::before{content:"";position:absolute;top:-60%;left:-30%;width:60%;height:220%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.10),transparent);transform:rotate(18deg);animation:dctaShine 6s ease-in-out infinite;pointer-events:none;}
+@keyframes dctaShine{0%{left:-30%}55%,100%{left:130%}}
+@media (prefers-reduced-motion:reduce){.dcta::before{display:none}}
+.dcta-eyebrow{position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);color:#eaf3ff;font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:6px 12px;border-radius:999px;margin-bottom:14px;}
+.dcta-eyebrow .dot{width:8px;height:8px;border-radius:50%;background:#5ee6a8;animation:dctaPulse 1.8s infinite}
+@keyframes dctaPulse{0%{box-shadow:0 0 0 0 rgba(94,230,168,.7)}70%{box-shadow:0 0 0 10px rgba(94,230,168,0)}100%{box-shadow:0 0 0 0 rgba(94,230,168,0)}}
+.dcta h3{position:relative;z-index:1;font-family:'DM Serif Display',Georgia,serif;font-size:27px;line-height:1.2;margin:0 0 8px;color:#fff}
+.dcta .dcta-sub{position:relative;z-index:1;font-size:15px;line-height:1.6;color:rgba(255,255,255,.85);margin:0 0 22px;max-width:54ch}
+.dcta .dcta-sub strong{color:#ffd97a}
+.dcta-form{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dcta-form .full{grid-column:1/-1}
+.dcta-form input,.dcta-form select,.dcta-form textarea{width:100%;box-sizing:border-box;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.97);color:#0a2540;font-size:15px;font-family:inherit;padding:12px 14px;border-radius:10px;transition:box-shadow .15s,border-color .15s;outline:none}
+.dcta-form input::placeholder,.dcta-form textarea::placeholder{color:#7a8aa0}
+.dcta-form input:focus,.dcta-form select:focus,.dcta-form textarea:focus{border-color:#5ee6a8;box-shadow:0 0 0 3px rgba(94,230,168,.35)}
+.dcta-form textarea{min-height:74px;resize:vertical}
+.dcta-consent{grid-column:1/-1;display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.5;color:rgba(255,255,255,.8)}
+.dcta-consent input{width:16px;height:16px;margin-top:2px;flex:0 0 auto}
+.dcta-consent a{color:#ffd97a;text-decoration:underline}
+.dcta-btn{grid-column:1/-1;position:relative;border:0;cursor:pointer;font-family:inherit;font-size:16px;font-weight:800;letter-spacing:.2px;color:#0a2540;padding:15px 24px;border-radius:12px;background:linear-gradient(135deg,#ffd97a,#ffb347 55%,#ff9d3d);background-size:180% 180%;box-shadow:0 12px 26px -8px rgba(255,157,61,.6);transition:transform .15s,box-shadow .2s,background-position .4s;display:inline-flex;align-items:center;justify-content:center;gap:9px}
+.dcta-btn:hover{transform:translateY(-2px);background-position:100% 50%;box-shadow:0 16px 34px -8px rgba(255,157,61,.75)}
+.dcta-btn:disabled{opacity:.7;cursor:not-allowed;transform:none}
+.dcta-note{grid-column:1/-1;font-size:12px;color:rgba(255,255,255,.6);text-align:center;margin-top:2px}
+.dcta-msg{grid-column:1/-1;display:none;padding:14px 16px;border-radius:10px;font-size:14.5px;font-weight:600}
+.dcta-msg.ok{display:block;background:rgba(94,230,168,.16);border:1px solid rgba(94,230,168,.5);color:#d6ffec}
+.dcta-msg.err{display:block;background:rgba(255,120,120,.16);border:1px solid rgba(255,120,120,.5);color:#ffdede}
+.dcta .hp{position:absolute!important;left:-9999px!important;opacity:0;height:0;width:0}
+@media (max-width:560px){.dcta-form{grid-template-columns:1fr}.dcta h3{font-size:23px}.dcta{padding:28px 20px}}
+</style>
+<div class="dcta">
+  <span class="dcta-eyebrow"><span class="dot"></span>Free property audit &bull; No obligation</span>
+  <h3>Ready to stop managing headaches?</h3>
+  <p class="dcta-sub">DoryAngel manages your NYC rental for a flat <strong>$99/unit/month</strong> &mdash; no hidden fees, no percentage tricks. Tell us about your property and we&#39;ll reply within one business day.</p>
+  <form class="dcta-form" id="dcta-form" action="https://api.web3forms.com/submit" method="POST" novalidate>
+    <input type="hidden" name="access_key" value="6991fa6b-8f6c-4c24-9167-b7ee52026a98">
+    <input type="hidden" name="subject" id="dcta-subject" value="New DoryAngel Blog Lead">
+    <input type="hidden" name="from_name" value="DoryAngel Blog">
+    <input type="hidden" name="lead_source" id="dcta-source" value="blog">
+    <label class="hp"><input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off"></label>
+    <div class="dcta-field full">
+      <select name="role" aria-label="I am a">
+        <option value="" selected disabled>I am a&hellip;</option>
+        <option value="Property Owner/Landlord">Property Owner / Landlord</option>
+        <option value="Tenant">Tenant</option>
+        <option value="Vendor/Contractor">Vendor / Contractor</option>
+        <option value="Broker">Broker</option>
+      </select>
+    </div>
+    <div class="dcta-field"><input type="text" name="first-name" placeholder="First name" autocomplete="given-name"></div>
+    <div class="dcta-field"><input type="text" name="last-name" placeholder="Last name" autocomplete="family-name"></div>
+    <div class="dcta-field"><input type="email" name="email" placeholder="Email address*" required autocomplete="email"></div>
+    <div class="dcta-field"><input type="tel" name="phone" placeholder="Phone" autocomplete="tel"></div>
+    <div class="dcta-field full"><input type="text" name="property-address" placeholder="Property address (city / borough)" autocomplete="street-address"></div>
+    <div class="dcta-field full"><textarea name="message" placeholder="How many units? What do you need help with?"></textarea></div>
+    <label class="dcta-consent"><input type="checkbox" name="tcpa-consent" required value="yes"><span>I agree to be contacted by DoryAngel by phone, text, or email about my inquiry. Message/data rates may apply. See our <a href="https://www.doryangel.com/#contact">privacy terms</a>.</span></label>
+    <button type="submit" class="dcta-btn">Get My Free Audit &rarr;</button>
+    <div class="dcta-note">&#128274; Your info is private. No spam, ever.</div>
+    <div class="dcta-msg" id="dcta-msg" role="status" aria-live="polite"></div>
+  </form>
+</div>
+<script>
+(function(){
+  var form=document.getElementById('dcta-form');
+  if(!form) return;
+  var slug=(location.pathname.replace(/\/index\.html$/,'').replace(/\/$/,'').split('/').pop())||'blog';
+  var src=document.getElementById('dcta-source'); if(src) src.value='blog-'+slug;
+  var msg=document.getElementById('dcta-msg');
+  var btn=form.querySelector('.dcta-btn');
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    if(!form.checkValidity()){ form.reportValidity(); return; }
+    var role=((form.querySelector('[name="role"]')||{}).value||'').trim();
+    var subj=document.getElementById('dcta-subject'); if(subj&&role) subj.value='New '+role+' lead - DoryAngel (blog)';
+    var label=btn.textContent; btn.disabled=true; btn.textContent='Sending...'; msg.className='dcta-msg';
+    var data=new FormData(form);
+    fetch(form.action,{method:'POST',body:data,headers:{'Accept':'application/json'}})
+    .then(function(r){return r.json();})
+    .then(function(res){
+      if(res && res.success){
+        var g=function(n){return ((form.querySelector('[name="'+n+'"]')||{}).value||'').trim();};
+        try{fetch('https://hook.eu1.make.com/8hmzcp8p8qexbtbmb90n0gn4u9a5jix7',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:(g('first-name')+' '+g('last-name')).trim(),email:g('email'),phone:g('phone'),message:g('message'),lead_source:'blog-'+slug})}).catch(function(){});}catch(_){}
+        if(typeof gtag!=='undefined'){gtag('event','generate_lead',{event_category:'lead',event_label:'blog_cta'});}
+        form.reset();
+        msg.className='dcta-msg ok'; msg.textContent='Thanks! Your request is in - we will reply within one business day.';
+        btn.style.display='none';
+      } else {
+        msg.className='dcta-msg err'; msg.textContent='Something went wrong. Please call (516) 847-4999.';
+        btn.disabled=false; btn.textContent=label;
+      }
+    })
+    .catch(function(){
+      msg.className='dcta-msg err'; msg.textContent='Network error. Please try again or call (516) 847-4999.';
+      btn.disabled=false; btn.textContent=label;
+    });
+  });
+})();
+</script>
 
   <div class="internal-links">
     <p>Explore DoryAngel:</p>
