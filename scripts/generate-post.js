@@ -303,7 +303,7 @@ When asked to write a post, also produce:
 📅 Compliance Calendar (free) → https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/
 📬 DoryAngel Digest (free) → https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/
 🔍 AI Property Inspector (free) → https://dror75p-ops.github.io/Transcribe_meeting/
-📊 Property P&L Dashboard ($7.99) → https://www.doryangel.com/tools/pl-dashboard/
+📊 Property P&L Dashboard ($29.99) → https://www.doryangel.com/tools/pl-dashboard/
 🤝 Broker Partner Program ($50/unit/mo) → https://www.doryangel.com/broker-partner.html
 
 Then the hashtags on the final line. If the post topic naturally connects to one of these tools, bold the relevant tool line by wrapping it in ★ symbols (e.g. ★📅 Compliance Calendar...★) so it stands out. For broker-partnerships posts, move the Broker Partner Program line to the TOP of the list.
