@@ -28,6 +28,8 @@ const FALLBACK_TOPICS = [
   { title: 'How Much Rent Are You Losing to Slow Tenant Turnover in Your Bronx Building?', category: 'property-management' },
   { title: 'How Do You Switch Property Managers in the Bronx Without Losing a Month of Rent?', category: 'property-management' },
   // --- diy-property-management (owner-facing) ---
+  { title: 'Bronx vs. Mount Vernon: Where Do Landlords Actually Keep More of Their Rent?', category: 'diy-property-management' },
+  { title: 'Should You Self-Manage Your Bronx Rental or Hire Flat-Fee Management? A Real Cost Breakdown', category: 'diy-property-management' },
   { title: '5 Free Tools Every DIY Landlord in the Bronx Needs', category: 'diy-property-management' },
   { title: 'Should Bronx Landlords Self-Manage or Hire a Property Manager?', category: 'diy-property-management' },
   { title: "How to Handle a Tenant Who Doesn't Pay Rent in the Bronx", category: 'diy-property-management' },
@@ -133,11 +135,12 @@ Recent posts to avoid repeating:
 ${recentTitles}
 
 Rules:
-- Geography: anchor every title to the Bronx as the primary location. A second adjacent borough (Queens or Manhattan) MAY be included when it reads naturally — e.g. "...Your Bronx or Queens Rental?". Never use a non-Bronx borough or city alone.
-- WINNING TITLE FORMULA (validated by real traffic): lead with the OWNER'S pain or cost and address the owner directly with "you"/"your". Include a concrete number, dollar figure, or NYC law. These outperform service-description titles.
+- Geography: anchor every title to the Bronx as the primary location. Two natural extensions are allowed: (a) a second adjacent NYC borough (Queens or Manhattan) when it reads naturally — e.g. "...Your Bronx or Queens Rental?"; (b) a Bronx-vs-adjacent-area COMPARISON, a proven high-traffic format — the "Bronx vs. Mount Vernon" comparison was one of the best-performing posts. Mount Vernon (the Westchester city bordering the Bronx) is allowed ONLY inside a Bronx-anchored comparison, never as the sole location. Never use a non-Bronx borough or city as the sole anchor.
+- WINNING TITLE FORMULA (validated by real traffic): lead with the OWNER'S pain or cost and address the owner directly with "you"/"your". Include a concrete number, dollar figure, or NYC law. These outperform service-description titles. Head-to-head comparisons ("X vs. Y", "Is A cheaper than B?") perform especially well — especially owner-facing self-manage-vs-hire and Bronx-vs-neighboring-area angles.
   Gold-standard examples to emulate the SHAPE of:
     • "How Much Is Inefficient Management Costing Your Bronx or Queens Rental?"
-    • "What Should a Property Manager Actually Do for You?"
+    • "Bronx vs. Mount Vernon: Where Do Landlords Actually Keep More of Their Rent?"  (proven high-traffic comparison shape)
+    • "Should You Self-Manage Your Bronx Rental or Hire Flat-Fee Management? A Real Cost Breakdown"
     • "How to Screen Tenants in NYC Without Getting Sued"
     • "Flat-Fee PM in the Bronx: What $99/Unit Actually Means"
   Avoid generic, geo-less, marketing-speak titles (these got zero traffic): "Maximizing Returns with Management Investment Strategies", "The Power of Transparent Management Practices".
@@ -257,7 +260,7 @@ const SYSTEM_PROMPT = `You are a content writer for DoryAngel LLC, a NYC propert
 
 CRITICAL RULES — what works for our audience (validated by real traffic data):
 
-1. Title formula (validated by real traffic): must be either a question OR start with a number ("5 Free Tools...", "Top 3 Mistakes..."). Lead with the OWNER'S pain or cost and address the owner directly with "you"/"your" — problem-first beats service-description. Anchor to the Bronx as the primary location; a second adjacent borough (Queens or Manhattan) may be included when natural (e.g. "...Your Bronx or Queens Rental?"), but never a non-Bronx borough alone. Gold-standard shapes to emulate: "How Much Is Inefficient Management Costing Your Bronx or Queens Rental?", "What Should a Property Manager Actually Do for You?", "How to Screen Tenants in NYC Without Getting Sued", "Flat-Fee PM in the Bronx: What $99/Unit Actually Means". Never write generic, geo-less, marketing-speak titles ("Maximizing Returns with Management Investment Strategies", "The Power of Transparent Management Practices") — these got zero traffic.
+1. Title formula (validated by real traffic): must be either a question OR start with a number ("5 Free Tools...", "Top 3 Mistakes..."). Lead with the OWNER'S pain or cost and address the owner directly with "you"/"your" — problem-first beats service-description. Anchor to the Bronx as the primary location; a second adjacent borough (Queens or Manhattan) may be included when natural (e.g. "...Your Bronx or Queens Rental?"), but never a non-Bronx borough alone. A Bronx-vs-adjacent-area COMPARISON is a proven top-traffic format — the "Bronx vs. Mount Vernon" comparison was one of the best-performing posts; Mount Vernon (the Westchester city bordering the Bronx) is allowed ONLY inside a Bronx-anchored comparison, never as the sole location. Favor owner-facing DIY and self-manage-vs-hire angles — these convert best. Gold-standard shapes to emulate: "How Much Is Inefficient Management Costing Your Bronx or Queens Rental?", "Bronx vs. Mount Vernon: Where Do Landlords Actually Keep More of Their Rent?", "Should You Self-Manage Your Bronx Rental or Hire Flat-Fee Management? A Real Cost Breakdown", "How to Screen Tenants in NYC Without Getting Sued", "Flat-Fee PM in the Bronx: What $99/Unit Actually Means". Never write generic, geo-less, marketing-speak titles ("Maximizing Returns with Management Investment Strategies", "The Power of Transparent Management Practices") — these got zero traffic.
 
 2. Pain-point excerpts: 1-2 sentences focused on a real landlord pain point — money lost, tenant trouble, compliance fines. NOT abstract or marketing-speak. The excerpt's pain must match the title's pain.
 
