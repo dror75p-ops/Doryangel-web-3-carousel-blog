@@ -163,7 +163,7 @@
 - **Resend** (`RESEND_API_KEY` secret): from `onboarding@resend.dev` — **owner-facing emails only** (Nave's approval email, daily-audit report) go to `dror75p@gmail.com`. The sandbox domain can ONLY reach the account owner, so it is NOT used for subscriber-facing email. Verify doryangel.com in Resend to lift this.
 - **Unsplash** (`UNSPLASH_ACCESS_KEY` secret): per-category curated queries for cover images
 - **GitHub** (`GH_TOKEN` secret): the bot's token for committing to main; needs `repo` + `workflow` scopes
-- **Google Analytics 4** (`G-0W61NYHM78`): in `index.html`, gated by cookie consent (was `G-P8QR4VL8NH` before the www.doryangel.com move, PR #79, 2026-06-16)
+- **Google Analytics 4** — **dual-tagged** (2026-07-15): `index.html` now sends to BOTH `G-0W61NYHM78` (primary, post-move) and `G-P8QR4VL8NH` (legacy). Context: the www.doryangel.com move (PR #79, 2026-06-16) switched the ID from `G-P8QR4VL8NH` → `G-0W61NYHM78`, which made the old "doryangel.com" GA4 property (still what the owner opens by habit) flatline at the move date while all new data landed in the new property. Dual-tagging via a second `gtag('config', …)` restores data to the legacy property so nothing's lost — both properties now collect. Uses Consent Mode v2 (loads on every visit, storage denied by default → cookieless pings; full data after Accept); the single `gtag.js` load + global consent calls cover both IDs. Events (`generate_lead`, `tool_gate_submit`) auto-send to both.
 - **Retell AI + Make.com lead capture**: see section below
 
 ### Make.com scenarios (team 998919, org 6531616, eu1)

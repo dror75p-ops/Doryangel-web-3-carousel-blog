@@ -4811,7 +4811,10 @@ async function handleFormSubmit(e) {
 
 <script>
 (function () {
-  var GA_ID = 'G-0W61NYHM78';
+  var GA_ID = 'G-0W61NYHM78';         // primary property (post-2026-07-07 www move)
+  var GA_ID_LEGACY = 'G-P8QR4VL8NH';  // pre-move property — dual-tagged so the original
+                                      // "doryangel.com" GA4 property keeps receiving data
+                                      // (no history gap at the move; nothing lost)
   var STORAGE_KEY = 'doryangel-cookie-consent';
 
   function loadClarity() {
@@ -4849,6 +4852,7 @@ async function handleFormSubmit(e) {
   })();
   gtag('js', new Date());
   gtag('config', GA_ID, { anonymize_ip: true });
+  gtag('config', GA_ID_LEGACY, { anonymize_ip: true });  // dual-tag: send to the legacy property too
 
   function grant() {
     gtag('consent', 'update', {
