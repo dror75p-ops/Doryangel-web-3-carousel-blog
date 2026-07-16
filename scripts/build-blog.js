@@ -378,6 +378,7 @@ footer.post-footer a { color: white; text-decoration: none; }
       <li><a href="${SITE_URL}/#pricing">View flat-fee pricing plans — from $99/month →</a></li>
       <li><a href="${SITE_URL}/#services">Full list of property management services →</a></li>
       <li><a href="${SITE_URL}/blog/">More articles for NYC landlords →</a></li>
+      <li><a href="${SITE_URL}/faq/">Bronx landlord FAQ: costs, compliance &amp; more →</a></li>
       <li><a href="${CONTACT_URL}">Request a free property audit →</a></li>
     </ul>
   </div>
