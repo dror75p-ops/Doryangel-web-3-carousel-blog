@@ -1,4 +1,4 @@
-name: Weekly SEO Audit (Arlo · seo suite)
+name: Weekly SEO Audit (Arlo · seo_doryangel suite)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # DOCUMENTATION ONLY — THIS WORKFLOW IS DISABLED.
@@ -30,7 +30,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: seo-audit
+  group: seo_doryangel-audit
   cancel-in-progress: true
 
 jobs:
@@ -58,7 +58,7 @@ jobs:
           VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           NAP_LISTINGS: ${{ secrets.NAP_LISTINGS }}
-        run: npm run seo:audit
+        run: npm run seo_doryangel:audit
 
       - name: Commit the report (report file only — never the site)
         run: |

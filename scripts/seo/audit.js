@@ -3,7 +3,7 @@
 // Runs the five data sub-skills in sequence, then the reporter, and writes a
 // single dated report to reports/seo/YYYY-MM-DD.md.
 //
-//   npm run seo:audit            # full audit
+//   npm run seo_doryangel:audit  # full audit
 //   node scripts/seo/audit.js    # same
 //
 // Trigger-agnostic: this is a plain Node entry point. Run it by hand today, or
@@ -38,11 +38,11 @@ export async function runAudit() {
     catch (err) { res = { skill: name, status: 'error', note: `uncaught: ${err.message}` }; }
     const ms = Date.now() - started;
     const badge = res.status === 'ok' ? 'ok' : res.status === 'skipped' ? 'skipped' : 'ERROR';
-    console.error(`[seo] ${name.padEnd(16)} ${badge.padEnd(8)} ${ms}ms${res.note ? ' — ' + res.note : ''}`);
+    console.error(`[seo_doryangel] ${name.padEnd(16)} ${badge.padEnd(8)} ${ms}ms${res.note ? ' — ' + res.note : ''}`);
     results.push(res);
   }
   const out = writeReport(results);
-  console.error(`[seo] report written → ${out.path}${out.diffedAgainst ? ` (diffed vs ${out.diffedAgainst})` : ''}`);
+  console.error(`[seo_doryangel] report written → ${out.path}${out.diffedAgainst ? ` (diffed vs ${out.diffedAgainst})` : ''}`);
   return { results, ...out };
 }
 
@@ -55,5 +55,5 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
       // Print the paste-ready row to stdout for easy piping.
       console.log(out.tsvRow);
     })
-    .catch(err => { console.error('[seo] fatal:', err.message); process.exit(1); });
+    .catch(err => { console.error('[seo_doryangel] fatal:', err.message); process.exit(1); });
 }

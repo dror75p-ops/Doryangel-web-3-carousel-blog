@@ -1,4 +1,8 @@
-# Arlo — SEO Audit Suite (`seo`)
+# Arlo — SEO Audit Suite (`seo_doryangel`)
+
+> The skill group and its npm commands are named **`seo_doryangel`**. The code
+> lives in `scripts/seo/` and reports in `reports/seo/` (those directory paths
+> are unchanged).
 
 A **read-only**, weekly SEO audit suite that extends Arlo (DoryAngel's automation
 agent, `scripts/daily-audit.js`). It crawls the site, pulls read-only analytics,
@@ -35,18 +39,18 @@ week-over-week.
 Full audit (runs 1–5, then writes the report):
 
 ```bash
-npm run seo:audit
+npm run seo_doryangel:audit
 ```
 
 Each sub-skill also runs standalone and prints JSON:
 
 ```bash
-npm run seo:technical      # node scripts/seo/technical-audit.js
-npm run seo:gsc
-npm run seo:traffic
-npm run seo:nap
-npm run seo:content-gap
-npm run seo:report         # re-render the report (gathers results itself, or pass a results.json path)
+npm run seo_doryangel:technical      # node scripts/seo/technical-audit.js
+npm run seo_doryangel:gsc
+npm run seo_doryangel:traffic
+npm run seo_doryangel:nap
+npm run seo_doryangel:content-gap
+npm run seo_doryangel:report         # re-render the report (gathers results itself, or pass a results.json path)
 ```
 
 Output:
@@ -87,7 +91,7 @@ A ready-to-enable example lives at
 [`.github/workflows/seo-audit.yml.disabled`](../../.github/workflows/seo-audit.yml.disabled).
 It is **disabled on purpose** (the `.disabled` extension means GitHub ignores
 it). To turn it on: rename it to `seo-audit.yml`, add the secrets above to the
-repo, and commit. It runs `npm run seo:audit` and commits the report (it never
+repo, and commit. It runs `npm run seo_doryangel:audit` and commits the report (it never
 touches the site or the publish workflow).
 
 ### n8n
@@ -95,7 +99,7 @@ touches the site or the publish workflow).
 Add an **Execute Command** node (or a CI step) that runs:
 
 ```bash
-npm ci && npm run seo:audit
+npm ci && npm run seo_doryangel:audit
 ```
 
 with the env vars set on the node. Then a follow-up node can read

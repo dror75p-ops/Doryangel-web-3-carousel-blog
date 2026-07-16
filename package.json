@@ -4,13 +4,13 @@
   "type": "module",
   "scripts": {
     "generate": "node scripts/generate-post.js",
-    "seo:audit": "node scripts/seo/audit.js",
-    "seo:technical": "node scripts/seo/technical-audit.js",
-    "seo:gsc": "node scripts/seo/gsc-quickwins.js",
-    "seo:traffic": "node scripts/seo/traffic-report.js",
-    "seo:nap": "node scripts/seo/local-nap.js",
-    "seo:content-gap": "node scripts/seo/content-gap.js",
-    "seo:report": "node scripts/seo/reporter.js"
+    "seo_doryangel:audit": "node scripts/seo/audit.js",
+    "seo_doryangel:technical": "node scripts/seo/technical-audit.js",
+    "seo_doryangel:gsc": "node scripts/seo/gsc-quickwins.js",
+    "seo_doryangel:traffic": "node scripts/seo/traffic-report.js",
+    "seo_doryangel:nap": "node scripts/seo/local-nap.js",
+    "seo_doryangel:content-gap": "node scripts/seo/content-gap.js",
+    "seo_doryangel:report": "node scripts/seo/reporter.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

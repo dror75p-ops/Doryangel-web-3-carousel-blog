@@ -15,7 +15,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join, resolve } from 'path';
 
 export const AGENT_NAME = 'Arlo';
-export const SUITE_NAME = 'seo';
+export const SUITE_NAME = 'seo_doryangel';
 
 // ─── Site facts (canonical source of truth) ───────────────────────────────────
 
