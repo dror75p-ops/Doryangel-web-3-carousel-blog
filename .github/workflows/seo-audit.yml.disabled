@@ -1,0 +1,69 @@
+name: Weekly SEO Audit (Arlo · seo suite)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DOCUMENTATION ONLY — THIS WORKFLOW IS DISABLED.
+#
+# The `.yml.disabled` extension means GitHub does NOT register or run this file.
+# The weekly `schedule:` trigger below is also commented out for good measure.
+# Nothing here runs until a human deliberately enables it.
+#
+# TO ENABLE (only if you want the audit on a cron):
+#   1. Rename this file:  seo-audit.yml.disabled  →  seo-audit.yml
+#   2. Uncomment the `schedule:` block below.
+#   3. Add the repo secrets referenced under `env:` (all optional — a missing
+#      one just skips that sub-skill).
+#
+# This audit is READ-ONLY with respect to the live site. It only crawls/reads
+# and writes a report under reports/seo/. It never edits, publishes, or deploys
+# the site, and it does NOT touch blog-autopublish.yml or any deploy workflow.
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  # Uncomment to run weekly (Mondays 13:00 UTC). Left commented so that even if
+  # the file is renamed by accident, no schedule fires until this is enabled.
+  # schedule:
+  #   - cron: '0 13 * * 1'
+  workflow_dispatch: {}
+
+# Only needs to write the report file back to the repo — nothing else.
+permissions:
+  contents: write
+
+concurrency:
+  group: seo-audit
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run SEO audit (read-only)
+        env:
+          # All optional — missing keys skip that sub-skill gracefully.
+          GOOGLE_SA_KEY: ${{ secrets.GOOGLE_SA_KEY }}
+          GSC_SITE_URL: ${{ secrets.GSC_SITE_URL }}
+          VERCEL_ANALYTICS_TOKEN: ${{ secrets.VERCEL_ANALYTICS_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NAP_LISTINGS: ${{ secrets.NAP_LISTINGS }}
+        run: npm run seo:audit
+
+      - name: Commit the report (report file only — never the site)
+        run: |
+          git config user.name "Arlo (DoryAngel Bot)"
+          git config user.email "office@doryangel.com"
+          git add reports/seo/
+          git commit -m "SEO audit report $(date +'%Y-%m-%d')" || echo "No new report to commit"
+          git push || echo "Nothing to push"

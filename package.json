@@ -3,7 +3,14 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "generate": "node scripts/generate-post.js"
+    "generate": "node scripts/generate-post.js",
+    "seo:audit": "node scripts/seo/audit.js",
+    "seo:technical": "node scripts/seo/technical-audit.js",
+    "seo:gsc": "node scripts/seo/gsc-quickwins.js",
+    "seo:traffic": "node scripts/seo/traffic-report.js",
+    "seo:nap": "node scripts/seo/local-nap.js",
+    "seo:content-gap": "node scripts/seo/content-gap.js",
+    "seo:report": "node scripts/seo/reporter.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
