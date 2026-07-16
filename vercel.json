@@ -288,12 +288,12 @@
     },
     {
       "source": "/post/why-more-new-rochelle-landlords-are-outsourcing-property-management",
-      "destination": "/blog/what-every-new-rochelle-landlord-needs-to-know-about-propert/",
+      "destination": "/blog/what-bronx-landlords-need-to-know-about-property-taxes-2026/",
       "permanent": true
     },
     {
       "source": "/post/new-landlord-in-mount-vernon-here-s-what-you-need-before-your-first-tenant",
-      "destination": "/blog/how-mount-vernon-landlords-can-cut-vacancy-time-in-half/",
+      "destination": "/blog/how-bronx-landlords-can-cut-vacancy-time-in-half/",
       "permanent": true
     },
     {
@@ -528,7 +528,7 @@
     },
     {
       "source": "/post/unlocking-success-with-doryangel-property-management-consulting-services",
-      "destination": "/blog/what-every-new-rochelle-landlord-needs-to-know-about-propert/",
+      "destination": "/blog/what-bronx-landlords-need-to-know-about-property-taxes-2026/",
       "permanent": true
     },
     {
@@ -548,7 +548,7 @@
     },
     {
       "source": "/post/top-tips-for-choosing-the-right-property-management-services",
-      "destination": "/blog/how-mount-vernon-landlords-can-cut-vacancy-time-in-half/",
+      "destination": "/blog/how-bronx-landlords-can-cut-vacancy-time-in-half/",
       "permanent": true
     },
     {
@@ -702,11 +702,6 @@
       "permanent": true
     },
     {
-      "source": "/post/:path*",
-      "destination": "/#blog",
-      "permanent": true
-    },
-    {
       "source": "/blog",
       "destination": "/#blog",
       "permanent": true
@@ -714,11 +709,6 @@
     {
       "source": "/broker-partner",
       "destination": "/broker-partner.html",
-      "permanent": true
-    },
-    {
-      "source": "/post/:slug*",
-      "destination": "/",
       "permanent": true
     },
     {
@@ -732,8 +722,13 @@
       "permanent": true
     },
     {
+      "source": "/contact",
+      "destination": "/#contact",
+      "permanent": true
+    },
+    {
       "source": "/vpm-call-center",
-      "destination": "/",
+      "destination": "/#services",
       "permanent": true
     },
     {

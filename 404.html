@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, follow">
+  <title>Page Not Found (404) | DoryAngel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0F2847;
+      --blue: #1E5AA8;
+      --blue-light: #5B9FEA;
+      --blue-dim: #EBF3FD;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--navy);
+      background: linear-gradient(160deg, #ffffff 0%, var(--blue-dim) 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+    .wrap { max-width: 560px; }
+    .code {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: clamp(72px, 18vw, 140px);
+      line-height: 1;
+      color: var(--blue);
+      letter-spacing: -2px;
+    }
+    h1 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: clamp(24px, 5vw, 34px);
+      margin: 8px 0 16px;
+      color: var(--navy);
+    }
+    p { font-size: 17px; line-height: 1.6; color: #3a4a5e; margin-bottom: 28px; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    a.btn {
+      display: inline-block;
+      padding: 13px 26px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 16px;
+      text-decoration: none;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    a.primary { background: var(--blue); color: #fff; box-shadow: 0 6px 18px rgba(30,90,168,.28); }
+    a.secondary { background: #fff; color: var(--blue); border: 1.5px solid var(--blue-light); }
+    a.btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(30,90,168,.3); }
+    .links { margin-top: 30px; font-size: 15px; }
+    .links a { color: var(--blue); text-decoration: none; margin: 0 10px; font-weight: 500; }
+    .links a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="code">404</div>
+    <h1>This page has moved on</h1>
+    <p>The page you were looking for isn't here anymore. It may have been part of our old website. Let's get you back to something useful.</p>
+    <div class="actions">
+      <a class="btn primary" href="/">Go to homepage</a>
+      <a class="btn secondary" href="/#blog">Read the blog</a>
+    </div>
+    <div class="links">
+      <a href="/#services">Services</a>
+      <a href="/#pricing">Pricing</a>
+      <a href="/faq/">FAQ</a>
+      <a href="/#contact">Contact us</a>
+    </div>
+  </main>
+</body>
+</html>
