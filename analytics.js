@@ -1,7 +1,8 @@
 /*
  * DoryAngel shared analytics + cookie-consent loader.
  * Self-contained: injects the consent banner, then loads GA4 (G-0W61NYHM78)
- * and Microsoft Clarity only after the visitor accepts.
+ * and Microsoft Clarity (cookieless mode) on every page load; the banner only
+ * gates GA4's cookie-based consent_storage grant.
  *
  * Uses the same localStorage key as index.html ('doryangel-cookie-consent'),
  * so a decision made on any page carries across the whole site.
@@ -100,7 +101,8 @@
 
     // Consent Mode v2 (advanced): GA loads on every page but defaults storage to
     // "denied" — no cookies, only cookieless pings — so undecided visitors (the
-    // majority) are still measured GDPR-safely. Clarity stays gated behind Accept.
+    // majority) are still measured GDPR-safely. Clarity runs in cookieless mode
+    // (dashboard Setup toggle) too, so it also loads on every page unconditionally.
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () { window.dataLayer.push(arguments); };
     window.gtag('consent', 'default', {
@@ -108,13 +110,12 @@
       analytics_storage: startGranted ? 'granted' : 'denied'
     });
     loadGA();
+    loadClarity();
 
-    if (consent === 'accepted') {
-      loadClarity();
-      return;
-    }
-    if (consent === 'rejected') {
-      window.gtag('consent', 'update', { analytics_storage: 'denied' });
+    if (consent === 'accepted' || consent === 'rejected') {
+      if (consent === 'rejected') {
+        window.gtag('consent', 'update', { analytics_storage: 'denied' });
+      }
       return;
     }
 
@@ -126,7 +127,6 @@
       try { localStorage.setItem(STORAGE_KEY, 'accepted'); } catch (e) {}
       banner.classList.remove('visible');
       grantConsent();
-      loadClarity();
     };
     document.getElementById('cookie-reject').onclick = function () {
       try { localStorage.setItem(STORAGE_KEY, 'rejected'); } catch (e) {}
