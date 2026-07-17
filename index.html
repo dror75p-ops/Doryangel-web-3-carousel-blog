@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<!-- Clarity loads only after cookie consent via loadClarity() below — GDPR compliant -->
+<!-- Clarity loads on every visit in cookieless mode (no consent needed) via loadClarity() below — GDPR compliant -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DoryAngel Property Management NYC | Flat-Fee Management Since 2010</title>
 <meta name="description" content="DoryAngel: flat-fee property management in NYC. $99/unit/mo, real-time owner dashboards, 24/7 maintenance. Bronx, Queens, Yonkers, North Jersey. Free audit.">
@@ -4838,7 +4838,8 @@ async function handleFormSubmit(e) {
   // to "denied". In the denied state GA sets NO cookies and sends only cookieless
   // pings, which stays GDPR-safe while still letting GA4 measure/model traffic and
   // conversions from visitors who never touch the banner (the majority). Clarity
-  // stays fully gated behind Accept — it has no cookieless mode.
+  // runs in cookieless mode (dashboard Setup toggle) too, so it also loads on
+  // every visit — no cookies are set before consent.
   window.dataLayer = window.dataLayer || [];
   window.gtag = function () { window.dataLayer.push(arguments); };
   gtag('consent', 'default', {
@@ -4856,20 +4857,18 @@ async function handleFormSubmit(e) {
   gtag('js', new Date());
   gtag('config', GA_ID, { anonymize_ip: true });
   gtag('config', GA_ID_LEGACY, { anonymize_ip: true });  // dual-tag: send to the legacy property too
+  loadClarity();
 
   function grant() {
     gtag('consent', 'update', {
       ad_storage: 'granted', ad_user_data: 'granted',
       ad_personalization: 'granted', analytics_storage: 'granted'
     });
-    loadClarity();
   }
 
   var banner = document.getElementById('cookie-banner');
 
-  if (consent === 'accepted') {
-    loadClarity();
-  } else if (consent !== 'rejected') {
+  if (consent !== 'accepted' && consent !== 'rejected') {
     setTimeout(function () { banner.classList.add('visible'); }, 1200);
   }
 
