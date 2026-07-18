@@ -1,6 +1,56 @@
 {
   "redirects": [
     {
+      "source": "/blog/are-bronx-landlords-prepared-for-spring-pest-season-a-comple",
+      "destination": "/blog/5-summer-pest-control-mistakes-costing-bronx-landlords-thous/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/are-bronx-landlords-prepared-for-spring-pest-season-a-comple/",
+      "destination": "/blog/5-summer-pest-control-mistakes-costing-bronx-landlords-thous/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/are-bronx-landlords-capitalizing-on-spring-2026-property-val",
+      "destination": "/blog/whats-your-bronx-building-worth-in-late-summer-and-why-augus/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/are-bronx-landlords-capitalizing-on-spring-2026-property-val/",
+      "destination": "/blog/whats-your-bronx-building-worth-in-late-summer-and-why-augus/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/how-much-will-spring-flooding-cost-bronx-landlords-in-2026-a",
+      "destination": "/blog/what-summer-flooding-in-your-bronx-building-could-cost-you-i/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/how-much-will-spring-flooding-cost-bronx-landlords-in-2026-a/",
+      "destination": "/blog/what-summer-flooding-in-your-bronx-building-could-cost-you-i/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/why-do-bronx-landlords-lose-thousands-every-summer-to-ac-bre",
+      "destination": "/blog/why-your-bronx-buildings-ac-breakdown-in-july-could-cost-you/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/why-do-bronx-landlords-lose-thousands-every-summer-to-ac-bre/",
+      "destination": "/blog/why-your-bronx-buildings-ac-breakdown-in-july-could-cost-you/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/how-can-a-bronx-landlord-protect-summer-rental-income-from-u",
+      "destination": "/blog/why-your-bronx-buildings-ac-breakdown-in-july-could-cost-you/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/how-can-a-bronx-landlord-protect-summer-rental-income-from-u/",
+      "destination": "/blog/why-your-bronx-buildings-ac-breakdown-in-july-could-cost-you/",
+      "permanent": true
+    },
+    {
       "source": "/blog/whats-your-bronx-buildings-summer-peak-power-usage-costing-y",
       "destination": "/blog/why-are-your-bronx-buildings-august-utility-bills-40-higher/",
       "permanent": true
