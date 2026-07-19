@@ -2957,6 +2957,12 @@ retell-chat-web-component {
     <div class="tools-hero-widget" aria-hidden="true">
       <style>
         #dy-hero-wrap { position:relative; width:min(360px,86vw); height:min(360px,86vw); margin:36px 0 8px; }
+        @media (max-width: 900px) {
+          /* tools-grid drops to repeat(2,1fr) here, so the 4th card no longer wraps
+             alone into column 1 — nothing left to align with, so recenter to match
+             the rest of the section instead. */
+          #dy-hero-wrap { margin:36px auto 8px; }
+        }
         #dy-hero-wrap canvas { width:100%; height:100%; border-radius:24px; display:block; }
         .dy-frame { position:absolute; inset:0; border-radius:24px; box-shadow:0 0 50px rgba(62,143,212,0.4), 0 8px 30px rgba(26,35,48,0.18); border:1px solid rgba(26,35,48,0.1); pointer-events:none; }
         .dy-dim { position:absolute; inset:0; background:rgba(11,11,12,0); transition:background 0.5s ease; pointer-events:none; }
