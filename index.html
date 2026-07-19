@@ -2953,6 +2953,422 @@ retell-chat-web-component {
 
     </div><!-- /tools-grid -->
 
+    <!-- ANIMATED OVERVIEW WIDGET -->
+    <div class="tools-hero-widget" aria-hidden="true">
+      <style>
+        #dy-hero-wrap { position:relative; width:min(360px,86vw); height:min(360px,86vw); margin:36px auto 8px; }
+        #dy-hero-wrap canvas { width:100%; height:100%; border-radius:24px; display:block; }
+        .dy-frame { position:absolute; inset:0; border-radius:24px; box-shadow:0 0 50px rgba(62,143,212,0.4), 0 8px 30px rgba(26,35,48,0.18); border:1px solid rgba(26,35,48,0.1); pointer-events:none; }
+        .dy-dim { position:absolute; inset:0; background:rgba(11,11,12,0); transition:background 0.5s ease; pointer-events:none; }
+        .dy-slogan-layer { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; pointer-events:none; opacity:0; transform:scale(0.6); transition:opacity 0.4s ease, transform 0.55s cubic-bezier(0.16,1,0.3,1); }
+        .dy-slogan-glow { position:absolute; inset:-46px; background:radial-gradient(circle, rgba(62,143,212,0.5) 0%, rgba(62,143,212,0.18) 45%, rgba(62,143,212,0) 75%); filter:blur(4px); animation:dy-pulse 1.4s ease-in-out infinite; }
+        .dy-slogan-bg { position:absolute; inset:-30px; background:rgba(255,255,255,0.78); border-radius:20px; filter:blur(6px); box-shadow:0 20px 60px rgba(26,35,48,0.12); }
+        .dy-rule { position:relative; width:56px; height:2px; background:linear-gradient(90deg, transparent, #5B9FEA, transparent); margin:0 auto 14px; }
+        .dy-rule.bottom { margin:14px auto 0; }
+        .dy-tagline { position:relative; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:34px; letter-spacing:0.24em; text-transform:uppercase; background:linear-gradient(120deg, #0F2847 0%, #1E5AA8 35%, #5B9FEA 55%, #1E5AA8 75%, #0F2847 100%); background-size:250% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:dy-shine 3s linear infinite; text-shadow:0 2px 18px rgba(30,90,168,0.25); }
+        @keyframes dy-shine { 0% { background-position:0% 0; } 100% { background-position:300% 0; } }
+        @keyframes dy-pulse { 0%, 100% { opacity:0.6; transform:scale(0.9); } 50% { opacity:1; transform:scale(1.08); } }
+        @media (prefers-reduced-motion: reduce) {
+          .dy-tagline, .dy-slogan-glow { animation: none !important; }
+        }
+      </style>
+      <div id="dy-hero-wrap">
+        <div class="dy-frame"></div>
+        <canvas id="dy-hero-canvas" width="600" height="600"></canvas>
+        <div class="dy-dim" id="dy-dim"></div>
+        <div class="dy-slogan-layer" id="dy-slogan-layer">
+          <div style="position:relative;">
+            <div class="dy-slogan-glow"></div>
+            <div class="dy-slogan-bg"></div>
+            <div class="dy-rule"></div>
+            <div class="dy-tagline" id="dy-tagline">Your Property Management</div>
+            <div class="dy-rule bottom"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+    (function() {
+      var canvas = document.getElementById('dy-hero-canvas');
+      var ctx = canvas.getContext('2d');
+      var dimEl = document.getElementById('dy-dim');
+      var sloganLayer = document.getElementById('dy-slogan-layer');
+      var taglineEl = document.getElementById('dy-tagline');
+      var taglines = ['Your Property Management', 'Enhance Asset Value', 'Building Equity Together'];
+      var sloganOn = false, taglineIdx = 0;
+      var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      var CX = 300, CY = 300, BR = 250;
+      var ringColor = '#FFFFFF';
+      var ballCount = 22;
+      var speed = 1;
+
+      var CORNER = 30;
+      function boundaryPath() {
+        var x0 = CX - BR, y0 = CY - BR, x1 = CX + BR, y1 = CY + BR;
+        ctx.beginPath();
+        ctx.moveTo(x0 + CORNER, y0);
+        ctx.lineTo(x1 - CORNER, y0); ctx.quadraticCurveTo(x1, y0, x1, y0 + CORNER);
+        ctx.lineTo(x1, y1 - CORNER); ctx.quadraticCurveTo(x1, y1, x1 - CORNER, y1);
+        ctx.lineTo(x0 + CORNER, y1); ctx.quadraticCurveTo(x0, y1, x0, y1 - CORNER);
+        ctx.lineTo(x0, y0 + CORNER); ctx.quadraticCurveTo(x0, y0, x0 + CORNER, y0);
+        ctx.closePath();
+      }
+      function clampSquare(e) {
+        var xmin = CX - BR + e.r, xmax = CX + BR - e.r, ymin = CY - BR + e.r, ymax = CY + BR - e.r;
+        if (e.x < xmin) { e.x = xmin; e.vx = Math.abs(e.vx); }
+        if (e.x > xmax) { e.x = xmax; e.vx = -Math.abs(e.vx); }
+        if (e.y < ymin) { e.y = ymin; e.vy = Math.abs(e.vy); }
+        if (e.y > ymax) { e.y = ymax; e.vy = -Math.abs(e.vy); }
+      }
+
+      var logoImg = new Image();
+      logoImg.onload = function() { if (prefersReduced) animate(); };
+      logoImg.src = './assets/logo-icon.jpg';
+      function drawTurtle(x, y, angle, r) {
+        if (!logoImg.complete || !logoImg.naturalWidth) return;
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        var d = r * 2;
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.save();
+        ctx.clip();
+        ctx.drawImage(logoImg, -r, -r, d, d);
+        ctx.restore();
+        ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.restore();
+      }
+
+      var cols = [
+        ['#3E8FD4', '#8FC4F5'], ['#E0553D', '#F5A28F'], ['#2FA36B', '#8FE0B5'], ['#C97B2F', '#F5C98F'],
+        ['#8E5AD1', '#D0AEF5'], ['#D14F87', '#F5AECB'], ['#3AA9A0', '#9FE3DC'], ['#B08D2A', '#F0D68A'],
+        ['#4F6EAE', '#A9C0EE'], ['#D18E2F', '#F5D08F'], ['#5AA6D1', '#B7E1F5'], ['#7A8D9B', '#C7D3DA']
+      ];
+      var iconKeys = ['rent', 'repair', 'lease', 'tenant', 'inspect', 'urgent', 'invoice', 'vacancy', 'security', 'utility', 'cleaning', 'parking', 'rent', 'repair', 'lease', 'tenant', 'inspect', 'urgent', 'invoice', 'vacancy', 'security', 'utility', 'cleaning', 'parking'];
+      var iconNames = { rent:'Rent', repair:'Repair', lease:'Lease', tenant:'Tenant', inspect:'Inspect', urgent:'Urgent', invoice:'Invoice', vacancy:'Vacancy', security:'Security', utility:'Utility', cleaning:'Cleaning', parking:'Parking' };
+      var labelIdx = 0;
+      function drawIcon(key, x, y, r) {
+        ctx.save();
+        ctx.translate(x, y);
+        var s = r * 0.052;
+        ctx.scale(s, s);
+        ctx.strokeStyle = 'rgba(255,255,255,0.92)';
+        ctx.lineWidth = 1.8;
+        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        ctx.fillStyle = 'rgba(255,255,255,0.92)';
+        ctx.beginPath();
+        switch (key) {
+          case 'rent':
+            ctx.moveTo(-9, 1); ctx.lineTo(0, -8); ctx.lineTo(9, 1); ctx.lineTo(9, 10); ctx.lineTo(-9, 10); ctx.closePath();
+            ctx.stroke();
+            break;
+          case 'repair':
+            ctx.moveTo(-8, 8); ctx.lineTo(2, -2);
+            ctx.moveTo(3, -9); ctx.arc(0, -6, 4.2, -0.6, 3.9);
+            ctx.stroke();
+            break;
+          case 'lease':
+            ctx.rect(-6, -9, 12, 18);
+            ctx.moveTo(-3, -4); ctx.lineTo(3, -4);
+            ctx.moveTo(-3, 0); ctx.lineTo(3, 0);
+            ctx.moveTo(-3, 4); ctx.lineTo(1, 4);
+            ctx.stroke();
+            break;
+          case 'tenant':
+            ctx.arc(0, -6, 4, 0, Math.PI * 2);
+            ctx.moveTo(-8, 10); ctx.quadraticCurveTo(-8, -1, 0, -1); ctx.quadraticCurveTo(8, -1, 8, 10);
+            ctx.stroke();
+            break;
+          case 'inspect':
+            ctx.arc(-1, -2, 6, 0, Math.PI * 2);
+            ctx.moveTo(3.5, 3); ctx.lineTo(9, 9);
+            ctx.stroke();
+            break;
+          case 'urgent':
+            ctx.moveTo(0, -10); ctx.lineTo(9, 9); ctx.lineTo(-9, 9); ctx.closePath();
+            ctx.moveTo(0, -2); ctx.lineTo(0, 2);
+            ctx.moveTo(0, 5.5); ctx.lineTo(0, 6);
+            ctx.stroke();
+            break;
+          case 'invoice':
+            ctx.rect(-7, -9, 14, 18);
+            ctx.moveTo(-3.5, -4); ctx.lineTo(3.5, -4);
+            ctx.moveTo(-3.5, 0); ctx.lineTo(3.5, 0);
+            ctx.moveTo(-3.5, 4); ctx.lineTo(0.5, 4);
+            ctx.stroke();
+            break;
+          case 'vacancy':
+            ctx.arc(-4, -5, 3, 0, Math.PI * 2);
+            ctx.moveTo(-1, -5); ctx.lineTo(9, -5);
+            ctx.moveTo(6, -5); ctx.lineTo(6, -1);
+            ctx.moveTo(9, -5); ctx.lineTo(9, -2);
+            ctx.stroke();
+            break;
+          case 'security':
+            ctx.moveTo(0, -10); ctx.lineTo(8, -6); ctx.lineTo(8, 3); ctx.quadraticCurveTo(8, 9, 0, 11); ctx.quadraticCurveTo(-8, 9, -8, 3); ctx.lineTo(-8, -6); ctx.closePath();
+            ctx.moveTo(-3, 0); ctx.lineTo(-1, 3); ctx.lineTo(4, -4);
+            ctx.stroke();
+            break;
+          case 'utility':
+            ctx.moveTo(2, -11); ctx.lineTo(-6, 2); ctx.lineTo(0, 2); ctx.lineTo(-2, 11); ctx.lineTo(7, -2); ctx.lineTo(1, -2); ctx.closePath();
+            ctx.stroke();
+            break;
+          case 'cleaning':
+            ctx.moveTo(-2, -11); ctx.lineTo(2, -11); ctx.lineTo(1, 2); ctx.lineTo(-1, 2); ctx.closePath();
+            ctx.moveTo(-6, 2); ctx.lineTo(6, 2); ctx.lineTo(3, 11); ctx.lineTo(-3, 11); ctx.closePath();
+            ctx.stroke();
+            break;
+          case 'parking':
+            ctx.rect(-8, -10, 16, 20);
+            ctx.moveTo(-2, -6); ctx.lineTo(-2, 6);
+            ctx.moveTo(-2, -6); ctx.lineTo(2, -6); ctx.quadraticCurveTo(5, -6, 5, -2); ctx.quadraticCurveTo(5, 2, 2, 2); ctx.lineTo(-2, 2);
+            ctx.stroke();
+            break;
+        }
+        ctx.restore();
+      }
+
+      function Entity(turtle) {
+        this.turtle = !!turtle;
+        this.label = this.turtle ? null : iconKeys[labelIdx++ % iconKeys.length];
+        this.namePhase = Math.random() * Math.PI * 2;
+        this.r = this.turtle ? 74 : 22 + Math.random() * 8;
+        this.mass = this.turtle ? 6 : this.r * 0.5;
+        var a = Math.random() * Math.PI * 2;
+        var d = this.turtle ? Math.random() * 20 : Math.random() * (BR - this.r - 80);
+        this.x = CX + Math.cos(a) * d;
+        this.y = CY + Math.sin(a) * d;
+        this.vx = (Math.random() - 0.5) * (this.turtle ? 2.6 : 4.4) * speed;
+        this.vy = (Math.random() - 0.5) * (this.turtle ? 2.6 : 4.4) * speed;
+        var pair = this.turtle ? ['#3E8FD4', '#8FC4F5'] : cols[(labelIdx - 1) % cols.length];
+        this.color = pair[0]; this.colorLight = pair[1];
+      }
+      Entity.prototype.update = function() {
+        if (this.turtle) {
+          this.x += this.vx; this.y += this.vy;
+          clampSquare(this);
+        } else if (this.slotX != null && this.settle) {
+          this.x += (this.slotX - this.x) * 0.045 * speed;
+          this.y += (this.slotY - this.y) * 0.045 * speed;
+        } else {
+          this.x += this.vx; this.y += this.vy;
+          clampSquare(this);
+        }
+      };
+      Entity.prototype.draw = function(t) {
+        if (this.turtle) {
+          drawTurtle(this.x, this.y, 0, this.r);
+        } else {
+          ctx.save();
+          ctx.shadowColor = this.color; ctx.shadowBlur = 22;
+          var grd = ctx.createRadialGradient(this.x - this.r * 0.35, this.y - this.r * 0.35, this.r * 0.1, this.x, this.y, this.r);
+          grd.addColorStop(0, this.colorLight); grd.addColorStop(1, this.color);
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+          ctx.fillStyle = grd; ctx.fill();
+          ctx.shadowBlur = 0;
+          ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 2; ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(this.x - this.r * 0.32, this.y - this.r * 0.32, this.r * 0.28, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.fill();
+          ctx.restore();
+          if (this.label) drawIcon(this.label, this.x, this.y, this.r);
+          if (this.label) {
+            var cyc = (t * 0.5 + this.namePhase) % (Math.PI * 2);
+            var nameOp = Math.max(0, Math.sin(cyc));
+            if (nameOp > 0.02) {
+              ctx.save();
+              ctx.globalAlpha = nameOp;
+              ctx.font = '700 11px DM Sans, sans-serif';
+              ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+              ctx.fillStyle = '#1a2330';
+              ctx.shadowColor = 'rgba(255,255,255,0.9)'; ctx.shadowBlur = 4;
+              ctx.fillText(iconNames[this.label] || '', this.x, this.y + this.r + 4);
+              ctx.restore();
+            }
+          }
+        }
+      };
+
+      var balls = [];
+      for (var i = 0; i < ballCount; i++) balls.push(new Entity(false));
+      var turtle = new Entity(true);
+      var ballR = balls[0] ? balls[0].r : 25;
+      var maxCornerR = BR - ballR - 18;
+
+      function polyR(n, apothem, angle, rot) {
+        if (!n) return apothem;
+        var seg = (Math.PI * 2) / n;
+        var a = ((angle - rot) % seg + seg) % seg;
+        a -= seg / 2;
+        return apothem / Math.cos(a);
+      }
+      var houseVerts = [[-1, 0.55], [1, 0.55], [1, -0.15], [0, -1.0], [-1, -0.15]];
+      function houseRadius(angle, scale) {
+        var dx = Math.cos(angle), dy = Math.sin(angle);
+        for (var i = 0; i < houseVerts.length; i++) {
+          var ax = houseVerts[i][0], ay = houseVerts[i][1];
+          var bx = houseVerts[(i + 1) % houseVerts.length][0], by = houseVerts[(i + 1) % houseVerts.length][1];
+          var ex = bx - ax, ey = by - ay;
+          var det = ex * dy - ey * dx;
+          if (Math.abs(det) < 1e-9) continue;
+          var t = (ex * ay - ey * ax) / det;
+          var s = (dx * ay - dy * ax) / det;
+          if (t > 0 && s >= 0 && s <= 1) return t * scale;
+        }
+        return scale;
+      }
+      var formations = [
+        { n: 0, apothem: maxCornerR * 0.62, rot: 0 },
+        { n: 3, apothem: maxCornerR * Math.cos(Math.PI / 3), rot: -Math.PI / 2 },
+        { n: 4, apothem: maxCornerR * Math.cos(Math.PI / 4), rot: -Math.PI / 4 },
+        { type: 'house', scale: maxCornerR * 0.75 }
+      ];
+      function applyFormation(idx) {
+        var f = formations[idx];
+        balls.forEach(function(b, i) {
+          var a = (i / ballCount) * Math.PI * 2 - Math.PI / 2;
+          var r = f.type === 'house' ? houseRadius(a, f.scale) : polyR(f.n, f.apothem, a, f.rot);
+          b.slotX = CX + Math.cos(a) * r;
+          b.slotY = CY + Math.sin(a) * r;
+        });
+      }
+      applyFormation(0);
+      var ents = balls.concat([turtle]);
+      var t = 0;
+      var startTime = performance.now();
+      var dust = [];
+      for (var i = 0; i < 28; i++) {
+        dust.push({
+          x: CX + (Math.random() * 2 - 1) * BR * 0.95,
+          y: CY + (Math.random() * 2 - 1) * BR * 0.95,
+          r: 0.6 + Math.random() * 1.6,
+          vx: (Math.random() - 0.5) * 0.15,
+          vy: (Math.random() - 0.5) * 0.15,
+          ph: Math.random() * Math.PI * 2
+        });
+      }
+
+      function collide() {
+        for (var i = 0; i < ents.length; i++) {
+          for (var j = i + 1; j < ents.length; j++) {
+            var a = ents[i], b = ents[j];
+            var dx = b.x - a.x, dy = b.y - a.y;
+            var dist = Math.hypot(dx, dy);
+            var min = a.r + b.r;
+            if (dist < min && dist > 0) {
+              var nx = dx / dist, ny = dy / dist;
+              var dv = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
+              if (dv > 0) continue;
+              var imp = -2 * dv / (a.mass + b.mass);
+              a.vx -= imp * b.mass * nx; a.vy -= imp * b.mass * ny;
+              b.vx += imp * a.mass * nx; b.vy += imp * a.mass * ny;
+              var ov = (min - dist) / 2;
+              a.x -= ov * nx; a.y -= ov * ny;
+              b.x += ov * nx; b.y += ov * ny;
+            }
+          }
+        }
+      }
+
+      var formationIdx = -1;
+
+      function animate() {
+        ctx.clearRect(0, 0, 600, 600);
+
+        var grad = ctx.createRadialGradient(CX - 60, CY - 70, 10, CX, CY, BR * 1.3);
+        grad.addColorStop(0, '#FFFFFF');
+        grad.addColorStop(0.7, '#FFFFFF');
+        grad.addColorStop(1, '#F7FAFC');
+        boundaryPath();
+        ctx.fillStyle = grad; ctx.fill();
+
+        ctx.save();
+        boundaryPath();
+        ctx.clip();
+        var sweepA = t * 0.35;
+        var sx = CX + Math.cos(sweepA) * BR * 1.3, sy = CY + Math.sin(sweepA) * BR * 1.3;
+        var sheen = ctx.createRadialGradient(sx, sy, 0, sx, sy, BR * 1.4);
+        sheen.addColorStop(0, 'rgba(62,143,212,0.10)');
+        sheen.addColorStop(1, 'rgba(62,143,212,0)');
+        ctx.fillStyle = sheen;
+        ctx.fillRect(0, 0, 600, 600);
+        ctx.restore();
+
+        dust.forEach(function(p) {
+          p.x += p.vx * speed; p.y += p.vy * speed;
+          if (p.x < CX - BR * 0.95 || p.x > CX + BR * 0.95) p.vx *= -1;
+          if (p.y < CY - BR * 0.95 || p.y > CY + BR * 0.95) p.vy *= -1;
+          var tw = 0.35 + 0.35 * Math.sin(t * 1.6 + p.ph);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(90,130,165,' + (tw * 0.4) + ')';
+          ctx.fill();
+        });
+
+        ctx.save();
+        ctx.shadowColor = ringColor; ctx.shadowBlur = 18;
+        boundaryPath();
+        ctx.strokeStyle = ringColor; ctx.lineWidth = 5; ctx.stroke();
+        ctx.restore();
+        boundaryPath();
+        ctx.strokeStyle = 'rgba(26,35,48,0.25)'; ctx.lineWidth = 1.5; ctx.stroke();
+
+        t += 0.014 * speed;
+        var elapsed = (performance.now() - startTime) / 1000 * speed;
+        var PHASE = 15, FLOAT = 7;
+        var cyclePos = elapsed % PHASE;
+        var phaseIdx = Math.floor(elapsed / PHASE) % formations.length;
+        if (phaseIdx !== formationIdx) {
+          formationIdx = phaseIdx;
+          applyFormation(phaseIdx);
+          taglineIdx = phaseIdx % taglines.length;
+          taglineEl.textContent = taglines[taglineIdx];
+        }
+        var settled = cyclePos >= FLOAT;
+        balls.forEach(function(b) {
+          if (settled && !b.settle) {
+            b.settle = true;
+          } else if (!settled && b.settle) {
+            b.settle = false;
+            b.vx = (Math.random() - 0.5) * 4.4 * speed;
+            b.vy = (Math.random() - 0.5) * 4.4 * speed;
+          }
+        });
+        var showSlogan = cyclePos >= FLOAT + 3.5;
+        if (showSlogan !== sloganOn) {
+          sloganOn = showSlogan;
+          sloganLayer.style.opacity = sloganOn ? '1' : '0';
+          sloganLayer.style.transform = sloganOn ? 'scale(1)' : 'scale(0.6)';
+          dimEl.style.background = sloganOn ? 'rgba(11,11,12,0.06)' : 'rgba(11,11,12,0)';
+        }
+        turtle.x += (CX - turtle.x) * 0.05;
+        turtle.y += (CY - turtle.y) * 0.05;
+        balls.forEach(function(e) { e.update(); });
+        collide();
+
+        ctx.save();
+        boundaryPath(); ctx.clip();
+        ents.forEach(function(e) { e.draw(t); });
+        ctx.restore();
+
+        var vig = ctx.createRadialGradient(CX, CY, BR * 0.7, CX, CY, BR * 1.3);
+        vig.addColorStop(0, 'rgba(0,0,0,0)');
+        vig.addColorStop(1, 'rgba(31,49,68,0.12)');
+        ctx.save();
+        boundaryPath(); ctx.clip();
+        ctx.fillStyle = vig; ctx.fillRect(0, 0, 600, 600);
+        ctx.restore();
+
+        if (!prefersReduced) requestAnimationFrame(animate);
+      }
+      animate();
+    })();
+    </script>
+
     <!-- COMING SOON TEASERS ROW -->
     <div class="tools-coming-teasers">
       <div class="tools-coming-teaser">
