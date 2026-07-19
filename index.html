@@ -584,6 +584,7 @@ picture { display: contents; }
 #portal-embed-outer {
   margin: 28px auto 0;
   max-width: 1200px;
+  min-height: 780px;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 12px 48px rgba(13,30,58,0.14);
@@ -1210,7 +1211,7 @@ footer {
   .footer-top { grid-template-columns: 1fr 1fr; }
   .footer-logo-wrap { background: white; display: inline-block; border-radius: 6px; padding: 6px 10px; }
   section { padding: 64px 20px; }
-  #portal-embed-outer { margin: 24px -20px 0; border-radius: 0; border-left: none; border-right: none; box-shadow: none; }
+  #portal-embed-outer { margin: 24px -24px 0; min-height: 620px; border-radius: 0; border-left: none; border-right: none; box-shadow: none; }
   #portal-embed-outer iframe { height: 620px; }
   #portal-open-link { padding: 0 20px; }
   .trust-bar { gap: 16px; padding: 16px 20px; flex-direction: column; align-items: flex-start; }
@@ -1225,6 +1226,7 @@ footer {
   .hero h1 { font-size: clamp(28px, 8vw, 38px); }
   .hero-sub { font-size: 15px; margin-bottom: 28px; }
   .hero-stats { margin-top: 28px; }
+  #portal-embed-outer { margin: 24px -16px 0; }
   .stat-num { font-size: 30px; }
   .blog-featured-foot { flex-direction: column; align-items: flex-start; gap: 12px; padding: 16px 24px; }
   .blog-featured-top { padding: 24px 24px; }
@@ -2461,8 +2463,8 @@ retell-chat-web-component {
 
     <!-- OWNER PORTAL REPORTS PREVIEW -->
     <div style="margin-top:44px;">
-      <div class="section-label">Transparent Reporting — Pillar 01</div>
-      <h3 style="font-family:'DM Serif Display',serif;font-size:clamp(26px,4vw,38px);color:var(--navy);font-weight:400;margin:0 0 14px;line-height:1.2;">See exactly what you&rsquo;ll have access to.</h3>
+      <div class="section-label" style="justify-content:center;">Transparent Reporting — Pillar 01</div>
+      <h2 style="font-family:'DM Serif Display',serif;font-size:clamp(26px,4vw,38px);color:var(--navy);font-weight:400;margin:0 0 14px;line-height:1.2;">See exactly what you&rsquo;ll have access to.</h2>
       <p style="font-size:15px;color:var(--text-muted);max-width:600px;line-height:1.65;margin:0 auto 24px;">As a Doryangel owner, your portal is always on — live rent status, maintenance updates, monthly reports, and financial statements, all in one place.</p>
       <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px 32px;margin-bottom:8px;">
         <div style="display:flex;align-items:center;gap:9px;font-size:14px;color:#556070;">
@@ -2483,18 +2485,32 @@ retell-chat-web-component {
       </div>
     </div>
 
-    <!-- iframe — breaks out to full width on mobile -->
+    <!-- iframe is created by JS after window load (see script below) so this heavy external
+         embed doesn't compete with the hero's own load/LCP now that it sits above the fold;
+         loading="lazy" alone doesn't help once it's in the initial viewport. No-JS fallback
+         below renders it directly. -->
     <div id="portal-embed-outer" class="reveal">
-      <iframe
-        src="https://dror75p-ops.github.io/doryangel-owner-portal-reports/"
-        title="Owner Portal Reports Preview"
-        loading="lazy"
-      ></iframe>
+      <noscript><iframe src="https://dror75p-ops.github.io/doryangel-owner-portal-reports/" title="Owner Portal Reports Preview"></iframe></noscript>
     </div>
     <p id="portal-open-link">
       <a href="https://dror75p-ops.github.io/doryangel-owner-portal-reports/"
          target="_blank" rel="noopener">Open full page ↗</a>
     </p>
+    <script>
+      (function() {
+        var container = document.getElementById('portal-embed-outer');
+        function loadFrame() {
+          if (!container || container.querySelector('iframe')) return;
+          var frame = document.createElement('iframe');
+          frame.src = 'https://dror75p-ops.github.io/doryangel-owner-portal-reports/';
+          frame.title = 'Owner Portal Reports Preview';
+          container.appendChild(frame);
+        }
+        var idle = window.requestIdleCallback || function(cb) { setTimeout(cb, 200); };
+        if (document.readyState === 'complete') idle(loadFrame);
+        else window.addEventListener('load', function() { idle(loadFrame); });
+      })();
+    </script>
 
     <div class="hero-stats">
       <div class="stat-item">
