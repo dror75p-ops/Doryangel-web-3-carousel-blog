@@ -66,11 +66,9 @@ Expert, trustworthy, practical. Write for landlords who own 1–12 unit building
 
 ### Structure to follow
 
-Existing posts in `content/blog/posts-index.json` (e.g. the spring-flooding and AI-security-cameras entries) are the template. Mirror their:
-- H2 section headings
-- Tables for cost breakdowns where relevant
-- Numbered checklists for action items
-- "The Bottom Line" closing section
+Use H2/H3 markdown headings and short, scannable paragraphs — but do NOT default every post to the same skeleton (dollar-figure hook → bulleted cost breakdown → rhetorical question sub-headings → numbered checklist → "The Bottom Line" closer). That shape read as repetitive/tiring once several posts in a row used it. Vary the structure post to post: a comparison table, a short scenario/story, a myth-vs-fact format, or a plain conversational explainer with no checklist and no "Bottom Line" section are all valid — pick whichever shape actually fits this specific topic best, not whichever was used last time. A numbered list or dollar breakdown should appear because the content calls for it, not by habit.
+
+Also check `content/blog/posts-index.json` for the 5-10 most recent posts before drafting — if the topic covers essentially the same theme as one of them (even reworded, e.g. "vacancy cost" vs "turnover cost"), pick a genuinely different angle instead.
 
 ## Output
 

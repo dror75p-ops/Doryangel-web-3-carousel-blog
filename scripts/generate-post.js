@@ -42,6 +42,8 @@ const FALLBACK_TOPICS = [
   { title: 'Is Buying a Rental Property in the Bronx Still a Good Investment?', category: 'investments' },
   { title: '3 Bronx Neighborhoods With the Best Rental ROI in 2026', category: 'investments' },
   { title: 'How Much Cash Flow Should a Bronx Multi-Family Actually Produce in 2026?', category: 'investments' },
+  { title: 'Bronx vs. Yonkers: Which Rental Market Actually Pays Owners More in 2026?', category: 'investments' },
+  { title: 'Bronx vs. New Rochelle: Where Does Your Rental Investment Actually Go Further?', category: 'diy-property-management' },
   // --- property-automation (sparing) ---
   { title: '5 Smart Sensors Every Bronx Landlord Should Install in 2026', category: 'property-automation' },
   { title: 'How AI Security Cameras Are Reducing Vacancy Crimes in NYC Rental Buildings', category: 'property-automation' },
@@ -121,7 +123,7 @@ async function getClarityCategorySignals(existingPosts) {
   }
 }
 
-async function pickTopicWithAI(existingPosts, claritySignals) {
+async function pickTopicWithAI(existingPosts, claritySignals, avoidNote = null) {
   const today = toISODate(new Date());
   const season = getSeason(new Date().getMonth() + 1);
   const recentTitles = existingPosts.slice(0, 10).map(p => `- ${p.title}`).join('\n') || 'None yet';
@@ -145,6 +147,7 @@ ${recentTitles}
 
 Rules:
 - Geography: anchor every title to the Bronx as the primary location. Two natural extensions are allowed: (a) a second adjacent NYC borough (Queens or Manhattan) when it reads naturally — e.g. "...Your Bronx or Queens Rental?"; (b) a Bronx-vs-adjacent-area COMPARISON, a proven high-traffic format — the "Bronx vs. Mount Vernon" comparison was one of the best-performing posts. Mount Vernon (the Westchester city bordering the Bronx) is allowed ONLY inside a Bronx-anchored comparison, never as the sole location. Never use a non-Bronx borough or city as the sole anchor.
+- COMPARISON FORMAT IS THE TOP PERFORMER — lean into it: the Bronx-vs-adjacent-area comparison (and self-manage-vs-hire comparisons) has been our single best-performing shape by real traffic. Aim for roughly 1 in every 3-4 posts to use a head-to-head comparison ("Bronx vs. Mount Vernon", "Bronx vs. Yonkers", "Bronx vs. New Rochelle", "Self-Managing vs. Flat-Fee Management") whenever a natural angle exists for today's category — don't save it for only rare occasions.
 - WINNING TITLE FORMULA (validated by real traffic): lead with the OWNER'S pain or cost and address the owner directly with "you"/"your". Include a concrete number, dollar figure, or NYC law. These outperform service-description titles. Head-to-head comparisons ("X vs. Y", "Is A cheaper than B?") perform especially well — especially owner-facing self-manage-vs-hire and Bronx-vs-neighboring-area angles.
   Gold-standard examples to emulate the SHAPE of:
     • "How Much Is Inefficient Management Costing Your Bronx or Queens Rental?"
@@ -163,6 +166,7 @@ Rules:
     • To keep variety, avoid repeating the SAME category as the last 2 posts shown above; but when in doubt, choose owner-facing property-management.
 - "broker-partnerships" posts target NYC real estate brokers/agents as referral partners — topics should cover referral income, how to advise landlord clients, or how the DoryAngel partner program works
 ${engagementLine ? `- ENGAGEMENT SIGNAL (Clarity, last ${claritySignals.windowDays}d — consent-gated + short window, so it is THIN; treat as directional and IGNORE categories with only a handful of sessions): how well each blog category held readers, by average scroll depth — ${engagementLine}. When two categories are otherwise equally good candidates for today, prefer the one that holds attention better. Do NOT override the owner-facing category preference above based on a few sessions.` : ''}
+${avoidNote ? `\nIMPORTANT: Your last suggestion covered substantially the same theme as an already-published post ("${avoidNote}"). Pick a genuinely different subject or angle this time — not just a reworded or re-seasoned version of that post.` : ''}
 
 Reply ONLY with valid JSON: {"title": "...", "category": "..."}`,
       }],
@@ -179,6 +183,42 @@ Reply ONLY with valid JSON: {"title": "...", "category": "..."}`,
   }
 
   return FALLBACK_TOPICS[existingPosts.length % FALLBACK_TOPICS.length];
+}
+
+// Semantic dedupe gate against the FULL post history (not just the last 10 shown
+// to the topic-picker above) — catches recurring themes worded differently, e.g.
+// a new "August move-out costs" post re-covering old "cut vacancy time in half" /
+// "reduce vacancy rates" ground. Mirrors Arlo's findDuplicateOpenIssue() in
+// daily-audit.js. Fails open (treats as not-duplicate) on any error, same as Arlo.
+async function findSimilarPublishedTopic(topic, existingPosts) {
+  if (!existingPosts.length) return null;
+  const titles = existingPosts.map(p => `${p.title} [${p.category}]`);
+  const prompt = `You are a strict deduplication gate for a property-management blog.
+
+NEW topic title: "${topic.title}"
+NEW topic category: ${topic.category}
+
+ALREADY PUBLISHED post titles (most recent first):
+${titles.map((t, i) => `${i + 1}. ${t}`).join('\n')}
+
+Does the NEW topic cover substantially the SAME underlying theme/angle as any ALREADY PUBLISHED post, even if worded differently, re-seasoned, or using different numbers (e.g. "cost of vacancy" vs "cut vacancy time in half" vs "August move-out costs" are the same theme)? Only answer false if the core subject is genuinely distinct.
+
+Return ONLY JSON: {"duplicate": true|false, "of": "<exact existing title, or empty>"}`;
+  try {
+    const msg = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 200,
+      messages: [{ role: 'user', content: prompt }],
+    });
+    const text = msg.content.find(b => b.type === 'text')?.text ?? '{}';
+    const m = text.match(/\{[\s\S]*\}/);
+    if (!m) return null;
+    const parsed = JSON.parse(m[0]);
+    return parsed.duplicate ? (parsed.of || 'an existing post') : null;
+  } catch (err) {
+    console.warn(`Topic dedupe gate failed (${err.message}) — proceeding anyway`);
+    return null;
+  }
 }
 
 const HASHTAGS_BY_CATEGORY = {
@@ -255,19 +295,26 @@ CRITICAL RULES — what works for our audience (validated by real traffic data):
 
 6. Structure: Use markdown headings (h2, h3), short paragraphs (2-3 sentences), bullet lists where useful. Make it scannable.
 
-7. Do NOT include the CTA in the content — the CTA is auto-appended to every post by our system.
+7. STRUCTURAL VARIETY — do not default to the same skeleton every time. A recurring failure mode is every post following the exact same shape: dollar-figure hook → bulleted cost breakdown → 2-3 rhetorical "### Is/Does/What Happens If...?" sub-headings → a numbered step-by-step checklist → a "Bottom Line" closer. That shape is fine occasionally, but rotate genuinely different structures post to post so the blog doesn't read like the same article rewritten with new numbers:
+   - Sometimes tell it through a short, specific scenario or before/after story instead of a bulleted breakdown.
+   - Sometimes debunk a common landlord myth or misconception as the spine of the piece.
+   - Sometimes structure it as a direct comparison (a table or side-by-side, not just prose) rather than a checklist.
+   - Sometimes just explain a topic clearly and conversationally with no numbered list and no "Bottom Line" section at all — not every post needs a step-by-step or a closer labeled that way; end naturally instead.
+   - A numbered list or dollar-amount breakdown should appear only where it's the best way to convey that specific content — never as a rote habit.
 
-8. Answer front-loading: The opening paragraph (first 2–3 sentences) must directly and concisely answer the post title as a search query. State the answer first, then provide depth and context. This is how Google AI Overviews and featured snippets are earned.
+8. Do NOT include the CTA in the content — the CTA is auto-appended to every post by our system.
 
-9. E-E-A-T voice: Write in first-person plural to signal real expertise — "In our experience managing 100+ Bronx properties...", "We've seen landlords lose $3,000 when...", "Our clients in Riverdale tell us...". Use at least one first-person experience marker per major section.
+9. Answer front-loading: The opening paragraph (first 2–3 sentences) must directly and concisely answer the post title as a search query. State the answer first, then provide depth and context. This is how Google AI Overviews and featured snippets are earned.
 
-10. FAQ headings: Structure at least 2–3 H2 or H3 subheadings as direct questions ending in "?" (e.g., "## How Much Does Property Management Cost in the Bronx?" or "### What Happens If You Miss an HPD Lead Paint Inspection?"). These are automatically converted to FAQPage schema, which boosts AI Overview appearances.
+10. E-E-A-T voice: Write in first-person plural to signal real expertise — "In our experience managing 100+ Bronx properties...", "We've seen landlords lose $3,000 when...", "Our clients in Riverdale tell us...". Use at least one first-person experience marker per major section — but vary where and how it appears rather than opening every section the same way.
 
-11. Banned phrases — never use these AI clichés: "delve", "testament", "it's worth noting", "it is important to note", "in conclusion", "moreover", "furthermore", "navigate", "realm", "landscape", "crucial", "key takeaways", "let's explore", "let's dive", "game-changer", "transformative", "leverage" (as a verb), "unlock", "harness", "empower", "foster", "in today's world", "stands out".
+11. FAQ headings: Structure at least 2–3 H2 or H3 subheadings as direct questions ending in "?" (e.g., "## How Much Does Property Management Cost in the Bronx?" or "### What Happens If You Miss an HPD Lead Paint Inspection?"). These are automatically converted to FAQPage schema, which boosts AI Overview appearances. Not every heading needs to be phrased as a question — mix in plain descriptive headings too.
 
-12. Tool mentions (use judgment — only when it fits naturally, not in every post): DoryAngel offers landlords a Compliance Calendar (47 HPD, DOB &amp; FDNY tasks with exact penalty amounts and seasonal checklists, delivered monthly — free at doryangel.com/tools), a Weekly Digest (Monday summary of the 5 most urgent items: overdue rent, open HPD violations, expiring leases, maintenance tickets, compliance deadlines), an Owner Dashboard (real-time view of rent collection, maintenance, HPD violations, occupancy, and monthly expenses), and a Maintenance Tracker. When the post's problem is one these tools directly solve, add one brief sentence — e.g. "DoryAngel clients get this flagged automatically in their weekly digest" or "the owner dashboard tracks this in real time" or "DoryAngel's free Compliance Calendar covers this deadline every month." Do not force it if the connection isn't genuine.
+12. Banned phrases — never use these AI clichés: "delve", "testament", "it's worth noting", "it is important to note", "in conclusion", "moreover", "furthermore", "navigate", "realm", "landscape", "crucial", "key takeaways", "let's explore", "let's dive", "game-changer", "transformative", "leverage" (as a verb), "unlock", "harness", "empower", "foster", "in today's world", "stands out".
 
-13. Broker Partner Program mentions (for broker-partnerships category posts only): DoryAngel runs a Broker Partner Program (currently in beta) where NYC brokers earn $50/unit/month in recurring passive income — approximately 30% of the total management fee — for every unit they place with DoryAngel. The broker's existing commission is untouched. The only ongoing commitment is a 30-minute quarterly call. Brokers can request beta access at doryangel.com/broker-partner. When writing broker-partnerships posts, always reference this specific program with the real numbers ($50/unit/month, beta program terms apply) rather than vague "referral income" language.
+13. Tool mentions (use judgment — only when it fits naturally, not in every post): DoryAngel offers landlords a Compliance Calendar (47 HPD, DOB &amp; FDNY tasks with exact penalty amounts and seasonal checklists, delivered monthly — free at doryangel.com/tools), a Weekly Digest (Monday summary of the 5 most urgent items: overdue rent, open HPD violations, expiring leases, maintenance tickets, compliance deadlines), an Owner Dashboard (real-time view of rent collection, maintenance, HPD violations, occupancy, and monthly expenses), and a Maintenance Tracker. When the post's problem is one these tools directly solve, add one brief sentence — e.g. "DoryAngel clients get this flagged automatically in their weekly digest" or "the owner dashboard tracks this in real time" or "DoryAngel's free Compliance Calendar covers this deadline every month." Do not force it if the connection isn't genuine.
+
+14. Broker Partner Program mentions (for broker-partnerships category posts only): DoryAngel runs a Broker Partner Program (currently in beta) where NYC brokers earn $50/unit/month in recurring passive income — approximately 30% of the total management fee — for every unit they place with DoryAngel. The broker's existing commission is untouched. The only ongoing commitment is a 30-minute quarterly call. Brokers can request beta access at doryangel.com/broker-partner. When writing broker-partnerships posts, always reference this specific program with the real numbers ($50/unit/month, beta program terms apply) rather than vague "referral income" language.
 
 When asked to write a post, also produce:
 - An SEO title in field "seoTitleShort": max 48 chars, do NOT add " | DoryAngel" — the system appends it
@@ -553,7 +600,14 @@ async function main() {
   if (claritySignals) {
     console.log(`Clarity signal: ${claritySignals.categories.map(c => `${c.category}=${c.avgScroll}%/${c.sessions}s`).join(', ')}`);
   }
-  const topic = await pickTopicWithAI(posts, claritySignals);
+  let topic = await pickTopicWithAI(posts, claritySignals);
+  let dupOf = await findSimilarPublishedTopic(topic, posts);
+  for (let attempt = 0; dupOf && attempt < 2; attempt++) {
+    console.log(`Topic "${topic.title}" overlaps published post "${dupOf}" — retrying (attempt ${attempt + 1}/2)`);
+    topic = await pickTopicWithAI(posts, claritySignals, dupOf);
+    dupOf = await findSimilarPublishedTopic(topic, posts);
+  }
+  if (dupOf) console.log(`Still overlapping after retries ("${dupOf}") — proceeding anyway (fail-open)`);
   console.log(`Topic: "${topic.title}" (${topic.category})`);
 
   const researchNotes = await researchTopic(topic);
