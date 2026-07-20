@@ -3,6 +3,7 @@
 // Defaults to the most recent post (posts[0]) if SLUG is not set.
 
 import { readFileSync, writeFileSync } from 'fs';
+import { searchUnsplashPhotos } from './lib/post-utils.js';
 
 const SLUG = process.env.SLUG || null;
 
@@ -46,14 +47,8 @@ async function fetchImage(category) {
   const query = queries[Math.floor(Math.random() * queries.length)];
   console.log(`Searching Unsplash: "${query}"`);
 
-  const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&orientation=landscape&per_page=15&content_filter=high`;
-  const res = await fetch(url, {
-    headers: { 'Authorization': `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}` },
-  });
-  if (!res.ok) throw new Error(`Unsplash ${res.status}`);
-  const data = await res.json();
-  if (!data.results?.length) throw new Error('No results');
-  const photo = data.results[Math.floor(Math.random() * Math.min(data.results.length, 10))];
+  const results = await searchUnsplashPhotos(query);
+  const photo = results[Math.floor(Math.random() * Math.min(results.length, 10))];
   return `${photo.urls.raw}&w=1600&q=80&fit=crop`;
 }
 
