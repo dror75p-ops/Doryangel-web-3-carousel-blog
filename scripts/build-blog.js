@@ -14,6 +14,7 @@ const CATEGORY_LABEL = {
   'diy-property-management': 'DIY Property Management',
   'investments':             'Investments',
   'property-automation':     'Property Automation',
+  'broker-partnerships':     'Broker Partnerships',
 };
 
 function escape(s) {
@@ -128,7 +129,7 @@ function renderPage(post, related) {
           <a href="../${r.slug}/" class="related-card">
             <div class="related-image" style="background-image:url('${escape(r.heroImage)}')"></div>
             <div class="related-body">
-              <div class="related-cat">${escape(CATEGORY_LABEL[r.category])}</div>
+              <div class="related-cat">${escape(CATEGORY_LABEL[r.category] || r.category)}</div>
               <h3>${escape(r.title)}</h3>
               <div class="related-meta">${r.minutesToRead} min read</div>
             </div>
@@ -406,7 +407,7 @@ ${relatedHtml}
 `;
 }
 
-const CATEGORY_ORDER = ['property-management', 'diy-property-management', 'investments', 'property-automation'];
+const CATEGORY_ORDER = ['property-management', 'diy-property-management', 'investments', 'property-automation', 'broker-partnerships'];
 
 function labelForCategory(cat) {
   return CATEGORY_LABEL[cat] || String(cat).replace(/-/g, ' ').replace(/\b\w/g, m => m.toUpperCase());

@@ -1,6 +1,7 @@
 // refresh-images.js — One-shot script to update all existing posts' cover images
 
 import { readFileSync, writeFileSync } from 'fs';
+import { searchUnsplashPhotos } from './lib/post-utils.js';
 
 const IMAGE_QUERIES = {
   'Compliance':           ['business professional reviewing documents bright office', 'office worker computer modern bright', 'manhattan skyscraper daylight blue sky'],
@@ -14,20 +15,14 @@ async function fetchImage(category, seedIndex) {
   const query = queries[seedIndex % queries.length];
   console.log(`  Searching: "${query}"`);
 
-  const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&orientation=landscape&per_page=15&content_filter=high`;
-  const res = await fetch(url, {
-    headers: { 'Authorization': `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}` }
-  });
-  if (!res.ok) {
-    console.log(`  ✗ API error ${res.status}`);
+  let results;
+  try {
+    results = await searchUnsplashPhotos(query);
+  } catch (e) {
+    console.log(`  ✗ ${e.message}`);
     return null;
   }
-  const data = await res.json();
-  if (!data.results || data.results.length === 0) {
-    console.log(`  ✗ No results`);
-    return null;
-  }
-  const photo = data.results[seedIndex % Math.min(data.results.length, 8)];
+  const photo = results[seedIndex % Math.min(results.length, 8)];
   return `${photo.urls.raw}&w=1200&q=80&fit=crop`;
 }
 

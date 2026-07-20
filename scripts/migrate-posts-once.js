@@ -4,6 +4,7 @@
 //        heroImageAlt, hashtags, featured, seoTitle, seoDescription, author, content }
 
 import { readFileSync, writeFileSync } from 'fs';
+import { wordsToMinutes } from './lib/post-utils.js';
 
 // Map old categories → new 3-category system
 const CATEGORY_MAP = {
@@ -27,11 +28,6 @@ function categoryAlt(category) {
     'investments':             'Bronx skyline showing rental property investment opportunity',
   };
   return map[category] || 'New York City property scene';
-}
-
-function wordsToMinutes(content) {
-  const words = content.trim().split(/\s+/).length;
-  return Math.max(2, Math.round(words / 220));
 }
 
 function truncate(str, max) {
