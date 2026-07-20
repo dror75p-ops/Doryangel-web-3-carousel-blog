@@ -4,6 +4,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { Resend } from 'resend';
 import { readFileSync, writeFileSync } from 'fs';
 import { createSign } from 'crypto';
+import { generateSlug, toISODate, wordsToMinutes, searchUnsplashPhotos } from './lib/post-utils.js';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 4 });
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -121,7 +122,7 @@ async function getClarityCategorySignals(existingPosts) {
 }
 
 async function pickTopicWithAI(existingPosts, claritySignals) {
-  const today = formatDate(new Date());
+  const today = toISODate(new Date());
   const season = getSeason(new Date().getMonth() + 1);
   const recentTitles = existingPosts.slice(0, 10).map(p => `- ${p.title}`).join('\n') || 'None yet';
 
@@ -180,25 +181,6 @@ Reply ONLY with valid JSON: {"title": "...", "category": "..."}`,
   return FALLBACK_TOPICS[existingPosts.length % FALLBACK_TOPICS.length];
 }
 
-function generateSlug(title) {
-  return title
-    .toLowerCase()
-    .replace(/[‐-―−]/g, ' ')  // em/en/figure dashes + minus → space, so "tenants—smart" → "tenants-smart" not "tenantssmart"
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-+|-+$/g, '')                  // trim leading/trailing hyphens before slicing
-    .slice(0, 60)
-    .replace(/-+$/g, '');                     // re-trim if the 60-char cut landed on a hyphen
-}
-
-function formatDate(date) { return date.toISOString().split('T')[0]; }
-
-function wordsToMinutes(content) {
-  const words = content.trim().split(/\s+/).length;
-  return Math.max(2, Math.round(words / 220));
-}
-
 const HASHTAGS_BY_CATEGORY = {
   'property-management':     ['propertymanagement', 'bronxlandlord', 'nyc', 'flatfee', 'doryangel'],
   'diy-property-management': ['diylandlord', 'bronxlandlord', 'nyc', 'rentalproperty', 'doryangel'],
@@ -248,15 +230,8 @@ async function fetchCoverImage(category) {
   console.log(`Searching Unsplash for: "${query}"`);
 
   try {
-    const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&orientation=landscape&per_page=15&content_filter=high`;
-    const res = await fetch(url, {
-      headers: { 'Authorization': `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}` }
-    });
-    if (!res.ok) throw new Error(`Unsplash returned ${res.status}`);
-    const data = await res.json();
-    if (!data.results || data.results.length === 0) throw new Error('No results');
-
-    const photo = data.results[Math.floor(Math.random() * Math.min(data.results.length, 10))];
+    const results = await searchUnsplashPhotos(query);
+    const photo = results[Math.floor(Math.random() * Math.min(results.length, 10))];
     return `${photo.urls.raw}&w=1600&q=80&fit=crop`;
   } catch (err) {
     console.warn(`Unsplash failed (${err.message}) — using fallback image`);
@@ -350,7 +325,7 @@ const POST_SCHEMA = {
 };
 
 async function generatePost(topic, researchNotes = '', editorFeedback = '') {
-  const today = formatDate(new Date());
+  const today = toISODate(new Date());
 
   const researchBlock = researchNotes
     ? `\nResearch facts to weave in naturally (use as inspiration — do not copy verbatim):\n${researchNotes}\n`
@@ -567,7 +542,7 @@ async function main() {
 
   // Guard: skip if a post was already published today (prevents double-runs on schedule)
   // Bypass with FORCE_PUBLISH=true (or DRY_RUN=true, which never publishes anyway)
-  const today = formatDate(new Date());
+  const today = toISODate(new Date());
   if (posts[0]?.publishedDate === today && process.env.FORCE_PUBLISH !== 'true' && process.env.DRY_RUN !== 'true') {
     console.log(`Post already published today (${today}) — skipping to avoid duplicate.`);
     console.log('To override, set FORCE_PUBLISH=true');
