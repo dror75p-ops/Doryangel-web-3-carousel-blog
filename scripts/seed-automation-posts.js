@@ -3,6 +3,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import { readFileSync, writeFileSync } from 'fs';
+import { generateSlug, toISODate, wordsToMinutes, searchUnsplashPhotos } from './lib/post-utils.js';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 4 });
 
@@ -59,21 +60,11 @@ const POST_SCHEMA = {
   additionalProperties: false,
 };
 
-function generateSlug(title) {
-  return title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').slice(0, 60);
-}
-function formatDate(d) { return d.toISOString().split('T')[0]; }
-function wordsToMinutes(content) { return Math.max(2, Math.round(content.trim().split(/\s+/).length / 220)); }
-
 async function fetchImage() {
   const query = IMAGE_QUERIES[Math.floor(Math.random() * IMAGE_QUERIES.length)];
   try {
-    const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&orientation=landscape&per_page=15&content_filter=high`;
-    const res = await fetch(url, { headers: { Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}` } });
-    if (!res.ok) throw new Error(`Unsplash ${res.status}`);
-    const data = await res.json();
-    if (!data.results?.length) throw new Error('No results');
-    const photo = data.results[Math.floor(Math.random() * Math.min(data.results.length, 10))];
+    const results = await searchUnsplashPhotos(query);
+    const photo = results[Math.floor(Math.random() * Math.min(results.length, 10))];
     return `${photo.urls.raw}&w=1600&q=80&fit=crop`;
   } catch (e) {
     console.warn(`Unsplash failed (${e.message}) — using fallback`);
@@ -101,7 +92,7 @@ async function generatePost(topic) {
     title: post.title,
     category: topic.category,
     excerpt: post.excerpt,
-    publishedDate: formatDate(new Date()),
+    publishedDate: toISODate(new Date()),
     minutesToRead: wordsToMinutes(post.content),
     heroImage,
     heroImageAlt: post.heroImageAlt,
