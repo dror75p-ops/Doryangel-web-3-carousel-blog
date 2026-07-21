@@ -3370,9 +3370,40 @@ retell-chat-web-component {
         ctx.fillStyle = vig; ctx.fillRect(0, 0, 600, 600);
         ctx.restore();
 
-        if (!prefersReduced) requestAnimationFrame(animate);
+        rafId = (!prefersReduced && running) ? requestAnimationFrame(animate) : null;
       }
-      animate();
+
+      // Only run the rAF loop while the widget is on-screen AND the tab is visible.
+      // This canvas sits below the fold; without gating, the loop (22-ball physics +
+      // collision + full canvas redraw every frame) burns the main thread the whole
+      // time the page is open and hurts INP / Real Experience Score. Mirrors the
+      // on-screen + document.hidden gating already used by the hero/carousel animations.
+      var rafId = null, running = false, inView = false;
+      function startLoop() {
+        if (prefersReduced || running || document.hidden || !inView) return;
+        running = true;
+        rafId = requestAnimationFrame(animate);
+      }
+      function stopLoop() {
+        running = false;
+        if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+      }
+
+      animate(); // paint the first frame immediately (also the lone static frame for reduced-motion)
+      if (!prefersReduced) {
+        if ('IntersectionObserver' in window) {
+          new IntersectionObserver(function (entries) {
+            inView = entries[0].isIntersecting;
+            if (inView) startLoop(); else stopLoop();
+          }, { threshold: 0.15 }).observe(canvas);
+        } else {
+          inView = true;
+          startLoop();
+        }
+        document.addEventListener('visibilitychange', function () {
+          if (document.hidden) stopLoop(); else startLoop();
+        });
+      }
     })();
     </script>
 
