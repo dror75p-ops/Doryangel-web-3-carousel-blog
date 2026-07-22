@@ -568,6 +568,19 @@ picture { display: contents; }
 }
 .audience-link svg { width: 16px; height: 16px; transition: transform 0.2s; }
 .audience-card:hover .audience-link svg { transform: translateX(4px); }
+/* Owner path is the primary lead target — emphasized in place so the 4-col grid stays symmetric */
+.audience-card--primary { position: relative; border-color: var(--blue); box-shadow: 0 12px 32px rgba(30,90,168,0.16); }
+.audience-badge {
+  position: absolute; top: 14px; right: 14px; z-index: 2;
+  background: var(--blue); color: #fff; font-size: 10px; font-weight: 800;
+  letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 11px;
+  border-radius: 999px; box-shadow: 0 4px 12px rgba(30,90,168,0.35);
+}
+.audience-card--primary .audience-link {
+  background: var(--blue); color: #fff; padding: 11px 18px; border-radius: 8px;
+  width: fit-content; justify-content: center;
+}
+.audience-card--primary .audience-link svg { color: #fff; }
 
 /* PILLARS */
 .pillars-grid {
@@ -1701,7 +1714,13 @@ footer {
 }
 
 /* premium card when outside the old tools-grid */
-.tools-premium-wrap { margin: 0; max-width: 384px; width: 100%; }
+.tools-premium-wrap { margin: 0 auto; max-width: 384px; width: 100%; }
+/* Feature row pairs the Tax Checklist card with the animated widget so neither
+   strands alone in the left column of the 3-col tools grid. */
+.tools-feature-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; margin-top: 24px; }
+.tools-feature-row .tool-card { margin: 0; }
+.tools-feature-row .tools-hero-widget { display: flex; justify-content: center; }
+@media (max-width: 900px) { .tools-feature-row { grid-template-columns: 1fr; } }
 
 /* bottom CTA strip */
 .tools-cta-strip {
@@ -2549,7 +2568,8 @@ retell-chat-web-component {
 
     <div class="audience-grid reveal-stagger">
       <!-- Owners -->
-      <a href="#pricing" class="audience-card">
+      <a href="#pricing" class="audience-card audience-card--primary">
+        <span class="audience-badge">Start here</span>
         <div class="audience-card-photo">
           <picture>
             <source srcset="./assets/photo-owners-signing.webp" type="image/webp">
@@ -2565,7 +2585,7 @@ retell-chat-web-component {
         <h3>Property Owners</h3>
         <p>Flat-fee management, live reporting, compliance handling, and 24/7 maintenance coordination. Your asset, maximized.</p>
         <div class="audience-link">
-          Learn more
+          See pricing
           <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
         </div>
       </a>
@@ -2993,7 +3013,12 @@ retell-chat-web-component {
         <div class="tool-trust-meta">Free · Uses your own OpenAI API key · No data stored</div>
       </div>
 
-      <!-- Card 4: Bronx Landlord Tax Checklist -->
+    </div><!-- /tools-grid (3 free-tool cards, clean row) -->
+
+    <!-- FEATURE ROW — Tax Checklist card + animated overview widget, balanced 2-col
+         so neither strands alone in the left column. Stacks on mobile. -->
+    <div class="tools-feature-row">
+      <!-- Bronx Landlord Tax Checklist -->
       <div class="tool-card">
         <div class="tool-card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="24" height="24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12l1.5 1.5L13 11M9 17l1.5 1.5L13 16"/></svg>
@@ -3013,12 +3038,10 @@ retell-chat-web-component {
         <div class="tool-trust-meta">Free · Updated for 2025 · No credit card</div>
       </div>
 
-    </div><!-- /tools-grid -->
-
-    <!-- ANIMATED OVERVIEW WIDGET -->
-    <div class="tools-hero-widget" aria-hidden="true">
+      <!-- ANIMATED OVERVIEW WIDGET (pairs with the Tax Checklist card above) -->
+      <div class="tools-hero-widget" aria-hidden="true">
       <style>
-        #dy-hero-wrap { position:relative; width:min(360px,86vw); height:min(360px,86vw); margin:36px 0 8px; }
+        #dy-hero-wrap { position:relative; width:min(360px,86vw); height:min(360px,86vw); margin:0 auto; }
         @media (max-width: 900px) {
           /* tools-grid drops to repeat(2,1fr) here, so the 4th card no longer wraps
              alone into column 1 — nothing left to align with, so recenter to match
@@ -3055,6 +3078,7 @@ retell-chat-web-component {
         </div>
       </div>
     </div>
+    </div><!-- /tools-feature-row -->
     <script>
     (function() {
       var canvas = document.getElementById('dy-hero-canvas');
@@ -4130,9 +4154,10 @@ retell-chat-web-component {
   margin-bottom: 18px;
 }
 
-/* Masonry */
+/* Masonry — 2 balanced columns (matches the 2-col featured row above it, and with an
+   odd number of variable-height cards this reads far tidier than a 3-col ragged fill). */
 .ct-masonry {
-  columns: 3;
+  columns: 2;
   column-gap: 18px;
 }
 .ct-masonry .ct-card {
