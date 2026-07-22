@@ -139,7 +139,19 @@
 <link rel="dns-prefetch" href="https://www.clarity.ms">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<!-- Hero skyline photos, the About skyline, and the blog-card images are all served from
+     images.unsplash.com. Warm the connection up front so the cross-origin fetch doesn't stall
+     on a cold DNS+TLS handshake on slow links (helps the P95/P99 experience tail). -->
+<link rel="preconnect" href="https://images.unsplash.com">
+<!-- Load the Google Fonts CSS non-render-blocking (preload + onload rel-swap). This is the only
+     external stylesheet on the page (all site CSS is inline below), so switching it off the
+     critical path removes the sole render-blocking request — the biggest lever on the
+     slow-connection LCP tail, where the median (P75) is already perfect. display=swap (in the
+     URL) means headline/body text paints immediately in the fallback face, then swaps in. -->
+<link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap"></noscript>
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
