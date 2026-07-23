@@ -269,15 +269,15 @@ nav.bar-hidden { top: 0; }
 .lp-section h2 {
   font-family: 'DM Serif Display', serif;
   font-size: clamp(24px, 4vw, 32px); color: var(--navy);
-  line-height: 1.18; margin-bottom: 12px;
+  line-height: 1.18; margin-bottom: 12px; text-align: center;
 }
-.lp-section .lp-sub { color: var(--text-muted); max-width: 720px; margin: 0 0 32px; font-size: 16px; }
+.lp-section .lp-sub { color: var(--text-muted); max-width: 720px; margin: 0 auto 32px; font-size: 16px; text-align: center; }
 
 /* INTRO / OVERVIEW */
-.intro-wrap { max-width: 1040px; margin: 0 auto; padding: 48px 24px 8px; }
-.intro-lead { font-size: 18px; color: var(--text); line-height: 1.7; max-width: 760px; }
+.intro-wrap { max-width: 1040px; margin: 0 auto; padding: 48px 24px 8px; text-align: center; }
+.intro-lead { font-size: 18px; color: var(--text); line-height: 1.7; max-width: 760px; margin: 0 auto; }
 .intro-lead strong { color: var(--navy); }
-.jump-nav { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+.jump-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 26px; }
 .jump-nav a {
   font-size: 13px; font-weight: 600; color: var(--navy); text-decoration: none;
   background: var(--grey-light); border: 1px solid var(--grey-mid);
@@ -288,7 +288,8 @@ nav.bar-hidden { top: 0; }
 /* GUIDE GROUPS */
 .guide-group { scroll-margin-top: 120px; }
 .guide-group + .guide-group { margin-top: 8px; }
-.guide-group-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+.guide-group-head { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 6px; }
+.guide-group-head h2 { margin-bottom: 0; }
 .guide-group-num {
   font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--blue);
   background: var(--blue-dim); width: 40px; height: 40px; border-radius: 10px;
@@ -449,13 +450,13 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
 <!-- INTRO / OVERVIEW -->
 <div class="intro-wrap" id="guide-start">
   <p class="intro-lead">Compliance isn't paperwork — it's cash flow. A single mishandled security deposit can become a <strong>$5,100 judgment</strong>. One rent-stabilization overcharge can trigger <strong>treble damages</strong>. A missed RPIE or grievance deadline can cost <strong>thousands</strong> in overpaid taxes. We pulled together DoryAngel's most-used Bronx compliance guides and grouped them the way the risk actually shows up over a landlord's year.</p>
-  <nav class="jump-nav" aria-label="Jump to a topic">
+  <div class="jump-nav" role="navigation" aria-label="Jump to a topic">
     <a href="#deadlines">Filing deadlines</a>
     <a href="#rent-reg">Rent regulation</a>
     <a href="#evictions">Evictions &amp; court</a>
     <a href="#screening">Legal screening</a>
     <a href="#money">Deposits &amp; taxes</a>
-  </nav>
+  </div>
 </div>
 
 <!-- GROUP 1: DEADLINES -->
