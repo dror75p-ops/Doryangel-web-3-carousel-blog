@@ -225,7 +225,22 @@ nav.bar-hidden { top: 0; }
 }
 
 /* Rotating headline + trust bar */
-.hero-rotator { display: block; min-width: 1px; }
+.hero-rotator {
+  display: block; min-width: 1px;
+  transform-origin: left center;
+  /* Gentle flag-wave while the slogan rests between rotations */
+  animation: heroFlagWave 5s ease-in-out infinite;
+}
+@keyframes heroFlagWave {
+  0%   { transform: rotate(0deg) skewX(0deg); }
+  15%  { transform: rotate(-0.5deg) skewX(1.3deg); }
+  35%  { transform: rotate(0.35deg) skewX(-0.9deg); }
+  55%  { transform: rotate(-0.3deg) skewX(0.7deg); }
+  75%  { transform: rotate(0.2deg) skewX(-0.4deg); }
+  100% { transform: rotate(0deg) skewX(0deg); }
+}
+/* Fade animations take over during the swap (higher specificity wins), then the
+   flag-wave resumes once the slogan is at rest again. */
 .hero-rotator.rotating { animation: textFadeOut 350ms ease forwards; }
 .hero-rotator.rotating-in { animation: textFadeIn 450ms ease forwards; }
 .trust-rotator { transition: opacity 350ms ease, transform 350ms ease; }
@@ -5018,7 +5033,7 @@ async function handleFormSubmit(e) {
         heroRotator.classList.add('rotating-in');
         setTimeout(function () { heroRotator.classList.remove('rotating-in'); }, 500);
       }, 350);
-    }, 4000);
+    }, 9000);
   }
 
   var trustRotator = document.getElementById('trust-rotator');
