@@ -73,10 +73,75 @@ function extractFAQs(markdown) {
   return faqs;
 }
 
+// Topic-cluster hubs: posts in a hub's slug set get a prominent up-link to the
+// pillar page. Keeps the individual posts and their hub woven together.
+const GUIDE_HUBS = [
+  {
+    url: `${SITE_URL}/guides/bronx-landlord-compliance/`,
+    label: 'Read the full NYC Landlord Compliance Guide →',
+    slugs: new Set([
+      'nyc-local-law-compliance-guide-2026',
+      'nyc-rent-stabilization-rules-every-landlord-must-know',
+      'good-cause-eviction-nyc-landlord-guide',
+      'nyc-housing-court-and-the-eviction-process-explained-for-lan',
+      'tenant-screening-bronx-landlord-guide',
+      'rent-control-tenant-screening-rules-bronx-landlords',
+      'why-your-bronx-tenants-security-deposit-claim-could-sink-you',
+      'what-bronx-landlords-need-to-know-about-property-taxes-2026',
+      '5-bronx-landlord-tax-deductions-youre-likely-missing-this-su',
+    ]),
+  },
+];
+
+function hubForPost(post) {
+  return GUIDE_HUBS.find(h => h.slugs.has(post.slug)) || null;
+}
+
+// Low-signal words to ignore when scoring topical overlap between two posts.
+const STOP_WORDS = new Set([
+  'the','and','for','you','your','are','with','that','this','what','why','how',
+  'could','should','does','from','into','when','will','have','has','its','our',
+  'bronx','nyc','landlord','landlords','2026','2025','new','york','city',
+]);
+
+function topicTokens(post) {
+  const text = `${post.title} ${post.excerpt || ''}`.toLowerCase();
+  const words = text.replace(/[^a-z0-9 ]/g, ' ').split(/\s+/)
+    .filter(w => w.length > 3 && !STOP_WORDS.has(w));
+  return new Set(words);
+}
+
+// Relevance of candidate `b` to the post we're rendering (`a`): shared hashtags
+// weigh heavily, plus title/excerpt word overlap.
+function relevanceScore(a, aTokens, b) {
+  const aTags = new Set(a.hashtags || []);
+  const tagScore = (b.hashtags || []).filter(t => aTags.has(t)).length * 3;
+  let overlap = 0;
+  for (const w of topicTokens(b)) if (aTokens.has(w)) overlap++;
+  return tagScore + overlap;
+}
+
+// Pick 3 related posts that deliberately reach BEYOND the current post's own
+// category: up to 2 most-relevant in-cluster + at least 1 most-relevant
+// cross-cluster, so no post stays siloed in its category.
 function getRelatedPosts(currentPost, allPosts) {
-  return allPosts
-    .filter(p => p.category === currentPost.category && p.slug !== currentPost.slug)
-    .slice(0, 3);
+  const aTokens = topicTokens(currentPost);
+  const byDate = (x, y) => new Date(y.publishedDate) - new Date(x.publishedDate);
+  const byRelevance = (x, y) =>
+    relevanceScore(currentPost, aTokens, y) - relevanceScore(currentPost, aTokens, x)
+    || byDate(x, y);
+
+  const others = allPosts.filter(p => p.slug !== currentPost.slug);
+  const sameCat = others.filter(p => p.category === currentPost.category).sort(byRelevance);
+  const otherCat = others.filter(p => p.category !== currentPost.category).sort(byRelevance);
+
+  const picks = sameCat.slice(0, 2);
+  if (otherCat.length) picks.push(otherCat[0]); // guaranteed cross-cluster link
+  for (const p of [...sameCat.slice(2), ...otherCat.slice(1)]) {
+    if (picks.length >= 3) break;
+    if (!picks.some(x => x.slug === p.slug)) picks.push(p);
+  }
+  return picks.slice(0, 3);
 }
 
 function renderPage(post, related) {
@@ -376,6 +441,7 @@ footer.post-footer a { color: white; text-decoration: none; }
   <div class="internal-links">
     <p>Explore DoryAngel:</p>
     <ul>
+      ${hubForPost(post) ? `<li><a href="${hubForPost(post).url}">${escape(hubForPost(post).label)}</a></li>` : ''}
       <li><a href="${SITE_URL}/#pricing">View flat-fee pricing plans — from $99/month →</a></li>
       <li><a href="${SITE_URL}/#services">Full list of property management services →</a></li>
       <li><a href="${SITE_URL}/blog/">More articles for NYC landlords →</a></li>
@@ -609,6 +675,7 @@ function buildSitemap(posts) {
     `  <url><loc>${SITE_URL}/broker-partner.html</loc><lastmod>2026-05-23</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
     `  <url><loc>${SITE_URL}/flat-fee-vs-commission/</loc><lastmod>2026-07-08</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
     `  <url><loc>${SITE_URL}/tax-checklist/</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
+    `  <url><loc>${SITE_URL}/guides/bronx-landlord-compliance/</loc><lastmod>2026-07-24</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
     `  <url><loc>${SITE_URL}/faq/</loc><lastmod>2026-07-15</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
     ...posts.map(p =>
       `  <url><loc>${SITE_URL}/blog/${p.slug}/</loc><lastmod>${p.publishedDate}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`
