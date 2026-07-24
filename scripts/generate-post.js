@@ -316,6 +316,8 @@ CRITICAL RULES — what works for our audience (validated by real traffic data):
 
 14. Broker Partner Program mentions (for broker-partnerships category posts only): DoryAngel runs a Broker Partner Program (currently in beta) where NYC brokers earn $50/unit/month in recurring passive income — approximately 30% of the total management fee — for every unit they place with DoryAngel. The broker's existing commission is untouched. The only ongoing commitment is a 30-minute quarterly call. Brokers can request beta access at doryangel.com/broker-partner. When writing broker-partnerships posts, always reference this specific program with the real numbers ($50/unit/month, beta program terms apply) rather than vague "referral income" language.
 
+15. Internal links (SEO): When a list of existing DoryAngel articles is provided alongside the topic, weave 2–3 of them into the body as contextual inline markdown links where they genuinely help the reader — e.g. "the same math applies when you [screen a rent-stabilized applicant](URL)". Use natural, descriptive anchor text (never "click here" or a bare URL), spread the links across the post where the connection is real, and skip any that don't fit rather than forcing them. Use ONLY URLs from the provided list, copied exactly — never invent a slug or URL, and never link to a page that isn't on the list. Do not add a separate "related articles" list at the end; our system appends related posts automatically.
+
 When asked to write a post, also produce:
 - An SEO title in field "seoTitleShort": max 48 chars, do NOT add " | DoryAngel" — the system appends it
 - An SEO description (max 155 chars, includes a hook + value prop)
@@ -371,7 +373,75 @@ const POST_SCHEMA = {
   additionalProperties: false,
 };
 
-async function generatePost(topic, researchNotes = '', editorFeedback = '') {
+// ── Internal linking (PR C) ─────────────────────────────────────────────
+// Give Nave a shortlist of real existing posts to link to contextually, and a
+// guard that neutralizes any hallucinated internal link so it can't 404.
+
+const COMPLIANCE_HUB = {
+  title: 'NYC Landlord Compliance Guide',
+  url: 'https://www.doryangel.com/guides/bronx-landlord-compliance/',
+  path: '/guides/bronx-landlord-compliance/',
+};
+
+const LINK_STOP_WORDS = new Set([
+  'the','and','for','you','your','are','with','that','this','what','why','how',
+  'could','should','does','from','into','when','will','have','has','its','our',
+  'bronx','nyc','landlord','landlords','2026','2025','new','york','city','rental',
+]);
+
+function linkTokens(text) {
+  return new Set(
+    String(text).toLowerCase().replace(/[^a-z0-9 ]/g, ' ').split(/\s+/)
+      .filter(w => w.length > 3 && !LINK_STOP_WORDS.has(w))
+  );
+}
+
+// Rank existing posts by relevance to the topic (title/excerpt overlap + a
+// same-category bonus) and return the top few as {title, url} for the prompt.
+function pickLinkablePosts(topic, existingPosts, limit = 8) {
+  const topicSlug = generateSlug(topic.title);
+  const tTokens = linkTokens(topic.title);
+  return existingPosts
+    .filter(p => p.slug !== topicSlug)
+    .map(p => {
+      const pt = linkTokens(`${p.title} ${p.excerpt || ''}`);
+      let overlap = 0;
+      for (const w of pt) if (tTokens.has(w)) overlap++;
+      return { p, score: overlap + (p.category === topic.category ? 2 : 0) };
+    })
+    .sort((a, b) => b.score - a.score
+      || new Date(b.p.publishedDate) - new Date(a.p.publishedDate))
+    .slice(0, limit)
+    .map(({ p }) => ({ title: p.title, url: `https://www.doryangel.com/blog/${p.slug}/` }));
+}
+
+// Candidates to show Nave + the full set of valid internal paths (for the guard).
+function buildLinkInfo(topic, existingPosts) {
+  const candidates = pickLinkablePosts(topic, existingPosts);
+  const validPaths = new Set(existingPosts.map(p => `/blog/${p.slug}/`));
+  validPaths.add(COMPLIANCE_HUB.path);
+  return { candidates, validPaths };
+}
+
+// Unwrap any markdown link pointing at a /blog/ or /guides/ page that doesn't
+// exist (a hallucinated slug) into plain text, so Nave can never ship a 404.
+// Leaves valid article links, homepage/#anchor links, and /tools links intact.
+function sanitizeInternalLinks(content, validPaths) {
+  if (!validPaths) return content;
+  return content.replace(
+    /\[([^\]]+)\]\((https?:\/\/[^)\/]*doryangel\.com(\/[^)\s]*))\)/g,
+    (match, anchor, _url, rawPath) => {
+      let path = rawPath.split('#')[0].split('?')[0];
+      if (!path.endsWith('/')) path += '/';
+      if (/^\/(blog|guides)\//.test(path)) {
+        return validPaths.has(path) ? match : anchor;
+      }
+      return match; // not an article/guide link — leave as-is
+    }
+  );
+}
+
+async function generatePost(topic, researchNotes = '', editorFeedback = '', linkInfo = null) {
   const today = toISODate(new Date());
 
   const researchBlock = researchNotes
@@ -380,6 +450,12 @@ async function generatePost(topic, researchNotes = '', editorFeedback = '') {
 
   const feedbackBlock = editorFeedback
     ? `\nEditor feedback — fix these issues in this rewrite:\n${editorFeedback}\n`
+    : '';
+
+  const linkBlock = linkInfo && linkInfo.candidates.length
+    ? `\nInternal links you MAY use — weave 2–3 of these into the body as contextual inline markdown links where they're genuinely relevant, using natural descriptive anchor text. Use ONLY URLs from this list, copied exactly — never invent a slug or URL:\n${
+        linkInfo.candidates.map(l => `- "${l.title}" — ${l.url}`).join('\n')
+      }\n- "${COMPLIANCE_HUB.title}" (link when the post touches NYC law, filing deadlines, or compliance) — ${COMPLIANCE_HUB.url}\n`
     : '';
 
   const message = await anthropic.messages.create({
@@ -396,7 +472,7 @@ async function generatePost(topic, researchNotes = '', editorFeedback = '') {
       content: `Write a blog post on this topic: "${topic.title}"
 Target category: ${topic.category}
 Year context: 2026
-${researchBlock}${feedbackBlock}
+${researchBlock}${feedbackBlock}${linkBlock}
 Remember: 800-1,200 words, NYC-specific examples, pain-point focused, scannable structure, no CTA in the content.`,
     }],
   });
@@ -409,6 +485,10 @@ Remember: 800-1,200 words, NYC-specific examples, pain-point focused, scannable 
   } catch (e) {
     throw new Error(`Claude returned invalid JSON: ${textBlock.text.slice(0, 200)}`);
   }
+
+  // Guard: neutralize any internal /blog/ or /guides/ link to a non-existent
+  // page so a hallucinated slug can never ship as a 404.
+  if (linkInfo) post.content = sanitizeInternalLinks(post.content, linkInfo.validPaths);
 
   console.log(
     `usage — input: ${message.usage.input_tokens}, ` +
@@ -611,14 +691,16 @@ async function main() {
   console.log(`Topic: "${topic.title}" (${topic.category})`);
 
   const researchNotes = await researchTopic(topic);
+  const linkInfo = buildLinkInfo(topic, posts);
+  console.log(`Internal-link candidates offered: ${linkInfo.candidates.length}`);
 
-  let post = await generatePost(topic, researchNotes);
+  let post = await generatePost(topic, researchNotes, '', linkInfo);
   console.log(`Generated: "${post.title}"`);
 
   const review = await reviewPost(post, topic);
   if (review.overall === 'FAIL') {
     console.log(`Rewriting with feedback: ${review.feedback}`);
-    post = await generatePost(topic, researchNotes, review.feedback);
+    post = await generatePost(topic, researchNotes, review.feedback, linkInfo);
     console.log(`Rewrite complete: "${post.title}"`);
   }
 
