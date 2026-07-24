@@ -1626,7 +1626,7 @@ footer {
 /* ── AUTOMATION TOOLS ── */
 .tools-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 24px;
   margin-top: 40px;
 }
@@ -2317,7 +2317,7 @@ retell-chat-web-component {
             <span class="dd-dot" style="background:#3A7BDD;"></span> Flat-Fee Savings Calculator <span class="nav-dd-tag" style="background:#EBF3FD;color:#3A7BDD;">Free</span>
           </a>
           <a href="./guides/bronx-landlord-compliance/" class="nav-dd-link">
-            <span class="dd-dot" style="background:#3A7BDD;"></span> Bronx Compliance Guide <span class="nav-dd-tag" style="background:#EBF3FD;color:#3A7BDD;">Free</span>
+            <span class="dd-dot" style="background:#3A7BDD;"></span> NYC Compliance Guide <span class="nav-dd-tag" style="background:#EBF3FD;color:#3A7BDD;">Free</span>
           </a>
           <a href="#tools" class="nav-dd-link">
             <span class="dd-dot dd-dot-premium"></span> Property P&amp;L Dashboard <span class="nav-dd-tag" style="background:#FBF1E6;color:#C97B2F;">$29.99</span>
@@ -2451,7 +2451,7 @@ retell-chat-web-component {
         <svg viewBox="0 0 24 24" fill="none" stroke="#3A7BDD" stroke-width="1.8" width="20" height="20"><path d="M12 3l8 3v5c0 4.5-3 8-8 10-5-2-8-5.5-8-10V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>
       </div>
       <div class="drawer-tool-card-body">
-        <div class="drawer-tool-card-title">Bronx Compliance Guide <span style="font-size:9px;font-weight:700;background:#EBF3FD;color:#3A7BDD;padding:1px 5px;border-radius:3px;margin-left:4px;">Free</span></div>
+        <div class="drawer-tool-card-title">NYC Compliance Guide <span style="font-size:9px;font-weight:700;background:#EBF3FD;color:#3A7BDD;padding:1px 5px;border-radius:3px;margin-left:4px;">Free</span></div>
         <div class="drawer-tool-card-sub">Every 2026 deadline, law &amp; fine in one place</div>
       </div>
       <svg class="drawer-tool-card-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M5 8h6M9 5l3 3-3 3"/></svg>
@@ -3041,7 +3041,27 @@ retell-chat-web-component {
         <div class="tool-trust-meta">Free · Uses your own OpenAI API key · No data stored</div>
       </div>
 
-    </div><!-- /tools-grid (3 free-tool cards, clean row) -->
+      <!-- Card 4: NYC Compliance Guide -->
+      <div class="tool-card">
+        <div class="tool-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="24" height="24"><path d="M12 3l8 3v5c0 4.5-3 8-8 10-5-2-8-5.5-8-10V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <span class="tool-tag">Free</span>
+        <h3>NYC Compliance Guide</h3>
+        <p>Every 2026 NYC filing deadline, rent-stabilization rule, eviction step and screening law that can fine a landlord — grouped into one guide, with the cost of each mistake spelled out.</p>
+        <div class="pm-chips" style="margin-top:-2px;">
+          <span class="pm-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>9 guides, 5 topics</span>
+          <span class="pm-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Fines &amp; deadlines mapped</span>
+          <span class="pm-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Updated for 2026</span>
+        </div>
+        <a href="./guides/bronx-landlord-compliance/" class="btn-primary" style="margin-top:auto;width:fit-content;display:inline-flex;align-items:center;gap:8px;text-decoration:none;">
+          Open the Guide
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <div class="tool-trust-meta">Free · No signup · Updated 2026</div>
+      </div>
+
+    </div><!-- /tools-grid (4 free-tool cards, 2×2) -->
 
     <!-- FEATURE ROW — Tax Checklist card + animated overview widget, balanced 2-col
          so neither strands alone in the left column. Stacks on mobile. -->
