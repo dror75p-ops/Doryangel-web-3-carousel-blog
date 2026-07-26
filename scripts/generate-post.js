@@ -14,8 +14,15 @@ const APPROVAL_EMAIL = 'dror75p@gmail.com';
 // Fallback topics used if AI topic selection fails
 // Ordered owner-first: the round-robin fallback (existingPosts.length % length)
 // should keep the mix skewed toward the owner-facing property-management /
-// DIY topics that actually earn search traffic. Automation & broker are kept
-// for occasional coverage only.
+// maintenance topics that actually earn search traffic. Automation & broker are
+// kept for occasional coverage only.
+//
+// NOTE (2026-07-26): the `diy-property-management` category slug now means
+// "Maintenance & Repairs" everywhere it is DISPLAYED. The slug itself is kept
+// as-is on purpose — it is baked into published post URLs' article:section, the
+// blog filter tabs, and the digest signup topic values — exactly the same
+// display-name-≠-slug arrangement as /guides/bronx-landlord-compliance/.
+// Do NOT "fix" the slug to say maintenance.
 const FALLBACK_TOPICS = [
   // --- property-management (owner-facing) ---
   { title: 'The Top 3 Mistakes Bronx Landlords Make Managing Their Own Properties', category: 'property-management' },
@@ -28,22 +35,30 @@ const FALLBACK_TOPICS = [
   { title: 'What Should a Bronx Landlord Expect From a Property Manager for $99 a Unit?', category: 'property-management' },
   { title: 'How Much Rent Are You Losing to Slow Tenant Turnover in Your Bronx Building?', category: 'property-management' },
   { title: 'How Do You Switch Property Managers in the Bronx Without Losing a Month of Rent?', category: 'property-management' },
-  // --- diy-property-management (owner-facing) ---
-  { title: 'Bronx vs. Mount Vernon: Where Do Landlords Actually Keep More of Their Rent?', category: 'diy-property-management' },
-  { title: 'Should You Self-Manage Your Bronx Rental or Hire Flat-Fee Management? A Real Cost Breakdown', category: 'diy-property-management' },
-  { title: '5 Free Tools Every DIY Landlord in the Bronx Needs', category: 'diy-property-management' },
-  { title: 'Should Bronx Landlords Self-Manage or Hire a Property Manager?', category: 'diy-property-management' },
-  { title: "How to Handle a Tenant Who Doesn't Pay Rent in the Bronx", category: 'diy-property-management' },
-  { title: 'How Bronx Landlords Can Cut Vacancy Time in Half', category: 'diy-property-management' },
-  { title: 'The Bronx Landlord Guide to NYC Housing Court in 2026', category: 'diy-property-management' },
-  { title: 'How Many Hours a Month Does Self-Managing a Bronx Rental Really Take?', category: 'diy-property-management' },
-  { title: 'What Does a Bronx Lease Need to Include to Actually Protect You in 2026?', category: 'diy-property-management' },
+  { title: "What Do You Do When a Bronx Tenant Stops Paying Rent?", category: 'property-management' },
+  { title: 'What Does a Bronx Lease Need to Include to Actually Protect You in 2026?', category: 'property-management' },
+  { title: 'How Many Hours a Month Does Self-Managing a Bronx Rental Really Take?', category: 'property-management' },
+  // --- diy-property-management = MAINTENANCE & REPAIRS (see note above) ---
+  // Hands-on building-care topics explained in plain English. The compliance /
+  // legal / leasing angles that used to live here moved to property-management.
+  { title: 'How Do You Get a Bronx Boiler Through Heat Season Without an HPD Complaint?', category: 'diy-property-management' },
+  { title: 'What Should a Bronx Landlord Actually Check on the Roof Every Spring?', category: 'diy-property-management' },
+  { title: '7 Bronx Building Repairs Worth Doing Yourself — and 5 You Should Never Touch', category: 'diy-property-management' },
+  { title: 'How Do You Find and Price a Reliable Bronx Contractor Without Getting Overcharged?', category: 'diy-property-management' },
+  { title: "What Belongs on Your Bronx Building's Fall Maintenance Walkthrough?", category: 'diy-property-management' },
+  { title: 'Why Does the Same Bronx Radiator Keep Failing? A Plain-English Look at What Goes Wrong', category: 'diy-property-management' },
+  { title: 'How Do You Stop a Small Bronx Leak From Becoming a $12,000 Ceiling Repair?', category: 'diy-property-management' },
+  // Comparison / self-manage-vs-hire are proven traffic winners but they are
+  // owner-economics posts, not building-care posts — they live in
+  // property-management now that this category means Maintenance & Repairs.
+  { title: 'Bronx vs. Mount Vernon: Where Do Landlords Actually Keep More of Their Rent?', category: 'property-management' },
+  { title: 'Should You Self-Manage Your Bronx Rental or Hire Flat-Fee Management? A Real Cost Breakdown', category: 'property-management' },
   // --- investments (occasional) ---
   { title: 'Is Buying a Rental Property in the Bronx Still a Good Investment?', category: 'investments' },
   { title: '3 Bronx Neighborhoods With the Best Rental ROI in 2026', category: 'investments' },
   { title: 'How Much Cash Flow Should a Bronx Multi-Family Actually Produce in 2026?', category: 'investments' },
   { title: 'Bronx vs. Yonkers: Which Rental Market Actually Pays Owners More in 2026?', category: 'investments' },
-  { title: 'Bronx vs. New Rochelle: Where Does Your Rental Investment Actually Go Further?', category: 'diy-property-management' },
+  { title: 'Bronx vs. New Rochelle: Where Does Your Rental Investment Actually Go Further?', category: 'investments' },
   // --- property-automation (sparing) ---
   { title: '5 Smart Sensors Every Bronx Landlord Should Install in 2026', category: 'property-automation' },
   { title: 'How AI Security Cameras Are Reducing Vacancy Crimes in NYC Rental Buildings', category: 'property-automation' },
@@ -160,10 +175,12 @@ Rules:
 - Address a real landlord pain point; use seasonal relevance where fitting
 - Category must be exactly one of: property-management, diy-property-management, investments, property-automation, broker-partnerships
 - CATEGORY PREFERENCE (data-driven by real search traffic): the site's organic clicks come almost entirely from owner-facing "property management bronx" searches. Weight new topics accordingly:
-    • DEFAULT to "property-management" or "diy-property-management" (owner-facing) — pick one of these unless a genuinely strong angle in another category fits this season. These are the categories that actually convert.
+    • "diy-property-management" IS OUR MAINTENANCE & REPAIRS CATEGORY (the slug is legacy — it is displayed as "Maintenance & Repairs"). Use it for hands-on building care: heating and boilers, roofs and facades, plumbing and leaks, pests, seasonal walkthroughs, hiring and pricing contractors, what to inspect and when, what to document. This is a PRIORITY direction for the blog right now.
+    • DEFAULT to "property-management" or "diy-property-management" (maintenance) — pick one of these unless a genuinely strong angle in another category fits this season. These are the categories that actually convert.
+    • Target roughly 1 in every 3 posts as a maintenance ("diy-property-management") post so building-care coverage builds up steadily.
     • Use "investments" occasionally, when a concrete Bronx ROI / market / rent-vs-buy angle fits the season.
     • Use "property-automation" or "broker-partnerships" only sparingly and only for a genuinely fresh angle — automation targets a speculative audience and broker posts target agents (not the owners who convert), so do NOT default to them.
-    • To keep variety, avoid repeating the SAME category as the last 2 posts shown above; but when in doubt, choose owner-facing property-management.
+    • HARD VARIETY RULE — this one is not a preference, follow it exactly: if the SAME category appears in the two most recent posts listed above, you MUST NOT choose that category again. Pick the best topic from any other category. (Historically this rule was worded as a soft preference and lost to the "when in doubt pick property-management" instruction, producing five straight property-management posts — do not let that happen.)
 - "broker-partnerships" posts target NYC real estate brokers/agents as referral partners — topics should cover referral income, how to advise landlord clients, or how the DoryAngel partner program works
 ${engagementLine ? `- ENGAGEMENT SIGNAL (Clarity, last ${claritySignals.windowDays}d — consent-gated + short window, so it is THIN; treat as directional and IGNORE categories with only a handful of sessions): how well each blog category held readers, by average scroll depth — ${engagementLine}. When two categories are otherwise equally good candidates for today, prefer the one that holds attention better. Do NOT override the owner-facing category preference above based on a few sessions.` : ''}
 ${avoidNote ? `\nIMPORTANT: Your last suggestion covered substantially the same theme as an already-published post ("${avoidNote}"). Pick a genuinely different subject or angle this time — not just a reworded or re-seasoned version of that post.` : ''}
@@ -223,7 +240,7 @@ Return ONLY JSON: {"duplicate": true|false, "of": "<exact existing title, or emp
 
 const HASHTAGS_BY_CATEGORY = {
   'property-management':     ['propertymanagement', 'bronxlandlord', 'nyc', 'flatfee', 'doryangel'],
-  'diy-property-management': ['diylandlord', 'bronxlandlord', 'nyc', 'rentalproperty', 'doryangel'],
+  'diy-property-management': ['propertymaintenance', 'bronxlandlord', 'buildingrepairs', 'preventivemaintenance', 'doryangel'],
   'investments':             ['realestateinvesting', 'bronx', 'nycrealestate', 'rentalincome', 'doryangel'],
   'property-automation':     ['smartproperty', 'proptech', 'bronxlandlord', 'IoT', 'doryangel'],
   'broker-partnerships':     ['bronxrealestate', 'nycbroker', 'propertymanagement', 'referralincome', 'doryangel'],
@@ -240,7 +257,9 @@ const IMAGE_QUERIES = {
     'handyman repairing apartment bright',
     'maintenance worker tools toolbox',
     'professional plumber working bright',
-    'nyc apartment building exterior bright',
+    'building boiler room heating system',
+    'roof inspection worker building rooftop',
+    'radiator heating apartment window',
   ],
   'investments': [
     'manhattan skyline daylight bright',
@@ -283,9 +302,9 @@ const SYSTEM_PROMPT = `You are a content writer for DoryAngel LLC, a NYC propert
 
 CRITICAL RULES — what works for our audience (validated by real traffic data):
 
-1. Title formula (validated by real traffic): must be either a question OR start with a number ("5 Free Tools...", "Top 3 Mistakes..."). Lead with the OWNER'S pain or cost and address the owner directly with "you"/"your" — problem-first beats service-description. Anchor to the Bronx as the primary location; a second adjacent borough (Queens or Manhattan) may be included when natural (e.g. "...Your Bronx or Queens Rental?"), but never a non-Bronx borough alone. A Bronx-vs-adjacent-area COMPARISON is a proven top-traffic format — the "Bronx vs. Mount Vernon" comparison was one of the best-performing posts; Mount Vernon (the Westchester city bordering the Bronx) is allowed ONLY inside a Bronx-anchored comparison, never as the sole location. Favor owner-facing DIY and self-manage-vs-hire angles — these convert best. Gold-standard shapes to emulate: "How Much Is Inefficient Management Costing Your Bronx or Queens Rental?", "Bronx vs. Mount Vernon: Where Do Landlords Actually Keep More of Their Rent?", "Should You Self-Manage Your Bronx Rental or Hire Flat-Fee Management? A Real Cost Breakdown", "How to Screen Tenants in NYC Without Getting Sued", "Flat-Fee PM in the Bronx: What $99/Unit Actually Means". Never write generic, geo-less, marketing-speak titles ("Maximizing Returns with Management Investment Strategies", "The Power of Transparent Management Practices") — these got zero traffic.
+1. Title formula (validated by real traffic): must be either a question OR start with a number ("5 Free Tools...", "Top 3 Mistakes..."). Address the owner directly with "you"/"your". Usually lead with the owner's pain or cost — problem-first beats service-description. EXCEPTION for maintenance/how-to posts: a practical "how do you actually do this" or "what should you check" title is equally valid and does NOT need to be framed as a cost ("What Should a Bronx Landlord Actually Check on the Roof Every Spring?", "How Do You Get a Bronx Boiler Through Heat Season Without an HPD Complaint?"). Do not bolt a dollar figure onto a how-to title just to satisfy the pain-first habit. Anchor to the Bronx as the primary location; a second adjacent borough (Queens or Manhattan) may be included when natural (e.g. "...Your Bronx or Queens Rental?"), but never a non-Bronx borough alone. A Bronx-vs-adjacent-area COMPARISON is a proven top-traffic format — the "Bronx vs. Mount Vernon" comparison was one of the best-performing posts; Mount Vernon (the Westchester city bordering the Bronx) is allowed ONLY inside a Bronx-anchored comparison, never as the sole location. Favor owner-facing DIY and self-manage-vs-hire angles — these convert best. Gold-standard shapes to emulate: "How Much Is Inefficient Management Costing Your Bronx or Queens Rental?", "Bronx vs. Mount Vernon: Where Do Landlords Actually Keep More of Their Rent?", "Should You Self-Manage Your Bronx Rental or Hire Flat-Fee Management? A Real Cost Breakdown", "How to Screen Tenants in NYC Without Getting Sued", "Flat-Fee PM in the Bronx: What $99/Unit Actually Means". Never write generic, geo-less, marketing-speak titles ("Maximizing Returns with Management Investment Strategies", "The Power of Transparent Management Practices") — these got zero traffic.
 
-2. Pain-point excerpts: 1-2 sentences focused on a real landlord pain point — money lost, tenant trouble, compliance fines. NOT abstract or marketing-speak. The excerpt's pain must match the title's pain.
+2. Excerpts: 1-2 sentences, concrete and never abstract or marketing-speak. Usually focus on a real landlord pain point — money lost, tenant trouble, compliance fines — and match the pain in the title. For a maintenance or how-to post whose title is practical rather than pain-framed, the excerpt should instead say plainly what the reader will be able to do or check after reading, still in specific terms ("what to look at on the roof each spring, what it costs, and which parts need a licensed roofer"). Match the excerpt to the title's promise, whichever kind it is.
 
 3. Word count: 800-1,200 words for the body content. Below 500 = zero traffic. We need depth.
 
@@ -300,6 +319,7 @@ CRITICAL RULES — what works for our audience (validated by real traffic data):
    - Sometimes debunk a common landlord myth or misconception as the spine of the piece.
    - Sometimes structure it as a direct comparison (a table or side-by-side, not just prose) rather than a checklist.
    - Sometimes just explain a topic clearly and conversationally with no numbered list and no "Bottom Line" section at all — not every post needs a step-by-step or a closer labeled that way; end naturally instead.
+   - For maintenance posts, two more shapes work well: a walkthrough that moves through the building in physical order (roof → facade → basement → units), and a symptom-first piece that starts from what the owner actually notices ("the top-floor radiator is cold") and works back to cause and fix.
    - A numbered list or dollar-amount breakdown should appear only where it's the best way to convey that specific content — never as a rote habit.
 
 8. Do NOT include the CTA in the content — the CTA is auto-appended to every post by our system.
@@ -318,11 +338,25 @@ CRITICAL RULES — what works for our audience (validated by real traffic data):
 
 15. Internal links (SEO): When a list of existing DoryAngel articles is provided alongside the topic, weave 2–3 of them into the body as contextual inline markdown links where they genuinely help the reader — e.g. "the same math applies when you [screen a rent-stabilized applicant](URL)". Use natural, descriptive anchor text (never "click here" or a bare URL), spread the links across the post where the connection is real, and skip any that don't fit rather than forcing them. Use ONLY URLs from the provided list, copied exactly — never invent a slug or URL, and never link to a page that isn't on the list. Do not add a separate "related articles" list at the end; our system appends related posts automatically.
 
+16. DOWN-TO-EARTH MAINTENANCE (priority direction for the blog): our readers own Bronx buildings but are not tradespeople. When a post is a maintenance post — and wherever building care comes up naturally inside any other post — actually TEACH the thing in plain English instead of only pricing the consequence of it breaking:
+   - Explain how the system or part works in everyday language: what it is, what it does, what it looks like when it's failing, and what the fix involves. Assume the reader has never opened their boiler room door.
+   - Gloss every trade term the first time you use it — e.g. "the low-water cutoff (the safety switch that shuts the boiler down if the water level drops too far)". Never use plumbing, HVAC, roofing, or electrical jargon bare.
+   - Be concrete and checkable: what a Bronx vendor typically charges for that call, roughly how long the job takes, which season to do it in, what to ask the contractor, and what to write down afterward.
+   - Say plainly when something is a reasonable do-it-yourself job and when it is a licensed-trade or permit job the owner must not touch. Owners trust us more when we tell them what they can handle themselves.
+   - Weave one short, genuinely relevant building-care detail into non-maintenance posts too (a lease post can note the walkthrough that protects the deposit) — one useful detail, not a tacked-on paragraph.
+   - Keep the warm neighbor voice from rule 5. This should read like an experienced building manager explaining it at the kitchen table, not a spec sheet or a manual.
+
 When asked to write a post, also produce:
 - An SEO title in field "seoTitleShort": max 48 chars, do NOT add " | DoryAngel" — the system appends it
 - An SEO description (max 155 chars, includes a hook + value prop)
 - A descriptive alt text for the hero image (used for accessibility + SEO)
-- A Facebook-optimized version (200-280 words, hook-first, 2-3 bullet takeaways, then a closing section in this EXACT format — copy the labels, emojis, and line breaks exactly:
+- A Facebook/Instagram caption in field "facebookPost". KEEP IT SHORT — this is the single most important rule for it. Short captions materially out-perform long ones on both platforms, and everything past roughly 400 characters is hidden behind "See more" where almost nobody expands it. Target 40–80 words for the whole caption before the links and hashtags — never more than 100.
+
+  Structure, in this order:
+  1. A hook of ONE sentence, under 125 characters, that works completely on its own — this is all that shows before the fold on Facebook and Instagram. Make it a concrete, specific statement or question from the post, not a teaser like "You won't believe...".
+  2. Two or three short lines of substance — the actual useful takeaway, not a summary of what the article contains. Plain sentences or two brief bullets, whichever reads better. Do not pad.
+  3. One line pointing to the article.
+  4. Exactly ONE tool line — pick the single tool most relevant to this post's topic, copied exactly from this list (labels, emojis and arrows exactly as written):
 
 📅 Compliance Calendar (free) → https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/
 📬 DoryAngel Digest (free) → https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/
@@ -330,7 +364,8 @@ When asked to write a post, also produce:
 📊 Property P&L Dashboard ($29.99) → https://www.doryangel.com/tools/pl-dashboard/
 🤝 Broker Partner Program ($50/unit/mo) → https://www.doryangel.com/broker-partner.html
 
-Then the hashtags on the final line. If the post topic naturally connects to one of these tools, bold the relevant tool line by wrapping it in ★ symbols (e.g. ★📅 Compliance Calendar...★) so it stands out. For broker-partnerships posts, move the Broker Partner Program line to the TOP of the list.
+  Include ONE of those lines only — never the whole list, which buries the post and reads as spam. For broker-partnerships posts always use the Broker Partner Program line. For maintenance posts the Compliance Calendar (a preventive-maintenance schedule) is usually the right one.
+  5. Three to five hashtags on the final line — no more.
 
 Categories must be exactly one of: property-management, diy-property-management, investments, property-automation, broker-partnerships.
 
@@ -528,6 +563,25 @@ Remember: 800-1,200 words, NYC-specific examples, pain-point focused, scannable 
 }
 
 async function researchTopic(topic) {
+  // Maintenance posts need trade facts (what a job costs, how a system fails),
+  // not the fines-and-court-timeline facts that suit compliance topics. Asking
+  // for the wrong facts is what used to push every maintenance draft back into
+  // the "here's what it costs you when it breaks" frame.
+  const isMaintenance = topic.category === 'diy-property-management';
+
+  const factsWanted = isMaintenance
+    ? `- What the repair or service actually costs in the Bronx: typical vendor call-out fees, hourly trade rates, part prices, and full replacement ranges
+- How the system or component works and how it typically fails — the specific failure mode, and the early warning signs an owner can actually notice
+- Whether the job is owner-doable or requires a licensed trade and/or a DOB permit in NYC
+- The NYC seasonal timing that matters (e.g. the Oct 1–May 31 heat season, when to schedule a boiler service, when facade or roof work is practical)
+- Any NYC rule that sets a standard for it (heat and hot water minimums, HPD violation classes, Local Law 11 facade cycles) — one or two, not a list
+- How long the job takes and what the owner should document afterward`
+    : `- Dollar amounts (fines, rents, costs — specific NYC/Bronx figures)
+- NYC law or rule names with numbers where applicable (e.g., Local Law 11, HPD §27-2005, Good Cause Eviction Law)
+- Bronx-specific market data or neighborhood references
+- Timelines, deadlines, or court procedures relevant to this topic
+- Real statistics or percentages if applicable`;
+
   try {
     const response = await anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
@@ -539,11 +593,7 @@ async function researchTopic(topic) {
 For the blog post: "${topic.title}" (category: ${topic.category})
 
 List 5–7 specific, concrete facts a Bronx landlord content writer should weave into this article. Include:
-- Dollar amounts (fines, rents, costs — specific NYC/Bronx figures)
-- NYC law or rule names with numbers where applicable (e.g., Local Law 11, HPD §27-2005, Good Cause Eviction Law)
-- Bronx-specific market data or neighborhood references
-- Timelines, deadlines, or court procedures relevant to this topic
-- Real statistics or percentages if applicable
+${factsWanted}
 
 Be specific. Avoid vague generalities. Format: numbered list, one fact per line, no headers.`,
       }],
@@ -577,7 +627,7 @@ async function reviewPost(post, topic) {
 1. ANSWER_FRONT_LOAD: Do the first 2–3 sentences directly answer the post title as a search query?
 2. EEAT_VOICE: Does the post use at least one first-person plural experience marker ("In our experience...", "We've seen...", "Our clients...")?
 3. QUESTION_HEADINGS: Does the post have at least 2 H2 or H3 headings ending in "?"?
-4. NYC_SPECIFICITY: Does it include at least one specific NYC dollar figure, law name, neighborhood, or court process?
+4. NYC_SPECIFICITY: Does it include at least one specific, checkable NYC detail? Any ONE of these counts: a dollar figure, a law or rule name, a neighborhood, a court process, OR — for maintenance and how-to posts — a concrete trade specific such as a vendor rate, part cost, permit requirement, seasonal deadline, or named building system. A practical how-to that cites real Bronx repair costs and NYC seasonal timing but no statute PASSES; do not fail it for lacking a law name.
 5. NO_CLICHES: Is it free of: "delve", "testament", "it's worth noting", "moreover", "furthermore", "navigate the", "realm", "landscape", "crucial", "game-changer", "transformative", "unlock", "harness", "empower", "foster", "in today's world", "stands out"?
 
 Word count: ${wordCountNote}.
@@ -703,6 +753,14 @@ async function main() {
     post = await generatePost(topic, researchNotes, review.feedback, linkInfo);
     console.log(`Rewrite complete: "${post.title}"`);
   }
+
+  // Surface the caption size in the run log. Facebook and Instagram both hide
+  // everything past roughly 400 characters behind "See more", so a caption that
+  // creeps back toward the old 200–280-word format is a regression worth seeing.
+  const capChars = post.facebookPost.length;
+  const capWords = post.facebookPost.trim().split(/\s+/).length;
+  const capHook = post.facebookPost.trim().split('\n')[0];
+  console.log(`Caption: ${capWords} words / ${capChars} chars, hook ${capHook.length} chars${capChars > 900 ? ' — LONG, check the caption rules held' : ''}`);
 
   // facebookPost is for the email only — strip before persisting
   const { facebookPost, ...postForIndex } = post;
