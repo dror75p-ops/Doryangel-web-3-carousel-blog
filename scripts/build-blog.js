@@ -9,9 +9,13 @@ const BOOKING_URL = 'https://cal.com/dory-angel-management-v5o0ke/30min';
 const CONTACT_URL = 'https://www.doryangel.com/#contact';
 const COMPANY_NAME = 'DoryAngel LLC';
 
+// NOTE: the 'diy-property-management' slug is displayed as "Maintenance & Repairs".
+// The slug is deliberately unchanged — it is baked into published pages, the blog
+// filter tabs and the digest signup topic values. Display name ≠ slug here, same
+// as /guides/bronx-landlord-compliance/ reading "NYC". Do not rename the slug.
 const CATEGORY_LABEL = {
   'property-management':     'Property Management',
-  'diy-property-management': 'DIY Property Management',
+  'diy-property-management': 'Maintenance & Repairs',
   'investments':             'Investments',
   'property-automation':     'Property Automation',
   'broker-partnerships':     'Broker Partnerships',

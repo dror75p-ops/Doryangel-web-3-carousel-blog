@@ -22,7 +22,7 @@
   var CATEGORY_LABEL = {
     'all':                       'All',
     'property-management':       'Property Management',
-    'diy-property-management':   'DIY Property Management',
+    'diy-property-management':   'Maintenance & Repairs',
     'investments':               'Investments',
     'property-automation':       'Property Automation',
     'broker-partnerships':       'Broker Partnerships',
