@@ -1115,7 +1115,13 @@ picture { display: contents; }
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-  border-color: var(--blue); box-shadow: 0 0 0 3px rgba(58,123,221,0.12);
+  /* The ring was rgba(58,123,221,0.12) — a stale pre-rebrand blue at 12% alpha, well under the
+     3:1 that WCAG 1.4.11 asks of a focus indicator. Now the brand token at a visible strength. */
+  border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,91,181,0.35);
+}
+/* Keyboard users additionally get a solid outline (~5.9:1 on white) — SC 2.4.11/2.4.13. */
+.form-group input:focus-visible, .form-group select:focus-visible, .form-group textarea:focus-visible {
+  outline: 2px solid var(--blue); outline-offset: 2px;
 }
 .form-group textarea { resize: vertical; min-height: 110px; }
 /* Keep the fixed-width Cloudflare Turnstile iframe (300px) from stretching the
@@ -4908,9 +4914,13 @@ retell-chat-web-component {
             <textarea id="message" name="message" placeholder="Tell us about your property and what you're looking for..."></textarea>
           </div>
           <div class="form-consent">
-            <input type="checkbox" id="tcpa-consent" name="tcpa-consent" value="yes" required>
+            <!-- NOT `required`: sms-consent.html states consent is voluntary and never a
+                 condition of service, and FCC 47 CFR 64.1200(a)(2) bars conditioning a
+                 transaction on consent to marketing calls/texts. Ticking it opts the sender
+                 into the phone/SMS channel; leaving it clear still submits the form. -->
+            <input type="checkbox" id="tcpa-consent" name="tcpa-consent" value="yes">
             <label for="tcpa-consent">
-              By providing your phone number and submitting this form, you consent to receive calls and/or text messages from <strong>DoryAngel LLC</strong> regarding your inquiry. Message and data rates may apply. You may opt out at any time by replying STOP or contacting us at <a href="mailto:office@doryangel.com">office@doryangel.com</a>. Your information will never be sold or shared with third parties. See our <a href="./terms.html">Terms &amp; Conditions</a> and <a href="./privacy.html">Privacy Policy</a>.
+              <strong>Optional:</strong> tick this box to let <strong>DoryAngel LLC</strong> contact you by phone or text about your inquiry. You do not have to agree to this to submit the form or to use our services. Message frequency varies. Message and data rates may apply. Reply HELP for help or STOP to opt out at any time, or email <a href="mailto:office@doryangel.com">office@doryangel.com</a>. Your information will never be sold or shared with third parties. See our <a href="./sms-consent.html">SMS Consent</a>, <a href="./terms.html">Terms &amp; Conditions</a> and <a href="./privacy.html">Privacy Policy</a>.
             </label>
           </div>
           <div class="cf-turnstile" data-sitekey="0x4AAAAAADr7qlYcZ_8Gw2v3" data-theme="light" data-refresh-expired="auto" style="margin:0 0 14px;"></div>
