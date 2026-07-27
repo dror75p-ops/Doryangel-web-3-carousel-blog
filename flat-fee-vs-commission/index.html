@@ -338,6 +338,11 @@ nav.bar-hidden { top: 0; }
 .lead-form input::placeholder { color: rgba(255,255,255,0.55); }
 .lead-form input:focus { outline: 2px solid var(--blue-light); background: rgba(255,255,255,0.14); }
 .lead-form .lead-full { grid-column: 1 / -1; }
+/* Each field is a labelled wrapper so the grid item stays one column while the input
+   gets a real, programmatically associated label (WCAG 1.3.1 / 3.3.2 / 4.1.2). */
+.lead-field { display: flex; flex-direction: column; gap: 6px; }
+.lead-field label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.88); text-align: left; }
+.lead-field label span { font-weight: 400; color: rgba(255,255,255,0.6); }
 .lead-form button { grid-column: 1 / -1; background: var(--blue); color: #fff; border: none; padding: 14px; border-radius: 9px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.2s, transform 0.15s; }
 .lead-form button:hover { background: #2B6CC7; transform: translateY(-2px); }
 .lead-note { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 14px; }
@@ -369,7 +374,7 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
 <div class="announce-bar">
   <strong>NYC Landlords:</strong>
   Save $2,000–$8,000/year vs. percentage-based managers.
-  <a href="../#contact">Get your free property audit &rarr;</a>
+  <a href="../#contact">Get your free rental analysis &rarr;</a>
 </div>
 
 <!-- NAV -->
@@ -383,7 +388,7 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
       <li><a href="../#faq">FAQ</a></li>
       <li><a href="../#blog">Blog</a></li>
     </ul>
-    <a href="../#contact" class="nav-cta">Free Property Audit</a>
+    <a href="../#contact" class="nav-cta">Free Rental Analysis</a>
     <button class="a11y-nav-btn" aria-label="Accessibility options" onclick="var uw=document.getElementById('userwayAccessibilityIcon');if(uw)uw.click();">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="white" aria-hidden="true">
         <circle cx="12" cy="4" r="2.2"/>
@@ -429,7 +434,7 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
   </ul>
   <div class="drawer-sep"></div>
   <div class="drawer-ctas">
-    <a href="../#contact" class="drawer-cta-book">Free Property Audit</a>
+    <a href="../#contact" class="drawer-cta-book">Free Rental Analysis</a>
     <a href="https://doryangel.managebuilding.com" target="_blank" rel="noopener" class="drawer-cta-portal">Tenant Portal</a>
   </div>
 </div>
@@ -489,7 +494,7 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
         <div class="calc-savings-amt">$<span id="saveOut">3,888</span></div>
         <div class="calc-savings-sub">per year · <span id="fiveOut">$19,440</span> over 5 years</div>
       </div>
-      <a href="#estimate" class="calc-cta">Get my free, exact estimate &rarr;</a>
+      <a href="#estimate" class="calc-cta">Get my free estimate &rarr;</a>
       <p class="calc-note">Based on DoryAngel's published pricing: $99 per unit per month. Got more than 10 units? <a href="../#contact">Ask about portfolio pricing.</a></p>
     </div>
   </div>
@@ -581,7 +586,7 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
 <!-- LEAD CAPTURE -->
 <section class="lp-section" id="estimate">
   <div class="lead-wrap">
-    <h2>Get your free, exact estimate</h2>
+    <h2>Get your free estimate</h2>
     <p class="lp-sub">Tell us about your property and we'll send a precise flat-fee quote — usually within one business day. No obligation.</p>
     <form class="lead-form" action="https://api.web3forms.com/submit" method="POST">
       <input type="hidden" name="access_key" value="6991fa6b-8f6c-4c24-9167-b7ee52026a98">
@@ -590,10 +595,22 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
       <input type="hidden" name="source" value="flat-fee-vs-commission calculator">
       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
       <input type="hidden" name="redirect" value="https://www.doryangel.com/thank-you.html">
-      <input type="text" name="name" class="lead-full" placeholder="Your name" required autocomplete="name">
-      <input type="email" name="email" placeholder="Email address" required autocomplete="email">
-      <input type="tel" name="phone" placeholder="Phone (optional)" autocomplete="tel">
-      <input type="text" name="property" class="lead-full" placeholder="Property address or # of units" autocomplete="street-address">
+      <div class="lead-field lead-full">
+        <label for="leadName">Your name</label>
+        <input type="text" id="leadName" name="name" placeholder="Your name" required autocomplete="name">
+      </div>
+      <div class="lead-field">
+        <label for="leadEmail">Email address</label>
+        <input type="email" id="leadEmail" name="email" placeholder="Email address" required autocomplete="email">
+      </div>
+      <div class="lead-field">
+        <label for="leadPhone">Phone <span>(optional)</span></label>
+        <input type="tel" id="leadPhone" name="phone" placeholder="Phone (optional)" autocomplete="tel">
+      </div>
+      <div class="lead-field lead-full">
+        <label for="leadProperty">Property address or number of units</label>
+        <input type="text" id="leadProperty" name="property" placeholder="Property address or # of units" autocomplete="street-address">
+      </div>
       <button type="submit">Send me my estimate &rarr;</button>
     </form>
     <p class="lead-note">🔒 We never share your details. Unsubscribe any time.</p>
