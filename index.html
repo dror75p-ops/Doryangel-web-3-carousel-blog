@@ -257,7 +257,16 @@ nav.bar-hidden { top: 0; }
   width: 100%; height: 0.16em; overflow: visible;
 }
 .hero-underline path {
-  fill: none; stroke: var(--blue-light); stroke-width: 3.5; stroke-linecap: round;
+  fill: none; stroke-linecap: round;
+  /* Colour is swapped per slogan by the rotator (see heroUnderlineColors). The
+     fallback is the index-0 brand blue, so a no-JS/reduced-motion render still
+     matches the first slogan. */
+  stroke: var(--hero-underline-color, #1A5BB5);
+  /* preserveAspectRatio="none" squashes the stroke vertically by svgHeight/12, so the
+     rendered line is much thinner than this number: 5.25 reads as ~2px at 320px and
+     ~3.5px at 1440px. Thicken via stroke-width only — growing the SVG box would also
+     move the path (it sits at y=8.5 of a 12-unit viewBox) and drag it into descenders. */
+  stroke-width: 5.25;
   stroke-dasharray: 320; stroke-dashoffset: 320;
 }
 .hero-promise.draw .hero-underline path {
@@ -5166,6 +5175,24 @@ async function handleFormSubmit(e) {
     'We Always Answer.',
     'Licensed &amp; Insured.',
   ];
+  /* One colour per slogan, paired by index so each line always gets the same one.
+     Opens on brand blue and closes on brand navy, so the cycle reads as anchored
+     rather than random. Keep in step with heroLines; the % guards a mismatch. */
+  var heroUnderlineColors = [
+    '#1A5BB5', // Real Peace of Mind.   — brand blue
+    '#F59E0B', // Repairs, Handled.     — amber
+    '#0E9F6E', // Every Dollar Visible. — emerald
+    '#0891B2', // Nothing Hidden.       — teal
+    '#7C3AED', // We Always Answer.     — violet
+    '#0D1E3A', // Licensed & Insured.   — brand navy
+  ];
+  function setUnderlineColor(i) {
+    if (!heroPromise) return;
+    heroPromise.style.setProperty('--hero-underline-color',
+      heroUnderlineColors[i % heroUnderlineColors.length]);
+  }
+  // Set outside the reduced-motion guard so a static render still gets slogan 0's colour.
+  setUnderlineColor(0);
   if (heroPromise && !prefersReduced) {
     // Draw the underline once on load; without this it stays hidden until the first swap.
     requestAnimationFrame(function () { heroPromise.classList.add('draw'); });
@@ -5182,6 +5209,8 @@ async function handleFormSubmit(e) {
         heroRotator.classList.remove('line-out');
         heroRotator.classList.add('line-in');
         if (heroPromise) {
+          // Recolour before redrawing, so the new colour arrives as the line draws itself.
+          setUnderlineColor(heroIdx);
           // Drop the class and force a reflow so the stroke animation restarts.
           heroPromise.classList.remove('draw');
           void heroPromise.offsetWidth;
