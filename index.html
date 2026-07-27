@@ -406,8 +406,11 @@ nav.bar-hidden { top: 0; }
   position: relative; z-index: 1;
   border: 1px solid var(--grey-mid); border-radius: var(--radius);
   overflow: hidden; box-shadow: var(--shadow-lg); background: var(--white);
-  /* Reserve the box before the image decodes so nothing shifts. */
-  aspect-ratio: 676 / 592;
+  /* Reserve the box before the image decodes so nothing shifts. The source is
+     676x592, but its bottom ~120px is the portal micro-site's own carousel caption
+     ("01 / Live Dashboard / At a glance") — wanted in #about, just chrome here — so
+     the frame crops to the dashboard itself. Same asset, no second file. */
+  aspect-ratio: 676 / 470;
 }
 .hero-shot img { display: block; width: 100%; height: auto; }
 .hero-visual .hero-card-bg {
