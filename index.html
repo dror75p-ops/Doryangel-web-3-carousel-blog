@@ -225,36 +225,47 @@ nav.bar-hidden { top: 0; }
 }
 
 /* Rotating headline + trust bar */
-.hero-rotator {
-  display: block; min-width: 1px;
-  transform-origin: left center;
-  /* Gentle flag-wave while the slogan rests between rotations */
-  animation: heroFlagWave 5s ease-in-out infinite;
+.hero-promise { display: inline-block; position: relative; }
+.hero-mask {
+  display: block; overflow: hidden;
+  /* overflow:hidden slices descenders (g, y, p) — pad, then pull the space back */
+  padding-bottom: 0.14em; margin-bottom: -0.14em;
+  /* Locked to exactly one line (1.12em of text + the descender pad, border-box) so the
+     hero height can never shift mid-rotation — including before the webfont loads.
+     Slogans must therefore fit one line at 320px: keep them under ~21 characters. */
+  height: 1.26em;
 }
-@keyframes heroFlagWave {
-  0%   { transform: rotate(0deg) skewX(0deg); }
-  15%  { transform: rotate(-0.5deg) skewX(1.3deg); }
-  35%  { transform: rotate(0.35deg) skewX(-0.9deg); }
-  55%  { transform: rotate(-0.3deg) skewX(0.7deg); }
-  75%  { transform: rotate(0.2deg) skewX(-0.4deg); }
-  100% { transform: rotate(0deg) skewX(0deg); }
+.hero-rotator { display: block; min-width: 1px; will-change: transform; }
+/* The outgoing line rises out of the mask; the incoming one rises in behind it. */
+.hero-rotator.line-out { animation: heroLineOut 380ms cubic-bezier(.7,0,.84,0) forwards; }
+.hero-rotator.line-in  { animation: heroLineIn 620ms cubic-bezier(.16,1,.3,1) forwards; }
+@keyframes heroLineOut {
+  to { transform: translateY(-108%); opacity: 0; }
 }
-/* Fade animations take over during the swap (higher specificity wins), then the
-   flag-wave resumes once the slogan is at rest again. */
-.hero-rotator.rotating { animation: textFadeOut 350ms ease forwards; }
-.hero-rotator.rotating-in { animation: textFadeIn 450ms ease forwards; }
+@keyframes heroLineIn {
+  from { transform: translateY(108%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+/* Hand-drawn underline, redrawn on each swap. Lives outside .hero-mask so the
+   mask's overflow:hidden can't clip it. */
+.hero-underline {
+  position: absolute; left: 0; right: 0; bottom: -0.06em;
+  width: 100%; height: 0.16em; overflow: visible;
+}
+.hero-underline path {
+  fill: none; stroke: var(--blue-light); stroke-width: 3.5; stroke-linecap: round;
+  stroke-dasharray: 320; stroke-dashoffset: 320;
+}
+.hero-promise.draw .hero-underline path {
+  animation: heroDraw 760ms 240ms cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes heroDraw { to { stroke-dashoffset: 0; } }
 .trust-rotator { transition: opacity 350ms ease, transform 350ms ease; }
 .trust-rotator.swap-out { opacity: 0; transform: translateY(-6px); }
 .trust-rotator.swap-in  { opacity: 0; transform: translateY(6px); }
-@keyframes textFadeOut {
-  to { opacity: 0; transform: translateY(-8px); }
-}
-@keyframes textFadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
 @media (prefers-reduced-motion: reduce) {
   .hero-rotator, .trust-rotator { animation: none !important; transition: none !important; }
+  .hero-underline path { stroke-dashoffset: 0; }
 }
 .nav-bottom {
   display: flex; align-items: center; justify-content: center;
@@ -718,6 +729,22 @@ picture { display: contents; }
 .google-badge-stars { color: #FBBF24; font-size: 20px; letter-spacing: 2px; }
 .google-badge-info { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 2px; }
 .google-badge-logo { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.5); letter-spacing: 0.05em; }
+/* Light variant for the hero (the base badge is built for the navy testimonials
+   background). Compact single row so it supports the CTA rather than competing. */
+.hero-rating-link { text-decoration: none; display: inline-block; }
+.google-rating-badge--hero {
+  background: var(--white); border: 1px solid var(--grey-mid);
+  gap: 10px; padding: 9px 18px; margin: 24px auto 0;
+  box-shadow: var(--shadow); transition: border-color 0.2s, transform 0.15s;
+}
+.hero-rating-link:hover .google-rating-badge--hero {
+  border-color: var(--blue); transform: translateY(-1px);
+}
+.google-rating-badge--hero .google-badge-stars { font-size: 15px; letter-spacing: 1px; }
+.google-rating-badge--hero .google-badge-info {
+  font-size: 13px; color: var(--text-muted); margin-top: 0;
+}
+.google-rating-badge--hero .google-badge-info strong { color: var(--navy); font-weight: 700; }
 
 /* Carousel */
 .reviews-carousel-wrap { position: relative; margin-top: 48px; }
@@ -1232,7 +1259,11 @@ footer {
   .nav-divider { display: none; }
   .nav-cta { flex: 1; min-width: 0; font-size: 13px; padding: 10px 14px; width: auto; max-width: none; align-self: center; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; text-align: center; }
   .hamburger-btn, .a11y-nav-btn { display: flex; flex-shrink: 0; width: 44px; height: 44px; }
-  .hero-eyebrow { display: none; }
+  /* Keep the positioning line on mobile (the majority of traffic) — just drop the
+     flanking rules and tighten it rather than hiding it outright. */
+  .hero-eyebrow { font-size: 11px; letter-spacing: 0.08em; margin-bottom: 16px; gap: 0; }
+  .hero-eyebrow::before, .hero-eyebrow::after { display: none; }
+  .hero-eyebrow-tail { display: none; }
   .hero { grid-template-columns: 1fr; gap: 40px; padding: 172px 24px 48px; }
   .hero h1 { font-size: clamp(32px, 9vw, 44px); }
   .hero-sub { font-size: 16px; }
@@ -1245,7 +1276,7 @@ footer {
   .portal-split { width: 100%; }
   .portal-btn { font-size: 13px; padding: 14px 12px; min-height: 44px; }
   .hero-actions { flex-direction: column; align-items: center; }
-  .btn-primary, .btn-secondary { font-size: 14px; padding: 14px 22px; min-height: 44px; }
+  .btn-primary, .btn-secondary { font-size: 14px; padding: 14px 22px; min-height: 48px; }
   .hero-visual { display: none; }
   .audience-grid { grid-template-columns: 1fr 1fr; }
   .pillars-grid { grid-template-columns: 1fr 1fr; }
@@ -2508,9 +2539,13 @@ retell-chat-web-component {
 </div>
 <div class="hero">
   <div class="hero-content">
-    <div class="hero-eyebrow">NYC Property Management — Trust, Transparency, Peace of Mind</div>
-    <h1 class="reveal"><span class="hero-rotator" id="hero-rotator">Your Property, Cared For<br>Like It&rsquo;s Our Own.<br><em>Real Peace of Mind.</em></span></h1>
-    <p class="hero-sub">From compliance to cash flow, we treat your building like our own — with real-time transparency, proactive care, and a team that actually picks up the phone. Modern technology with a human touch. All for one flat, predictable fee.</p>
+    <div class="hero-eyebrow">NYC Property Management<span class="hero-eyebrow-tail"> — Trust, Transparency, Peace of Mind</span></div>
+    <!-- No .reveal here on purpose: this H1 is the LCP element, and .reveal starts at
+         opacity:0, which makes it ineligible for LCP until the fade finishes — the swap
+         then re-registers it as a late candidate (measured 6.7s). Painting it
+         immediately puts LCP back at ~0.3s. -->
+    <h1>Your Property, Cared For<br>Like It&rsquo;s Our Own.<br><span class="hero-promise" id="hero-promise"><span class="hero-mask"><em class="hero-rotator" id="hero-rotator">Real Peace of Mind.</em></span><svg class="hero-underline" viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8.5 C 60 3, 150 3, 297 6.5"/></svg></span></h1>
+    <p class="hero-sub">We treat your building like our own — proactive care, real-time transparency, and a team that actually picks up the phone. One flat fee.</p>
     <div class="hero-actions">
       <a href="#contact" class="btn-primary">
         Get My Free Property Audit
@@ -2518,6 +2553,15 @@ retell-chat-web-component {
       </a>
       <a href="#pricing" class="btn-secondary">See Pricing Plans</a>
     </div>
+
+    <!-- Rating mirrors the testimonials badge and the aggregateRating JSON-LD in <head>.
+         All three carry 5.0 / 21 — update them together. -->
+    <a href="https://share.google/tTIEyy7qxx4bKm1Zo" target="_blank" rel="noopener" class="hero-rating-link">
+      <div class="google-rating-badge google-rating-badge--hero">
+        <div class="google-badge-stars">★★★★★</div>
+        <div class="google-badge-info"><strong>5.0</strong> · 21 Google reviews</div>
+      </div>
+    </a>
 
     <div class="hero-stats">
       <div class="stat-item">
@@ -5049,24 +5093,41 @@ async function handleFormSubmit(e) {
   }
 
   var heroRotator = document.getElementById('hero-rotator');
+  var heroPromise = document.getElementById('hero-promise');
+  /* Only the promise line rotates — the two lines above it are fixed, so the
+     indexed H1 stays stable. Index 0 matches the markup. Every line carries a
+     benefit on its own, since any one of them may be the one a visitor sees. */
   var heroLines = [
-    'Your Property, Cared For<br>Like It&rsquo;s Our Own.<br><em>Real Peace of Mind.</em>',
-    'Nothing Hidden.<br>Everything Handled.<br><em>Total Owner Transparency.</em>',
-    'High Tech. Human Touch.<br>NYC Property Management.<br><em>Evolved.</em>',
+    'Real Peace of Mind.',
+    'No Repairs to Chase.',
+    'Every Dollar Visible.',
+    'Nothing Hidden. Ever.',
+    'Always Someone There.',
+    'Licensed and Insured.',
   ];
+  if (heroPromise && !prefersReduced) {
+    // Draw the underline once on load; without this it stays hidden until the first swap.
+    requestAnimationFrame(function () { heroPromise.classList.add('draw'); });
+  }
   if (heroRotator && !prefersReduced) {
     var heroIdx = 0;
     setInterval(function () {
       if (document.hidden) return;
-      heroRotator.classList.add('rotating');
+      heroRotator.classList.remove('line-in');
+      heroRotator.classList.add('line-out');
       setTimeout(function () {
         heroIdx = (heroIdx + 1) % heroLines.length;
         heroRotator.innerHTML = heroLines[heroIdx];
-        heroRotator.classList.remove('rotating');
-        heroRotator.classList.add('rotating-in');
-        setTimeout(function () { heroRotator.classList.remove('rotating-in'); }, 500);
-      }, 350);
-    }, 9000);
+        heroRotator.classList.remove('line-out');
+        heroRotator.classList.add('line-in');
+        if (heroPromise) {
+          // Drop the class and force a reflow so the stroke animation restarts.
+          heroPromise.classList.remove('draw');
+          void heroPromise.offsetWidth;
+          heroPromise.classList.add('draw');
+        }
+      }, 380);
+    }, 6000);
   }
 
   var trustRotator = document.getElementById('trust-rotator');
