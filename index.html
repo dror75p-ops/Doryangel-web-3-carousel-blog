@@ -225,36 +225,51 @@ nav.bar-hidden { top: 0; }
 }
 
 /* Rotating headline + trust bar */
-.hero-rotator {
-  display: block; min-width: 1px;
-  transform-origin: left center;
-  /* Gentle flag-wave while the slogan rests between rotations */
-  animation: heroFlagWave 5s ease-in-out infinite;
+.hero-promise { display: inline-block; position: relative; }
+.hero-mask {
+  display: block; overflow: hidden;
+  /* overflow:hidden slices descenders (g, y, p) — pad, then pull the space back */
+  padding-bottom: 0.14em; margin-bottom: -0.14em;
+  /* Locked to exactly one line (1.12em of text + the descender pad, border-box) so the
+     hero height can never shift mid-rotation — including before the webfont loads.
+     Slogans must therefore fit one line at 320px: keep them under ~21 characters. */
+  height: 1.26em;
 }
-@keyframes heroFlagWave {
-  0%   { transform: rotate(0deg) skewX(0deg); }
-  15%  { transform: rotate(-0.5deg) skewX(1.3deg); }
-  35%  { transform: rotate(0.35deg) skewX(-0.9deg); }
-  55%  { transform: rotate(-0.3deg) skewX(0.7deg); }
-  75%  { transform: rotate(0.2deg) skewX(-0.4deg); }
-  100% { transform: rotate(0deg) skewX(0deg); }
+/* nowrap is load-bearing: .hero-mask has a fixed one-line height, so a slogan that
+   wrapped would be silently cut in half. This guarantees that can't happen even if the
+   webfont's metrics differ from the fallback used at first paint. */
+.hero-rotator { display: block; min-width: 1px; white-space: nowrap; will-change: transform; }
+.hero-promise { max-width: 100%; }
+/* The outgoing line rises out of the mask; the incoming one rises in behind it. */
+.hero-rotator.line-out { animation: heroLineOut 380ms cubic-bezier(.7,0,.84,0) forwards; }
+.hero-rotator.line-in  { animation: heroLineIn 620ms cubic-bezier(.16,1,.3,1) forwards; }
+@keyframes heroLineOut {
+  to { transform: translateY(-108%); opacity: 0; }
 }
-/* Fade animations take over during the swap (higher specificity wins), then the
-   flag-wave resumes once the slogan is at rest again. */
-.hero-rotator.rotating { animation: textFadeOut 350ms ease forwards; }
-.hero-rotator.rotating-in { animation: textFadeIn 450ms ease forwards; }
+@keyframes heroLineIn {
+  from { transform: translateY(108%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+/* Hand-drawn underline, redrawn on each swap. Lives outside .hero-mask so the
+   mask's overflow:hidden can't clip it. */
+.hero-underline {
+  position: absolute; left: 0; right: 0; bottom: -0.06em;
+  width: 100%; height: 0.16em; overflow: visible;
+}
+.hero-underline path {
+  fill: none; stroke: var(--blue-light); stroke-width: 3.5; stroke-linecap: round;
+  stroke-dasharray: 320; stroke-dashoffset: 320;
+}
+.hero-promise.draw .hero-underline path {
+  animation: heroDraw 760ms 240ms cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes heroDraw { to { stroke-dashoffset: 0; } }
 .trust-rotator { transition: opacity 350ms ease, transform 350ms ease; }
 .trust-rotator.swap-out { opacity: 0; transform: translateY(-6px); }
 .trust-rotator.swap-in  { opacity: 0; transform: translateY(6px); }
-@keyframes textFadeOut {
-  to { opacity: 0; transform: translateY(-8px); }
-}
-@keyframes textFadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
 @media (prefers-reduced-motion: reduce) {
   .hero-rotator, .trust-rotator { animation: none !important; transition: none !important; }
+  .hero-underline path { stroke-dashoffset: 0; }
 }
 .nav-bottom {
   display: flex; align-items: center; justify-content: center;
@@ -385,6 +400,31 @@ nav.bar-hidden { top: 0; }
   border-radius: var(--radius);
   padding: 24px;
   border: 1px solid rgba(58,123,221,0.2);
+}
+/* Owner-portal screenshot frame + the stat card floating over its lower-left corner. */
+.hero-shot {
+  position: relative; z-index: 1;
+  border: 1px solid var(--grey-mid); border-radius: var(--radius);
+  overflow: hidden; box-shadow: var(--shadow-lg); background: var(--white);
+  /* Reserve the box before the image decodes so nothing shifts. The source is
+     676x592, but its bottom ~120px is the portal micro-site's own carousel caption
+     ("01 / Live Dashboard / At a glance") — wanted in #about, just chrome here — so
+     the frame crops to the dashboard itself. Same asset, no second file. */
+  aspect-ratio: 676 / 470;
+}
+.hero-shot img { display: block; width: 100%; height: auto; }
+.hero-visual .hero-card-bg {
+  top: auto; right: auto; bottom: -34px; left: -34px;
+  width: auto; z-index: 2; padding: 11px 15px;
+  box-shadow: var(--shadow-lg);
+}
+.hero-visual .hero-card-bg .card-tag { font-size: 9px; margin-bottom: 7px; padding: 3px 8px; }
+.hero-visual .hero-card-bg .card-metric { font-size: 22px; }
+.hero-visual .hero-card-bg .card-metric-label { font-size: 11px; }
+.hero-shot-note {
+  /* Clears the stat card, which hangs 34px below the frame. */
+  margin-top: 56px; font-size: 11px; color: var(--grey);
+  text-align: center; line-height: 1.5; max-width: 320px;
 }
 .card-tag {
   font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
@@ -718,6 +758,22 @@ picture { display: contents; }
 .google-badge-stars { color: #FBBF24; font-size: 20px; letter-spacing: 2px; }
 .google-badge-info { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 2px; }
 .google-badge-logo { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.5); letter-spacing: 0.05em; }
+/* Light variant for the hero (the base badge is built for the navy testimonials
+   background). Compact single row so it supports the CTA rather than competing. */
+.hero-rating-link { text-decoration: none; display: inline-block; }
+.google-rating-badge--hero {
+  background: var(--white); border: 1px solid var(--grey-mid);
+  gap: 10px; padding: 9px 18px; margin: 24px auto 0;
+  box-shadow: var(--shadow); transition: border-color 0.2s, transform 0.15s;
+}
+.hero-rating-link:hover .google-rating-badge--hero {
+  border-color: var(--blue); transform: translateY(-1px);
+}
+.google-rating-badge--hero .google-badge-stars { font-size: 15px; letter-spacing: 1px; }
+.google-rating-badge--hero .google-badge-info {
+  font-size: 13px; color: var(--text-muted); margin-top: 0;
+}
+.google-rating-badge--hero .google-badge-info strong { color: var(--navy); font-weight: 700; }
 
 /* Carousel */
 .reviews-carousel-wrap { position: relative; margin-top: 48px; }
@@ -1189,7 +1245,9 @@ footer {
   transition: opacity 1.8s ease-in-out;
   filter: saturate(0.9) brightness(1.05);
 }
-.hero-photo.active { opacity: 0.22; }
+/* Kept low: at 0.22 the photos read as a grey wash that fought the copy for contrast.
+   The hero-wrap gradient carries the atmosphere; the portal shot carries the visual. */
+.hero-photo.active { opacity: 0.10; }
 /* Light blue/white wash on top of photos to keep brand tone + text readability */
 .hero-skyline::after {
   content: '';
@@ -1232,7 +1290,11 @@ footer {
   .nav-divider { display: none; }
   .nav-cta { flex: 1; min-width: 0; font-size: 13px; padding: 10px 14px; width: auto; max-width: none; align-self: center; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; text-align: center; }
   .hamburger-btn, .a11y-nav-btn { display: flex; flex-shrink: 0; width: 44px; height: 44px; }
-  .hero-eyebrow { display: none; }
+  /* Keep the positioning line on mobile (the majority of traffic) — just drop the
+     flanking rules and tighten it rather than hiding it outright. */
+  .hero-eyebrow { font-size: 11px; letter-spacing: 0.08em; margin-bottom: 16px; gap: 0; }
+  .hero-eyebrow::before, .hero-eyebrow::after { display: none; }
+  .hero-eyebrow-tail { display: none; }
   .hero { grid-template-columns: 1fr; gap: 40px; padding: 172px 24px 48px; }
   .hero h1 { font-size: clamp(32px, 9vw, 44px); }
   .hero-sub { font-size: 16px; }
@@ -1245,7 +1307,7 @@ footer {
   .portal-split { width: 100%; }
   .portal-btn { font-size: 13px; padding: 14px 12px; min-height: 44px; }
   .hero-actions { flex-direction: column; align-items: center; }
-  .btn-primary, .btn-secondary { font-size: 14px; padding: 14px 22px; min-height: 44px; }
+  .btn-primary, .btn-secondary { font-size: 14px; padding: 14px 22px; min-height: 48px; }
   .hero-visual { display: none; }
   .audience-grid { grid-template-columns: 1fr 1fr; }
   .pillars-grid { grid-template-columns: 1fr 1fr; }
@@ -1272,6 +1334,31 @@ footer {
   .blog-list-item { padding: 16px 18px; gap: 14px; }
   .blog-list-num { font-size: 28px; width: 32px; }
   .blog-list-title { font-size: 15px; }
+}
+
+/* Desktop hero: asymmetric split with the owner-portal screenshot on the right.
+   Placed after the base rules so it wins over `.hero-visual { display: none }`.
+   Below 1024px the hero stays the centred single column it has always been. */
+@media (min-width: 1024px) {
+  .hero {
+    max-width: 1240px; grid-template-columns: 1.2fr 0.8fr;
+    gap: 56px; text-align: left; align-items: center;
+    padding: 190px 40px 110px;
+  }
+  /* Scaled down from the full-width hero's 58px: the headline now shares the row with
+     the screenshot, and the anchor line needs ~641px at 58px but the column is ~660px.
+     This keeps the H1 at three lines with margin to spare. */
+  .hero h1 { font-size: clamp(36px, 3.9vw, 50px); }
+  /* Column, not the default row — the disclaimer is a sibling of the card stack and
+     would otherwise share the column's width and squeeze the screenshot. */
+  .hero-visual { display: flex; flex-direction: column; align-items: center; }
+  .hero-card-stack { width: 100%; }
+  .hero-eyebrow { justify-content: flex-start; }
+  .hero-eyebrow::before { display: none; }
+  .hero-actions { justify-content: flex-start; }
+  .hero-stats { justify-content: flex-start; gap: 40px; }
+  .google-rating-badge--hero { margin-left: 0; margin-right: 0; }
+  /* The promise underline is sized to its own line, so left-aligning the H1 is enough. */
 }
 
 /* ===== COOKIE CONSENT BANNER ===== */
@@ -2030,8 +2117,16 @@ footer {
    Call FAB is a circular button stacked above the Retell chat circle so the
    two read as a unified action stack. Navy fill on Call (secondary), bright
    blue on Retell (primary, set by the widget itself). */
+/* Bottom-right corner (the chat widget is bottom-LEFT, so this corner is free), and
+   hidden until the hero scrolls past. It used to sit at bottom:106px and show
+   immediately, which put it over the third hero stat on every common phone size.
+   Repositioning alone can't fix that — the stats land at a different height on every
+   device — so the button now stays out of the way while the hero is on screen, where
+   the page already has its primary CTA. */
 .sticky-ai-call {
-  position: fixed; bottom: 106px; right: 38px; z-index: 500;
+  position: fixed; bottom: 24px; right: 20px; z-index: 500;
+  opacity: 0; visibility: hidden; transform: translateY(12px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
   width: 60px; height: 60px; border-radius: 50%;
   background: #0F2847; color: #fff;
   display: flex; align-items: center; justify-content: center;
@@ -2039,10 +2134,14 @@ footer {
   text-decoration: none;
   transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
 }
-.sticky-ai-call:hover, .sticky-ai-call:focus-visible {
+.sticky-ai-call.is-revealed { opacity: 1; visibility: visible; transform: none; }
+.sticky-ai-call.is-revealed:hover, .sticky-ai-call.is-revealed:focus-visible {
   background: #1E5AA8;
   transform: translateY(-3px);
   box-shadow: 0 10px 28px rgba(30,90,168,0.32);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sticky-ai-call { transition: none; transform: none; }
 }
 .sticky-ai-call-label {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
@@ -2050,6 +2149,10 @@ footer {
 }
 /* Always on top — above any third-party widget */
 .sticky-ai-call { z-index: 999999; }
+/* While the cookie banner is up, ride above it rather than sitting on its corner.
+   Banner is ~152px tall at 16px from the bottom. Browsers without :has() keep the
+   base corner position, which is still clear of the hero stats. */
+body:has(#cookie-banner.visible) .sticky-ai-call { bottom: 192px; }
 @media (min-width: 768px) { .sticky-ai-call { display: none; } }
 
 /* Park UserWay's own button off-screen so we can trigger it programmatically */
@@ -2508,9 +2611,13 @@ retell-chat-web-component {
 </div>
 <div class="hero">
   <div class="hero-content">
-    <div class="hero-eyebrow">NYC Property Management — Trust, Transparency, Peace of Mind</div>
-    <h1 class="reveal"><span class="hero-rotator" id="hero-rotator">Your Property, Cared For<br>Like It&rsquo;s Our Own.<br><em>Real Peace of Mind.</em></span></h1>
-    <p class="hero-sub">From compliance to cash flow, we treat your building like our own — with real-time transparency, proactive care, and a team that actually picks up the phone. Modern technology with a human touch. All for one flat, predictable fee.</p>
+    <div class="hero-eyebrow">NYC Property Management<span class="hero-eyebrow-tail"> — Trust, Transparency, Peace of Mind</span></div>
+    <!-- No .reveal here on purpose: this H1 is the LCP element, and .reveal starts at
+         opacity:0, which makes it ineligible for LCP until the fade finishes — the swap
+         then re-registers it as a late candidate (measured 6.7s). Painting it
+         immediately puts LCP back at ~0.3s. -->
+    <h1>Your Property, Cared For<br>Like It&rsquo;s Our Own.<br><span class="hero-promise" id="hero-promise"><span class="hero-mask"><em class="hero-rotator" id="hero-rotator">Real Peace of Mind.</em></span><svg class="hero-underline" viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8.5 C 60 3, 150 3, 297 6.5"/></svg></span></h1>
+    <p class="hero-sub">We treat your building like our own — proactive care, real-time transparency, and a team that actually picks up the phone. One flat fee.</p>
     <div class="hero-actions">
       <a href="#contact" class="btn-primary">
         Get My Free Property Audit
@@ -2518,6 +2625,15 @@ retell-chat-web-component {
       </a>
       <a href="#pricing" class="btn-secondary">See Pricing Plans</a>
     </div>
+
+    <!-- Rating mirrors the testimonials badge and the aggregateRating JSON-LD in <head>.
+         All three carry 5.0 / 21 — update them together. -->
+    <a href="https://share.google/tTIEyy7qxx4bKm1Zo" target="_blank" rel="noopener" class="hero-rating-link">
+      <div class="google-rating-badge google-rating-badge--hero">
+        <div class="google-badge-stars">★★★★★</div>
+        <div class="google-badge-info"><strong>5.0</strong> · 21 Google reviews</div>
+      </div>
+    </a>
 
     <div class="hero-stats">
       <div class="stat-item">
@@ -2532,40 +2648,31 @@ retell-chat-web-component {
       </div>
       <div class="stat-item">
         <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
-        <div class="stat-num">24/7</div>
-        <div class="stat-label">Support & response</div>
+        <div class="stat-num">2 hr</div>
+        <div class="stat-label">Avg. response time</div>
       </div>
     </div>
   </div>
 
   <div class="hero-visual">
-    <!-- Background card -->
+    <!-- Real owner-portal screen, not a mockup. Eager + explicit dimensions: this sits
+         above the fold at >=1024px, so lazy-loading it would delay LCP rather than help.
+         Same 7 screens are cross-faded further down in #about. -->
     <div class="hero-card-stack">
+      <div class="hero-shot">
+        <picture>
+          <source srcset="./assets/portal-live-dashboard.webp" type="image/webp">
+          <img src="./assets/portal-live-dashboard.jpg" width="676" height="592" fetchpriority="high" decoding="async"
+               alt="DoryAngel owner portal dashboard showing rent collected, outstanding balances and open maintenance tasks">
+        </picture>
+      </div>
       <div class="hero-card-bg hero-card">
         <div class="card-tag">Portfolio Health</div>
         <div class="card-metric">98%</div>
         <div class="card-metric-label">Rent collection rate</div>
       </div>
-      <!-- Main card -->
-      <div class="hero-card-main hero-card">
-        <div class="card-tag">Owner Dashboard</div>
-        <div class="card-metric">$4,200</div>
-        <div class="card-metric-label">Net rent this month — Unit 4B</div>
-        <div class="card-divider"></div>
-        <div class="card-row" style="margin-bottom:10px">
-          <span class="card-row-label">Maintenance requests</span>
-          <span class="card-row-val">2 open</span>
-        </div>
-        <div class="card-row" style="margin-bottom:10px">
-          <span class="card-row-label">Lease expires</span>
-          <span class="card-row-val">Oct 2025</span>
-        </div>
-        <div class="card-row">
-          <span class="card-row-label">Status</span>
-          <span class="card-row-val"><span class="status-dot"></span>Fully occupied</span>
-        </div>
-      </div>
     </div>
+    <div class="hero-shot-note">Illustrative sample data — your real portfolio is private and protected.</div>
     <!-- Geo accent turtle -->
     <svg class="turtle-accent" width="280" height="200" viewBox="0 0 280 200" fill="none">
       <polygon points="140,20 200,60 200,120 140,160 80,120 80,60" fill="#3A7BDD" opacity="0.6"/>
@@ -5049,24 +5156,42 @@ async function handleFormSubmit(e) {
   }
 
   var heroRotator = document.getElementById('hero-rotator');
+  var heroPromise = document.getElementById('hero-promise');
+  /* Only the promise line rotates — the two lines above it are fixed, so the
+     indexed H1 stays stable. Index 0 matches the markup. Every line carries a
+     benefit on its own, since any one of them may be the one a visitor sees.
+     Keep these short: they must fit one line inside .hero-mask at 320px. */
   var heroLines = [
-    'Your Property, Cared For<br>Like It&rsquo;s Our Own.<br><em>Real Peace of Mind.</em>',
-    'Nothing Hidden.<br>Everything Handled.<br><em>Total Owner Transparency.</em>',
-    'High Tech. Human Touch.<br>NYC Property Management.<br><em>Evolved.</em>',
+    'Real Peace of Mind.',
+    'Repairs, Handled.',
+    'Every Dollar Visible.',
+    'Nothing Hidden.',
+    'We Always Answer.',
+    'Licensed &amp; Insured.',
   ];
+  if (heroPromise && !prefersReduced) {
+    // Draw the underline once on load; without this it stays hidden until the first swap.
+    requestAnimationFrame(function () { heroPromise.classList.add('draw'); });
+  }
   if (heroRotator && !prefersReduced) {
     var heroIdx = 0;
     setInterval(function () {
       if (document.hidden) return;
-      heroRotator.classList.add('rotating');
+      heroRotator.classList.remove('line-in');
+      heroRotator.classList.add('line-out');
       setTimeout(function () {
         heroIdx = (heroIdx + 1) % heroLines.length;
         heroRotator.innerHTML = heroLines[heroIdx];
-        heroRotator.classList.remove('rotating');
-        heroRotator.classList.add('rotating-in');
-        setTimeout(function () { heroRotator.classList.remove('rotating-in'); }, 500);
-      }, 350);
-    }, 9000);
+        heroRotator.classList.remove('line-out');
+        heroRotator.classList.add('line-in');
+        if (heroPromise) {
+          // Drop the class and force a reflow so the stroke animation restarts.
+          heroPromise.classList.remove('draw');
+          void heroPromise.offsetWidth;
+          heroPromise.classList.add('draw');
+        }
+      }, 380);
+    }, 6000);
   }
 
   var trustRotator = document.getElementById('trust-rotator');
@@ -5075,6 +5200,7 @@ async function handleFormSubmit(e) {
     '⬡ <strong>100+</strong> properties under management',
     '⬡ <strong>$0</strong> setup fees · <strong>$99/unit</strong> flat',
     '⬡ <strong>15+ years</strong> serving NYC owners',
+    '⬡ <strong>24/7</strong> emergency maintenance line',
   ];
   if (trustRotator && !prefersReduced) {
     var trustIdx = 0;
@@ -5091,6 +5217,28 @@ async function handleFormSubmit(e) {
         });
       }, 350);
     }, 4000);
+  }
+
+  /* Reveal the sticky call button only once the hero is off screen, so it can never
+     sit on top of the hero stats. Without IntersectionObserver, just show it. */
+  /* Deferred: this script runs while the document is still parsing, and the button
+     markup sits near </body>, so querying for it now would return null. */
+  function initStickyCall() {
+    var stickyCall = document.querySelector('.sticky-ai-call');
+    if (!stickyCall) return;
+    var heroWrap = document.querySelector('.hero-wrap');
+    if (heroWrap && hasIO) {
+      new IntersectionObserver(function (entries) {
+        stickyCall.classList.toggle('is-revealed', !entries[0].isIntersecting);
+      }, { threshold: 0 }).observe(heroWrap);
+    } else {
+      stickyCall.classList.add('is-revealed');
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initStickyCall);
+  } else {
+    initStickyCall();
   }
 
   var skyline = document.getElementById('hero-skyline');
