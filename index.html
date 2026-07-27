@@ -4875,6 +4875,11 @@ retell-chat-web-component {
       <div class="contact-form">
         <form name="contact" method="POST" action="https://api.web3forms.com/submit" onsubmit="handleFormSubmit(event)">
           <input type="hidden" name="access_key" value="6991fa6b-8f6c-4c24-9167-b7ee52026a98">
+          <!-- Honeypot: Web3Forms discards any submission where this is filled. Same pattern as
+               #toolGateForm and #notifyGateForm. This form previously had NO bot protection at all —
+               Turnstile guards the Make/Sheets branch but runs after Web3Forms has already emailed
+               the owner, so spam still reached the inbox. -->
+          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
           <input type="hidden" name="subject" id="contactSubject" value="New DoryAngel Website Inquiry">
           <input type="hidden" name="from_name" value="DoryAngel Website">
           <input type="hidden" name="redirect" value="https://www.doryangel.com/thank-you.html">
