@@ -2117,8 +2117,16 @@ footer {
    Call FAB is a circular button stacked above the Retell chat circle so the
    two read as a unified action stack. Navy fill on Call (secondary), bright
    blue on Retell (primary, set by the widget itself). */
+/* Bottom-right corner (the chat widget is bottom-LEFT, so this corner is free), and
+   hidden until the hero scrolls past. It used to sit at bottom:106px and show
+   immediately, which put it over the third hero stat on every common phone size.
+   Repositioning alone can't fix that — the stats land at a different height on every
+   device — so the button now stays out of the way while the hero is on screen, where
+   the page already has its primary CTA. */
 .sticky-ai-call {
-  position: fixed; bottom: 106px; right: 38px; z-index: 500;
+  position: fixed; bottom: 24px; right: 20px; z-index: 500;
+  opacity: 0; visibility: hidden; transform: translateY(12px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
   width: 60px; height: 60px; border-radius: 50%;
   background: #0F2847; color: #fff;
   display: flex; align-items: center; justify-content: center;
@@ -2126,10 +2134,14 @@ footer {
   text-decoration: none;
   transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
 }
-.sticky-ai-call:hover, .sticky-ai-call:focus-visible {
+.sticky-ai-call.is-revealed { opacity: 1; visibility: visible; transform: none; }
+.sticky-ai-call.is-revealed:hover, .sticky-ai-call.is-revealed:focus-visible {
   background: #1E5AA8;
   transform: translateY(-3px);
   box-shadow: 0 10px 28px rgba(30,90,168,0.32);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sticky-ai-call { transition: none; transform: none; }
 }
 .sticky-ai-call-label {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
@@ -2137,6 +2149,10 @@ footer {
 }
 /* Always on top — above any third-party widget */
 .sticky-ai-call { z-index: 999999; }
+/* While the cookie banner is up, ride above it rather than sitting on its corner.
+   Banner is ~152px tall at 16px from the bottom. Browsers without :has() keep the
+   base corner position, which is still clear of the hero stats. */
+body:has(#cookie-banner.visible) .sticky-ai-call { bottom: 192px; }
 @media (min-width: 768px) { .sticky-ai-call { display: none; } }
 
 /* Park UserWay's own button off-screen so we can trigger it programmatically */
@@ -5201,6 +5217,28 @@ async function handleFormSubmit(e) {
         });
       }, 350);
     }, 4000);
+  }
+
+  /* Reveal the sticky call button only once the hero is off screen, so it can never
+     sit on top of the hero stats. Without IntersectionObserver, just show it. */
+  /* Deferred: this script runs while the document is still parsing, and the button
+     markup sits near </body>, so querying for it now would return null. */
+  function initStickyCall() {
+    var stickyCall = document.querySelector('.sticky-ai-call');
+    if (!stickyCall) return;
+    var heroWrap = document.querySelector('.hero-wrap');
+    if (heroWrap && hasIO) {
+      new IntersectionObserver(function (entries) {
+        stickyCall.classList.toggle('is-revealed', !entries[0].isIntersecting);
+      }, { threshold: 0 }).observe(heroWrap);
+    } else {
+      stickyCall.classList.add('is-revealed');
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initStickyCall);
+  } else {
+    initStickyCall();
   }
 
   var skyline = document.getElementById('hero-skyline');
