@@ -660,12 +660,12 @@ async function sendApprovalEmail(post, digestStats) {
   await resend.emails.send({
     from: 'DoryAngel Blog <onboarding@resend.dev>',
     to: APPROVAL_EMAIL,
-    subject: `${isDryRun ? '🧪 [DRY RUN] ' : ''}📱 Social-ready (Facebook + Instagram): "${post.title}"`,
+    subject: `${isDryRun ? '🧪 [DRY RUN] ' : ''}📱 Instagram-ready: "${post.title}"`,
     html: `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#1A2740;">
         <div style="background:#0F2847;padding:20px 24px;border-radius:8px 8px 0 0;">
-          <h1 style="color:white;font-size:18px;margin:0;">📱 Ready to post — Facebook &amp; Instagram</h1>
-          <p style="color:rgba(255,255,255,0.7);font-size:13px;margin:6px 0 0;">Same image + caption for both</p>
+          <h1 style="color:white;font-size:18px;margin:0;">📱 Ready to post — Instagram</h1>
+          <p style="color:rgba(255,255,255,0.7);font-size:13px;margin:6px 0 0;">Facebook goes out automatically — this is the Instagram half</p>
         </div>
         <div style="padding:20px;border:1px solid #E2E8F0;border-top:none;border-radius:0 0 8px 8px;">
 
@@ -683,7 +683,8 @@ async function sendApprovalEmail(post, digestStats) {
           </div>
 
           <div style="background:#E8F8E8;border:1px solid #8FCB8F;border-radius:8px;padding:14px 16px;margin-bottom:32px;">
-            <p style="margin:0;font-size:13px;color:#1B6B1B;font-weight:700;">✅ STEP 3 — Post it: Facebook "Create post" AND Instagram "New post" → attach the saved image + paste the caption (on Instagram the link isn't clickable — that's fine, it drives to "link in bio")</p>
+            <p style="margin:0;font-size:13px;color:#1B6B1B;font-weight:700;">✅ STEP 3 — Post it on Instagram: "New post" → attach the saved image + paste the caption (the link isn't clickable on Instagram — that's fine, it drives to "link in bio")</p>
+            <p style="margin:8px 0 0;font-size:12px;color:#4A6B4A;">Facebook is posted automatically by Vera — don't post it again there. If the auto-post ever fails you'll get a separate "Facebook auto-post failed" email with the caption to paste by hand.</p>
           </div>
 
           <div style="background:#F0FAF4;border:1px solid #8FCB8F;border-radius:8px;padding:12px 16px;margin-bottom:32px;">

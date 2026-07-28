@@ -8,7 +8,25 @@
 - Owner GitHub account: dror75p-ops
 - Owner email: office@doryangel.com (notification emails go to dror75p@gmail.com via Resend)
 
-### Last changes (as of 2026-07-27)
+### Last changes (as of 2026-07-28)
+
+- **Vera was never posting to Facebook — silent skip fixed, auto-posting revived** (2026-07-28, branch `claude/heck-vera-ahent-k1gew6`): an audit of the Vera agent found that **every auto-publish run from 2026-06-20 through 2026-07-27 skipped Facebook entirely**, on a green checkmark. The `FACEBOOK_PAGE_ACCESS_TOKEN` repo secret is empty (`FACEBOOK_PAGE_ID` is set), so `postToFacebook()` hit its guard clause and `console.log`-ed a skip. Over a month of every-2-day publishing produced zero Facebook posts and nothing surfaced it.
+  - **⚠️ FOUR THINGS TO KNOW BEFORE TOUCHING VERA OR THE PUBLISH WORKFLOW.**
+    1. **Vera must NEVER fail the workflow.** Every exit path is `exit 0` and the queue read is inside the try/catch. Previously `JSON.parse` sat *outside* it, so a truncated `/tmp/social-queue.json` would have thrown unhandled → node exits non-zero → **the workflow dies before the commit step and the post never publishes at all**. A social hiccup must not block a finished post. The `resend` import is also **dynamic, inside `emailFallback()`** — a top-level import throws at module load, before any try/catch can catch it.
+    2. **Vera now runs AFTER the commit/push step, not before.** It was step 7 of 8; it is now the last step. It also polls the post URL (6 × 15s, then posts anyway) so Facebook isn't handed a link that 404s while Vercel redeploys. **Do not move it back above the commit** while "tidying" the step order.
+    3. **Nave's approval email is INSTAGRAM-ONLY now.** STEP 3 used to say "Facebook AND Instagram". With Vera actually posting, following that email double-posts to Facebook. If a Facebook post ever fails, Vera sends a **separate** "Facebook auto-post failed" email carrying the caption + link to post by hand. **Do not re-add Facebook to Nave's STEP 3.**
+    4. **Silent success is the bug, not the symptom.** Skips and failures are now GitHub Actions annotations (`::warning::` for an unconfigured secret, `::error::` for a rejected post), so a broken Vera shows on the run itself. A `console.log` is what hid this for a month — don't downgrade them back.
+  - **Also fixed:** Graph API errors now carry `code`/`error_subcode` and special-case **code 190** with remint instructions (the failure that will actually recur); and both Graph calls read through `readJson()`, so an edge 5xx or proxy HTML answer reports `non-JSON response (HTTP 502): …` instead of `Unexpected token '<'`.
+  - **New `.github/workflows/vera-verify.yml`** — manual `workflow_dispatch` that runs Vera with `VERA_VERIFY=true`. Calls `GET /me?fields=id,name`, prints the Page it resolves to, warns if that id ≠ `FACEBOOK_PAGE_ID`, and **posts nothing**. Run it after minting or reminting a token instead of waiting on a scheduled publish.
+  - **⚠️ OWNER ACTION REQUIRED — none of this posts anything until the secret exists.** Mint a **long-lived Page token** (a Page token derived from a long-lived *user* token does not expire unless permissions are revoked or the password changes):
+    1. Facebook Developers → the app owning the DoryAngel Page integration → **Graph API Explorer**.
+    2. Get a User Access Token with `pages_manage_posts`, `pages_read_engagement`, `pages_show_list`.
+    3. Exchange for a long-lived user token: `GET /v22.0/oauth/access_token?grant_type=fb_exchange_token&client_id={app-id}&client_secret={app-secret}&fb_exchange_token={short-lived-token}`
+    4. `GET /v22.0/me/accounts?access_token={long-lived-user-token}` → take the DoryAngel Page's `access_token` field.
+    5. Confirm the returned Page `id` matches the existing `FACEBOOK_PAGE_ID` secret.
+    6. Repo → Settings → Secrets and variables → Actions → set **`FACEBOOK_PAGE_ACCESS_TOKEN`**. Then run **Vera — verify Facebook token**.
+    **Never commit this token or paste it into a PR body, issue, or commit message.** Same rule as the Turnstile secret and the broadcast shared secret.
+  - **Not verifiable in-session:** the CCR sandbox's egress policy blocks `graph.facebook.com` (`403 Host not in allowlist`), so no live token or post test was possible. All five skip/failure paths were exercised locally and each exits 0 with the right annotation. **The first real proof is a `workflow_dispatch` run with `force: true`, `dry_run: false` after the secret is set** — expect `[Vera] Posted to Facebook — post ID: …` in the log.
 
 - **Offer renamed to "Free Rental Analysis" + a compliance pass** (2026-07-27, branch `claude/hero-rotating-sentences-myjdhz`, PR #264 merged): started as an A/B test of the CTA wording and ended up as an offer alignment plus a set of governance fixes. A governance/compliance subagent reviewed the change before merge.
   - **⚠️ FIVE THINGS A FUTURE SESSION COULD UNDO WITHOUT KNOWING WHY. Read before touching the contact form, the CTA, or Make.**
@@ -153,12 +171,13 @@
 - `blog-loader.js` — Renders blog cards on the home page; each card links to `/blog/[slug]/`
 - `content/blog/posts-index.json` — Source of truth for all posts
 - `scripts/generate-post.js` — Agent **Nave**: generates the post (Claude API → Unsplash) → writes `posts-index.json` → fires the topic-segmented digest broadcast (Make/Gmail) → Resend approval email to owner → hands a social queue to Vera. **(2026-07-24, PR #256)** now also weaves 2–3 contextual in-body internal links into each new post: `pickLinkablePosts()` offers the top-8 most-relevant existing posts + the compliance hub to the prompt (SYSTEM_PROMPT rule 15), and `sanitizeInternalLinks()` unwraps any hallucinated `/blog//guides/` link so it can't 404.
-- `scripts/social-post.js` — Agent **Vera**: posts the new article to the Facebook Page (reads `/tmp/social-queue.json` from Nave). Does NOT touch subscribers.
+- `scripts/social-post.js` — Agent **Vera**: posts the new article to the Facebook Page (reads `/tmp/social-queue.json` from Nave). Does NOT touch subscribers. **(2026-07-28)** Runs as the LAST workflow step (after commit) and waits for the post URL to go live before posting; never fails the workflow; emits `::warning::`/`::error::` annotations on a skip or failure; emails the caption to the owner if Facebook rejects the post; `VERA_VERIFY=true` checks the token without posting. See the ⚠️ four-point note in Last changes before editing.
 - `scripts/build-blog.js` — Generates per-post HTML pages from the JSON. **(2026-07-24, PR #255)** `getRelatedPosts()` now blends "Continue reading" across categories (2 in-cluster + ≥1 cross-cluster, scored by hashtag/word overlap) instead of same-category-only; posts in `GUIDE_HUBS` (the 9 compliance slugs) get a hub up-link; and `buildSitemap()` includes the `/guides/bronx-landlord-compliance/` URL (so Nave runs don't drop it).
 - `scripts/migrate-posts-once.js` — One-time schema migration (kept for reference)
 - `scripts/refresh-images.js` — One-shot workflow to refresh all post hero images
 - `blog/[slug]/index.html` — Auto-generated per-post pages (NEVER hand-edit; rerun build-blog.js)
 - `.github/workflows/blog-autopublish.yml` — Cron-triggered every 2 days at 14:00 UTC (odd calendar days)
+- `.github/workflows/vera-verify.yml` — Manual `workflow_dispatch` that checks the Facebook Page token resolves to the right Page. Posts nothing.
 - `.github/workflows/refresh-images.yml` — Manual one-shot for image refresh
 - `sitemap.xml`, `robots.txt` — SEO
 - `.gitignore` — node_modules, .env, .DS_Store, logs, /tmp/
@@ -195,7 +214,7 @@
 - **SEO per post**: `<title>`, meta description, canonical, Open Graph, Twitter Card, JSON-LD BlogPosting schema
 - **Featured post** flag on JSON for the larger card on the index
 - **Post page** has: full-width hero image, sticky CTA, markdown body, CTA block, "Continue reading" related posts (3 from same category)
-- **Auto-publish workflow** (`blog-autopublish.yml`, every 2 days): Nave (`generate-post.js`, also sends the topic-segmented digest) → `build-blog.js` → Vera (`social-post.js`, Facebook) → commit all to main. The digest broadcast needs no new secret (the Make webhook is a public URL); it reads subscribers via `GOOGLE_SA_KEY` (or public CSV fallback). Note: the digest fires before the post page is committed/deployed, so a clicked link can 404 for the ~1–2 min until Vercel redeploys — pre-existing, low-impact.
+- **Auto-publish workflow** (`blog-autopublish.yml`, every 2 days): Nave (`generate-post.js`, also sends the topic-segmented digest) → `build-blog.js` → commit all to main → Vera (`social-post.js`, Facebook). **Vera is deliberately LAST** (since 2026-07-28) so the post page is already committed and deploying when the Facebook link goes out; it also polls the URL before posting. Do not reorder it above the commit. The digest broadcast needs no new secret (the Make webhook is a public URL); it reads subscribers via `GOOGLE_SA_KEY` (or public CSV fallback). Note: the digest fires before the post page is committed/deployed, so a clicked link can 404 for the ~1–2 min until Vercel redeploys — pre-existing, low-impact.
 
 ### Post schema (current)
 
@@ -234,6 +253,7 @@
 - **Resend** (`RESEND_API_KEY` secret): from `onboarding@resend.dev` — **owner-facing emails only** (Nave's approval email, daily-audit report) go to `dror75p@gmail.com`. The sandbox domain can ONLY reach the account owner, so it is NOT used for subscriber-facing email. Verify doryangel.com in Resend to lift this.
 - **Unsplash** (`UNSPLASH_ACCESS_KEY` secret): per-category curated queries for cover images
 - **GitHub** (`GH_TOKEN` secret): the bot's token for committing to main; needs `repo` + `workflow` scopes
+- **Facebook Graph API** (`FACEBOOK_PAGE_ID` + `FACEBOOK_PAGE_ACCESS_TOKEN` secrets): Vera posts each new article to the Page via `POST /v22.0/{page-id}/feed`. **`FACEBOOK_PAGE_ACCESS_TOKEN` was empty from at least 2026-06-20 to 2026-07-28, so nothing was ever posted** — see the 2026-07-28 entry in Last changes for the minting runbook. Use a **long-lived Page token**; a short-lived one dies in ~60 days and shows up as Graph error **code 190**. Verify with the **Vera — verify Facebook token** workflow. Instagram has no API wired in and stays manual.
 - **Google Analytics 4** — **dual-tagged** (2026-07-15): `index.html` now sends to BOTH `G-0W61NYHM78` (primary, post-move) and `G-P8QR4VL8NH` (legacy). Context: the www.doryangel.com move (PR #79, 2026-06-16) switched the ID from `G-P8QR4VL8NH` → `G-0W61NYHM78`, which made the old "doryangel.com" GA4 property (still what the owner opens by habit) flatline at the move date while all new data landed in the new property. Dual-tagging via a second `gtag('config', …)` restores data to the legacy property so nothing's lost — both properties now collect. Uses Consent Mode v2 (loads on every visit, storage denied by default → cookieless pings; full data after Accept); the single `gtag.js` load + global consent calls cover both IDs. Events (`generate_lead`, `tool_gate_submit`) auto-send to both.
 - **Retell AI + Make.com lead capture**: see section below
 

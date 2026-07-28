@@ -1,0 +1,31 @@
+name: Vera — verify Facebook token
+
+# Manual, read-only check that FACEBOOK_PAGE_ACCESS_TOKEN is valid and resolves
+# to the same Page as FACEBOOK_PAGE_ID. Posts NOTHING to Facebook — run this
+# after minting or reminting a Page token, before waiting on a scheduled publish.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Vera — check the Page token
+        env:
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
+          VERA_VERIFY: 'true'
+        run: node scripts/social-post.js
