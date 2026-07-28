@@ -74,10 +74,11 @@ jobs:
       # Runs AFTER the commit on purpose: Vera waits for the post page to go live
       # on Vercel before handing Facebook the link, so the first click isn't a 404.
       # Vera never fails the workflow — a skip or error surfaces as an annotation.
+      # Posts via the Make "Facebook Auto-Post" scenario, which holds the Facebook
+      # OAuth connection — there is no Facebook token in this repo by design.
       - name: Vera — post to Facebook Page
         if: ${{ github.event.inputs.dry_run != 'true' }}
         env:
-          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
-          FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
+          DIGEST_WEBHOOK_SECRET: ${{ secrets.DIGEST_WEBHOOK_SECRET }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: node scripts/social-post.js

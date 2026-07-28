@@ -1,15 +1,26 @@
 // social-post.js — Vera: DoryAngel's social distribution agent
-// Reads the handoff file left by Nave and posts to the DoryAngel Facebook Page.
+// Reads the handoff file left by Nave and posts the new article to the DoryAngel
+// Facebook Page — via the Make scenario "DoryAngel Blog — Facebook Auto-Post",
+// NOT by calling the Graph API directly.
 //
-// TWO INVARIANTS — see CLAUDE.md before changing either:
-//   1. Vera must NEVER fail the workflow. Every path exits 0. A social hiccup
-//      must not block a post that is already written, built and committed.
-//   2. Vera runs AFTER the commit/push step, so the blog page is already on its
-//      way to Vercel when the link goes out. Do not move it back before commit.
+// WHY MAKE AND NOT THE GRAPH API (changed 2026-07-28): posting directly needed a
+// hand-minted long-lived Page token in FACEBOOK_PAGE_ACCESS_TOKEN. That secret sat
+// empty from 2026-06-20 to 2026-07-28 and every post silently skipped. Make holds
+// the Facebook connection as OAuth and refreshes it itself, so there is no token
+// to mint, none to leak, and none to expire. Do not "simplify" this back into a
+// direct graph.facebook.com call.
 //
-// Anything Vera skips or fails is emitted as a GitHub Actions annotation. A
-// plain console.log is not enough: an empty FACEBOOK_PAGE_ACCESS_TOKEN silently
-// skipped every post from 2026-06-20 to 2026-07-27 on green checkmarks.
+// THREE INVARIANTS — see CLAUDE.md before changing any of them:
+//   1. Vera must NEVER fail the workflow. Every path exits 0. A social hiccup must
+//      not block a post that is already written, built and committed.
+//   2. Vera runs AFTER the commit/push step, so the blog page is already on its way
+//      to Vercel when the link goes out. Do not move it back before commit.
+//   3. A 200 from the webhook is NOT proof of a Facebook post. Make answers
+//      "Accepted" instantly unless the scenario ends in a Webhook Response module,
+//      so Vera requires a post id in the reply. No id = failure, loudly.
+//
+// Anything Vera skips or fails is emitted as a GitHub Actions annotation. A plain
+// console.log is what hid the empty-token bug for over a month of publishing.
 
 // Resend is imported dynamically inside emailFallback(), not at the top level:
 // a top-level import throws at module load, before any try/catch can run, so a
@@ -19,8 +30,12 @@ import { readFileSync, existsSync } from 'fs';
 const AGENT_NAME     = 'Vera';
 const BASE_URL       = 'https://www.doryangel.com';
 const QUEUE_FILE     = '/tmp/social-queue.json';
-const GRAPH          = 'https://graph.facebook.com/v22.0';
 const APPROVAL_EMAIL = 'dror75p@gmail.com';
+
+// Make "DoryAngel Blog — Facebook Auto-Post" (hook 2871253). The scenario filters
+// on the shared secret before it will post anything, so this public URL can't be
+// used to make the Page publish arbitrary text.
+const SOCIAL_WEBHOOK = 'https://hook.eu1.make.com/ura1w6nxwhdgbkg0ebbdu6fwiuq4zi38';
 
 // Vercel redeploys ~1 min after the commit lands, so poll the post URL before
 // handing Facebook a link that would 404 for whoever clicks it first.
@@ -33,36 +48,15 @@ const fail = m => console.log(`::error title=${AGENT_NAME}::${m}`);
 
 const escapeHtml = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 
-// Graph normally answers JSON, but an edge 5xx or a proxy in the way answers
-// HTML — parsing that blind turns a readable outage into "Unexpected token '<'".
+// Make normally answers JSON, but an outage or a misconfigured scenario answers
+// plain text — parsing that blind turns a readable failure into "Unexpected token".
 async function readJson(res) {
   const text = await res.text();
   try {
-    return JSON.parse(text);
+    return { data: JSON.parse(text), raw: text };
   } catch {
-    return { error: { message: `non-JSON response (HTTP ${res.status}): ${text.slice(0, 200)}` } };
+    return { data: null, raw: text };
   }
-}
-
-// Graph errors carry code/subcode alongside the message — keep them, they are
-// the difference between "token expired" and "caption rejected".
-function graphError(data, res) {
-  const e     = data?.error ?? {};
-  const parts = [e.message ?? `HTTP ${res.status}`];
-  if (e.code !== undefined) parts.push(`code ${e.code}${e.error_subcode ? `/${e.error_subcode}` : ''}`);
-  let msg = parts.join(' — ');
-  if (e.code === 190) {
-    msg += ' — the Page access token is expired or invalid. Remint a long-lived Page token (CLAUDE.md → Vera / Facebook token) and update the FACEBOOK_PAGE_ACCESS_TOKEN secret.';
-  }
-  return new Error(msg);
-}
-
-// VERA_VERIFY mode: confirm the token works and names the right Page, post nothing.
-async function verifyToken(token) {
-  const res  = await fetch(`${GRAPH}/me?fields=id,name&access_token=${encodeURIComponent(token)}`);
-  const data = await readJson(res);
-  if (!res.ok) throw graphError(data, res);
-  return data;
 }
 
 async function waitForPage(url) {
@@ -83,26 +77,40 @@ async function waitForPage(url) {
   return false;
 }
 
-async function postToFacebook(pageId, token, slug, caption) {
+async function postViaMake(secret, slug, caption) {
   const blogUrl = `${BASE_URL}/blog/${slug}/`;
   await waitForPage(blogUrl);
 
-  const body = new URLSearchParams({
-    message:      caption,
-    link:         blogUrl,
-    access_token: token,
+  const res = await fetch(SOCIAL_WEBHOOK, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ secret, slug, message: caption, link: blogUrl }),
   });
 
-  const res  = await fetch(`${GRAPH}/${pageId}/feed`, { method: 'POST', body });
-  const data = await readJson(res);
-  if (!res.ok) throw graphError(data, res);
-  log(`Posted to Facebook — post ID: ${data.id}`);
+  const { data, raw } = await readJson(res);
+
+  if (!res.ok) {
+    throw new Error(`Make webhook returned HTTP ${res.status}: ${raw.slice(0, 200)}`);
+  }
+
+  // Invariant 3. "Accepted" is Make's default instant reply and proves nothing —
+  // it means the scenario was queued, or that the secret filter silently dropped
+  // it, or that the scenario has no Webhook Response module. Demand the post id.
+  const postId = data?.postId ?? data?.id;
+  if (!postId) {
+    throw new Error(
+      `Make accepted the request but returned no Facebook post id (got: ${raw.slice(0, 200) || 'empty response'}). ` +
+      `Either the secret filter dropped it, the Facebook module errored, or the scenario is missing its Webhook Response module.`
+    );
+  }
+
+  log(`Posted to Facebook — post ID: ${postId}`);
   log(`Blog URL: ${blogUrl}`);
 }
 
-// Only sent when Facebook was configured and still refused the post — the owner
-// needs the caption in hand to post it manually. A missing secret is the
-// annotation's job, not the inbox's.
+// Only sent when the post was actually attempted and failed — the owner needs the
+// caption in hand to post it manually. A missing secret is the annotation's job,
+// not the inbox's.
 async function emailFallback(slug, caption, reason) {
   if (!process.env.RESEND_API_KEY) {
     log('RESEND_API_KEY not set — no fallback email sent');
@@ -141,27 +149,9 @@ async function emailFallback(slug, caption, reason) {
 }
 
 async function main() {
-  const pageId     = process.env.FACEBOOK_PAGE_ID;
-  const token      = process.env.FACEBOOK_PAGE_ACCESS_TOKEN;
-  const configured = Boolean(pageId && token);
-  const missing    = !pageId ? 'FACEBOOK_PAGE_ID' : 'FACEBOOK_PAGE_ACCESS_TOKEN';
-
-  if (process.env.VERA_VERIFY === 'true') {
-    if (!configured) {
-      fail(`${missing} is not set — nothing to verify.`);
-      return;
-    }
-    try {
-      const me = await verifyToken(token);
-      log(`Token OK — resolves to "${me.name}" (id ${me.id})`);
-      if (me.id !== pageId) {
-        fail(`token resolves to id ${me.id} but FACEBOOK_PAGE_ID is ${pageId} — these must match, or posts go to the wrong Page.`);
-      }
-    } catch (e) {
-      fail(`token check failed: ${e.message}`);
-    }
-    return;
-  }
+  // Shared with the digest broadcast scenario on purpose — one secret, one place
+  // for the owner to manage. The Make filter requires it before posting anything.
+  const secret = process.env.DIGEST_WEBHOOK_SECRET;
 
   if (!existsSync(QUEUE_FILE)) {
     log('No social queue file found — nothing to post (Nave may have skipped)');
@@ -178,13 +168,13 @@ async function main() {
   }
   log(`Picked up post: ${slug}`);
 
-  if (!configured) {
-    warn(`${missing} is not set — NO Facebook post was made for "${slug}". Add the secret in repo Settings → Secrets and variables → Actions (CLAUDE.md → Vera / Facebook token).`);
+  if (!secret) {
+    warn(`DIGEST_WEBHOOK_SECRET is not set — NO Facebook post was made for "${slug}". The Make scenario drops unsigned requests. Add the secret in repo Settings → Secrets and variables → Actions.`);
     return;
   }
 
   try {
-    await postToFacebook(pageId, token, slug, facebookPost);
+    await postViaMake(secret, slug, facebookPost);
   } catch (e) {
     fail(`Facebook post failed: ${e.message}`);
     log('Blog is live and the digest was sent — only the social post was skipped');
