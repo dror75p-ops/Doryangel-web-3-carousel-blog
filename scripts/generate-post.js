@@ -75,18 +75,62 @@ const CATEGORIES = [
   'broker-partnerships',
 ];
 
+// A multi-run category plan, so a decision like "the next 10 posts are all
+// maintenance" survives across scheduled runs instead of having to be passed by
+// hand each time. Nave reads it, and decrements `remaining` once per published
+// post; at 0 it stops forcing and normal weighting resumes.
+//
+// Every read and write is wrapped: a missing, malformed, or unwritable plan must
+// never stop a post from publishing. Same fail-open philosophy as the dedupe gate.
+const CATEGORY_PLAN_PATH = './content/blog/category-plan.json';
+
+function readCategoryPlan() {
+  try {
+    const plan = JSON.parse(readFileSync(CATEGORY_PLAN_PATH, 'utf8'));
+    if (!Number.isFinite(plan.remaining) || plan.remaining <= 0) return null;
+    if (!CATEGORIES.includes(plan.forceCategory)) {
+      console.warn(`Category plan names an unknown category "${plan.forceCategory}" — ignoring the plan.`);
+      return null;
+    }
+    return plan;
+  } catch (err) {
+    if (err.code !== 'ENOENT') console.warn(`Category plan unreadable (${err.message}) — ignoring it.`);
+    return null;
+  }
+}
+
+// Called once per published post. Decrementing on write (rather than on topic
+// pick) means a run that dies mid-generation doesn't silently burn a slot.
+function consumeCategoryPlan() {
+  const plan = readCategoryPlan();
+  if (!plan) return;
+  try {
+    plan.remaining -= 1;
+    writeFileSync(CATEGORY_PLAN_PATH, JSON.stringify(plan, null, 2) + '\n');
+    console.log(
+      plan.remaining > 0
+        ? `Category plan: ${plan.remaining} more ${plan.forceCategory} post${plan.remaining === 1 ? '' : 's'} to go.`
+        : `Category plan complete — normal category weighting resumes on the next run.`
+    );
+  } catch (err) {
+    console.warn(`Could not update the category plan (${err.message}) — it may force one extra post.`);
+  }
+}
+
 // FORCE_CATEGORY pins today's post to one category, overriding both the picker's
 // own weighting and the HARD VARIETY RULE. Used from the workflow_dispatch
 // `category` input when a run needs to land in a specific bucket (e.g. "the last
 // post wasn't a maintenance post — run a maintenance one"). Empty = normal.
+//
+// The env var is the manual override and wins for that single run; the plan file
+// is the standing instruction underneath it.
 function getForcedCategory() {
   const raw = (process.env.FORCE_CATEGORY || '').trim();
-  if (!raw) return null;
-  if (!CATEGORIES.includes(raw)) {
+  if (raw) {
+    if (CATEGORIES.includes(raw)) return raw;
     console.warn(`FORCE_CATEGORY="${raw}" is not a known category — ignoring. Valid: ${CATEGORIES.join(', ')}`);
-    return null;
   }
-  return raw;
+  return readCategoryPlan()?.forceCategory ?? null;
 }
 
 function getSeason(month) {
@@ -206,7 +250,8 @@ Rules:
     • HARD VARIETY RULE — this one is not a preference, follow it exactly: if the SAME category appears in the two most recent posts listed above, you MUST NOT choose that category again. Pick the best topic from any other category. (Historically this rule was worded as a soft preference and lost to the "when in doubt pick property-management" instruction, producing five straight property-management posts — do not let that happen.)
 - "broker-partnerships" posts target NYC real estate brokers/agents as referral partners — topics should cover referral income, how to advise landlord clients, or how the DoryAngel partner program works
 ${engagementLine ? `- ENGAGEMENT SIGNAL (Clarity, last ${claritySignals.windowDays}d — consent-gated + short window, so it is THIN; treat as directional and IGNORE categories with only a handful of sessions): how well each blog category held readers, by average scroll depth — ${engagementLine}. When two categories are otherwise equally good candidates for today, prefer the one that holds attention better. Do NOT override the owner-facing category preference above based on a few sessions.` : ''}
-${forcedCategory ? `\nCATEGORY IS FIXED FOR THIS RUN — this overrides every category preference and variety rule above: you MUST return "category": "${forcedCategory}"${forcedCategory === 'diy-property-management' ? ' (our Maintenance & Repairs category). Suggest a hands-on building-care subject: heating and boilers, roofs and facades, plumbing and leaks, pests, seasonal walkthroughs, hiring and pricing contractors, what to inspect and when, what to document.' : '.'} Pick the strongest title you can WITHIN that category — do not switch categories to get a better title.` : ''}
+${forcedCategory ? `\nCATEGORY IS FIXED FOR THIS RUN — this overrides every category preference and variety rule above: you MUST return "category": "${forcedCategory}"${forcedCategory === 'diy-property-management' ? ` (our Maintenance & Repairs category). Suggest a hands-on building-care subject: heating and boilers, roofs and facades, plumbing and leaks, pests, seasonal walkthroughs, hiring and pricing contractors, what to inspect and when, what to document.
+- SUBJECT VARIETY MATTERS MORE THAN USUAL HERE. These posts run consecutively, so the recent titles listed above are themselves maintenance posts. Pick a building system or job that NONE of them covered. Returning to roofs and boilers every time is the fastest way to make a run of maintenance posts read as one repeated article. Rotate across the whole building: heating, plumbing and drains, roof and facade, electrical, windows and doors, floors and stairs, pests, water heaters, laundry and utility rooms, common areas, basements, and the trade-hiring and documentation side of the work.` : '.'} Pick the strongest title you can WITHIN that category — do not switch categories to get a better title.` : ''}
 ${avoidNote ? `\nIMPORTANT: Your last suggestion covered substantially the same theme as an already-published post ("${avoidNote}"). Pick a genuinely different subject or angle this time — not just a reworded or re-seasoned version of that post.` : ''}
 
 Reply ONLY with valid JSON: {"title": "...", "category": "..."}`,
@@ -824,6 +869,11 @@ async function main() {
   posts.unshift(postForIndex);
   writeFileSync(indexPath, JSON.stringify(posts, null, 2));
   console.log('Added to posts-index.json');
+
+  // Burn one slot of the standing category plan, if there is one. Deliberately
+  // after the index write and before any outbound step, so it counts exactly the
+  // posts that actually got written.
+  consumeCategoryPlan();
 
   // A run on a branch writes the post but must NOT go outbound: the post URL only
   // goes live once the branch is merged and Vercel redeploys, so a digest blast or
