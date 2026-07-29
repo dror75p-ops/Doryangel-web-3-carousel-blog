@@ -37,5 +37,9 @@ jobs:
           git add content/blog/posts-index.json blog/ sitemap.xml
           git diff --staged --quiet && echo "No changes" && exit 0
           git commit -m "Fix hero image: ${{ github.event.inputs.slug || 'most recent post' }}"
-          git pull --rebase origin main
-          git push origin main
+          # Same reason as blog-autopublish.yml: pushing back to the ref the run
+          # started on lets this be dispatched against a branch. `git push origin
+          # main` fails off main anyway — checkout only creates the dispatched
+          # branch, so no local `main` ref exists to push.
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"

@@ -4,7 +4,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { Resend } from 'resend';
 import { readFileSync, writeFileSync } from 'fs';
 import { createSign } from 'crypto';
-import { generateSlug, toISODate, wordsToMinutes, searchUnsplashPhotos } from './lib/post-utils.js';
+import { generateSlug, toISODate, wordsToMinutes, searchUnsplashPhotos, pickImageQuery } from './lib/post-utils.js';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 4 });
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -66,6 +66,28 @@ const FALLBACK_TOPICS = [
   { title: 'How Do Bronx Real Estate Brokers Earn Referral Income After the Deal Closes?', category: 'broker-partnerships' },
   { title: '5 Signs Your Bronx Investor Client Needs a Property Manager — Not Just a New Agent', category: 'broker-partnerships' },
 ];
+
+const CATEGORIES = [
+  'property-management',
+  'diy-property-management',
+  'investments',
+  'property-automation',
+  'broker-partnerships',
+];
+
+// FORCE_CATEGORY pins today's post to one category, overriding both the picker's
+// own weighting and the HARD VARIETY RULE. Used from the workflow_dispatch
+// `category` input when a run needs to land in a specific bucket (e.g. "the last
+// post wasn't a maintenance post — run a maintenance one"). Empty = normal.
+function getForcedCategory() {
+  const raw = (process.env.FORCE_CATEGORY || '').trim();
+  if (!raw) return null;
+  if (!CATEGORIES.includes(raw)) {
+    console.warn(`FORCE_CATEGORY="${raw}" is not a known category — ignoring. Valid: ${CATEGORIES.join(', ')}`);
+    return null;
+  }
+  return raw;
+}
 
 function getSeason(month) {
   if (month >= 3 && month <= 5) return 'spring';
@@ -142,6 +164,7 @@ async function pickTopicWithAI(existingPosts, claritySignals, avoidNote = null) 
   const today = toISODate(new Date());
   const season = getSeason(new Date().getMonth() + 1);
   const recentTitles = existingPosts.slice(0, 10).map(p => `- ${p.title}`).join('\n') || 'None yet';
+  const forcedCategory = getForcedCategory();
 
   const engagementLine = claritySignals && claritySignals.categories.length
     ? claritySignals.categories
@@ -183,6 +206,7 @@ Rules:
     • HARD VARIETY RULE — this one is not a preference, follow it exactly: if the SAME category appears in the two most recent posts listed above, you MUST NOT choose that category again. Pick the best topic from any other category. (Historically this rule was worded as a soft preference and lost to the "when in doubt pick property-management" instruction, producing five straight property-management posts — do not let that happen.)
 - "broker-partnerships" posts target NYC real estate brokers/agents as referral partners — topics should cover referral income, how to advise landlord clients, or how the DoryAngel partner program works
 ${engagementLine ? `- ENGAGEMENT SIGNAL (Clarity, last ${claritySignals.windowDays}d — consent-gated + short window, so it is THIN; treat as directional and IGNORE categories with only a handful of sessions): how well each blog category held readers, by average scroll depth — ${engagementLine}. When two categories are otherwise equally good candidates for today, prefer the one that holds attention better. Do NOT override the owner-facing category preference above based on a few sessions.` : ''}
+${forcedCategory ? `\nCATEGORY IS FIXED FOR THIS RUN — this overrides every category preference and variety rule above: you MUST return "category": "${forcedCategory}"${forcedCategory === 'diy-property-management' ? ' (our Maintenance & Repairs category). Suggest a hands-on building-care subject: heating and boilers, roofs and facades, plumbing and leaks, pests, seasonal walkthroughs, hiring and pricing contractors, what to inspect and when, what to document.' : '.'} Pick the strongest title you can WITHIN that category — do not switch categories to get a better title.` : ''}
 ${avoidNote ? `\nIMPORTANT: Your last suggestion covered substantially the same theme as an already-published post ("${avoidNote}"). Pick a genuinely different subject or angle this time — not just a reworded or re-seasoned version of that post.` : ''}
 
 Reply ONLY with valid JSON: {"title": "...", "category": "..."}`,
@@ -193,13 +217,20 @@ Reply ONLY with valid JSON: {"title": "...", "category": "..."}`,
     const match = text.match(/\{[\s\S]*?\}/);
     if (match) {
       const parsed = JSON.parse(match[0]);
-      if (parsed.title && parsed.category) return parsed;
+      // Belt and braces: the prompt fixes the category, this guarantees it.
+      if (parsed.title && parsed.category) {
+        return forcedCategory ? { ...parsed, category: forcedCategory } : parsed;
+      }
     }
   } catch (err) {
     console.warn(`AI topic selection failed (${err.message}) — using fallback`);
   }
 
-  return FALLBACK_TOPICS[existingPosts.length % FALLBACK_TOPICS.length];
+  // Fallback round-robin, restricted to the forced category when one is set.
+  const pool = forcedCategory
+    ? FALLBACK_TOPICS.filter(t => t.category === forcedCategory)
+    : FALLBACK_TOPICS;
+  return pool[existingPosts.length % pool.length];
 }
 
 // Semantic dedupe gate against the FULL post history (not just the last 10 shown
@@ -283,9 +314,9 @@ const IMAGE_QUERIES = {
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1600&q=80';
 
-async function fetchCoverImage(category) {
+async function fetchCoverImage(category, title = '') {
   const queries = IMAGE_QUERIES[category] || IMAGE_QUERIES['property-management'];
-  const query = queries[Math.floor(Math.random() * queries.length)];
+  const query = pickImageQuery(queries, title);
   console.log(`Searching Unsplash for: "${query}"`);
 
   try {
@@ -532,7 +563,9 @@ Remember: 800-1,200 words, NYC-specific examples, pain-point focused, scannable 
     `output: ${message.usage.output_tokens}`
   );
 
-  const heroImage = await fetchCoverImage(topic.category);
+  // Pass the title so the query matches the subject: a roof post gets the roof
+  // query, not whichever of the category's queries came up at random.
+  const heroImage = await fetchCoverImage(topic.category, post.title || topic.title);
 
   const SUFFIX = ' | DoryAngel';
   const MAX = 60;
@@ -653,6 +686,8 @@ async function sendApprovalEmail(post, digestStats) {
   const isDryRun = digestStats?.dryRun === true;
   const digestLine = isDryRun
     ? `<p style="margin:0;font-size:12px;color:#8B6F1A;font-weight:700;">🧪 DRY RUN — preview only. This post was NOT published and NO subscribers were emailed.</p>`
+    : digestStats?.skipped === true
+    ? `<p style="margin:0;font-size:12px;color:#8B6F1A;font-weight:700;">🌿 BRANCH RUN — the post is committed to a branch, not to the live site. NO subscribers were emailed and nothing was posted to Facebook. Both go out on the next scheduled run after the branch is merged.</p>`
     : digestStats?.error
     ? `<p style="margin:0;font-size:12px;color:#B91C1C;">⚠️ Subscriber emails failed: ${digestStats.error}</p>`
     : `<p style="margin:0;font-size:12px;color:#1B6B1B;font-weight:700;">📬 ${digestStats?.sent ?? 0} subscriber${(digestStats?.sent ?? 0) !== 1 ? 's' : ''} emailed with this post</p>`;
@@ -789,6 +824,17 @@ async function main() {
   posts.unshift(postForIndex);
   writeFileSync(indexPath, JSON.stringify(posts, null, 2));
   console.log('Added to posts-index.json');
+
+  // A run on a branch writes the post but must NOT go outbound: the post URL only
+  // goes live once the branch is merged and Vercel redeploys, so a digest blast or
+  // a Facebook post from here would hand every subscriber a 404. The workflow sets
+  // this whenever the ref is not main; the scheduled run on main never does.
+  if (process.env.SKIP_BROADCAST === 'true') {
+    console.log('SKIP_BROADCAST=true (branch run) — no subscriber digest, no social queue. Post written to the index only.');
+    await sendApprovalEmail(post, { skipped: true });
+    console.log(`Approval email sent to ${APPROVAL_EMAIL}`);
+    return;
+  }
 
   // Run subscriber digest first so the count lands in the approval email
   const digestStats = await notifyDigestSubscribers(postForIndex);

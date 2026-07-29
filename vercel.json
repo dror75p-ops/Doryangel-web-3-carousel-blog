@@ -1,6 +1,16 @@
 {
   "redirects": [
     {
+      "source": "/blog/bronx-vs-yonkers-why-your-summer-tenant-turnover-could-cost",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/bronx-vs-yonkers-why-your-summer-tenant-turnover-could-cost/",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
       "source": "/blog/are-bronx-landlords-prepared-for-spring-pest-season-a-comple",
       "destination": "/blog/5-summer-pest-control-mistakes-costing-bronx-landlords-thous/",
       "permanent": true
@@ -172,7 +182,12 @@
     },
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "beta.doryangel.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "beta.doryangel.com"
+        }
+      ],
       "destination": "https://www.doryangel.com/:path*",
       "permanent": true
     },

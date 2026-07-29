@@ -17,6 +17,18 @@ on:
         required: false
         default: 'false'
         type: string
+      category:
+        description: 'Pin this run to one category (overrides the picker and the variety rule). Leave blank for normal behaviour.'
+        required: false
+        default: ''
+        type: choice
+        options:
+          - ''
+          - diy-property-management
+          - property-management
+          - investments
+          - property-automation
+          - broker-partnerships
 
 concurrency:
   group: blog-publish
@@ -51,6 +63,11 @@ jobs:
           CLARITY_API_TOKEN: ${{ secrets.CLARITY_API_TOKEN }}
           FORCE_PUBLISH: ${{ github.event.inputs.force || 'false' }}
           DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+          FORCE_CATEGORY: ${{ github.event.inputs.category || '' }}
+          # Off main the post URL isn't live yet, so the digest blast and the
+          # Facebook post would hand everyone a 404. Branch runs write the post
+          # and email the owner only.
+          SKIP_BROADCAST: ${{ github.ref_name != 'main' }}
         run: node scripts/generate-post.js
 
       - name: Build per-post HTML pages + sitemap
@@ -68,14 +85,17 @@ jobs:
           git add content/blog/posts-index.json blog/ sitemap.xml
           git diff --staged --quiet && echo "Nothing to commit — post was skipped" && exit 0
           git commit -m "Auto-publish: new blog post $(date +'%Y-%m-%d')"
-          git pull --rebase origin main
-          git push origin main
+          # Commits back to whatever ref the run was started on. That is `main` for
+          # the cron and for a normal dispatch; a branch dispatch lands the post on
+          # that branch instead, so it can be reviewed before it goes live.
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
 
       # Runs AFTER the commit on purpose: Vera waits for the post page to go live
       # on Vercel before handing Facebook the link, so the first click isn't a 404.
       # Vera never fails the workflow — a skip or error surfaces as an annotation.
       - name: Vera — post to Facebook Page
-        if: ${{ github.event.inputs.dry_run != 'true' }}
+        if: ${{ github.event.inputs.dry_run != 'true' && github.ref_name == 'main' }}
         env:
           FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
           FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}

@@ -29,6 +29,42 @@ export function wordsToMinutes(content) {
   return Math.max(2, Math.round(words / 220));
 }
 
+// Picks which of a category's Unsplash queries to search for, given the post's
+// title. The category lists stay local to each script (see the header note) —
+// what is shared is this choice, because both scripts had the same bug: they
+// picked purely at random, so a roof post could be illustrated with a photo of a
+// radiator while its heroImageAlt described a roof. Alt text that contradicts
+// the image it labels is worse than useless to a screen reader.
+//
+// Scores each query by how many of its words appear in the title and returns the
+// best match; falls back to a random pick when nothing overlaps, which is the
+// old behaviour and the right default for a generic title.
+const IMAGE_QUERY_STOPWORDS = new Set([
+  'a', 'an', 'the', 'and', 'or', 'of', 'in', 'on', 'at', 'to', 'for', 'with',
+  'your', 'you', 'what', 'how', 'why', 'is', 'are', 'do', 'does', 'should',
+  'bright', 'modern', 'daylight', 'professional', 'nyc', 'bronx',
+]);
+
+export function pickImageQuery(queries, title = '') {
+  const titleWords = new Set(
+    title.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean)
+  );
+
+  let best = null;
+  let bestScore = 0;
+  for (const query of queries) {
+    const score = query
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(w => !IMAGE_QUERY_STOPWORDS.has(w))
+      .filter(w => titleWords.has(w) || titleWords.has(`${w}s`) || titleWords.has(w.replace(/s$/, '')))
+      .length;
+    if (score > bestScore) { best = query; bestScore = score; }
+  }
+
+  return best ?? queries[Math.floor(Math.random() * queries.length)];
+}
+
 // Shared Unsplash search primitive. Builds the query, fetches, and returns the
 // raw results array (or throws) — it does not pick a photo. Selection strategy
 // (random vs. deterministic), width/crop params, and error-handling policy
