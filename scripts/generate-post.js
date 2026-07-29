@@ -4,7 +4,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { Resend } from 'resend';
 import { readFileSync, writeFileSync } from 'fs';
 import { createSign } from 'crypto';
-import { generateSlug, toISODate, wordsToMinutes, searchUnsplashPhotos } from './lib/post-utils.js';
+import { generateSlug, toISODate, wordsToMinutes, searchUnsplashPhotos, pickImageQuery } from './lib/post-utils.js';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 4 });
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -314,9 +314,9 @@ const IMAGE_QUERIES = {
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1600&q=80';
 
-async function fetchCoverImage(category) {
+async function fetchCoverImage(category, title = '') {
   const queries = IMAGE_QUERIES[category] || IMAGE_QUERIES['property-management'];
-  const query = queries[Math.floor(Math.random() * queries.length)];
+  const query = pickImageQuery(queries, title);
   console.log(`Searching Unsplash for: "${query}"`);
 
   try {
@@ -563,7 +563,9 @@ Remember: 800-1,200 words, NYC-specific examples, pain-point focused, scannable 
     `output: ${message.usage.output_tokens}`
   );
 
-  const heroImage = await fetchCoverImage(topic.category);
+  // Pass the title so the query matches the subject: a roof post gets the roof
+  // query, not whichever of the category's queries came up at random.
+  const heroImage = await fetchCoverImage(topic.category, post.title || topic.title);
 
   const SUFFIX = ' | DoryAngel';
   const MAX = 60;

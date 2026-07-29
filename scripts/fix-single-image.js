@@ -3,7 +3,7 @@
 // Defaults to the most recent post (posts[0]) if SLUG is not set.
 
 import { readFileSync, writeFileSync } from 'fs';
-import { searchUnsplashPhotos } from './lib/post-utils.js';
+import { searchUnsplashPhotos, pickImageQuery } from './lib/post-utils.js';
 
 const SLUG = process.env.SLUG || null;
 
@@ -14,10 +14,16 @@ const IMAGE_QUERIES = {
     'manhattan skyscraper daylight blue sky',
     'modern nyc office building',
   ],
+  // Kept in step with generate-post.js's list for this category — it had drifted
+  // and was missing the roof/boiler queries, so re-rolling a roof post's image
+  // here could never produce a roof photo.
   'diy-property-management': [
     'handyman repairing apartment bright',
     'maintenance worker tools toolbox',
     'professional plumber working bright',
+    'building boiler room heating system',
+    'roof inspection worker building rooftop',
+    'radiator heating apartment window',
     'nyc apartment building exterior bright',
   ],
   'investments': [
@@ -42,9 +48,9 @@ const IMAGE_QUERIES = {
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1600&q=80';
 
-async function fetchImage(category) {
+async function fetchImage(category, title = '') {
   const queries = IMAGE_QUERIES[category] || IMAGE_QUERIES['property-management'];
-  const query = queries[Math.floor(Math.random() * queries.length)];
+  const query = pickImageQuery(queries, title);
   console.log(`Searching Unsplash: "${query}"`);
 
   const results = await searchUnsplashPhotos(query);
@@ -63,7 +69,7 @@ console.log(`Refreshing image for: "${post.title}" (${post.category})`);
 console.log(`Current image: ${post.heroImage?.slice(0, 60)}...`);
 
 try {
-  const newImage = await fetchImage(post.category);
+  const newImage = await fetchImage(post.category, post.title);
   post.heroImage = newImage;
   posts[idx] = post;
   writeFileSync(indexPath, JSON.stringify(posts, null, 2));
