@@ -8,7 +8,16 @@
 - Owner GitHub account: dror75p-ops
 - Owner email: office@doryangel.com (notification emails go to dror75p@gmail.com via Resend)
 
-### Last changes (as of 2026-07-28)
+### Last changes (as of 2026-07-29)
+
+- **Nave can be pinned to a category, and branch runs no longer go outbound** (2026-07-29, branch `claude/regenerate-nav-agent-post-7aos4b`): the 2026-07-29 auto-publish produced *another* property-management comparison ("Bronx vs. Yonkers… Summer Tenant Turnover") when the intended mix is roughly **1 in 3 posts on maintenance**. Owner asked for it to be regenerated as a maintenance post. There was no way to steer a run — the picker's HARD VARIETY RULE only blocks the same category **twice in a row**, so after a maintenance post on 07-27 it was free to go back to property-management.
+  - **New `FORCE_CATEGORY` env / `category` workflow_dispatch input** (`scripts/generate-post.js` + `blog-autopublish.yml`). It overrides the category weighting *and* the variety rule, and is enforced in **three** places — the picker prompt, the parsed result, and the fallback round-robin — so it still holds when the Haiku topic call fails (verified: with an invalid key the fallback picked a `diy-property-management` topic). An unknown value logs a warning and is ignored rather than erroring.
+  - **⚠️ `SKIP_BROADCAST` — the reason a branch run is safe.** The workflow sets it whenever `github.ref_name != 'main'`. Nave then writes the post to the index and emails the owner, but sends **no subscriber digest** and writes **no social queue**; Vera's step is skipped by the same condition. Without it a branch run would blast every subscriber a link to a post that only goes live after the merge — a guaranteed 404. **Do not "simplify" this away**, and do not run a branch dispatch with it disabled.
+  - **The commit step now pushes to `HEAD:$GITHUB_REF_NAME`, not a hardcoded `main`.** That is what makes a branch dispatch land the post on the branch for review. It also *had* to change: `git push origin main` fails outright off main, because actions/checkout only creates the dispatched branch and `git pull --rebase` never makes a local `main`. The cron and a normal dispatch both run on main, so their behaviour is identical to before.
+  - **The 2026-07-29 Bronx-vs-Yonkers post was removed** (index entry, page, hub, sitemap; 50 → 49 posts) and a maintenance post generated in its place. **Its digest blast had already gone out on 07-29**, so the old slug is redirected in `vercel.json` rather than left to 404 — same pattern as the earlier duplicate-post consolidations.
+  - **Still true:** the CCR sandbox has no `ANTHROPIC_API_KEY`, so Nave cannot be run locally. Use `workflow_dispatch` (optionally with `dry_run: true`) to exercise it.
+
+### Older changes (as of 2026-07-28)
 
 - **Vera was never posting to Facebook — silent skip fixed, auto-posting revived** (2026-07-28, branch `claude/heck-vera-ahent-k1gew6`): an audit of the Vera agent found that **every auto-publish run from 2026-06-20 through 2026-07-27 skipped Facebook entirely**, on a green checkmark. The `FACEBOOK_PAGE_ACCESS_TOKEN` repo secret is empty (`FACEBOOK_PAGE_ID` is set), so `postToFacebook()` hit its guard clause and `console.log`-ed a skip. Over a month of every-2-day publishing produced zero Facebook posts and nothing surfaced it.
   - **⚠️ FOUR THINGS TO KNOW BEFORE TOUCHING VERA OR THE PUBLISH WORKFLOW.**
