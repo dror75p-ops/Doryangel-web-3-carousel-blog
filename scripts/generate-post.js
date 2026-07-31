@@ -434,7 +434,7 @@ When asked to write a post, also produce:
   3. One line pointing to the article.
   4. Exactly ONE tool line — pick the single tool most relevant to this post's topic, copied exactly from this list (labels, emojis and arrows exactly as written):
 
-📅 Compliance Calendar (free) → https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/
+📅 Compliance Calendar (free) → https://www.doryangel.com/tools/compliance-calendar/
 📬 DoryAngel Digest (free) → https://dror75p-ops.github.io/Doryangel-preventive-maintenance-schedule.automation/digest/
 🔍 AI Property Inspector (free) → https://dror75p-ops.github.io/Transcribe_meeting/
 📊 Property P&L Dashboard ($29.99) → https://www.doryangel.com/tools/pl-dashboard/
