@@ -7,7 +7,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import { Resend } from 'resend';
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { execSync } from 'child_process';
 import { createSign } from 'crypto';
 
@@ -193,6 +193,159 @@ async function getGA4Stats() {
     };
   } catch (err) {
     console.warn(`GA4 fetch failed: ${err.message}`);
+    return null;
+  }
+}
+
+// ─── Google Search Console — where we actually rank ──────────────────────────
+//
+// Lives here rather than in its own script on purpose: Arlo already runs daily,
+// already holds GOOGLE_SA_KEY, already sends this email, and getGoogleAccessToken
+// above is already generic over `scope`. A separate rank-tracking agent would
+// have duplicated a cron, a workflow, an email sender and this auth helper to
+// deliver one more table.
+//
+// ⚠️ siteUrl MUST be the `sc-domain:` form. The owner's property is a Domain
+// property covering apex + www; a URL-prefix value like
+// "https://www.doryangel.com/" returns 403 against it.
+//
+// Uses the official Search Console API with owner-granted access. Never scrape
+// Google results for rankings instead — that breaks Google's Terms of Service.
+const GSC_SITE_URL = process.env.GSC_SITE_URL || 'sc-domain:doryangel.com';
+
+// The terms the business actually competes on. Kept local to this script per the
+// lib philosophy in post-utils.js — this is data, not shared behaviour.
+const WATCH_TERMS = [
+  'bronx property management',
+  'property management bronx',
+  'property management bronx ny',
+  'bronx property manager',
+  'property management company bronx',
+  'nyc property management',
+  'flat fee property management',
+  'flat fee property management nyc',
+];
+
+const RANK_HISTORY_FILE = './project/seo/rank-history.json';
+
+// project/, not content/ — .vercelignore excludes project/ but NOT content/,
+// and blog-loader.js fetches content/ client-side. A history file under content/
+// would publish the full keyword export at a guessable public URL.
+function readRankHistory() {
+  try {
+    if (!existsSync(RANK_HISTORY_FILE)) return [];
+    const parsed = JSON.parse(readFileSync(RANK_HISTORY_FILE, 'utf8'));
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeRankHistory(history) {
+  try {
+    mkdirSync('./project/seo', { recursive: true });
+    // ~2 years of daily snapshots is plenty and keeps the file reviewable.
+    writeFileSync(RANK_HISTORY_FILE, JSON.stringify(history.slice(-730), null, 2) + '\n');
+    return true;
+  } catch (e) {
+    console.log(`::warning title=${AGENT_NAME}::Could not write ${RANK_HISTORY_FILE}: ${e.message}`);
+    return false;
+  }
+}
+
+async function querySearchConsole(token, body) {
+  const res = await fetch(
+    `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(GSC_SITE_URL)}/searchAnalytics/query`,
+    {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }
+  );
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const err = new Error(json?.error?.message || `HTTP ${res.status}`);
+    err.status = res.status;
+    throw err;
+  }
+  return json.rows || [];
+}
+
+async function getSearchConsoleStats() {
+  const saKey = process.env.GOOGLE_SA_KEY;
+  if (!saKey) {
+    console.log(`::warning title=${AGENT_NAME}::GOOGLE_SA_KEY is not set — no Search Console rankings in today's report.`);
+    return null;
+  }
+
+  let credentials;
+  try {
+    credentials = JSON.parse(saKey);
+  } catch {
+    console.log(`::warning title=${AGENT_NAME}::GOOGLE_SA_KEY is not valid JSON — skipping Search Console.`);
+    return null;
+  }
+
+  try {
+    const token = await getGoogleAccessToken(credentials, 'https://www.googleapis.com/auth/webmasters.readonly');
+
+    // GSC finalises data ~3 days behind. A 28-day window keeps these numbers
+    // directly comparable to the manual export the current baseline came from.
+    const end = new Date(Date.now() - 3 * 864e5);
+    const start = new Date(end.getTime() - 27 * 864e5);
+    const iso = d => d.toISOString().split('T')[0];
+    const window = { startDate: iso(start), endDate: iso(end) };
+    const base = { ...window, dataState: 'final', type: 'web' };
+
+    const [totalsRows, queryRows, pageRows] = await Promise.all([
+      querySearchConsole(token, { ...base }),
+      querySearchConsole(token, { ...base, dimensions: ['query'], rowLimit: 500 }),
+      querySearchConsole(token, { ...base, dimensions: ['page'], rowLimit: 250 }),
+    ]);
+
+    const t = totalsRows[0];
+    const totals = t
+      ? { clicks: t.clicks, impressions: t.impressions, ctr: t.ctr, position: t.position }
+      : { clicks: 0, impressions: 0, ctr: 0, position: null };
+
+    const byQuery = new Map(queryRows.map(r => [r.keys[0].toLowerCase(), r]));
+    // A watched term absent from the top 500 is signal, not an error — record it
+    // as null rather than dropping the row, so a fall-off is visible as a gap.
+    const watch = WATCH_TERMS.map(q => {
+      const r = byQuery.get(q);
+      return r
+        ? { query: q, clicks: r.clicks, impressions: r.impressions, ctr: r.ctr, position: r.position }
+        : { query: q, clicks: 0, impressions: 0, ctr: 0, position: null };
+    });
+
+    const shape = r => ({
+      key: r.keys[0], clicks: r.clicks, impressions: r.impressions, ctr: r.ctr, position: r.position,
+    });
+    const topQueries = queryRows.slice(0, 25).map(shape);
+    const topPages = pageRows.slice(0, 25).map(shape);
+
+    const snapshot = { runDate: today(), window, totals, watch, topQueries, topPages };
+
+    const history = readRankHistory();
+    const previous = history.length ? history[history.length - 1] : null;
+    // One snapshot per day — a re-run replaces rather than duplicating.
+    const filtered = history.filter(h => h.runDate !== snapshot.runDate);
+    filtered.push(snapshot);
+    writeRankHistory(filtered);
+
+    const money = watch.find(w => w.query === 'bronx property management');
+    console.log(`GSC: ${totals.clicks} clicks / ${totals.impressions} impressions, "bronx property management" position ${money?.position?.toFixed(1) ?? 'not in top 500'}`);
+
+    return { snapshot, previous };
+  } catch (e) {
+    // 403 is the expected first result: the service account exists but has not
+    // been added to the Search Console property yet. Name the exact address so
+    // the owner does not have to go digging through GCP for it.
+    if (e.status === 403 || e.status === 401 || e.status === 404) {
+      console.log(`::warning title=${AGENT_NAME}::No Search Console access for ${GSC_SITE_URL}. Add ${credentials.client_email || 'the service account'} as a user on the doryangel.com Domain property (Search Console → Settings → Users and permissions → Add user → Restricted), and enable the Search Console API in the same Google Cloud project. No history was written.`);
+      return { error: 'permission', clientEmail: credentials.client_email || null };
+    }
+    console.log(`::warning title=${AGENT_NAME}::Search Console query failed: ${e.message}`);
     return null;
   }
 }
@@ -587,7 +740,7 @@ Return ONLY JSON: {"duplicate": true|false, "of": "<exact existing title, or emp
 
 // ─── Email digest ─────────────────────────────────────────────────────────────
 
-async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make, clarity }) {
+async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make, clarity, gsc }) {
   const { stats, categoryCounts, postCount } = state;
 
   const resultColor     = resultType === 'code' ? '#E8F8E8' : '#E7F3FF';
@@ -676,6 +829,86 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
     <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:12px 16px;margin-bottom:24px;">
       <p style="margin:0;color:#92400E;font-size:12px;font-weight:700;">🔌 GA4 not connected</p>
       <p style="margin:4px 0 0;color:#92400E;font-size:12px;">Add <code>GA4_PROPERTY_ID</code> and <code>GOOGLE_SA_KEY</code> as GitHub secrets to see traffic data here.</p>
+    </div>`;
+  }
+
+  // ── Search Console rankings ──────────────────────────────────────────────────
+  // The point of this block: position is the bottleneck, not content volume.
+  // "bronx property management" sitting at ~12 means top of page 2 — impressions
+  // without clicks. Page 1 starts at position 10, so that line is marked.
+  let gscSection = '';
+  if (gsc?.snapshot) {
+    const { snapshot, previous } = gsc;
+    const prevPos = q => previous?.watch?.find(w => w.query === q)?.position ?? null;
+    const fmtPos = p => (p == null ? '—' : p.toFixed(1));
+    const delta = (now, before) => {
+      if (now == null || before == null) return '<span style="color:#8B9BAE;">—</span>';
+      const d = before - now; // positive = moved UP the results
+      if (Math.abs(d) < 0.1) return '<span style="color:#8B9BAE;">no change</span>';
+      const up = d > 0;
+      return `<span style="color:${up ? '#1E9E6A' : '#B91C1C'};font-weight:700;">${up ? '▲' : '▼'} ${Math.abs(d).toFixed(1)}</span>`;
+    };
+
+    const money = snapshot.watch.find(w => w.query === 'bronx property management');
+    const moneyPos = money?.position ?? null;
+    const onPage1 = moneyPos != null && moneyPos <= 10;
+
+    const watchRows = snapshot.watch.map((w, i) => {
+      const bg = i % 2 === 0 ? '#ffffff' : '#F8FAFB';
+      const posColor = w.position == null ? '#8B9BAE' : w.position <= 10 ? '#1E9E6A' : w.position <= 20 ? '#B7791F' : '#556070';
+      return `<tr style="background:${bg};">
+        <td style="padding:6px 12px;color:#556070;font-size:12px;">${w.query}</td>
+        <td style="padding:6px 12px;text-align:center;font-weight:700;color:${posColor};font-size:14px;">${fmtPos(w.position)}</td>
+        <td style="padding:6px 12px;text-align:center;font-size:12px;">${delta(w.position, prevPos(w.query))}</td>
+        <td style="padding:6px 12px;text-align:right;color:#0F2847;font-size:12px;">${w.impressions}</td>
+        <td style="padding:6px 12px;text-align:right;font-weight:700;color:#0F2847;font-size:12px;">${w.clicks}</td>
+      </tr>`;
+    }).join('');
+
+    // Which pages the impressions are actually landing on — the other half of
+    // the ranking picture, and the thing that says where to spend effort next.
+    const pageRowsHtml = snapshot.topPages.slice(0, 8).map((p, i) => {
+      const path = p.key.replace('https://www.doryangel.com', '') || '/';
+      const label = path.length > 46 ? path.slice(0, 46) + '…' : path;
+      return `<tr style="background:${i % 2 === 0 ? '#ffffff' : '#F8FAFB'};">
+        <td style="padding:5px 12px;color:#556070;font-size:12px;font-family:monospace;">${label}</td>
+        <td style="padding:5px 12px;text-align:right;color:#556070;font-size:12px;">pos ${fmtPos(p.position)}</td>
+        <td style="padding:5px 12px;text-align:right;color:#0F2847;font-size:12px;">${p.impressions} impr</td>
+        <td style="padding:5px 12px;text-align:right;font-weight:700;color:#0F2847;font-size:12px;">${p.clicks}</td>
+      </tr>`;
+    }).join('');
+
+    const areaBlock = `<p style="font-size:12px;color:#8B9BAE;margin:0 0 8px;">Top pages by impressions</p>
+    <table style="border-collapse:collapse;width:100%;margin-bottom:20px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
+      ${pageRowsHtml}
+    </table>`;
+
+    gscSection = `
+    <!-- Search Console rankings -->
+    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">🔍 Google rankings (last 28 days)</h3>
+    <div style="background:${onPage1 ? '#ECFDF5' : '#EBF3FD'};border:1px solid ${onPage1 ? '#6EE7B7' : '#BFDBFE'};border-radius:8px;padding:14px 16px;margin-bottom:12px;">
+      <p style="margin:0;font-size:12px;color:#556070;">"bronx property management"</p>
+      <p style="margin:2px 0 0;font-size:28px;font-weight:700;color:#0F2847;">${fmtPos(moneyPos)} ${delta(moneyPos, prevPos('bronx property management'))}</p>
+      <p style="margin:4px 0 0;font-size:12px;color:#556070;">${onPage1 ? 'On page 1.' : 'Page 1 starts at position 10.'} Site totals: <strong>${snapshot.totals.clicks}</strong> clicks · <strong>${snapshot.totals.impressions}</strong> impressions · avg position ${fmtPos(snapshot.totals.position)}</p>
+    </div>
+    <table style="border-collapse:collapse;width:100%;margin-bottom:14px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
+      <tr style="background:#F4F7FA;">
+        <th style="padding:8px 12px;text-align:left;color:#8B9BAE;font-size:11px;text-transform:uppercase;">Query</th>
+        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;">Pos</th>
+        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;">Change</th>
+        <th style="padding:8px 12px;text-align:right;color:#8B9BAE;font-size:11px;text-transform:uppercase;">Impr</th>
+        <th style="padding:8px 12px;text-align:right;color:#8B9BAE;font-size:11px;text-transform:uppercase;">Clicks</th>
+      </tr>
+      ${watchRows}
+    </table>
+    ${areaBlock}`;
+  } else if (gsc?.error === 'permission') {
+    gscSection = `
+    <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:12px 16px;margin-bottom:24px;">
+      <p style="margin:0;color:#92400E;font-size:12px;font-weight:700;">🔍 Search Console not connected yet — 2 minutes to fix</p>
+      <p style="margin:6px 0 0;color:#92400E;font-size:12px;">Open Search Console → the <strong>doryangel.com</strong> Domain property → Settings → Users and permissions → Add user → paste:</p>
+      <p style="margin:6px 0 0;color:#92400E;font-size:12px;font-family:monospace;word-break:break-all;">${gsc.clientEmail || 'the service account address in GOOGLE_SA_KEY'}</p>
+      <p style="margin:6px 0 0;color:#92400E;font-size:12px;">Permission level <strong>Restricted</strong> is enough. Also enable the "Google Search Console API" in the same Google Cloud project.</p>
     </div>`;
   }
 
@@ -859,6 +1092,9 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
       ${catBars}
     </table>
 
+    <!-- Search Console rankings -->
+    ${gscSection}
+
     <!-- GA4 traffic -->
     ${ga4Section}
 
@@ -896,7 +1132,9 @@ async function main() {
 
   // Pull live analytics up front so Arlo's idea generator can learn from real
   // user behavior (GA4 traffic + Clarity friction signals), not just guess.
-  const [ga4, make, clarity] = await Promise.all([getGA4Stats(), getMakeStats(), getClarityStats()]);
+  const [ga4, make, clarity, gsc] = await Promise.all([
+    getGA4Stats(), getMakeStats(), getClarityStats(), getSearchConsoleStats(),
+  ]);
   console.log(`GA4: ${ga4 ? `sessions today=${ga4.sessions.day}` : 'not configured'}`);
   console.log(`Leads: ${make ? `total=${make.totals.total}, 30d=${make.totals.month}` : 'not configured'}`);
   console.log(`Clarity: ${clarity ? `${clarity.sessions} sessions/3d, scroll ${clarity.avgScrollDepth}%` : 'not configured'}`);
@@ -965,7 +1203,7 @@ async function main() {
     resultType = 'issue';
   }
 
-  await sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make, clarity });
+  await sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make, clarity, gsc });
   console.log(`Digest sent to ${NOTIFY_EMAIL}`);
 }
 

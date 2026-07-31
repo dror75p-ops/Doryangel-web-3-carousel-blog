@@ -46,7 +46,31 @@ jobs:
           GA4_PROPERTY_ID: ${{ secrets.GA4_PROPERTY_ID }}
           GOOGLE_SA_KEY: ${{ secrets.GOOGLE_SA_KEY }}
           CLARITY_API_TOKEN: ${{ secrets.CLARITY_API_TOKEN }}
+          # Must be the sc-domain: form — the owner's Search Console property is
+          # a Domain property, and a URL-prefix value 403s against it. Not a
+          # secret, so it is a plain literal.
+          GSC_SITE_URL: 'sc-domain:doryangel.com'
         run: node scripts/daily-audit.js
+
+      # ⚠️ Separate from the PR step below, and deliberately unconditional.
+      # That step only runs when an auto-task fired, which is the minority of
+      # days — so if the rank snapshot rode along with it, it would be thrown
+      # away with the runner on every other day and the trend would never
+      # accumulate. This is the category-plan.json lesson: anything written on
+      # the runner has to be committed or it does not exist.
+      - name: Commit rank history
+        run: |
+          if [ ! -f project/seo/rank-history.json ]; then
+            echo "No rank history written — Search Console not connected yet."
+            exit 0
+          fi
+          git config user.name "Arlo (DoryAngel Bot)"
+          git config user.email "office@doryangel.com"
+          git add project/seo/rank-history.json
+          git diff --staged --quiet && echo "No new snapshot today" && exit 0
+          git commit -m "Arlo: rank snapshot $(date +'%Y-%m-%d')"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
 
       - name: Commit improvements and open PR
         env:
