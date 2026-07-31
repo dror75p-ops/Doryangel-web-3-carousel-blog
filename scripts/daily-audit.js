@@ -1046,7 +1046,11 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
     </div>`;
   }
 
-  await resend.emails.send({
+  // ⚠️ The Resend SDK does NOT throw on an API error — it resolves with
+  // { data: null, error: {...} }. Ignoring the return value and logging
+  // "Digest sent" is the exact silent-success bug that hid Vera's Facebook
+  // failures for over a month on a green checkmark. Inspect the result.
+  const { data, error } = await resend.emails.send({
     from: `${AGENT_NAME} by DoryAngel <onboarding@resend.dev>`,
     to: NOTIFY_EMAIL,
     subject: `🔧 ${AGENT_NAME} — ${taskLabel}`,
@@ -1119,6 +1123,21 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
   </div>
 </div>`,
   });
+
+  if (error) {
+    // The most likely cause: `onboarding@resend.dev` is Resend's SANDBOX
+    // sender, which may only deliver to the address that owns the Resend
+    // account. If the account is not registered to NOTIFY_EMAIL, every send is
+    // rejected and, before this check existed, the run still logged success.
+    // Verifying doryangel.com in Resend removes the restriction for good.
+    console.log(`::error title=${AGENT_NAME}::Daily digest was NOT delivered to ${NOTIFY_EMAIL} — Resend rejected it: ${error.message || JSON.stringify(error)}. If this mentions a testing/sandbox restriction, the sender onboarding@resend.dev can only reach the address that owns the Resend account; verify doryangel.com in Resend, or send to the account owner's address.`);
+    return false;
+  }
+  if (!data?.id) {
+    console.log(`::error title=${AGENT_NAME}::Resend returned no message id — treating the digest as NOT delivered. Response: ${JSON.stringify(data)}`);
+    return false;
+  }
+  return data.id;
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
@@ -1203,8 +1222,12 @@ async function main() {
     resultType = 'issue';
   }
 
-  await sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make, clarity, gsc });
-  console.log(`Digest sent to ${NOTIFY_EMAIL}`);
+  // Report what actually happened. This line used to print unconditionally,
+  // so a rejected email still read as "Digest sent" in the run log.
+  const messageId = await sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make, clarity, gsc });
+  console.log(messageId
+    ? `Digest delivered to ${NOTIFY_EMAIL} (Resend id ${messageId})`
+    : `Digest NOT delivered to ${NOTIFY_EMAIL} — see the error annotation above.`);
 }
 
 main().catch(err => {
