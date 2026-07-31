@@ -1,25 +1,47 @@
-# CODING AGENTS: READ THIS FIRST
+# DoryAngel — Web 3, Carousel Blog
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+The **live production website** for DoryAngel Property Management, Bronx NY.
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+- **Production:** https://www.doryangel.com/ — served by Vercel since the DNS cutover on 2026-07-07
+- **Owner:** dror75p-ops
 
-## What you should do — IMPORTANT
+## 👉 Read `CLAUDE.md` first
 
-**Read the chat transcripts first.** There are 1 chat transcript(s) in `chats/`. The transcripts show the full back-and-forth between the user and the design assistant — they tell you **what the user actually wants** and **where they landed** after iterating. Don't skip them. The final HTML files are the output, but the chat is where the intent lives.
+**`CLAUDE.md` is the source of truth for this repo** — architecture, the three automation agents, integrations, credentials-by-reference, and a long list of hard-won gotchas that will cost you hours if you rediscover them yourself. Read it before changing anything.
 
-**Read `project/index.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
+## ⚠️ This README used to say something else
 
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
+It was the auto-generated handoff README from a Claude Design export, and it instructed coding agents to treat **`project/index.html`** as "the primary design they want built."
 
-## About the design files
+**That is no longer true, and following it would be a mistake.** `project/` holds the superseded *Doeryangelweb.2* prototype. It is kept for reference only, is excluded from deployment via `.vercelignore`, and must not be used as a source of truth for anything.
 
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
+The real site is **`index.html`** at the repo root — a single self-contained file with all CSS and JS inline.
 
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
+## Layout
 
-## Bundle contents
+| Path | What it is |
+|---|---|
+| `index.html` | The entire website. All CSS and JS inline. ~310KB. |
+| `blog/<slug>/index.html` | **Generated.** Never hand-edit — re-run `scripts/build-blog.js`. |
+| `content/blog/posts-index.json` | Source of truth for every blog post. |
+| `guides/`, `faq/`, `tax-checklist/`, `flat-fee-vs-commission/`, `tools/` | Standalone landing pages on a shared shell. |
+| `scripts/` | The automation agents and build scripts (not deployed). |
+| `project/seo/rank-history.json` | Daily Google Search Console snapshots. Committed, never deployed. |
+| `project/`, `chats/` | Superseded design prototype and its transcripts. Reference only, not deployed. |
+| `vercel.json` | 163 redirects (the old Wix URLs) + security headers. |
 
-- `README.md` — this file
-- `chats/` — conversation transcripts (read these!)
-- `project/` — the `Doeryangelweb.2` project files (HTML prototypes, assets, components)
+## The three agents
+
+There are exactly **three**, and that is deliberate — a proposal to add a fourth and fifth was rejected in favour of extending these:
+
+| Agent | Script | Does |
+|---|---|---|
+| **Nave** | `scripts/generate-post.js` | Writes and publishes a blog post every 2 days, emails the owner, fires the subscriber digest. |
+| **Arlo** | `scripts/daily-audit.js` | Daily site audit + auto-fixes + a report email covering GA4 traffic, leads, Clarity behaviour and Google Search Console rankings. |
+| **Vera** | `scripts/social-post.js` | Posts each new article to the Facebook Page via Make. |
+
+## Working on this repo
+
+- Branch as `claude/<short-description>`, push, open a PR, and let the owner merge. See the `pr-flow` skill.
+- `scripts/lib/__verify__/*.js` are offline checks — no network, no writes. Run them after touching anything in `scripts/lib/`.
+- The sandbox has no `ANTHROPIC_API_KEY` and restricted network, so the agents cannot be run locally. Exercise them with `workflow_dispatch`, using each workflow's `dry_run` input first.
