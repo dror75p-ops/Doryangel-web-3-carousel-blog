@@ -1,6 +1,6 @@
 {
   "forceCategory": "diy-property-management",
-  "remaining": 5,
+  "remaining": 4,
   "reason": "Owner request 2026-07-29: the next 10 posts are all maintenance (Maintenance & Repairs). Nave decrements 'remaining' on each publish and stops forcing once it reaches 0, at which point normal category weighting resumes. Delete this file or set remaining to 0 to end the run early; raise the number to extend it. A FORCE_CATEGORY value passed to the workflow still wins over this file for that one run.",
   "createdAt": "2026-07-29"
 }
