@@ -5125,8 +5125,23 @@ async function handleFormSubmit(e) {
       const units   = ((form.querySelector('[name="units"]')            || {}).value || '').trim();
       const address = ((form.querySelector('[name="property-address"]') || {}).value || '').trim();
       const tcpaEl  = form.querySelector('[name="tcpa-consent"]');
+      // keepalive guards a real race: line ~5145 navigates to thank-you.html
+      // immediately after this call, and per spec same-tab navigation may cancel
+      // an in-flight fetch. This webhook sends the visitor their confirmation
+      // email, so a cancelled request loses it silently. Same shape as the
+      // `window.open`-before-fetch note in CLAUDE.md.
+      //
+      // HONESTY NOTE: the loss was NOT reproduced — a headless test (5 and 6
+      // trials, normal and throttled) delivered the request 100% of the time
+      // both with and without keepalive, though localhost likely defeated the
+      // throttling. So this is a cheap, spec-sanctioned guard against a
+      // plausible race, NOT a fix for a measured defect. Do not cite it as one.
+      //
+      // Do NOT "simplify" it by awaiting instead — Make takes up to ~2s, which
+      // would stall the redirect on every submission.
       fetch('https://hook.eu1.make.com/8hmzcp8p8qexbtbmb90n0gn4u9a5jix7', {
         method: 'POST',
+        keepalive: true,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: (firstName + ' ' + lastName).trim(),
