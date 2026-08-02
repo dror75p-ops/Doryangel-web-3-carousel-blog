@@ -4890,6 +4890,21 @@ retell-chat-web-component {
               <option>Broker</option>
             </select>
           </div>
+          <div class="form-group">
+            <!-- Optional on purpose: pricing is $99/unit/month, so this is the number that
+                 turns an inquiry into a quote — but a required field on a form this low-volume
+                 costs more in drop-off than the data is worth. `name="units"` matches
+                 broker-partner.html so the field reads the same across the Web3Forms inbox. -->
+            <label for="unit-count">How many units? <span style="font-weight:400;opacity:.7;">(optional)</span></label>
+            <select id="unit-count" name="units">
+              <option value="">Select unit count</option>
+              <option>1</option>
+              <option>2–4</option>
+              <option>5–10</option>
+              <option>11–25</option>
+              <option>26+</option>
+            </select>
+          </div>
           <div class="form-row">
             <div class="form-group">
               <label for="first-name">First Name</label>
@@ -5094,6 +5109,14 @@ async function handleFormSubmit(e) {
       const lastName  = (form.querySelector('[name="last-name"]')  || {}).value || '';
       const email     = (form.querySelector('[name="email"]')       || {}).value || '';
       const cfToken   = (form.querySelector('[name="cf-turnstile-response"]') || {}).value || '';
+      // `role` and `property-address` used to be collected and then thrown away here — the
+      // sheet could never tell an owner from a tenant. Send everything the visitor gave us.
+      // NOTE: hook 3296084 has no attached data structure, so Make auto-learned the old
+      // payload shape; these keys resolve to EMPTY in scenario 6335620 until the hook
+      // re-learns them (send one submission, then re-determine the data structure).
+      const units   = ((form.querySelector('[name="units"]')            || {}).value || '').trim();
+      const address = ((form.querySelector('[name="property-address"]') || {}).value || '').trim();
+      const tcpaEl  = form.querySelector('[name="tcpa-consent"]');
       fetch('https://hook.eu1.make.com/8hmzcp8p8qexbtbmb90n0gn4u9a5jix7', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -5102,10 +5125,14 @@ async function handleFormSubmit(e) {
           email,
           phone:   ((form.querySelector('[name="phone"]')   || {}).value || '').trim(),
           message: ((form.querySelector('[name="message"]') || {}).value || '').trim(),
+          role,
+          propertyAddress: address,
+          units,
+          tcpaConsent: !!(tcpaEl && tcpaEl.checked),
           turnstileToken: cfToken
         })
       }).catch(function(){});
-      if (typeof gtag !== 'undefined') { gtag('event', 'generate_lead', { event_category: 'lead', event_label: 'main_contact' }); }
+      if (typeof gtag !== 'undefined') { gtag('event', 'generate_lead', { event_category: 'lead', event_label: 'main_contact', lead_role: role, lead_units: units }); }
       window.location.href = './thank-you.html';
     } else {
       btn.textContent = 'Error – please call (516) 847-4999';
