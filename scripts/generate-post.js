@@ -968,10 +968,16 @@ async function notifyDigestSubscribers(post) {
         rows = (data.values || []).slice(1);
         console.log('Subscriber list loaded via Sheets API');
       } else {
-        console.warn(`Sheets API returned ${res.status} — falling back to public CSV`);
+        // Annotation, not a bare warn: the CSV fallback below only works while
+        // the sheet stays link-viewable, so a silent slide onto it is a digest
+        // outage waiting to happen. It is also the first place a dead
+        // GOOGLE_SA_KEY shows up — the same key Arlo needs for GA4, Search
+        // Console and the lead sheets. (2026-08-03: this line was the only trace
+        // in the publish log that the service account's Cloud project was gone.)
+        console.log(`::warning title=Nave::Subscriber sheet read failed (${res.status}) — fell back to the public CSV export. Check GOOGLE_SA_KEY; Arlo's GA4/Search Console/lead-sheet reads use the same credential.`);
       }
     } catch (err) {
-      console.warn(`SA auth failed (${err.message}) — falling back to public CSV`);
+      console.log(`::warning title=Nave::Subscriber sheet auth failed (${err.message}) — fell back to the public CSV export. Check GOOGLE_SA_KEY; Arlo uses the same credential.`);
     }
   }
 
