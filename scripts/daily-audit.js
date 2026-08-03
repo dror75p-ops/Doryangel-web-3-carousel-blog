@@ -449,18 +449,41 @@ async function fetchWatchSeries(token, endDate) {
 
   if (startDate > endDate) return queries;
 
-  const rows = await querySearchConsole(token, {
-    startDate, endDate, dataState: 'final', type: 'web', rowLimit: 25000,
-    dimensions: ['date', 'query'],
-    dimensionFilterGroups: [{
-      groupType: 'or',
-      filters: WATCH_TERMS.map(q => ({ dimension: 'query', operator: 'equals', expression: q })),
-    }],
-  });
+  // ⚠️ ONE REQUEST PER TERM, EACH WITH A SINGLE FILTER — do not "optimise" this
+  // into one call carrying all eight. The obvious way to write that is a filter
+  // group of eight `equals` with groupType:'or', and the Search Console API only
+  // supports groupType 'and': eight equals-filters ANDed together mean "a query
+  // that is all eight terms at once", which matches nothing. It returns 200 with
+  // an empty row set, so the failure is completely silent — this file would just
+  // be written empty every day. Eight small requests are unambiguous instead.
+  const perTerm = await Promise.all(WATCH_TERMS.map(term =>
+    querySearchConsole(token, {
+      startDate, endDate, dataState: 'final', type: 'web', rowLimit: 25000,
+      dimensions: ['date'],
+      dimensionFilterGroups: [{ filters: [{ dimension: 'query', operator: 'equals', expression: term }] }],
+    })
+      // A term with no data is normal; a term whose request fails must not cost
+      // us the other seven.
+      .then(rows => [term, rows])
+      .catch(e => {
+        console.log(`::warning title=${AGENT_NAME}::Watch-term series "${term}" failed: ${e.message}`);
+        return [term, []];
+      })
+  ));
 
-  for (const r of rows) {
-    const [date, query] = r.keys;
-    (queries[query] || (queries[query] = {}))[date] = tuple(r);
+  let rowCount = 0;
+  for (const [term, rows] of perTerm) {
+    for (const r of rows) {
+      (queries[term] || (queries[term] = {}))[r.keys[0]] = tuple(r);
+      rowCount++;
+    }
+  }
+
+  // Every watch term drawing zero rows over a multi-month backfill is not a
+  // plausible ranking result — it means the filter or the terms are wrong. Say
+  // so, rather than committing an empty file that looks like a finding.
+  if (rowCount === 0) {
+    console.log(`::warning title=${AGENT_NAME}::No watch-term rows for ${startDate}..${endDate}. Every term returned empty — check WATCH_TERMS against the queries in rank-history.json before trusting this.`);
   }
 
   for (const q of Object.keys(queries)) {
