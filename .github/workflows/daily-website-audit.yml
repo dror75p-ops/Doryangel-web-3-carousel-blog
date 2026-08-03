@@ -66,7 +66,16 @@ jobs:
           fi
           git config user.name "Arlo (DoryAngel Bot)"
           git config user.email "office@doryangel.com"
-          git add project/seo/rank-history.json
+          # ⚠️ ALL FOUR of these are written on the runner and all four must be
+          # added here. daily-series.json is the per-day (non-overlapping) history
+          # and query-series.json the per-term one; leaving either out of this line
+          # means the backfill is re-fetched and re-thrown-away every single day,
+          # and no trend ever accumulates — the exact bug that `git add` line
+          # already exists to prevent for rank-history.json.
+          git add project/seo/rank-history.json \
+                  project/seo/daily-series.json \
+                  project/seo/query-series.json \
+                  project/seo/annotations.json
           git diff --staged --quiet && echo "No new snapshot today" && exit 0
           git commit -m "Arlo: rank snapshot $(date +'%Y-%m-%d')"
           git pull --rebase origin "$GITHUB_REF_NAME"

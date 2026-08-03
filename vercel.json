@@ -820,6 +820,11 @@
       "source": "/home",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/tenants",
+      "destination": "/#services",
+      "permanent": true
     }
   ],
   "headers": [
