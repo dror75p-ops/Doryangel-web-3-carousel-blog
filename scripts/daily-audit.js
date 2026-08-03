@@ -23,6 +23,50 @@ const AGENT_NAME = 'Arlo';
 
 function today() { return new Date().toISOString().split('T')[0]; }
 
+// ─── Shared Google credential health ─────────────────────────────────────────
+//
+// ⚠️ GA4, Search Console AND all five lead Sheets authenticate with the SAME
+// GOOGLE_SA_KEY service account. When that one credential dies, three sections
+// of this report fail at once — and each of them used to print its own
+// "not connected — add the secret / add the user" card. That advice is wrong
+// twice over: the secret IS set, and the grants were never revoked, so the
+// owner spends the morning re-doing access that was already correct.
+//
+// That is exactly what happened on 2026-08-03: the service account's Google
+// Cloud project was deleted, every Google call started returning 403, and the
+// email told the owner to go add a user in Search Console ("2 minutes to fix").
+// The real fix was in the Cloud console, and nothing in the email pointed there.
+//
+// classifyGoogleFailure() turns a raw API error into one cause so the report can
+// name it once, at the top, instead of guessing three times:
+//   'project-deleted' — the GCP project behind the key is gone (fatal, shared)
+//   'sa-invalid'      — key revoked / SA deleted / clock skew (fatal, shared)
+//   'api-disabled'    — that one API is off in the project (per-service)
+//   'access'          — genuinely not granted on that property/sheet (per-service)
+//   'unknown'         — anything else; the raw message is shown verbatim
+const FATAL_CREDENTIAL_KINDS = new Set(['project-deleted', 'sa-invalid']);
+
+function classifyGoogleFailure(message = '') {
+  const m = String(message);
+  if (/CONSUMER_INVALID|has been deleted|project.*deleted/i.test(m)) return 'project-deleted';
+  if (/invalid_grant|invalid_client|Invalid JWT|account not found|unauthorized_client/i.test(m)) return 'sa-invalid';
+  if (/SERVICE_DISABLED|has not been used in project|is disabled/i.test(m)) return 'api-disabled';
+  if (/\b40[134]\b|PERMISSION_DENIED|permission|forbidden|not authori[sz]ed/i.test(m)) return 'access';
+  return 'unknown';
+}
+
+function googleFailure(message, extra = {}) {
+  return { kind: classifyGoogleFailure(message), message: String(message).slice(0, 400), ...extra };
+}
+
+// Parsed once so the report can name the exact service account and project the
+// owner has to go fix, without every caller re-parsing the key.
+function readServiceAccount() {
+  const saKey = process.env.GOOGLE_SA_KEY;
+  if (!saKey) return null;
+  try { return JSON.parse(saKey); } catch { return null; }
+}
+
 // ─── State ────────────────────────────────────────────────────────────────────
 
 function readState() {
@@ -122,6 +166,9 @@ async function getGoogleAccessToken(credentials, scope = 'https://www.googleapis
   return data.access_token;
 }
 
+// Returns the stats object on success, `null` when the integration is genuinely
+// unconfigured, and `{ error }` when it IS configured but the call failed — the
+// email renders a different (and honest) card for each of those three states.
 async function getGA4Stats() {
   const saKey      = process.env.GOOGLE_SA_KEY;
   const propertyId = process.env.GA4_PROPERTY_ID;
@@ -192,8 +239,10 @@ async function getGA4Stats() {
       topPages,
     };
   } catch (err) {
-    console.warn(`GA4 fetch failed: ${err.message}`);
-    return null;
+    // A warning annotation, not a bare console.warn: this used to scroll past in
+    // a green run while the email claimed GA4 was simply "not connected".
+    console.log(`::warning title=${AGENT_NAME}::GA4 fetch failed: ${err.message}`);
+    return { error: googleFailure(err.message) };
   }
 }
 
@@ -338,15 +387,24 @@ async function getSearchConsoleStats() {
 
     return { snapshot, previous };
   } catch (e) {
-    // 403 is the expected first result: the service account exists but has not
-    // been added to the Search Console property yet. Name the exact address so
-    // the owner does not have to go digging through GCP for it.
-    if (e.status === 403 || e.status === 401 || e.status === 404) {
+    // ⚠️ A 403 here has TWO very different causes and they need different fixes.
+    // Before 2026-08-03 every 401/403/404 was reported as "not connected yet —
+    // add the service account in Search Console", which was correct only on the
+    // first run. Once the connection is live, the same 403 usually means the
+    // shared credential died (deleted project, revoked key) — and telling the
+    // owner to re-add a user who is already there wastes the morning. Classify
+    // it and let the email say which one it actually is.
+    const failure = googleFailure(`${e.status || ''} ${e.message}`, {
+      clientEmail: credentials.client_email || null,
+    });
+    if (FATAL_CREDENTIAL_KINDS.has(failure.kind)) {
+      console.log(`::error title=${AGENT_NAME}::Search Console failed because the GOOGLE_SA_KEY credential itself is dead (${failure.kind}): ${e.message}. GA4 and the lead sheets use the same key, so they are down too. No history was written.`);
+    } else if (failure.kind === 'access' || failure.kind === 'api-disabled') {
       console.log(`::warning title=${AGENT_NAME}::No Search Console access for ${GSC_SITE_URL}. Add ${credentials.client_email || 'the service account'} as a user on the doryangel.com Domain property (Search Console → Settings → Users and permissions → Add user → Restricted), and enable the Search Console API in the same Google Cloud project. No history was written.`);
-      return { error: 'permission', clientEmail: credentials.client_email || null };
+    } else {
+      console.log(`::warning title=${AGENT_NAME}::Search Console query failed: ${e.message}`);
     }
-    console.log(`::warning title=${AGENT_NAME}::Search Console query failed: ${e.message}`);
-    return null;
+    return { error: failure };
   }
 }
 
@@ -468,10 +526,20 @@ async function getMakeStats() {
       { day: 0, week: 0, month: 0, total: 0 }
     );
 
+    // ⚠️ A failed sheet read contributes 0, so when EVERY sheet fails the totals
+    // row still renders a tidy "0 leads, 0 all time" table — which reads as a
+    // collapsed business rather than a broken credential. Say so instead.
+    const failed = results.filter(s => s.error);
+    if (failed.length === results.length) {
+      const failure = googleFailure(failed[0].error);
+      console.log(`::${FATAL_CREDENTIAL_KINDS.has(failure.kind) ? 'error' : 'warning'} title=${AGENT_NAME}::All ${results.length} lead sheets failed to read (${failure.message}) — today's lead counts are UNKNOWN, not zero.`);
+      return { totals, sources: results, error: failure };
+    }
+
     return { totals, sources: results };
   } catch (err) {
-    console.warn(`Lead stats failed: ${err.message}`);
-    return null;
+    console.log(`::warning title=${AGENT_NAME}::Lead stats failed: ${err.message}`);
+    return { error: googleFailure(err.message) };
   }
 }
 
@@ -647,9 +715,14 @@ async function generateIssueIdea(state, openIssueTitles, ga4, clarity) {
   const catSummary = Object.entries(state.categoryCounts)
     .map(([c, n]) => `${c}: ${n} posts`).join(', ');
 
-  const ga4Line = ga4
+  // `ga4` can now also be an { error } object — never treat a failed fetch as
+  // real data, and never let the idea generator "explain" a credential outage
+  // as a traffic collapse.
+  const ga4Line = ga4?.sessions
     ? `${ga4.sessions.month} sessions / ${ga4.users.month} users (30d); top pages: ${ga4.topPages.slice(0, 3).map(p => `${p.path} (${p.sessions})`).join(', ') || 'n/a'}`
-    : 'not connected';
+    : ga4?.error
+      ? 'UNAVAILABLE today (API error, not a traffic drop) — ignore traffic in your reasoning'
+      : 'not connected';
 
   const clarityLine = clarity
     ? `${clarity.sessions} sessions / ${clarity.users} users (last 3d — consent-gated, so it UNDERCOUNTS and skews to power users; treat as directional, not volume). `
@@ -743,6 +816,39 @@ Return ONLY JSON: {"duplicate": true|false, "of": "<exact existing title, or emp
 async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make, clarity, gsc }) {
   const { stats, categoryCounts, postCount } = state;
 
+  // ── Shared-credential banner ─────────────────────────────────────────────────
+  // One card, at the very top, when the single service account behind GA4 +
+  // Search Console + the lead sheets is what broke. Without it the reader gets
+  // three unrelated-looking yellow cards, each proposing a fix for a connection
+  // that is already correctly configured.
+  const sa = readServiceAccount();
+  const googleErrors = [ga4?.error, gsc?.error, make?.error].filter(Boolean);
+  const fatal = googleErrors.find(e => FATAL_CREDENTIAL_KINDS.has(e.kind));
+  let credentialBanner = '';
+  if (fatal) {
+    const down = [
+      ga4?.error && 'Website traffic (GA4)',
+      gsc?.error && 'Google rankings (Search Console)',
+      make?.error && 'Lead counts (all 5 Google Sheets)',
+    ].filter(Boolean);
+    const fixSteps = fatal.kind === 'project-deleted'
+      ? `<li>Open <a href="https://console.cloud.google.com/cloud-resource-manager" style="color:#B91C1C;">Cloud Resource Manager</a> → <strong>Resources pending deletion</strong> → <strong>Restore</strong> the project. Google keeps a deleted project recoverable for <strong>30 days</strong>; restoring it brings all three integrations back with no other changes.</li>
+           <li>If the 30 days are gone: create a new project, create a service account, enable the <strong>Analytics Data</strong>, <strong>Search Console</strong> and <strong>Sheets</strong> APIs, then re-grant it in <em>three</em> places — GA4 property, the doryangel.com Domain property in Search Console, and each of the 5 lead sheets — and paste the new JSON key into the <code>GOOGLE_SA_KEY</code> repo secret.</li>`
+      : `<li>The key in <code>GOOGLE_SA_KEY</code> is no longer valid (revoked, or the service account was deleted). Mint a fresh JSON key for <code>${sa?.client_email || 'the service account'}</code> in Google Cloud → IAM &amp; Admin → Service Accounts → Keys, and update the <code>GOOGLE_SA_KEY</code> repo secret.</li>
+           <li>If the service account itself is gone, recreate it and re-grant it on the GA4 property, the Search Console Domain property, and all 5 lead sheets.</li>`;
+    credentialBanner = `
+    <div style="background:#FEF2F2;border:2px solid #B91C1C;border-radius:8px;padding:14px 16px;margin-bottom:24px;">
+      <p style="margin:0;color:#B91C1C;font-size:14px;font-weight:700;">🚨 Google service account is down — this is ONE problem, not three</p>
+      <p style="margin:8px 0 0;color:#7F1D1D;font-size:12px;">GA4, Search Console and the lead sheets all authenticate with the same key. It stopped working, so these sections are blank today:</p>
+      <p style="margin:6px 0 0;color:#7F1D1D;font-size:12px;"><strong>${down.join(' · ') || 'Google data sources'}</strong></p>
+      <p style="margin:10px 0 0;color:#7F1D1D;font-size:12px;">Google says: <span style="font-family:monospace;">${fatal.message}</span></p>
+      ${sa ? `<p style="margin:6px 0 0;color:#7F1D1D;font-size:12px;font-family:monospace;word-break:break-all;">${sa.client_email || ''}${sa.project_id ? ` (project ${sa.project_id})` : ''}</p>` : ''}
+      <p style="margin:10px 0 4px;color:#7F1D1D;font-size:12px;font-weight:700;">How to fix</p>
+      <ol style="margin:0;padding-left:18px;color:#7F1D1D;font-size:12px;">${fixSteps}</ol>
+      <p style="margin:10px 0 0;color:#7F1D1D;font-size:12px;">Nothing needs re-adding in Search Console or the sheets — those grants are still in place. Ranking history stops accumulating until this is fixed.</p>
+    </div>`;
+  }
+
   const resultColor     = resultType === 'code' ? '#E8F8E8' : '#E7F3FF';
   const resultBorder    = resultType === 'code' ? '#8FCB8F' : '#8FBCEB';
   const resultTextColor = resultType === 'code' ? '#1B6B1B' : '#1B4F8A';
@@ -788,7 +894,7 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
 
   // ── GA4 traffic section ───────────────────────────────────────────────────────
   let ga4Section = '';
-  if (ga4) {
+  if (ga4?.sessions) {
     const maxSessions = Math.max(ga4.topPages[0]?.sessions || 1, 1);
     const topPageRows = ga4.topPages.map((p, i) => {
       const pct = Math.round((p.sessions / maxSessions) * 100);
@@ -824,6 +930,17 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
     <table style="border-collapse:collapse;width:100%;margin-bottom:24px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
       ${topPageRows}
     </table>`;
+  } else if (ga4?.error) {
+    // Configured, but the call failed. Never print "add the secret" here — the
+    // secret is set, and that advice sent the owner looking in the wrong place.
+    ga4Section = fatal ? '' : `
+    <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:12px 16px;margin-bottom:24px;">
+      <p style="margin:0;color:#92400E;font-size:12px;font-weight:700;">⚠️ GA4 traffic unavailable today — this is not a traffic drop</p>
+      <p style="margin:4px 0 0;color:#92400E;font-size:12px;">The Analytics Data API call failed, so today's numbers are unknown rather than zero.</p>
+      <p style="margin:6px 0 0;color:#92400E;font-size:12px;font-family:monospace;word-break:break-all;">${ga4.error.message}</p>
+      ${ga4.error.kind === 'api-disabled' ? '<p style="margin:6px 0 0;color:#92400E;font-size:12px;">Enable the <strong>Google Analytics Data API</strong> in the Cloud project that owns the service account.</p>' : ''}
+      ${ga4.error.kind === 'access' ? `<p style="margin:6px 0 0;color:#92400E;font-size:12px;">Add <code>${sa?.client_email || 'the service account'}</code> as a <strong>Viewer</strong> on the GA4 property.</p>` : ''}
+    </div>`;
   } else {
     ga4Section = `
     <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:12px 16px;margin-bottom:24px;">
@@ -902,13 +1019,18 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
       ${watchRows}
     </table>
     ${areaBlock}`;
-  } else if (gsc?.error === 'permission') {
+  } else if (gsc?.error && !FATAL_CREDENTIAL_KINDS.has(gsc.error.kind)) {
+    // Only the genuine "you haven't granted access yet" case gets the
+    // add-a-user instructions. A dead credential is covered by the banner above
+    // — repeating the setup steps there would send the owner to the wrong screen.
+    const rankingsWereWorking = readRankHistory().length > 0;
     gscSection = `
     <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:12px 16px;margin-bottom:24px;">
-      <p style="margin:0;color:#92400E;font-size:12px;font-weight:700;">🔍 Search Console not connected yet — 2 minutes to fix</p>
-      <p style="margin:6px 0 0;color:#92400E;font-size:12px;">Open Search Console → the <strong>doryangel.com</strong> Domain property → Settings → Users and permissions → Add user → paste:</p>
-      <p style="margin:6px 0 0;color:#92400E;font-size:12px;font-family:monospace;word-break:break-all;">${gsc.clientEmail || 'the service account address in GOOGLE_SA_KEY'}</p>
-      <p style="margin:6px 0 0;color:#92400E;font-size:12px;">Permission level <strong>Restricted</strong> is enough. Also enable the "Google Search Console API" in the same Google Cloud project.</p>
+      <p style="margin:0;color:#92400E;font-size:12px;font-weight:700;">🔍 ${rankingsWereWorking ? 'Search Console access lost' : 'Search Console not connected yet — 2 minutes to fix'}</p>
+      ${rankingsWereWorking ? '<p style="margin:6px 0 0;color:#92400E;font-size:12px;">Rankings were being collected until now, so the grant was in place and something changed. Check both halves:</p>' : '<p style="margin:6px 0 0;color:#92400E;font-size:12px;">Open Search Console → the <strong>doryangel.com</strong> Domain property → Settings → Users and permissions → Add user → paste:</p>'}
+      <p style="margin:6px 0 0;color:#92400E;font-size:12px;font-family:monospace;word-break:break-all;">${gsc.error.clientEmail || sa?.client_email || 'the service account address in GOOGLE_SA_KEY'}</p>
+      <p style="margin:6px 0 0;color:#92400E;font-size:12px;">Permission level <strong>Restricted</strong> is enough. The "Google Search Console API" must also be enabled in the same Google Cloud project — missing either half produces this same error.</p>
+      <p style="margin:6px 0 0;color:#92400E;font-size:12px;font-family:monospace;word-break:break-all;">${gsc.error.message}</p>
     </div>`;
   }
 
@@ -977,7 +1099,7 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
 
   // ── Make.com Hailey leads section ─────────────────────────────────────────────
   let makeSection = '';
-  if (make) {
+  if (make?.sources && !make.error) {
     const sourceRows = make.sources.map((s, i) => {
       const bg = i % 2 === 0 ? '#ffffff' : '#F8FAFB';
       const errMsg   = s.error === '403' ? 'share sheet with service account' : s.error;
@@ -1038,6 +1160,16 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
     </table>
     <p style="font-size:11px;color:#8B9BAE;margin:0 0 24px;">A chat counts as a win when it captures a name + phone or email. (Make.com leaves <code>chat_successful</code> blank, so this is the reliable proxy.)</p>`;
     }
+  } else if (make?.error) {
+    // ⚠️ Deliberately NOT a table of zeros. Every sheet read failed, so the true
+    // lead count is unknown — printing 0/0/0 here would look like a dead month.
+    makeSection = fatal ? '' : `
+    <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:12px 16px;margin-bottom:24px;">
+      <p style="margin:0;color:#92400E;font-size:12px;font-weight:700;">⚠️ Lead counts unknown today — not zero</p>
+      <p style="margin:4px 0 0;color:#92400E;font-size:12px;">Every lead sheet failed to read, so no counts are shown rather than showing zeros. Leads themselves are unaffected — Make still writes every submission to the sheets.</p>
+      <p style="margin:6px 0 0;color:#92400E;font-size:12px;font-family:monospace;word-break:break-all;">${make.error.message}</p>
+      ${make.error.kind === 'access' ? `<p style="margin:6px 0 0;color:#92400E;font-size:12px;">Share each lead sheet with <code>${sa?.client_email || 'the service account'}</code> (Viewer is enough).</p>` : ''}
+    </div>`;
   } else {
     makeSection = `
     <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:12px 16px;margin-bottom:24px;">
@@ -1064,6 +1196,10 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
   </div>
 
   <div style="padding:20px 24px;border:1px solid #E2E8F0;border-top:none;border-radius:0 0 8px 8px;">
+
+    <!-- Shared Google credential outage (only when the one key behind GA4 +
+         Search Console + the lead sheets is what broke) -->
+    ${credentialBanner}
 
     <!-- Today's task -->
     <h2 style="font-size:15px;color:#0F2847;margin:0 0 5px;">Today: ${taskLabel}</h2>
@@ -1154,10 +1290,22 @@ async function main() {
   const [ga4, make, clarity, gsc] = await Promise.all([
     getGA4Stats(), getMakeStats(), getClarityStats(), getSearchConsoleStats(),
   ]);
-  console.log(`GA4: ${ga4 ? `sessions today=${ga4.sessions.day}` : 'not configured'}`);
-  console.log(`Leads: ${make ? `total=${make.totals.total}, 30d=${make.totals.month}` : 'not configured'}`);
+  console.log(`GA4: ${ga4?.sessions ? `sessions today=${ga4.sessions.day}` : ga4?.error ? `FAILED (${ga4.error.kind})` : 'not configured'}`);
+  console.log(`Leads: ${make?.error ? `UNKNOWN — sheet reads failed (${make.error.kind})` : make ? `total=${make.totals.total}, 30d=${make.totals.month}` : 'not configured'}`);
   console.log(`Clarity: ${clarity ? `${clarity.sessions} sessions/3d, scroll ${clarity.avgScrollDepth}%` : 'not configured'}`);
-  if (make) {
+
+  // One loud line when the shared credential is the cause. Three data sources
+  // failing on a green checkmark is the same silent-success class that hid
+  // Vera's skipped Facebook posts for a month — it should be impossible to miss
+  // in the Actions log, not just in the email.
+  const fatalCredential = [ga4?.error, gsc?.error, make?.error]
+    .filter(Boolean).find(e => FATAL_CREDENTIAL_KINDS.has(e.kind));
+  if (fatalCredential) {
+    const acct = readServiceAccount();
+    console.log(`::error title=${AGENT_NAME}::GOOGLE_SA_KEY is dead (${fatalCredential.kind}) — GA4, Search Console and the lead sheets are ALL down until it is fixed. Account: ${acct?.client_email || 'unknown'}${acct?.project_id ? `, project ${acct.project_id}` : ''}. Google says: ${fatalCredential.message}`);
+  }
+
+  if (make?.sources) {
     const h = make.sources.find(s => s.chat);
     if (h && h.chat) console.log(`Hailey: ${h.chat.qualified}/${h.chat.sessions} sessions = ${h.chat.successRate}% success rate`);
   }
