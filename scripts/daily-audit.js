@@ -831,21 +831,30 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
       gsc?.error && 'Google rankings (Search Console)',
       make?.error && 'Lead counts (all 5 Google Sheets)',
     ].filter(Boolean);
+    // Partial outages are real and common: after a project is restored, Google's
+    // services drop the stale "deleted" state at different rates, so GA4 and
+    // Sheets typically come back before Search Console. Claiming all three are
+    // down when two are visibly reporting numbers is the same over-claiming bug
+    // this banner exists to fix — so say exactly which ones are actually out.
+    const partial = down.length > 0 && down.length < 3;
     const fixSteps = fatal.kind === 'project-deleted'
-      ? `<li>Open <a href="https://console.cloud.google.com/cloud-resource-manager" style="color:#B91C1C;">Cloud Resource Manager</a> → <strong>Resources pending deletion</strong> → <strong>Restore</strong> the project. Google keeps a deleted project recoverable for <strong>30 days</strong>; restoring it brings all three integrations back with no other changes.</li>
+      ? `${partial ? '<li><strong>If you already restored the project, stop here and just re-run the audit in an hour</strong> — a source that is still reporting the old error while the others recover is a stale cache, not a second fault.</li>' : ''}
+         <li>Open <a href="https://console.cloud.google.com/cloud-resource-manager" style="color:#B91C1C;">Cloud Resource Manager</a> → <strong>Resources pending deletion</strong> → <strong>Restore</strong> the project. Google keeps a deleted project recoverable for <strong>30 days</strong>; restoring it brings all three integrations back with no other changes.</li>
            <li>If the 30 days are gone: create a new project, create a service account, enable the <strong>Analytics Data</strong>, <strong>Search Console</strong> and <strong>Sheets</strong> APIs, then re-grant it in <em>three</em> places — GA4 property, the doryangel.com Domain property in Search Console, and each of the 5 lead sheets — and paste the new JSON key into the <code>GOOGLE_SA_KEY</code> repo secret.</li>`
       : `<li>The key in <code>GOOGLE_SA_KEY</code> is no longer valid (revoked, or the service account was deleted). Mint a fresh JSON key for <code>${sa?.client_email || 'the service account'}</code> in Google Cloud → IAM &amp; Admin → Service Accounts → Keys, and update the <code>GOOGLE_SA_KEY</code> repo secret.</li>
            <li>If the service account itself is gone, recreate it and re-grant it on the GA4 property, the Search Console Domain property, and all 5 lead sheets.</li>`;
     credentialBanner = `
     <div style="background:#FEF2F2;border:2px solid #B91C1C;border-radius:8px;padding:14px 16px;margin-bottom:24px;">
-      <p style="margin:0;color:#B91C1C;font-size:14px;font-weight:700;">🚨 Google service account is down — this is ONE problem, not three</p>
-      <p style="margin:8px 0 0;color:#7F1D1D;font-size:12px;">GA4, Search Console and the lead sheets all authenticate with the same key. It stopped working, so these sections are blank today:</p>
+      <p style="margin:0;color:#B91C1C;font-size:14px;font-weight:700;">${partial ? '🚨 Google service account is partly down — one credential, not several problems' : '🚨 Google service account is down — this is ONE problem, not three'}</p>
+      <p style="margin:8px 0 0;color:#7F1D1D;font-size:12px;">GA4, Search Console and the lead sheets all authenticate with the same key.${partial ? ' The other sources in this email are reading fine, so the credential is partly working — if you just restored the project, the rest is still catching up. Blank today:' : ' It stopped working, so these sections are blank today:'}</p>
       <p style="margin:6px 0 0;color:#7F1D1D;font-size:12px;"><strong>${down.join(' · ') || 'Google data sources'}</strong></p>
       <p style="margin:10px 0 0;color:#7F1D1D;font-size:12px;">Google says: <span style="font-family:monospace;">${fatal.message}</span></p>
       ${sa ? `<p style="margin:6px 0 0;color:#7F1D1D;font-size:12px;font-family:monospace;word-break:break-all;">${sa.client_email || ''}${sa.project_id ? ` (project ${sa.project_id})` : ''}</p>` : ''}
       <p style="margin:10px 0 4px;color:#7F1D1D;font-size:12px;font-weight:700;">How to fix</p>
       <ol style="margin:0;padding-left:18px;color:#7F1D1D;font-size:12px;">${fixSteps}</ol>
-      <p style="margin:10px 0 0;color:#7F1D1D;font-size:12px;">Nothing needs re-adding in Search Console or the sheets — those grants are still in place. Ranking history stops accumulating until this is fixed.</p>
+      <p style="margin:10px 0 0;color:#7F1D1D;font-size:12px;">${partial
+        ? 'Nothing needs re-granting. If the project was just restored, the remaining source is almost certainly still holding a cached copy of the old state — wait up to an hour and re-run the audit before changing anything.'
+        : 'Nothing needs re-adding in Search Console or the sheets — those grants are still in place. Ranking history stops accumulating until this is fixed.'}</p>
     </div>`;
   }
 
@@ -1302,7 +1311,19 @@ async function main() {
     .filter(Boolean).find(e => FATAL_CREDENTIAL_KINDS.has(e.kind));
   if (fatalCredential) {
     const acct = readServiceAccount();
-    console.log(`::error title=${AGENT_NAME}::GOOGLE_SA_KEY is dead (${fatalCredential.kind}) — GA4, Search Console and the lead sheets are ALL down until it is fixed. Account: ${acct?.client_email || 'unknown'}${acct?.project_id ? `, project ${acct.project_id}` : ''}. Google says: ${fatalCredential.message}`);
+    const downNames = [
+      ga4?.error && 'GA4',
+      gsc?.error && 'Search Console',
+      make?.error && 'the lead sheets',
+    ].filter(Boolean);
+    // Name only what actually failed. During a project restore the services
+    // recover at different rates, and asserting "all three are down" while two
+    // of them are printing real numbers two lines above is exactly the kind of
+    // wrong-but-confident report this whole change set exists to stop.
+    const scope = downNames.length === 3
+      ? 'GA4, Search Console and the lead sheets are ALL down until it is fixed'
+      : `${downNames.join(' and ')} ${downNames.length > 1 ? 'are' : 'is'} down (the other Google sources read fine this run — if the project was just restored, this is a stale cache and should clear within the hour)`;
+    console.log(`::error title=${AGENT_NAME}::GOOGLE_SA_KEY failure (${fatalCredential.kind}) — ${scope}. Account: ${acct?.client_email || 'unknown'}${acct?.project_id ? `, project ${acct.project_id}` : ''}. Google says: ${fatalCredential.message}`);
   }
 
   if (make?.sources) {
