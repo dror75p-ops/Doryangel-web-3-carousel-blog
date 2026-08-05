@@ -30,6 +30,32 @@ function escape(s) {
     .replace(/'/g, '&#39;');
 }
 
+/**
+ * Hero images come from Unsplash with a width baked into the query string (usually w=1600).
+ * These helpers re-point that width so a phone can fetch a 640px file for a 240px-tall box
+ * instead of the 1600px original. Every post image on the site is an images.unsplash.com URL,
+ * but a non-Unsplash URL still degrades safely: with no `w=` param to rewrite, srcset() returns
+ * an empty string and the caller falls back to a plain src.
+ */
+function imageAtWidth(url, width) {
+  return /([?&])w=\d+/.test(url)
+    ? url.replace(/([?&])w=\d+/, `$1w=${width}`)
+    : null;
+}
+
+function srcset(url, widths) {
+  const entries = widths
+    .map(w => {
+      const at = imageAtWidth(url, w);
+      return at ? `${escape(at)} ${w}w` : null;
+    })
+    .filter(Boolean);
+  return entries.length ? entries.join(', ') : '';
+}
+
+const HERO_WIDTHS = [640, 960, 1280, 1600];
+const THUMB_WIDTHS = [320, 480, 640];
+
 function formatDate(iso) {
   return new Date(iso).toLocaleDateString('en-US', {
     year: 'numeric', month: 'long', day: 'numeric',
@@ -190,13 +216,15 @@ function renderPage(post, related) {
     ],
   };
 
+  const heroSrcset = srcset(post.heroImage, HERO_WIDTHS);
+
   const relatedHtml = related.length === 0 ? '' : `
     <section class="related-posts">
       <h2>Continue reading</h2>
       <div class="related-grid">
         ${related.map(r => `
           <a href="../${r.slug}/" class="related-card">
-            <div class="related-image" style="background-image:url('${escape(r.heroImage)}')"></div>
+            <div class="related-image"><img src="${escape(imageAtWidth(r.heroImage, 640) || r.heroImage)}"${srcset(r.heroImage, THUMB_WIDTHS) ? ` srcset="${srcset(r.heroImage, THUMB_WIDTHS)}" sizes="(max-width: 800px) 100vw, 33vw"` : ''} alt="" width="640" height="160" loading="lazy" decoding="async"></div>
             <div class="related-body">
               <div class="related-cat">${escape(CATEGORY_LABEL[r.category] || r.category)}</div>
               <h3>${escape(r.title)}</h3>
@@ -238,7 +266,23 @@ ${(post.hashtags || []).map(t => `<meta property="article:tag" content="${escape
 <meta name="twitter:image" content="${escape(post.heroImage)}">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- The hero and the "Continue reading" thumbnails are all served from images.unsplash.com, and
+     the hero is this page's LCP element. Warm the connection up front so the cross-origin fetch
+     doesn't stall on a cold DNS+TLS handshake. -->
+<link rel="preconnect" href="https://images.unsplash.com">
+<!-- Load the Google Fonts CSS non-render-blocking (preload + onload rel-swap), matching the
+     homepage. All page CSS is inline below, so this is the only external stylesheet and the only
+     render-blocking request — taking it off the critical path is the biggest LCP lever here.
+     display=swap (in the URL) paints text immediately in the fallback face, then swaps. -->
+<link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap"></noscript>
+<!-- Preload the LCP hero. The <img> below is discoverable by the preload scanner on its own, but
+     this starts the fetch at the top of the document and marks it high priority. -->
+<link rel="preload" as="image" href="${escape(post.heroImage)}" fetchpriority="high"${heroSrcset ? `
+      imagesrcset="${heroSrcset}" imagesizes="100vw"` : ''}>
 
 <script type="application/ld+json">
 ${JSON.stringify(jsonLd, null, 2)}
@@ -288,8 +332,15 @@ a { color: var(--blue); }
 
 .hero-image-wrap {
   width: 100%; height: 400px;
-  background-size: cover; background-position: center;
   position: relative;
+}
+/* The hero is a real <img> rather than a CSS background so the preload scanner can discover it
+   immediately and so srcset can hand phones a smaller file. object-fit reproduces exactly what
+   background-size:cover / background-position:center did before. */
+.hero-image-wrap img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  display: block;
 }
 .hero-image-wrap::after {
   content: ''; position: absolute; inset: 0;
@@ -396,7 +447,8 @@ h1.post-title {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 .related-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(15,40,71,0.12); }
-.related-image { width: 100%; height: 160px; background-size: cover; background-position: center; }
+.related-image { width: 100%; height: 160px; }
+.related-image img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
 .related-body { padding: 18px 18px 22px; }
 .related-cat { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--blue); margin-bottom: 8px; }
 .related-card h3 { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--navy); line-height: 1.35; font-weight: 400; margin-bottom: 10px; }
@@ -417,7 +469,7 @@ footer.post-footer a { color: white; text-decoration: none; }
   <a href="${BOOKING_URL}" target="_blank" class="cta">Book Free Consultation</a>
 </nav>
 
-<div class="hero-image-wrap" style="background-image:url('${escape(post.heroImage)}')" role="img" aria-label="${escape(post.heroImageAlt)}"></div>
+<div class="hero-image-wrap"><img src="${escape(post.heroImage)}"${heroSrcset ? ` srcset="${heroSrcset}" sizes="100vw"` : ''} alt="${escape(post.heroImageAlt)}" width="1600" height="400" fetchpriority="high" decoding="async"></div>
 
 <article>
   <div class="post-meta">
@@ -574,7 +626,13 @@ function renderHub(posts) {
 <meta name="twitter:image" content="${SITE_URL}/assets/logo.jpg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Non-render-blocking font load (preload + onload rel-swap), matching the homepage and the post
+     pages. All page CSS is inline below, so this is the only render-blocking request. -->
+<link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap"></noscript>
 
 <script type="application/ld+json">
 ${JSON.stringify(collectionLd, null, 2)}

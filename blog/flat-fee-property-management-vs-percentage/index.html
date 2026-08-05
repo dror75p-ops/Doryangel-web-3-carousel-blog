@@ -32,7 +32,23 @@
 <meta name="twitter:image" content="https://images.unsplash.com/photo-1690384007667-094a1ddcf41f?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2UlMjB3b3JrZXJzJTIwY29tcHV0ZXJzJTIwZGF5bGlnaHR8ZW58MXwwfHx8MTc3NzE1NjA5M3ww&amp;ixlib=rb-4.1.0&amp;w=1200&amp;q=80&amp;fit=crop">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- The hero and the "Continue reading" thumbnails are all served from images.unsplash.com, and
+     the hero is this page's LCP element. Warm the connection up front so the cross-origin fetch
+     doesn't stall on a cold DNS+TLS handshake. -->
+<link rel="preconnect" href="https://images.unsplash.com">
+<!-- Load the Google Fonts CSS non-render-blocking (preload + onload rel-swap), matching the
+     homepage. All page CSS is inline below, so this is the only external stylesheet and the only
+     render-blocking request — taking it off the critical path is the biggest LCP lever here.
+     display=swap (in the URL) paints text immediately in the fallback face, then swaps. -->
+<link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap"></noscript>
+<!-- Preload the LCP hero. The <img> below is discoverable by the preload scanner on its own, but
+     this starts the fetch at the top of the document and marks it high priority. -->
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1690384007667-094a1ddcf41f?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2UlMjB3b3JrZXJzJTIwY29tcHV0ZXJzJTIwZGF5bGlnaHR8ZW58MXwwfHx8MTc3NzE1NjA5M3ww&amp;ixlib=rb-4.1.0&amp;w=1200&amp;q=80&amp;fit=crop" fetchpriority="high"
+      imagesrcset="https://images.unsplash.com/photo-1690384007667-094a1ddcf41f?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2UlMjB3b3JrZXJzJTIwY29tcHV0ZXJzJTIwZGF5bGlnaHR8ZW58MXwwfHx8MTc3NzE1NjA5M3ww&amp;ixlib=rb-4.1.0&amp;w=640&amp;q=80&amp;fit=crop 640w, https://images.unsplash.com/photo-1690384007667-094a1ddcf41f?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2UlMjB3b3JrZXJzJTIwY29tcHV0ZXJzJTIwZGF5bGlnaHR8ZW58MXwwfHx8MTc3NzE1NjA5M3ww&amp;ixlib=rb-4.1.0&amp;w=960&amp;q=80&amp;fit=crop 960w, https://images.unsplash.com/photo-1690384007667-094a1ddcf41f?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2UlMjB3b3JrZXJzJTIwY29tcHV0ZXJzJTIwZGF5bGlnaHR8ZW58MXwwfHx8MTc3NzE1NjA5M3ww&amp;ixlib=rb-4.1.0&amp;w=1280&amp;q=80&amp;fit=crop 1280w, https://images.unsplash.com/photo-1690384007667-094a1ddcf41f?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2UlMjB3b3JrZXJzJTIwY29tcHV0ZXJzJTIwZGF5bGlnaHR8ZW58MXwwfHx8MTc3NzE1NjA5M3ww&amp;ixlib=rb-4.1.0&amp;w=1600&amp;q=80&amp;fit=crop 1600w" imagesizes="100vw">
 
 <script type="application/ld+json">
 {
@@ -124,8 +140,15 @@ a { color: var(--blue); }
 
 .hero-image-wrap {
   width: 100%; height: 400px;
-  background-size: cover; background-position: center;
   position: relative;
+}
+/* The hero is a real <img> rather than a CSS background so the preload scanner can discover it
+   immediately and so srcset can hand phones a smaller file. object-fit reproduces exactly what
+   background-size:cover / background-position:center did before. */
+.hero-image-wrap img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  display: block;
 }
 .hero-image-wrap::after {
   content: ''; position: absolute; inset: 0;
@@ -232,7 +255,8 @@ h1.post-title {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 .related-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(15,40,71,0.12); }
-.related-image { width: 100%; height: 160px; background-size: cover; background-position: center; }
+.related-image { width: 100%; height: 160px; }
+.related-image img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
 .related-body { padding: 18px 18px 22px; }
 .related-cat { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--blue); margin-bottom: 8px; }
 .related-card h3 { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--navy); line-height: 1.35; font-weight: 400; margin-bottom: 10px; }
@@ -253,7 +277,7 @@ footer.post-footer a { color: white; text-decoration: none; }
   <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" class="cta">Book Free Consultation</a>
 </nav>
 
-<div class="hero-image-wrap" style="background-image:url('https://images.unsplash.com/photo-1690384007667-094a1ddcf41f?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2UlMjB3b3JrZXJzJTIwY29tcHV0ZXJzJTIwZGF5bGlnaHR8ZW58MXwwfHx8MTc3NzE1NjA5M3ww&amp;ixlib=rb-4.1.0&amp;w=1200&amp;q=80&amp;fit=crop')" role="img" aria-label="Modern New York City property management office"></div>
+<div class="hero-image-wrap"><img src="https://images.unsplash.com/photo-1690384007667-094a1ddcf41f?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2UlMjB3b3JrZXJzJTIwY29tcHV0ZXJzJTIwZGF5bGlnaHR8ZW58MXwwfHx8MTc3NzE1NjA5M3ww&amp;ixlib=rb-4.1.0&amp;w=1200&amp;q=80&amp;fit=crop" srcset="https://images.unsplash.com/photo-1690384007667-094a1ddcf41f?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2UlMjB3b3JrZXJzJTIwY29tcHV0ZXJzJTIwZGF5bGlnaHR8ZW58MXwwfHx8MTc3NzE1NjA5M3ww&amp;ixlib=rb-4.1.0&amp;w=640&amp;q=80&amp;fit=crop 640w, https://images.unsplash.com/photo-1690384007667-094a1ddcf41f?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2UlMjB3b3JrZXJzJTIwY29tcHV0ZXJzJTIwZGF5bGlnaHR8ZW58MXwwfHx8MTc3NzE1NjA5M3ww&amp;ixlib=rb-4.1.0&amp;w=960&amp;q=80&amp;fit=crop 960w, https://images.unsplash.com/photo-1690384007667-094a1ddcf41f?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2UlMjB3b3JrZXJzJTIwY29tcHV0ZXJzJTIwZGF5bGlnaHR8ZW58MXwwfHx8MTc3NzE1NjA5M3ww&amp;ixlib=rb-4.1.0&amp;w=1280&amp;q=80&amp;fit=crop 1280w, https://images.unsplash.com/photo-1690384007667-094a1ddcf41f?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2UlMjB3b3JrZXJzJTIwY29tcHV0ZXJzJTIwZGF5bGlnaHR8ZW58MXwwfHx8MTc3NzE1NjA5M3ww&amp;ixlib=rb-4.1.0&amp;w=1600&amp;q=80&amp;fit=crop 1600w" sizes="100vw" alt="Modern New York City property management office" width="1600" height="400" fetchpriority="high" decoding="async"></div>
 
 <article>
   <div class="post-meta">
@@ -441,7 +465,7 @@ footer.post-footer a { color: white; text-decoration: none; }
       <div class="related-grid">
         
           <a href="../bronx-vs-mount-vernon-which-landlords-actually-keep-more-aft/" class="related-card">
-            <div class="related-image" style="background-image:url('https://images.unsplash.com/photo-1779111717718-e33b35488915?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwyfHxtYW5oYXR0YW4lMjBza3lzY3JhcGVyJTIwZGF5bGlnaHQlMjBibHVlJTIwc2t5fGVufDF8MHx8fDE3ODQzMDEzNTl8MA&amp;ixlib=rb-4.1.0&amp;w=1600&amp;q=80&amp;fit=crop')"></div>
+            <div class="related-image"><img src="https://images.unsplash.com/photo-1779111717718-e33b35488915?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwyfHxtYW5oYXR0YW4lMjBza3lzY3JhcGVyJTIwZGF5bGlnaHQlMjBibHVlJTIwc2t5fGVufDF8MHx8fDE3ODQzMDEzNTl8MA&amp;ixlib=rb-4.1.0&amp;w=640&amp;q=80&amp;fit=crop" srcset="https://images.unsplash.com/photo-1779111717718-e33b35488915?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwyfHxtYW5oYXR0YW4lMjBza3lzY3JhcGVyJTIwZGF5bGlnaHQlMjBibHVlJTIwc2t5fGVufDF8MHx8fDE3ODQzMDEzNTl8MA&amp;ixlib=rb-4.1.0&amp;w=320&amp;q=80&amp;fit=crop 320w, https://images.unsplash.com/photo-1779111717718-e33b35488915?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwyfHxtYW5oYXR0YW4lMjBza3lzY3JhcGVyJTIwZGF5bGlnaHQlMjBibHVlJTIwc2t5fGVufDF8MHx8fDE3ODQzMDEzNTl8MA&amp;ixlib=rb-4.1.0&amp;w=480&amp;q=80&amp;fit=crop 480w, https://images.unsplash.com/photo-1779111717718-e33b35488915?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwyfHxtYW5oYXR0YW4lMjBza3lzY3JhcGVyJTIwZGF5bGlnaHQlMjBibHVlJTIwc2t5fGVufDF8MHx8fDE3ODQzMDEzNTl8MA&amp;ixlib=rb-4.1.0&amp;w=640&amp;q=80&amp;fit=crop 640w" sizes="(max-width: 800px) 100vw, 33vw" alt="" width="640" height="160" loading="lazy" decoding="async"></div>
             <div class="related-body">
               <div class="related-cat">Property Management</div>
               <h3>Bronx vs. Mount Vernon: Which Landlords Actually Keep More After Summer Maintenance Season?</h3>
@@ -450,7 +474,7 @@ footer.post-footer a { color: white; text-decoration: none; }
           </a>
         
           <a href="../self-managing-bronx-rental-vs-flat-fee-property-management/" class="related-card">
-            <div class="related-image" style="background-image:url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&amp;auto=format&amp;fit=crop&amp;q=80')"></div>
+            <div class="related-image"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=640&amp;auto=format&amp;fit=crop&amp;q=80" srcset="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=320&amp;auto=format&amp;fit=crop&amp;q=80 320w, https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=480&amp;auto=format&amp;fit=crop&amp;q=80 480w, https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=640&amp;auto=format&amp;fit=crop&amp;q=80 640w" sizes="(max-width: 800px) 100vw, 33vw" alt="" width="640" height="160" loading="lazy" decoding="async"></div>
             <div class="related-body">
               <div class="related-cat">Property Management</div>
               <h3>Is Self-Managing Your Bronx Rental Actually Costing You More Than Flat-Fee Management?</h3>
@@ -459,7 +483,7 @@ footer.post-footer a { color: white; text-decoration: none; }
           </a>
         
           <a href="../why-bronx-landlords-miss-building-problems-until-too-late/" class="related-card">
-            <div class="related-image" style="background-image:url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&amp;auto=format&amp;fit=crop&amp;q=80')"></div>
+            <div class="related-image"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=640&amp;auto=format&amp;fit=crop&amp;q=80" srcset="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=320&amp;auto=format&amp;fit=crop&amp;q=80 320w, https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=480&amp;auto=format&amp;fit=crop&amp;q=80 480w, https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=640&amp;auto=format&amp;fit=crop&amp;q=80 640w" sizes="(max-width: 800px) 100vw, 33vw" alt="" width="640" height="160" loading="lazy" decoding="async"></div>
             <div class="related-body">
               <div class="related-cat">Property Automation</div>
               <h3>Why Are Bronx Landlords Always the Last to Know When Their Building Has a Problem?</h3>

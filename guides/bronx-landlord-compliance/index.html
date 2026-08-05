@@ -342,6 +342,9 @@ nav.bar-hidden { top: 0; }
 .lead-form input::placeholder { color: rgba(255,255,255,0.55); }
 .lead-form input:focus { outline: 2px solid var(--blue-light); background: rgba(255,255,255,0.14); }
 .lead-form .lead-full { grid-column: 1 / -1; }
+.lead-field { display: flex; flex-direction: column; gap: 6px; }
+.lead-field label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.88); text-align: left; }
+.lead-field label span { font-weight: 400; color: rgba(255,255,255,0.6); }
 .lead-form button { grid-column: 1 / -1; background: var(--blue); color: #fff; border: none; padding: 14px; border-radius: 9px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.2s, transform 0.15s; }
 .lead-form button:hover { background: #2B6CC7; transform: translateY(-2px); }
 .lead-note { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 14px; }
@@ -651,10 +654,22 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
       <input type="hidden" name="source" value="guides/bronx-landlord-compliance">
       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
       <input type="hidden" name="redirect" value="https://www.doryangel.com/thank-you.html">
-      <input type="text" name="name" class="lead-full" placeholder="Your name" required autocomplete="name">
-      <input type="email" name="email" placeholder="Email address" required autocomplete="email">
-      <input type="tel" name="phone" placeholder="Phone (optional)" autocomplete="tel">
-      <input type="text" name="property" class="lead-full" placeholder="Property address or # of units" autocomplete="street-address">
+      <div class="lead-field lead-full">
+        <label for="leadName">Your name</label>
+        <input type="text" id="leadName" name="name" placeholder="Your name" required autocomplete="name">
+      </div>
+      <div class="lead-field">
+        <label for="leadEmail">Email address</label>
+        <input type="email" id="leadEmail" name="email" placeholder="Email address" required autocomplete="email">
+      </div>
+      <div class="lead-field">
+        <label for="leadPhone">Phone <span>(optional)</span></label>
+        <input type="tel" id="leadPhone" name="phone" placeholder="Phone (optional)" autocomplete="tel">
+      </div>
+      <div class="lead-field lead-full">
+        <label for="leadProperty">Property address or # of units</label>
+        <input type="text" id="leadProperty" name="property" placeholder="Property address or # of units" autocomplete="street-address">
+      </div>
       <button type="submit">Get my free compliance review &rarr;</button>
     </form>
     <p class="lead-note">🔒 We never share your details. Unsubscribe any time.</p>
