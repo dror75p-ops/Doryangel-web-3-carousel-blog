@@ -502,6 +502,92 @@ async function fetchWatchSeries(token, endDate) {
   return queries;
 }
 
+// ─── Query mix ───────────────────────────────────────────────────────────────
+//
+// ⚠️ WHY THIS EXISTS: `topQueries` is `queryRows.slice(0, 25)`, and GSC returns
+// rows sorted by CLICKS descending. So those 25 rows are the top 25 by clicks —
+// a handful with clicks, then whichever zero-click rows sort alphabetically
+// first (numeric strings win, which is why they read as a wall of street
+// addresses). The other 475 rows were fetched and discarded.
+//
+// On 2026-08-03 that cost a whole strategic read: the discarded rows were
+// mistaken for "the tail", and a claim that 93% of impressions were address
+// searches was built on what is actually an alphabetical artifact. Nothing about
+// the tail's real composition was ever measured. These buckets measure it, over
+// every row returned.
+const QUERY_BUCKETS = [
+  // A leading house number, or a street/building word — someone looking up a
+  // specific building, not shopping for a manager.
+  { key: 'address',    label: 'Building / address lookups', test: q =>
+      /^\s*\d+[\s-]/.test(q) || /\b(ave|avenue|st|street|rd|road|blvd|boulevard|concourse|parkway|pkwy|terrace|plaza)\b/.test(q) },
+  { key: 'branded',    label: 'Brand searches',             test: q => /dory\s*angel|doryangel/.test(q) },
+  // The queries the business actually competes on.
+  { key: 'commercial', label: 'Property-management intent', test: q =>
+      /property manage|management compan|property manager|rental manage|landlord service/.test(q) },
+  { key: 'other',      label: 'Everything else',            test: () => true },
+];
+
+function summariseQueryMix(rows) {
+  const buckets = QUERY_BUCKETS.map(b => ({ key: b.key, label: b.label, queries: 0, clicks: 0, impressions: 0, weighted: 0 }));
+  for (const r of rows) {
+    const q = String(r.keys[0] || '').toLowerCase();
+    const i = QUERY_BUCKETS.findIndex(b => b.test(q));
+    const b = buckets[i < 0 ? buckets.length - 1 : i];
+    b.queries++;
+    b.clicks += r.clicks;
+    b.impressions += r.impressions;
+    b.weighted += r.position * r.impressions;
+  }
+  return buckets.map(({ weighted, ...b }) => ({
+    ...b,
+    position: b.impressions ? Number((weighted / b.impressions).toFixed(2)) : null,
+  }));
+}
+
+// ─── page × query ────────────────────────────────────────────────────────────
+//
+// The one pull that settles whether apex genuinely outranks www or the two
+// hosts are simply serving different query mixes. `page` and `query` were only
+// ever fetched as separate dimensions, so that question has been open — and it
+// is load-bearing: it decides whether the host split is a ranking problem or a
+// reporting artifact.
+async function fetchHostQueries(token, window) {
+  const rows = await querySearchConsole(token, {
+    ...window, dataState: 'final', type: 'web', rowLimit: 25000,
+    dimensions: ['page', 'query'],
+  });
+
+  const byQuery = new Map();
+  for (const r of rows) {
+    const [page, query] = r.keys;
+    const host = HOST_BUCKETS.find(h => new RegExp(h.regex, 'i').test(page));
+    if (!host) continue;
+    const entry = byQuery.get(query) || (byQuery.set(query, { query, total: 0, hosts: {} }), byQuery.get(query));
+    entry.total += r.impressions;
+    const h = entry.hosts[host.key] || (entry.hosts[host.key] = { clicks: 0, impressions: 0, weighted: 0 });
+    h.clicks += r.clicks;
+    h.impressions += r.impressions;
+    h.weighted += r.position * r.impressions;
+  }
+
+  // Only the queries where more than one host appears are interesting, plus the
+  // watch terms regardless — those are the ones the decision hangs on.
+  const shaped = [...byQuery.values()]
+    .filter(e => Object.keys(e.hosts).length > 1 || WATCH_TERMS.includes(e.query.toLowerCase()))
+    .sort((a, b) => b.total - a.total)
+    .slice(0, 30)
+    .map(e => ({
+      query: e.query,
+      hosts: Object.fromEntries(Object.entries(e.hosts).map(([k, v]) => [k, {
+        clicks: v.clicks,
+        impressions: v.impressions,
+        position: Number((v.weighted / v.impressions).toFixed(2)),
+      }])),
+    }));
+
+  return { split: shaped, pairs: rows.length };
+}
+
 // Sums a slice of the daily series. Used for 7-day vs previous-7-day, which is
 // the smallest comparison that is genuinely non-overlapping — unlike the 28-day
 // snapshot deltas, a move here happened in the week it is reported in.
@@ -611,8 +697,19 @@ async function getSearchConsoleStats() {
     const shape = r => ({
       key: r.keys[0], clicks: r.clicks, impressions: r.impressions, ctr: r.ctr, position: r.position,
     });
+    // ⚠️ topQueries is top-by-CLICKS (GSC's sort order). Keeping only that is
+    // what produced the 2026-08-03 misreading — see summariseQueryMix(). These
+    // three lines are a set: the click view, the impression view, and the mix
+    // over EVERY row. Do not drop the last two back out.
     const topQueries = queryRows.slice(0, 25).map(shape);
+    const topByImpressions = [...queryRows].sort((a, b) => b.impressions - a.impressions).slice(0, 25).map(shape);
+    const queryMix = summariseQueryMix(queryRows);
     const topPages = pageRows.slice(0, 25).map(shape);
+
+    // The commercial basket: the only totals worth steering on. The site-wide
+    // average blends three hosts and an unmeasured tail of address lookups, so
+    // it cannot move in response to anything we do — it is not reported.
+    const commercial = queryMix.find(b => b.key === 'commercial') || null;
 
     // Split the same window by host. Computed over the full 250-row page pull,
     // not the 25 kept for the email, so the shares are the real ones.
@@ -632,7 +729,20 @@ async function getSearchConsoleStats() {
       };
     });
 
-    const snapshot = { runDate: today(), window, totals, watch, topQueries, topPages, hosts };
+    // page × query — fails soft like the series files. Its absence costs the
+    // host-attribution card, nothing else.
+    let hostQueries = null;
+    try {
+      hostQueries = await fetchHostQueries(token, window);
+    } catch (e) {
+      console.log(`::warning title=${AGENT_NAME}::page×query unavailable: ${e.message}`);
+    }
+
+    const snapshot = {
+      runDate: today(), window, totals, watch,
+      topQueries, topByImpressions, queryMix, topPages, hosts,
+      hostQueries: hostQueries?.split || [],
+    };
 
     // The series files are the point of this whole block — see the comment on
     // SERIES_BACKFILL_DAYS. They fail soft individually: a broken series must
@@ -675,6 +785,8 @@ async function getSearchConsoleStats() {
     console.log(`GSC: ${totals.clicks} clicks / ${totals.impressions} impressions, "bronx property management" position ${money?.position?.toFixed(1) ?? 'not in top 500'}`);
     console.log(`GSC hosts: ${hosts.map(h => `${h.key} ${h.impressions} impr @ ${h.position?.toFixed(1) ?? '—'}`).join(' · ')}`);
     console.log(`GSC series: ${trend.days} days on file${backfilled ? ' (backfilled this run)' : ''}, ${Object.keys(watchSeries).length} watch terms, ${annotations.length} change-log entries`);
+    console.log(`GSC query mix (${queryRows.length} rows): ${queryMix.map(b => `${b.key} ${b.impressions} impr / ${b.clicks} clk`).join(' · ')}`);
+    console.log(`GSC page×query: ${hostQueries ? `${hostQueries.pairs} pairs, ${hostQueries.split.length} queries served by >1 host` : 'unavailable'}`);
 
     return { snapshot, previous, trend, watchSeries };
   } catch (e) {
@@ -1270,6 +1382,16 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
     const moneyPos = money?.position ?? null;
     const onPage1 = moneyPos != null && moneyPos <= 10;
 
+    // ⚠️ The site-wide "avg position" USED to sit here and has been removed on
+    // purpose. It averages three hosts that rank 6, 12 and 48, over a query set
+    // that is mostly building-address lookups — so it cannot respond to anything
+    // we do, and steering on it wasted real effort. Report the commercial basket
+    // instead. Do not put the site average back.
+    const commercialBucket = (snapshot.queryMix || []).find(b => b.key === 'commercial');
+    const commercialLine = commercialBucket
+      ? `Property-management queries: <strong>${commercialBucket.clicks}</strong> clicks · <strong>${commercialBucket.impressions}</strong> impressions · avg position ${fmtPos(commercialBucket.position)} <span style="color:#8B9BAE;">(site-wide average deliberately not shown — it blends hosts and address lookups)</span>`
+      : `Site totals: <strong>${snapshot.totals.clicks}</strong> clicks · <strong>${snapshot.totals.impressions}</strong> impressions`;
+
     const watchRows = snapshot.watch.map((w, i) => {
       const bg = i % 2 === 0 ? '#ffffff' : '#F8FAFB';
       const posColor = w.position == null ? '#8B9BAE' : w.position <= 10 ? '#1E9E6A' : w.position <= 20 ? '#B7791F' : '#556070';
@@ -1371,13 +1493,56 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
       <p style="font-size:11px;color:#8B9BAE;margin:0 0 20px;">${legacyShare}% of impressions still land on a pre-cutover URL. Until that reaches 0, the site-wide average position above is a blend of hosts and should not be read as one number.</p>`;
     }
 
+    // ── What the traffic is actually made of ────────────────────────────────
+    // Every query row, bucketed. This replaces guessing at the tail from a
+    // click-sorted top-25, which is how a claim that 93% of impressions were
+    // address lookups got made without the tail ever being measured.
+    let mixBlock = '';
+    const mix = (snapshot.queryMix || []).filter(b => b.impressions > 0);
+    if (mix.length) {
+      const totalImpr = mix.reduce((n, b) => n + b.impressions, 0) || 1;
+      const rows = mix.sort((a, b) => b.impressions - a.impressions).map((b, i) => `<tr style="background:${i % 2 === 0 ? '#ffffff' : '#F8FAFB'};">
+        <td style="padding:6px 12px;font-size:12px;color:${b.key === 'commercial' ? '#0F2847' : '#556070'};font-weight:${b.key === 'commercial' ? 700 : 400};">${b.label}</td>
+        <td style="padding:6px 12px;text-align:right;font-size:12px;color:#556070;">${b.queries} queries</td>
+        <td style="padding:6px 12px;text-align:right;font-size:12px;color:#556070;">${Math.round((b.impressions / totalImpr) * 100)}%</td>
+        <td style="padding:6px 12px;text-align:right;font-size:12px;color:#556070;">${b.impressions} impr</td>
+        <td style="padding:6px 12px;text-align:right;font-size:12px;font-weight:700;color:#0F2847;">${b.clicks} clicks</td>
+      </tr>`).join('');
+      mixBlock = `<p style="font-size:12px;color:#8B9BAE;margin:0 0 8px;">What the search traffic is made of (all ${mix.reduce((n, b) => n + b.queries, 0)} queries, not a top-25 sample)</p>
+      <table style="border-collapse:collapse;width:100%;margin-bottom:20px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">${rows}</table>`;
+    }
+
+    // ── Which host serves which query ───────────────────────────────────────
+    // The answer to "does the old URL actually outrank the new one, or do they
+    // just serve different queries" — unanswerable until page×query existed.
+    let splitBlock = '';
+    const split = (snapshot.hostQueries || []).filter(e => Object.keys(e.hosts).length > 1).slice(0, 8);
+    if (split.length) {
+      const rows = split.map((e, i) => {
+        const cells = HOST_BUCKETS.map(h => {
+          const v = e.hosts[h.key];
+          return `<td style="padding:5px 10px;text-align:right;font-size:12px;color:${v ? (v.position <= 10 ? '#1E9E6A' : '#556070') : '#C9D2DC'};">${v ? `${fmtPos(v.position)} <span style="color:#8B9BAE;">(${v.impressions})</span>` : '—'}</td>`;
+        }).join('');
+        return `<tr style="background:${i % 2 === 0 ? '#ffffff' : '#F8FAFB'};">
+          <td style="padding:5px 10px;font-size:12px;color:#556070;">${e.query.replace(/[<>&]/g, '')}</td>${cells}</tr>`;
+      }).join('');
+      splitBlock = `<p style="font-size:12px;color:#8B9BAE;margin:0 0 8px;">Same query, different host — position (impressions)</p>
+      <table style="border-collapse:collapse;width:100%;margin-bottom:6px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
+        <tr style="background:#F4F7FA;">
+          <th style="padding:8px 10px;text-align:left;color:#8B9BAE;font-size:11px;text-transform:uppercase;">Query</th>
+          ${HOST_BUCKETS.map(h => `<th style="padding:8px 10px;text-align:right;color:#8B9BAE;font-size:11px;text-transform:uppercase;">${h.key}</th>`).join('')}
+        </tr>${rows}
+      </table>
+      <p style="font-size:11px;color:#8B9BAE;margin:0 0 20px;">These queries are served under more than one host at once. Where a legacy host ranks better than www on the SAME query, the old URL is holding the position — that is a consolidation problem, not a content problem.</p>`;
+    }
+
     gscSection = `
     <!-- Search Console rankings -->
     <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">🔍 Google rankings (last 28 days)</h3>
     <div style="background:${onPage1 ? '#ECFDF5' : '#EBF3FD'};border:1px solid ${onPage1 ? '#6EE7B7' : '#BFDBFE'};border-radius:8px;padding:14px 16px;margin-bottom:12px;">
       <p style="margin:0;font-size:12px;color:#556070;">"bronx property management"</p>
       <p style="margin:2px 0 0;font-size:28px;font-weight:700;color:#0F2847;">${fmtPos(moneyPos)} ${delta(moneyPos, prevPos('bronx property management'))}</p>
-      <p style="margin:4px 0 0;font-size:12px;color:#556070;">${onPage1 ? 'On page 1.' : 'Page 1 starts at position 10.'} Site totals: <strong>${snapshot.totals.clicks}</strong> clicks · <strong>${snapshot.totals.impressions}</strong> impressions · avg position ${fmtPos(snapshot.totals.position)}</p>
+      <p style="margin:4px 0 0;font-size:12px;color:#556070;">${onPage1 ? 'On page 1.' : 'Page 1 starts at position 10.'} ${commercialLine}</p>
     </div>
     <table style="border-collapse:collapse;width:100%;margin-bottom:14px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
       <tr style="background:#F4F7FA;">
@@ -1390,6 +1555,8 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
       ${watchRows}
     </table>
     ${trendBlock}
+    ${mixBlock}
+    ${splitBlock}
     ${hostBlock}
     ${areaBlock}`;
   } else if (gsc?.error && !FATAL_CREDENTIAL_KINDS.has(gsc.error.kind)) {
