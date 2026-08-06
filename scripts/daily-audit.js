@@ -160,6 +160,9 @@ async function getGoogleAccessToken(credentials, scope = 'https://www.googleapis
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${jwt}`,
+    // Every Google-backed section of this report starts here, so a stall on the
+    // token exchange hangs GA4, Search Console and the lead sheets at once.
+    signal: AbortSignal.timeout(30_000),
   });
   const data = await res.json();
   if (!data.access_token) throw new Error(`GA4 token error: ${JSON.stringify(data)}`);
@@ -356,6 +359,19 @@ function writeRankHistory(history) {
   }
 }
 
+// ⚠️ NOTHING IN THIS SCRIPT USED TO TIME OUT. Node's fetch waits forever by
+// default, so a single stalled Google connection hangs the whole run — no error,
+// no output, the job just sits there until GitHub kills the runner and reports
+// a bare "cancelled" with no logs to explain it. That is exactly what run
+// 31118286414 looked like on 2026-08-06 (first failure in 30 runs, dead at
+// 15:01 with zero failed-job logs), and it cost that day's rank snapshot.
+//
+// It matters more now than it did: this file went from 3 Search Console calls
+// per run to ~16 once the daily/per-term/page×query pulls landed, so the odds
+// of catching one bad connection went up with it. A timeout turns a silent hang
+// into a normal error that the existing fail-soft paths already handle.
+const GSC_REQUEST_TIMEOUT_MS = 60_000;
+
 async function querySearchConsole(token, body) {
   const res = await fetch(
     `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(GSC_SITE_URL)}/searchAnalytics/query`,
@@ -363,6 +379,7 @@ async function querySearchConsole(token, body) {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
+      signal: AbortSignal.timeout(GSC_REQUEST_TIMEOUT_MS),
     }
   );
   const json = await res.json().catch(() => ({}));
