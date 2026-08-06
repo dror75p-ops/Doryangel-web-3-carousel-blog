@@ -24,6 +24,12 @@ permissions:
 jobs:
   audit:
     runs-on: ubuntu-latest
+    # A backstop, not the real fix — the per-request timeouts in daily-audit.js
+    # are. Without this the job inherits GitHub's 360-minute default, so a hang
+    # burns six hours of runner time before anyone hears about it. With it, a
+    # stuck run fails as a timeout that names itself instead of the bare
+    # "cancelled" with no logs that run 31118286414 produced on 2026-08-06.
+    timeout-minutes: 20
 
     steps:
       - name: Checkout repo
@@ -66,7 +72,16 @@ jobs:
           fi
           git config user.name "Arlo (DoryAngel Bot)"
           git config user.email "office@doryangel.com"
-          git add project/seo/rank-history.json
+          # ⚠️ ALL FOUR of these are written on the runner and all four must be
+          # added here. daily-series.json is the per-day (non-overlapping) history
+          # and query-series.json the per-term one; leaving either out of this line
+          # means the backfill is re-fetched and re-thrown-away every single day,
+          # and no trend ever accumulates — the exact bug that `git add` line
+          # already exists to prevent for rank-history.json.
+          git add project/seo/rank-history.json \
+                  project/seo/daily-series.json \
+                  project/seo/query-series.json \
+                  project/seo/annotations.json
           git diff --staged --quiet && echo "No new snapshot today" && exit 0
           git commit -m "Arlo: rank snapshot $(date +'%Y-%m-%d')"
           git pull --rebase origin "$GITHUB_REF_NAME"

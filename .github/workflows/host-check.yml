@@ -1,0 +1,108 @@
+# Host consolidation check — manual, read-only, no secrets.
+#
+# WHY THIS EXISTS: every redirect claim in this project has been verified
+# indirectly. The CCR sandbox's proxy blocks the live site (403), so checks had
+# to go through the Vercel API — which answers for Vercel's configuration and
+# adds a `_vercel_share=` token to the Location it returns. That is not the same
+# thing as what an anonymous crawler sees, and "the config looks right" has
+# already been wrong once here (the 2026-07-24 note declaring consolidation
+# confirmed was premature).
+#
+# A GitHub runner is on the open internet with no proxy, so this asks the real
+# question: what does a Googlebot-shaped request actually get back? Same trick
+# as the throwaway Retell harness that found the domain-allowlist 401.
+#
+# It writes nothing and reads no secrets. Run it from the Actions tab.
+
+name: Host consolidation check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Probe every host and legacy path
+        run: |
+          UA='Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+
+          # Each entry: URL | what we expect to see
+          URLS=(
+            "http://doryangel.com/|308/301 to https://www.doryangel.com/"
+            "https://doryangel.com/|308/301 to https://www.doryangel.com/"
+            "http://www.doryangel.com/|301 to https, then 200"
+            "https://www.doryangel.com/|200"
+            "https://beta.doryangel.com/|308/301 to www"
+            "https://beta.doryangel.com/blog/nyc-housing-court-and-the-eviction-process-explained-for-lan/|308/301 to the SAME path on www"
+            "https://www.doryangel.com/home|301 to /"
+            "https://www.doryangel.com/tenants|301 to /#services (only after that PR merges)"
+            "https://dror75p-ops.github.io/Doryangel-web-3-carousel-blog/|404 is GOOD — 200 means a live duplicate site"
+          )
+
+          fail=0
+          for entry in "${URLS[@]}"; do
+            url="${entry%%|*}"
+            expect="${entry#*|}"
+            echo "───────────────────────────────────────────────────────────"
+            echo "URL      : $url"
+            echo "Expect   : $expect"
+
+            # -I is HEAD; some hosts treat HEAD differently, so use GET with
+            # -o /dev/null instead and follow up to 10 hops.
+            chain=$(curl -sS -o /dev/null -A "$UA" -L --max-redirs 10 --max-time 30 \
+                     -w '%{http_code} %{url_effective}\n' "$url" 2>&1 || echo "REQUEST FAILED")
+            hops=$(curl -sS -o /dev/null -A "$UA" -L --max-redirs 10 --max-time 30 \
+                     -w '%{num_redirects}' "$url" 2>/dev/null || echo '?')
+
+            echo "Result   : $chain"
+            echo "Hops     : $hops"
+
+            # Show the actual redirect headers — the hop chain is what matters
+            # for consolidation speed, and a share/query token appearing in a
+            # Location would be a real finding.
+            echo "Headers  :"
+            curl -sSI -A "$UA" --max-time 30 "$url" 2>&1 \
+              | grep -iE '^(HTTP/|location:|x-vercel|server:|cache-control:)' \
+              | sed 's/^/           /' || true
+
+            code=$(echo "$chain" | awk '{print $1}')
+            case "$url" in
+              *github.io*)
+                if [ "$code" = "200" ]; then
+                  echo "::warning::GitHub Pages is SERVING CONTENT at $url — a full duplicate of the site with no redirect. This is invisible to the sc-domain:doryangel.com property. Decide whether to turn Pages off (repo → Settings → Pages → Source: None) after checking its own GSC property for impressions."
+                  fail=1
+                else
+                  echo "           OK — GitHub Pages is not serving this repo."
+                fi
+                ;;
+              *)
+                if [ "$code" != "200" ]; then
+                  echo "::warning::$url did not end at a 200 (got $code)."
+                  fail=1
+                fi
+                ;;
+            esac
+          done
+
+          echo "───────────────────────────────────────────────────────────"
+          echo "Anything flagged above is a finding, not a build failure —"
+          echo "this job is a probe and always exits 0 so the full report is readable."
+          exit 0
+
+      - name: Where each host actually resolves
+        run: |
+          echo "DNS — tells you WHICH platform answers for each host."
+          echo "beta pointing at GitHub Pages rather than Vercel would mean"
+          echo "Vercel's redirect config never applies to it at all."
+          for h in doryangel.com www.doryangel.com beta.doryangel.com; do
+            echo "───────────────────────────────────────────────────────────"
+            echo "$h"
+            dig +short "$h" A    | sed 's/^/   A     /' || true
+            dig +short "$h" CNAME | sed 's/^/   CNAME /' || true
+          done
