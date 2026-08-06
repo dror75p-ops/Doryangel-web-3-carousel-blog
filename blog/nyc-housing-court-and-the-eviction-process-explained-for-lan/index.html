@@ -32,7 +32,23 @@
 <meta name="twitter:image" content="https://images.unsplash.com/photo-1771031517661-d8e23b1a9e34?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwzfHxtYW5oYXR0YW4lMjBza3lzY3JhcGVyJTIwZGF5bGlnaHQlMjBibHVlJTIwc2t5fGVufDF8MHx8fDE3NzcxNTYwODZ8MA&amp;ixlib=rb-4.1.0&amp;w=1200&amp;q=80&amp;fit=crop">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- The hero and the "Continue reading" thumbnails are all served from images.unsplash.com, and
+     the hero is this page's LCP element. Warm the connection up front so the cross-origin fetch
+     doesn't stall on a cold DNS+TLS handshake. -->
+<link rel="preconnect" href="https://images.unsplash.com">
+<!-- Load the Google Fonts CSS non-render-blocking (preload + onload rel-swap), matching the
+     homepage. All page CSS is inline below, so this is the only external stylesheet and the only
+     render-blocking request — taking it off the critical path is the biggest LCP lever here.
+     display=swap (in the URL) paints text immediately in the fallback face, then swaps. -->
+<link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap"></noscript>
+<!-- Preload the LCP hero. The <img> below is discoverable by the preload scanner on its own, but
+     this starts the fetch at the top of the document and marks it high priority. -->
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1771031517661-d8e23b1a9e34?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwzfHxtYW5oYXR0YW4lMjBza3lzY3JhcGVyJTIwZGF5bGlnaHQlMjBibHVlJTIwc2t5fGVufDF8MHx8fDE3NzcxNTYwODZ8MA&amp;ixlib=rb-4.1.0&amp;w=1200&amp;q=80&amp;fit=crop" fetchpriority="high"
+      imagesrcset="https://images.unsplash.com/photo-1771031517661-d8e23b1a9e34?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwzfHxtYW5oYXR0YW4lMjBza3lzY3JhcGVyJTIwZGF5bGlnaHQlMjBibHVlJTIwc2t5fGVufDF8MHx8fDE3NzcxNTYwODZ8MA&amp;ixlib=rb-4.1.0&amp;w=640&amp;q=80&amp;fit=crop 640w, https://images.unsplash.com/photo-1771031517661-d8e23b1a9e34?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwzfHxtYW5oYXR0YW4lMjBza3lzY3JhcGVyJTIwZGF5bGlnaHQlMjBibHVlJTIwc2t5fGVufDF8MHx8fDE3NzcxNTYwODZ8MA&amp;ixlib=rb-4.1.0&amp;w=960&amp;q=80&amp;fit=crop 960w, https://images.unsplash.com/photo-1771031517661-d8e23b1a9e34?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwzfHxtYW5oYXR0YW4lMjBza3lzY3JhcGVyJTIwZGF5bGlnaHQlMjBibHVlJTIwc2t5fGVufDF8MHx8fDE3NzcxNTYwODZ8MA&amp;ixlib=rb-4.1.0&amp;w=1280&amp;q=80&amp;fit=crop 1280w, https://images.unsplash.com/photo-1771031517661-d8e23b1a9e34?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwzfHxtYW5oYXR0YW4lMjBza3lzY3JhcGVyJTIwZGF5bGlnaHQlMjBibHVlJTIwc2t5fGVufDF8MHx8fDE3NzcxNTYwODZ8MA&amp;ixlib=rb-4.1.0&amp;w=1600&amp;q=80&amp;fit=crop 1600w" imagesizes="100vw">
 
 <script type="application/ld+json">
 {
@@ -124,8 +140,15 @@ a { color: var(--blue); }
 
 .hero-image-wrap {
   width: 100%; height: 400px;
-  background-size: cover; background-position: center;
   position: relative;
+}
+/* The hero is a real <img> rather than a CSS background so the preload scanner can discover it
+   immediately and so srcset can hand phones a smaller file. object-fit reproduces exactly what
+   background-size:cover / background-position:center did before. */
+.hero-image-wrap img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  display: block;
 }
 .hero-image-wrap::after {
   content: ''; position: absolute; inset: 0;
@@ -232,7 +255,8 @@ h1.post-title {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 .related-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(15,40,71,0.12); }
-.related-image { width: 100%; height: 160px; background-size: cover; background-position: center; }
+.related-image { width: 100%; height: 160px; }
+.related-image img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
 .related-body { padding: 18px 18px 22px; }
 .related-cat { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--blue); margin-bottom: 8px; }
 .related-card h3 { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--navy); line-height: 1.35; font-weight: 400; margin-bottom: 10px; }
@@ -253,7 +277,7 @@ footer.post-footer a { color: white; text-decoration: none; }
   <a href="https://cal.com/dory-angel-management-v5o0ke/30min" target="_blank" class="cta">Book Free Consultation</a>
 </nav>
 
-<div class="hero-image-wrap" style="background-image:url('https://images.unsplash.com/photo-1771031517661-d8e23b1a9e34?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwzfHxtYW5oYXR0YW4lMjBza3lzY3JhcGVyJTIwZGF5bGlnaHQlMjBibHVlJTIwc2t5fGVufDF8MHx8fDE3NzcxNTYwODZ8MA&amp;ixlib=rb-4.1.0&amp;w=1200&amp;q=80&amp;fit=crop')" role="img" aria-label="New York landlord working in apartment building"></div>
+<div class="hero-image-wrap"><img src="https://images.unsplash.com/photo-1771031517661-d8e23b1a9e34?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwzfHxtYW5oYXR0YW4lMjBza3lzY3JhcGVyJTIwZGF5bGlnaHQlMjBibHVlJTIwc2t5fGVufDF8MHx8fDE3NzcxNTYwODZ8MA&amp;ixlib=rb-4.1.0&amp;w=1200&amp;q=80&amp;fit=crop" srcset="https://images.unsplash.com/photo-1771031517661-d8e23b1a9e34?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwzfHxtYW5oYXR0YW4lMjBza3lzY3JhcGVyJTIwZGF5bGlnaHQlMjBibHVlJTIwc2t5fGVufDF8MHx8fDE3NzcxNTYwODZ8MA&amp;ixlib=rb-4.1.0&amp;w=640&amp;q=80&amp;fit=crop 640w, https://images.unsplash.com/photo-1771031517661-d8e23b1a9e34?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwzfHxtYW5oYXR0YW4lMjBza3lzY3JhcGVyJTIwZGF5bGlnaHQlMjBibHVlJTIwc2t5fGVufDF8MHx8fDE3NzcxNTYwODZ8MA&amp;ixlib=rb-4.1.0&amp;w=960&amp;q=80&amp;fit=crop 960w, https://images.unsplash.com/photo-1771031517661-d8e23b1a9e34?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwzfHxtYW5oYXR0YW4lMjBza3lzY3JhcGVyJTIwZGF5bGlnaHQlMjBibHVlJTIwc2t5fGVufDF8MHx8fDE3NzcxNTYwODZ8MA&amp;ixlib=rb-4.1.0&amp;w=1280&amp;q=80&amp;fit=crop 1280w, https://images.unsplash.com/photo-1771031517661-d8e23b1a9e34?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwzfHxtYW5oYXR0YW4lMjBza3lzY3JhcGVyJTIwZGF5bGlnaHQlMjBibHVlJTIwc2t5fGVufDF8MHx8fDE3NzcxNTYwODZ8MA&amp;ixlib=rb-4.1.0&amp;w=1600&amp;q=80&amp;fit=crop 1600w" sizes="100vw" alt="New York landlord working in apartment building" width="1600" height="400" fetchpriority="high" decoding="async"></div>
 
 <article>
   <div class="post-meta">
@@ -337,7 +361,7 @@ footer.post-footer a { color: white; text-decoration: none; }
       <div class="related-grid">
         
           <a href="../nyc-rent-stabilization-rules-every-landlord-must-know/" class="related-card">
-            <div class="related-image" style="background-image:url('https://images.unsplash.com/photo-1573878412480-ec1bdc30ef53?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMHByb2Zlc3Npb25hbCUyMHJldmlld2luZyUyMGRvY3VtZW50cyUyMGJyaWdodCUyMG9mZmljZXxlbnwxfDB8fHwxNzc3MTU2MDgzfDA&amp;ixlib=rb-4.1.0&amp;w=1200&amp;q=80&amp;fit=crop')"></div>
+            <div class="related-image"><img src="https://images.unsplash.com/photo-1573878412480-ec1bdc30ef53?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMHByb2Zlc3Npb25hbCUyMHJldmlld2luZyUyMGRvY3VtZW50cyUyMGJyaWdodCUyMG9mZmljZXxlbnwxfDB8fHwxNzc3MTU2MDgzfDA&amp;ixlib=rb-4.1.0&amp;w=640&amp;q=80&amp;fit=crop" srcset="https://images.unsplash.com/photo-1573878412480-ec1bdc30ef53?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMHByb2Zlc3Npb25hbCUyMHJldmlld2luZyUyMGRvY3VtZW50cyUyMGJyaWdodCUyMG9mZmljZXxlbnwxfDB8fHwxNzc3MTU2MDgzfDA&amp;ixlib=rb-4.1.0&amp;w=320&amp;q=80&amp;fit=crop 320w, https://images.unsplash.com/photo-1573878412480-ec1bdc30ef53?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMHByb2Zlc3Npb25hbCUyMHJldmlld2luZyUyMGRvY3VtZW50cyUyMGJyaWdodCUyMG9mZmljZXxlbnwxfDB8fHwxNzc3MTU2MDgzfDA&amp;ixlib=rb-4.1.0&amp;w=480&amp;q=80&amp;fit=crop 480w, https://images.unsplash.com/photo-1573878412480-ec1bdc30ef53?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMHByb2Zlc3Npb25hbCUyMHJldmlld2luZyUyMGRvY3VtZW50cyUyMGJyaWdodCUyMG9mZmljZXxlbnwxfDB8fHwxNzc3MTU2MDgzfDA&amp;ixlib=rb-4.1.0&amp;w=640&amp;q=80&amp;fit=crop 640w" sizes="(max-width: 800px) 100vw, 33vw" alt="" width="640" height="160" loading="lazy" decoding="async"></div>
             <div class="related-body">
               <div class="related-cat">Property Management</div>
               <h3>Are You Breaking a Bronx Rent-Stabilization Rule in 2026? What Overcharges Cost You</h3>
@@ -346,7 +370,7 @@ footer.post-footer a { color: white; text-decoration: none; }
           </a>
         
           <a href="../how-bronx-landlords-can-cut-vacancy-time-in-half/" class="related-card">
-            <div class="related-image" style="background-image:url('https://images.unsplash.com/photo-1613668816690-546c6fa9ad42?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwzfHxoYW5keW1hbiUyMHJlcGFpcmluZyUyMGFwYXJ0bWVudCUyMGJyaWdodHxlbnwxfDB8fHwxNzc3MzE4ODkxfDA&amp;ixlib=rb-4.1.0&amp;w=1600&amp;q=80&amp;fit=crop')"></div>
+            <div class="related-image"><img src="https://images.unsplash.com/photo-1613668816690-546c6fa9ad42?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwzfHxoYW5keW1hbiUyMHJlcGFpcmluZyUyMGFwYXJ0bWVudCUyMGJyaWdodHxlbnwxfDB8fHwxNzc3MzE4ODkxfDA&amp;ixlib=rb-4.1.0&amp;w=640&amp;q=80&amp;fit=crop" srcset="https://images.unsplash.com/photo-1613668816690-546c6fa9ad42?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwzfHxoYW5keW1hbiUyMHJlcGFpcmluZyUyMGFwYXJ0bWVudCUyMGJyaWdodHxlbnwxfDB8fHwxNzc3MzE4ODkxfDA&amp;ixlib=rb-4.1.0&amp;w=320&amp;q=80&amp;fit=crop 320w, https://images.unsplash.com/photo-1613668816690-546c6fa9ad42?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwzfHxoYW5keW1hbiUyMHJlcGFpcmluZyUyMGFwYXJ0bWVudCUyMGJyaWdodHxlbnwxfDB8fHwxNzc3MzE4ODkxfDA&amp;ixlib=rb-4.1.0&amp;w=480&amp;q=80&amp;fit=crop 480w, https://images.unsplash.com/photo-1613668816690-546c6fa9ad42?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwzfHxoYW5keW1hbiUyMHJlcGFpcmluZyUyMGFwYXJ0bWVudCUyMGJyaWdodHxlbnwxfDB8fHwxNzc3MzE4ODkxfDA&amp;ixlib=rb-4.1.0&amp;w=640&amp;q=80&amp;fit=crop 640w" sizes="(max-width: 800px) 100vw, 33vw" alt="" width="640" height="160" loading="lazy" decoding="async"></div>
             <div class="related-body">
               <div class="related-cat">Property Management</div>
               <h3>Is Your Bronx Rental Sitting Empty? How to Cut Vacancy Time in Half in 2026</h3>
@@ -355,7 +379,7 @@ footer.post-footer a { color: white; text-decoration: none; }
           </a>
         
           <a href="../why-your-bronx-buildings-ac-breakdown-in-july-could-cost-you/" class="related-card">
-            <div class="related-image" style="background-image:url('https://images.unsplash.com/photo-1479920252409-6e3d8e8d4866?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxMHx8b2ZmaWNlJTIwd29ya2VyJTIwY29tcHV0ZXIlMjBtb2Rlcm4lMjBicmlnaHR8ZW58MXwwfHx8MTc4Mzk2MDU4OXww&amp;ixlib=rb-4.1.0&amp;w=1600&amp;q=80&amp;fit=crop')"></div>
+            <div class="related-image"><img src="https://images.unsplash.com/photo-1479920252409-6e3d8e8d4866?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxMHx8b2ZmaWNlJTIwd29ya2VyJTIwY29tcHV0ZXIlMjBtb2Rlcm4lMjBicmlnaHR8ZW58MXwwfHx8MTc4Mzk2MDU4OXww&amp;ixlib=rb-4.1.0&amp;w=640&amp;q=80&amp;fit=crop" srcset="https://images.unsplash.com/photo-1479920252409-6e3d8e8d4866?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxMHx8b2ZmaWNlJTIwd29ya2VyJTIwY29tcHV0ZXIlMjBtb2Rlcm4lMjBicmlnaHR8ZW58MXwwfHx8MTc4Mzk2MDU4OXww&amp;ixlib=rb-4.1.0&amp;w=320&amp;q=80&amp;fit=crop 320w, https://images.unsplash.com/photo-1479920252409-6e3d8e8d4866?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxMHx8b2ZmaWNlJTIwd29ya2VyJTIwY29tcHV0ZXIlMjBtb2Rlcm4lMjBicmlnaHR8ZW58MXwwfHx8MTc4Mzk2MDU4OXww&amp;ixlib=rb-4.1.0&amp;w=480&amp;q=80&amp;fit=crop 480w, https://images.unsplash.com/photo-1479920252409-6e3d8e8d4866?ixid=M3w5MzUzNTF8MHwxfHNlYXJjaHwxMHx8b2ZmaWNlJTIwd29ya2VyJTIwY29tcHV0ZXIlMjBtb2Rlcm4lMjBicmlnaHR8ZW58MXwwfHx8MTc4Mzk2MDU4OXww&amp;ixlib=rb-4.1.0&amp;w=640&amp;q=80&amp;fit=crop 640w" sizes="(max-width: 800px) 100vw, 33vw" alt="" width="640" height="160" loading="lazy" decoding="async"></div>
             <div class="related-body">
               <div class="related-cat">Maintenance &amp; Repairs</div>
               <h3>Why Your Bronx Building&#39;s AC Breakdown in July Could Cost You $15,000+ (And How to Avoid It)</h3>
