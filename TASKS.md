@@ -31,10 +31,32 @@ Living list of outstanding work. Newest status: **2026-08-02**.
 
 | Date | What happens |
 |---|---|
-| **~2026-08-05** | The forced maintenance-post run finishes (`category-plan.json` hits 0) and normal category variety resumes by itself. |
+| **~2026-08-09** | The forced maintenance-post run finishes (`category-plan.json` hits 0) and normal category variety resumes by itself. *(Checked 2026-08-05: `remaining` is 2, not 0 — the earlier ~08-05 estimate was based on the manual-dispatch burst and was too aggressive. Two posts left at the 2-day cadence.)* |
 | **~2026-08-30** | **Decision point.** Check Arlo's email: has `bronx property management` moved off **~20**? If not, the homepage title was not the constraint — go to backlinks or a Google Business Profile rather than iterating on wording. Baseline: 75 clicks / 5,460 impressions / 1.37% CTR. |
 
 **Do not stack SEO changes before that date.** The whole point of the rank tracking is attribution; changing several things at once makes the result unreadable.
+
+**Rank check 2026-08-05** (3 days after the title change, into a 28-day rolling window — far too early to attribute anything):
+
+| | 07-31 | 08-05 |
+|---|---|---|
+| Site clicks | 75 | **85** |
+| Site impressions | 5,460 | **6,036** |
+| Site avg position | 29.6 | 29.5 |
+| `bronx property management` | 19.9 | **24.6** |
+
+Volume is up ~13% and average position is flat. The one term that moved meaningfully is `bronx property management`, down 4.7 — but **it was already sliding before the title merged** (19.9 → 20.5 on 08-01), and 3 days can only weight ~11% of a 28-day average, so the title is very unlikely to be the cause. The other three tracked terms moved 0.2–0.5, which is noise. **Watch, do not act.**
+
+---
+
+## 🧹 Open pull requests — a backlog worth triaging
+
+As of 2026-08-05 there are **6 open PRs**, some since mid-July. Worth a pass:
+
+- **#266 — should be CLOSED, do not merge.** It adds `<input name="_honey">` to the contact form. `_honey` is FormSubmit.co's field name; **Web3Forms uses `botcheck`**, which `index.html` already has on that form. Merging it adds a non-functional field that Web3Forms treats as ordinary data and **mails to the owner on every lead**. It also edits the same `CLAUDE.md` line as #278, so the two conflict.
+- **#278** — this task list + the do-not-do warnings. *(Merging this is what puts these notes where the next session finds them.)*
+- **#279** — one-word `keepalive` guard on the contact form's Make webhook.
+- **#283, #260, #229** — not reviewed in this session; #229 and #260 have been open since July.
 
 ---
 
