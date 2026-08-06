@@ -2464,7 +2464,10 @@ retell-chat-web-component {
       <li><a href="https://share.google/FcmXTN7BpxR9m3XoZ" target="_blank" rel="noopener">Brochure</a></li>
     </ul>
     <div class="nav-divider"></div>
-    <button class="a11y-nav-btn" aria-label="Accessibility options" onclick="var uw=document.getElementById('userwayAccessibilityIcon');if(uw)uw.click();">
+    <!-- Opens the UserWay panel. UserWay is lazy-loaded (see its loader near </body>), so this
+         goes through loadUserWay(cb) rather than clicking the icon directly — a direct click
+         would be a silent no-op whenever the widget has not downloaded yet. -->
+    <button class="a11y-nav-btn" aria-label="Accessibility options" onclick="window.loadUserWay ? window.loadUserWay(function(uw){uw.click();}) : (function(){var uw=document.getElementById('userwayAccessibilityIcon');if(uw)uw.click();})();">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="white" aria-hidden="true">
         <circle cx="12" cy="4" r="2.2"/>
         <path d="M15.5 8.5h-7a.5.5 0 0 0-.45.72l2.2 4.78H8a1 1 0 0 0 0 2h2.5l.5 4h-1a1 1 0 0 0 0 2h4a1 1 0 0 0 0-2h-1l.5-4H16a1 1 0 0 0 0-2h-2.25l2.2-4.78A.5.5 0 0 0 15.5 8.5z"/>
@@ -3830,17 +3833,13 @@ retell-chat-web-component {
 <!-- VIDEO DIVIDER STRIP -->
 <div class="video-divider" aria-label="New York City aerial view — DoryAngel property management">
   <div class="video-divider__bg">
-    <!-- YouTube iframe background: replace DA_VIDEO_ID with a real YouTube video ID
-         Suggested search: "New York City aerial drone footage" on YouTube
-         Example free NYC aerial: https://www.youtube.com/watch?v=ZbFothOBLqE -->
-    <iframe
-      class="video-divider__yt"
-      src="https://www.youtube.com/embed/ZbFothOBLqE?autoplay=1&mute=1&loop=1&playlist=ZbFothOBLqE&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
-      allow="autoplay; encrypted-media"
-      allowfullscreen
-      loading="lazy"
-      title="NYC aerial background"
-    ></iframe>
+    <!-- YouTube iframe background (video ID ZbFothOBLqE — NYC aerial).
+         ⚠️ Deliberately NOT in the markup. It used to be a plain <iframe loading="lazy">
+         hidden below 768px by CSS, but display:none does not reliably stop an iframe from
+         loading — Chrome eagerly loads frames it considers hidden — so phone visitors were
+         downloading the whole YouTube player (~1MB of JS) for something they never see.
+         It is now injected by the script below: desktop only, reduced-motion respected,
+         and only once the strip nears the viewport. The <img> is the base layer either way. -->
     <!-- Static fallback for mobile / reduced-motion -->
     <img
       class="video-divider__img"
@@ -3856,6 +3855,49 @@ retell-chat-web-component {
     <a href="#contact">Get Your Free Consultation →</a>
   </div>
 </div>
+<script>
+/* Video-divider background: inject the YouTube player only where it is actually shown.
+   Gates, in order — all three must pass:
+     1. viewport > 768px      (matches the .video-divider__yt CSS breakpoint)
+     2. no prefers-reduced-motion
+     3. the strip is within 300px of the viewport
+   Mobile and reduced-motion visitors never fetch the player at all; they keep the
+   static image, which is the base layer and was always the visible layer for them. */
+(function () {
+  var strip = document.querySelector('.video-divider');
+  var bg = strip && strip.querySelector('.video-divider__bg');
+  if (!bg) return;
+
+  var DESKTOP = '(min-width: 769px)';
+  var REDUCED = '(prefers-reduced-motion: reduce)';
+  function allowed() {
+    return window.matchMedia(DESKTOP).matches && !window.matchMedia(REDUCED).matches;
+  }
+
+  var injected = false;
+  function inject() {
+    if (injected || !allowed()) return;
+    injected = true;
+    var f = document.createElement('iframe');
+    f.className = 'video-divider__yt';
+    f.title = 'NYC aerial background';
+    f.allow = 'autoplay; encrypted-media';
+    f.setAttribute('allowfullscreen', '');
+    f.setAttribute('tabindex', '-1');
+    f.setAttribute('aria-hidden', 'true');
+    f.src = 'https://www.youtube.com/embed/ZbFothOBLqE?autoplay=1&mute=1&loop=1' +
+            '&playlist=ZbFothOBLqE&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1';
+    bg.insertBefore(f, bg.firstChild);
+  }
+
+  if (!allowed()) return;
+  if (!('IntersectionObserver' in window)) { window.addEventListener('load', inject); return; }
+  var io = new IntersectionObserver(function (entries) {
+    if (entries.some(function (e) { return e.isIntersecting; })) { io.disconnect(); inject(); }
+  }, { rootMargin: '300px' });
+  io.observe(strip);
+})();
+</script>
 
 <!-- TESTIMONIALS -->
 <section class="testimonials-section" id="testimonials">
@@ -5773,18 +5815,57 @@ async function handleFormSubmit(e) {
   </svg>
   <span class="sticky-ai-call-label">Call us 24/7</span>
 </a>
-<!-- USERWAY ACCESSIBILITY WIDGET -->
+<!-- USERWAY ACCESSIBILITY WIDGET — loaded on first interaction, with an idle/timeout
+     fallback, so this DOM-rewriting overlay stays off the critical rendering path.
+     Same pattern as the Retell and Elfsight loaders below.
+
+     ⚠️ The nav's accessibility button (.a11y-nav-btn) calls window.loadUserWay(cb) —
+     do NOT change that back to a bare userwayAccessibilityIcon.click(), which is a
+     silent no-op until the widget has downloaded. loadUserWay() forces the load and
+     runs the callback once the icon exists, so the first click always opens the panel. -->
 <script>
-(function(d){
-  var s = d.createElement("script");
-  s.setAttribute("data-account", "lKWv8TGXed");
-  s.setAttribute("data-position", "2");
-  s.setAttribute("data-size", "small");
-  s.setAttribute("data-color", "#3A7BDD");
-  s.setAttribute("data-mobile", true);
-  s.setAttribute("src", "https://cdn.userway.org/widget.js");
-  (d.body || d.head).appendChild(s);
-})(document)
+(function (d) {
+  var loaded = false;
+  var waiting = [];
+
+  function flush() {
+    var uw = d.getElementById('userwayAccessibilityIcon');
+    if (!uw) return false;
+    while (waiting.length) { try { waiting.shift()(uw); } catch (e) {} }
+    return true;
+  }
+
+  function loadUserWay(cb) {
+    if (cb) waiting.push(cb);
+    if (!loaded) {
+      loaded = true;
+      var s = d.createElement('script');
+      s.setAttribute('data-account', 'lKWv8TGXed');
+      s.setAttribute('data-position', '2');
+      s.setAttribute('data-size', 'small');
+      s.setAttribute('data-color', '#3A7BDD');
+      s.setAttribute('data-mobile', true);
+      s.setAttribute('src', 'https://cdn.userway.org/widget.js');
+      (d.body || d.head).appendChild(s);
+      remove();
+    }
+    if (!waiting.length || flush()) return;
+    // The icon is injected asynchronously after widget.js runs; poll briefly for it.
+    var tries = 0;
+    var poll = setInterval(function () {
+      if (flush() || ++tries > 100) { clearInterval(poll); waiting.length = 0; }
+    }, 100);
+  }
+  window.loadUserWay = loadUserWay;
+
+  function onInteract() { loadUserWay(); }
+  var evts = ['scroll', 'pointerdown', 'touchstart', 'keydown', 'mousemove'];
+  function remove() { evts.forEach(function (e) { window.removeEventListener(e, onInteract); }); }
+  evts.forEach(function (e) { window.addEventListener(e, onInteract, { once: true, passive: true }); });
+  // Fallback so fully passive visitors still get the accessibility widget.
+  if ('requestIdleCallback' in window) { requestIdleCallback(onInteract, { timeout: 5000 }); }
+  else { window.addEventListener('load', function () { setTimeout(onInteract, 3500); }); }
+})(document);
 </script>
 
 <!-- LOGO PROMO FLIP (hamburger excluded) -->
