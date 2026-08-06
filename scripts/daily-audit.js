@@ -721,7 +721,14 @@ async function getSearchConsoleStats() {
     const topQueries = queryRows.slice(0, 25).map(shape);
     const topByImpressions = [...queryRows].sort((a, b) => b.impressions - a.impressions).slice(0, 25).map(shape);
     const queryMix = summariseQueryMix(queryRows);
+    // ⚠️ SAME CLICK-SORT ARTIFACT AS topQueries, and it hid a real page. On
+    // 2026-08-06 Search Console's own Overview flagged
+    // beta.doryangel.com/blog/nyc-housing-court-…/ as up 108% in impressions —
+    // a page that does not appear anywhere in this file, because it earns zero
+    // clicks and GSC sorts by clicks. Our tracking could not see a page Google
+    // was actively telling the owner about. Keep both views.
     const topPages = pageRows.slice(0, 25).map(shape);
+    const topPagesByImpressions = [...pageRows].sort((a, b) => b.impressions - a.impressions).slice(0, 25).map(shape);
 
     // The commercial basket: the only totals worth steering on. The site-wide
     // average blends three hosts and an unmeasured tail of address lookups, so
@@ -757,7 +764,7 @@ async function getSearchConsoleStats() {
 
     const snapshot = {
       runDate: today(), window, totals, watch,
-      topQueries, topByImpressions, queryMix, topPages, hosts,
+      topQueries, topByImpressions, queryMix, topPages, topPagesByImpressions, hosts,
       hostQueries: hostQueries?.split || [],
     };
 
