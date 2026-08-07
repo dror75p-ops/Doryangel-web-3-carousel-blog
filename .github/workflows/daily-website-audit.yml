@@ -34,6 +34,14 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          # buildAnnotations() runs `git log --since="<backfill> days ago"` to
+          # derive the change log that daily-series.json is read against.
+          # checkout defaults to a depth-1 shallow clone, so that log returned a
+          # single commit — filtered out as noise — and annotations.json was
+          # written empty every run with no error anywhere. Full history is the
+          # only thing that makes the file mean anything.
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
