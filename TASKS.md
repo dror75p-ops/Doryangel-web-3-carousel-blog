@@ -1,6 +1,6 @@
 # DoryAngel — Website Task List
 
-Living list of outstanding work. Newest status: **2026-08-02**.
+Living list of outstanding work. Newest status: **2026-08-06**.
 
 `CLAUDE.md` holds the *reasoning and history*; this file holds *what's left to do*. Tick items off here and move the detail there when something ships.
 
@@ -31,32 +31,36 @@ Living list of outstanding work. Newest status: **2026-08-02**.
 
 | Date | What happens |
 |---|---|
-| **~2026-08-09** | The forced maintenance-post run finishes (`category-plan.json` hits 0) and normal category variety resumes by itself. *(Checked 2026-08-05: `remaining` is 2, not 0 — the earlier ~08-05 estimate was based on the manual-dispatch burst and was too aggressive. Two posts left at the 2-day cadence.)* |
+| **~2026-08-07** | The forced maintenance-post run finishes (`category-plan.json` hits 0) and normal category variety resumes by itself. *(Checked 2026-08-06 after that day's post: `remaining` is **1**. The cron fires on odd days, so the next scheduled post — 08-07 — is the last forced one.)* |
 | **~2026-08-30** | **Decision point.** Check Arlo's email: has `bronx property management` moved off **~20**? If not, the homepage title was not the constraint — go to backlinks or a Google Business Profile rather than iterating on wording. Baseline: 75 clicks / 5,460 impressions / 1.37% CTR. |
 
 **Do not stack SEO changes before that date.** The whole point of the rank tracking is attribution; changing several things at once makes the result unreadable.
 
-**Rank check 2026-08-05** (3 days after the title change, into a 28-day rolling window — far too early to attribute anything):
+**Rank check 2026-08-06** (4 days after the title change, into a 28-day rolling window — still far too early to attribute anything):
 
-| | 07-31 | 08-05 |
-|---|---|---|
-| Site clicks | 75 | **85** |
-| Site impressions | 5,460 | **6,036** |
-| Site avg position | 29.6 | 29.5 |
-| `bronx property management` | 19.9 | **24.6** |
+| | 07-31 | 08-05 | 08-06 |
+|---|---|---|---|
+| Site clicks | 75 | 85 | **85** |
+| Site impressions | 5,460 | 6,036 | **6,072** |
+| `bronx property management` | 19.9 | 24.6 | **25.0** |
 
-Volume is up ~13% and average position is flat. The one term that moved meaningfully is `bronx property management`, down 4.7 — but **it was already sliding before the title merged** (19.9 → 20.5 on 08-01), and 3 days can only weight ~11% of a 28-day average, so the title is very unlikely to be the cause. The other three tracked terms moved 0.2–0.5, which is noise. **Watch, do not act.**
+`bronx property management` has now gone 19.9 → 20.5 → 22.8 → 23.5 → 25.0 — **drifting the wrong way, and it was already sliding before the title merged**. Do not read it as the title hurting: consecutive snapshots share 27 of 28 days, which is exactly the confound the series files exist to remove. **Watch, do not act.**
+
+**🆕 But this no longer has to be guesswork.** Arlo's first real series run (2026-08-06) put **478 days of true per-day history** on disk in `project/seo/daily-series.json` + `query-series.json`, with `annotations.json` as the matching change log. **Answering this properly from the per-day data is the single highest-value analysis task now available** — see the code list below.
+
+**Host split, 2026-08-06:** www **4,309** impr @ **34.0** · apex **1,358** @ **6.2** · beta **1,123** @ **27.1**. Versus 08-03 (www 2,510 @ 47.7 · apex 1,355 @ 5.9 · beta 68 @ 11.2): www is genuinely improving, apex is flat at the local-pack signature, and **beta jumped ~16×**. Beta redirects correctly per-path (measured), so that is Google serving more beta URLs, not a fault. **Watch the beta number.**
 
 ---
 
 ## 🧹 Open pull requests — a backlog worth triaging
 
-As of 2026-08-05 there are **6 open PRs**, some since mid-July. Worth a pass:
+As of 2026-08-06 there are **3 open PRs** — #266, #278 and #283/#284 have all been resolved since the last pass:
 
-- **#266 — should be CLOSED, do not merge.** It adds `<input name="_honey">` to the contact form. `_honey` is FormSubmit.co's field name; **Web3Forms uses `botcheck`**, which `index.html` already has on that form. Merging it adds a non-functional field that Web3Forms treats as ordinary data and **mails to the owner on every lead**. It also edits the same `CLAUDE.md` line as #278, so the two conflict.
-- **#278** — this task list + the do-not-do warnings. *(Merging this is what puts these notes where the next session finds them.)*
-- **#279** — one-word `keepalive` guard on the contact form's Make webhook.
-- **#283, #260, #229** — not reviewed in this session; #229 and #260 have been open since July.
+- **#279** — one-word `keepalive` guard on the contact form's Make webhook. Cheap and self-describing; the PR body is honest that it guards a plausible race rather than fixing a measured defect.
+- **#260** — docs-only; records the Nave maintenance-pivot dry run. Open since 2026-07-26.
+- **#229** — docs-only; GA4 bounce-rate follow-up. Open since 2026-07-17, and its premise ("traffic too thin to conclude") is now stale given the 478-day series.
+
+**Unmerged branch, no PR opened:** `claude/agent-nave-2re5c3` carries two `CLAUDE.md` commits from 2026-08-06 — the measured host check + the github.io finding, and Arlo's first-run verification. **Nothing depends on it, but the github.io finding lives there and nowhere else on `main`.**
 
 ---
 
@@ -64,6 +68,9 @@ As of 2026-08-05 there are **6 open PRs**, some since mid-July. Worth a pass:
 
 Roughly in order of value per unit of risk.
 
+- [ ] **🆕 Answer the `bronx property management` question from the per-day series instead of the rolling snapshots.** `project/seo/daily-series.json` (per-day clicks/impressions/position, split by host) + `query-series.json` (per-day, per-watch-term) + `annotations.json` (change log from `git log`) now hold **478 days**. The 28-day snapshots cannot attribute a move to a cause — that is why these files exist. **Do this before the ~08-30 decision point**, so that decision rests on a measurement rather than an inference. Also worth asking the same data: what actually drove beta from 68 to 1,123 impressions.
+- [ ] **🆕 Bump `actions/checkout@v4` and `actions/setup-node@v4` to `@v5`** across all six workflows. Run logs now warn they target Node 20 and are being **force-run on Node 24**. Nothing is broken yet; this is pre-emptive, and it stops the warning drowning real annotations.
+- [ ] **🆕 Wire up or delete `hasBreadcrumbInBlog`.** `scripts/daily-audit.js:120` is a **hardcoded `false`** with the comment "checked separately in build-blog.js", so every audit prints it as a failing check. Breadcrumb JSON-LD **is** present on blog pages (verified 2026-08-06). It reads like a regression in every daily email.
 - [ ] **Add owner-notify + a sheet row to Make scenario 6335620**, additively, after its existing filter. No code change. Owner briefly gets two alerts per lead — a loud, safe failure mode — and it removes the single point of failure on a public key. *Prerequisite for ever removing Web3Forms.*
 - [ ] **Fix the honeypot field on 5 forms.** They use `_honey`, which is FormSubmit.co's convention — Web3Forms uses `botcheck`, so those forms have **zero** honeypot protection today. Correct in `index.html:2211`, `:2262`, `tax-checklist/index.html:376`, `flat-fee-vs-commission/index.html:596`, `guides/bronx-landlord-compliance/index.html:652`. Only `index.html:4889` is right.
 - [ ] **Add `turnstile.reset()` to the contact form's error paths** (`index.html` ~5146 and ~5150). The tool gate does this; the contact form doesn't. Low severity today, becomes severe if Web3Forms ever validates the token.
@@ -83,8 +90,17 @@ Roughly in order of value per unit of risk.
 
 ---
 
+## ⚠️ Known-good, so nobody re-debugs it
+
+**A job that dies at exactly 15:01 with `runner_id: 0`, no steps and no logs is a GitHub runner-allocation failure, not a bug here.** On 2026-08-06 this killed 4 runs (Arlo ×3, Nave ×1) plus GitHub's own Pages build ×3. `actions/checkout` never runs, so no script in this repo can be involved. **The recovery is simply to re-dispatch.** Both agents were re-run unchanged that evening and passed in 3m51s and 38s. Commit `e93a6ea` misdiagnosed this as a hanging Google `fetch` — its timeouts are fine to keep, but they did not fix it. Full reasoning in `CLAUDE.md`.
+
+---
+
 ## ✅ Recently shipped
 
+- **2026-08-07** — **The github.io duplicate is gone.** Owner set Pages `Source: None`; the probe re-run confirms **404** and zero warnings, with every other host unchanged and Nave's scheduled post publishing normally straight after. *(Use Branch → `None` → Save, not the red `Unpublish site` button — that one leaves the source configured and can republish.)*
+- **2026-08-06** — Host consolidation measured for real from a runner (`host-check.yml`): all 8 redirects correct, beta deep paths preserved, `/tenants` live. Found the github.io duplicate.
+- **2026-08-06** — Arlo's rank-series code had its first live run: **478 days backfilled**, no empty-query-series warning. The "93% of impressions are address lookups" claim is now dead — commercial terms are **2,443** impressions to address lookups' **30**.
 - **2026-08-02** — Homepage title retargeted at the Bronx queries (PR #276). Four lines in `<head>`; nothing visible changed.
 - **2026-07-31** — Google Search Console rank tracking added inside Arlo, not as a new agent. Runs daily, commits history to `project/seo/rank-history.json`.
 - **2026-07-31** — Arlo no longer reports the daily digest as sent when Resend rejected it.
