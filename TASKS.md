@@ -20,7 +20,6 @@ Living list of outstanding work. Newest status: **2026-08-06**.
 
 | | Task | Time | Why it matters |
 |---|---|---|---|
-| 0 | **🆕 Open the `dror75p-ops.github.io/Doryangel-web-3-carousel-blog/` GSC property and read its impressions.** Then decide: near zero → turn Pages off at repo → Settings → Pages → Source: None. Not zero → leave it and tell the next session, because the decision changes. **Do not switch Pages off before reading that property.** | ~5 min | Measured 2026-08-06: that URL returns **200** — GitHub Pages is serving a **full live duplicate of the site**. It is invisible to `sc-domain:doryangel.com`, so no rank data has ever seen it. Its canonicals point at www, which has limited the damage, but it is a second live copy competing during the consolidation window. **This is the only new blocker; everything else below is unchanged.** |
 | 1 | **Rotate the Web3Forms access keys.** Create a new key per form in the Web3Forms dashboard, send the values, they get swapped in, **then** delete the old key — that order, or all 8 forms break. | ~10 min | **This is what actually stops the inbox spam.** The current key is public in the page source, so bots POST directly and never load the site. No code change can stop that. |
 | 2 | **Request re-indexing of the homepage** in Search Console (paste `https://www.doryangel.com/`, click Request Indexing). | 30 sec | Cuts the wait on the new title from weeks to days. |
 | 3 | Verify `doryangel.com` in Resend. | ~10 min | Lifts the sandbox-sender restriction so agent email comes from the brand domain. Long-standing item. |
@@ -99,7 +98,8 @@ Roughly in order of value per unit of risk.
 
 ## ✅ Recently shipped
 
-- **2026-08-06** — Host consolidation measured for real from a runner (`host-check.yml`): all 8 redirects correct, beta deep paths preserved, `/tenants` live. Found the github.io duplicate (owner item 0 above).
+- **2026-08-07** — **The github.io duplicate is gone.** Owner set Pages `Source: None`; the probe re-run confirms **404** and zero warnings, with every other host unchanged and Nave's scheduled post publishing normally straight after. *(Use Branch → `None` → Save, not the red `Unpublish site` button — that one leaves the source configured and can republish.)*
+- **2026-08-06** — Host consolidation measured for real from a runner (`host-check.yml`): all 8 redirects correct, beta deep paths preserved, `/tenants` live. Found the github.io duplicate.
 - **2026-08-06** — Arlo's rank-series code had its first live run: **478 days backfilled**, no empty-query-series warning. The "93% of impressions are address lookups" claim is now dead — commercial terms are **2,443** impressions to address lookups' **30**.
 - **2026-08-02** — Homepage title retargeted at the Bronx queries (PR #276). Four lines in `<head>`; nothing visible changed.
 - **2026-07-31** — Google Search Console rank tracking added inside Arlo, not as a new agent. Runs daily, commits history to `project/seo/rank-history.json`.
