@@ -1,6 +1,6 @@
 # DoryAngel — Website Task List
 
-Living list of outstanding work. Newest status: **2026-08-02**.
+Living list of outstanding work. Newest status: **2026-08-07**.
 
 `CLAUDE.md` holds the *reasoning and history*; this file holds *what's left to do*. Tick items off here and move the detail there when something ships.
 
@@ -22,8 +22,12 @@ Living list of outstanding work. Newest status: **2026-08-02**.
 |---|---|---|---|
 | 1 | **Rotate the Web3Forms access keys.** Create a new key per form in the Web3Forms dashboard, send the values, they get swapped in, **then** delete the old key — that order, or all 8 forms break. | ~10 min | **This is what actually stops the inbox spam.** The current key is public in the page source, so bots POST directly and never load the site. No code change can stop that. |
 | 2 | **Request re-indexing of the homepage** in Search Console (paste `https://www.doryangel.com/`, click Request Indexing). | 30 sec | Cuts the wait on the new title from weeks to days. |
-| 3 | Verify `doryangel.com` in Resend. | ~10 min | Lifts the sandbox-sender restriction so agent email comes from the brand domain. Long-standing item. |
-| 4 | Set budget caps on Make.com and Anthropic. | ~5 min | Cost safety. Long-standing item. |
+| 3 | **Turn off GitHub Pages** — repo → Settings → Pages → **Source: None**. | ~1 min | Production has been on Vercel since 2026-07-07, but Pages still rebuilds and serves a stale duplicate of the whole site at `dror75p-ops.github.io/Doryangel-web-3-carousel-blog/` on every push. Verified safe: **zero** references to that URL anywhere on the site, no `CNAME`, and the other github.io micro-sites are different repos. |
+| 4 | **Read the Page indexing counts** in Search Console (Indexing → Pages) and send a screenshot. | 1 min | The report lists `Discovered - not indexed`, `Crawled - not indexed` and `Duplicate, Google chose different canonical` — but the **counts were never read**. Three trivial pages and a third of the site look identical until you do. Probably the highest-value unanswered SEO question. |
+| 5 | Verify `doryangel.com` in Resend. | ~10 min | Lifts the sandbox-sender restriction so agent email comes from the brand domain. Long-standing item. |
+| 6 | Set budget caps on Make.com and Anthropic. | ~5 min | Cost safety. Long-standing item. |
+
+**No longer needed:** resubmitting `sitemap.xml`. Verified 2026-08-06 — submitted 07-24, last read 08-05, **65 discovered pages**, "processed successfully". Nothing was ever wrong with it.
 
 ---
 
@@ -56,7 +60,8 @@ As of 2026-08-05 there are **6 open PRs**, some since mid-July. Worth a pass:
 - **#266 — should be CLOSED, do not merge.** It adds `<input name="_honey">` to the contact form. `_honey` is FormSubmit.co's field name; **Web3Forms uses `botcheck`**, which `index.html` already has on that form. Merging it adds a non-functional field that Web3Forms treats as ordinary data and **mails to the owner on every lead**. It also edits the same `CLAUDE.md` line as #278, so the two conflict.
 - **#278** — this task list + the do-not-do warnings. *(Merging this is what puts these notes where the next session finds them.)*
 - **#279** — one-word `keepalive` guard on the contact form's Make webhook.
-- **#283, #260, #229** — not reviewed in this session; #229 and #260 have been open since July.
+- **#283 — MERGED 2026-08-06.** Phase 1 audit fixes. *(Lesson from it: it conflicted with two auto-published posts while open. Generated `blog/*/index.html` files are never hand-merged — merge main, keep the branch's `scripts/build-blog.js`, then re-run it. Auto-publish fires on odd days, so PRs touching those files should be merged quickly.)*
+- **#260, #229** — not reviewed; open since July.
 
 ---
 
@@ -71,6 +76,8 @@ Roughly in order of value per unit of risk.
 - [ ] **Fix the `/tools` 404 landmine.** `scripts/generate-post.js:411` tells the model to write "free at doryangel.com/tools" into posts, but there is no `tools/index.html` and no rewrite. No post has emitted it yet — harmless today, broken the day one does. Cheapest fix is a `/tools` → `/#tools` redirect in `vercel.json`.
 - [ ] **Fix one truncated meta description.** `why-your-bronx-rentals-insurance-premium-could-jump-25-this` ends mid-word: `"…and how to fight ba"`. Only one of 56; renders verbatim in Google.
 - [ ] **Repoint one old github.io link.** `content/blog/posts-index.json:66` still links the retired Compliance Calendar URL, sending backlink credit to the personal subdomain the migration existed to retire.
+- [ ] **Update the tax checklist from 2025 to 2026.** `tax-checklist/index.html` title, meta description and H1 all advertise the prior tax year, as does the homepage tool card (`index.html:3213`, "Updated for 2025"). It is August 2026, so a live lead magnet is presenting itself as abandoned. Four strings — but **first ask the owner whether the 28 deductions still hold for the 2026 tax year**; changing only the number would be worse than leaving it. Owner deferred this on 2026-08-05.
+- [ ] **Fix the hashtag chip overflowing the viewport on mobile.** A `.hashtag-row` chip sits ~9px past the right edge at 390px on **every** post page, causing horizontal scroll. Confirmed pre-existing (reproduced against the pre-change commit), so it is not a regression from the 2026-08-05 hero work. Likely one `flex-wrap` line in `scripts/build-blog.js`; regenerates all 58 pages.
 - [ ] **Add a sentence-shape rule to Nave's prompt** if the forced-category run is ever repeated. Six of the last eight titles opened `"Your Bronx Building's …"`; only category and subject are constrained, not shape.
 
 ---
@@ -85,6 +92,7 @@ Roughly in order of value per unit of risk.
 
 ## ✅ Recently shipped
 
+- **2026-08-06** — Phase 1 audit of the owner's improvement plan, and its two approved fixes (PR #283). The compliance guide's four unlabelled lead-form inputs now have real labels — the same defect fixed on `flat-fee-vs-commission` in July, which had never propagated across the shared shell. And all 58 blog pages got the homepage's load fixes they never received: fonts off the critical path, `preconnect` to `fonts.gstatic.com` and `images.unsplash.com`, and the LCP hero converted from a CSS background to a real `<img>` with `srcset` and a preload. Measured: mobile now fetches the 640w image where it used to take 1200w.
 - **2026-08-02** — Homepage title retargeted at the Bronx queries (PR #276). Four lines in `<head>`; nothing visible changed.
 - **2026-07-31** — Google Search Console rank tracking added inside Arlo, not as a new agent. Runs daily, commits history to `project/seo/rank-history.json`.
 - **2026-07-31** — Arlo no longer reports the daily digest as sent when Resend rejected it.
