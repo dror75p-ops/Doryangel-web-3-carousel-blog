@@ -1,7 +1,2542 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-08-07",
+  "updatedAt": "2026-08-08",
   "events": [
+    {
+      "date": "2026-04-25",
+      "kind": "site",
+      "subject": "Refresh all post images with new aligned queries"
+    },
+    {
+      "date": "2026-04-25",
+      "kind": "site",
+      "subject": "Add one-shot workflow to refresh all existing post images"
+    },
+    {
+      "date": "2026-04-25",
+      "kind": "site",
+      "subject": "Refine Unsplash queries: office workers, skyscrapers, handymen — all bright"
+    },
+    {
+      "date": "2026-04-25",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-04-25"
+    },
+    {
+      "date": "2026-04-25",
+      "kind": "site",
+      "subject": "Add Facebook-ready copy block to approval email"
+    },
+    {
+      "date": "2026-04-25",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-04-25"
+    },
+    {
+      "date": "2026-04-25",
+      "kind": "site",
+      "subject": "Add Unsplash cover images to blog posts"
+    },
+    {
+      "date": "2026-04-25",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-04-25"
+    },
+    {
+      "date": "2026-04-25",
+      "kind": "site",
+      "subject": "Send approval email to dror75p@gmail.com for Resend test"
+    },
+    {
+      "date": "2026-04-25",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-04-25"
+    },
+    {
+      "date": "2026-04-25",
+      "kind": "site",
+      "subject": "Fix workflow: remove npm cache, add package-lock.json"
+    },
+    {
+      "date": "2026-04-25",
+      "kind": "site",
+      "subject": "Wire GH_TOKEN secret into workflow push step"
+    },
+    {
+      "date": "2026-04-25",
+      "kind": "site",
+      "subject": "Add blog automation — generates + emails post every 3 days"
+    },
+    {
+      "date": "2026-04-25",
+      "kind": "site",
+      "subject": "Add CLAUDE.md — project memory for latest version"
+    },
+    {
+      "date": "2026-04-25",
+      "kind": "site",
+      "subject": "Implement DoryAngel website — Option D editorial blog layout"
+    },
+    {
+      "date": "2026-04-25",
+      "kind": "site",
+      "subject": "Claude Design handoff: Doeryangelweb.2"
+    },
+    {
+      "date": "2026-04-26",
+      "kind": "site",
+      "subject": "Living Turtle + rotating headlines/trust bar (Direction A+B)"
+    },
+    {
+      "date": "2026-04-26",
+      "kind": "site",
+      "subject": "Add Google Analytics 4 + cookie consent banner"
+    },
+    {
+      "date": "2026-04-26",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-04-26"
+    },
+    {
+      "date": "2026-04-26",
+      "kind": "site",
+      "subject": "Apply Claude API best practices to blog generation"
+    },
+    {
+      "date": "2026-04-26",
+      "kind": "site",
+      "subject": "Improve Facebook post format based on feedback"
+    },
+    {
+      "date": "2026-04-26",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-04-26"
+    },
+    {
+      "date": "2026-04-26",
+      "kind": "site",
+      "subject": "Add visual polish, motion, and mobile responsiveness improvements"
+    },
+    {
+      "date": "2026-04-27",
+      "kind": "site",
+      "subject": "feat: add Buildium trust strip below Owner/Tenant portal buttons"
+    },
+    {
+      "date": "2026-04-27",
+      "kind": "site",
+      "subject": "Update Google review count from 19 to 21"
+    },
+    {
+      "date": "2026-04-27",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-04-27"
+    },
+    {
+      "date": "2026-04-27",
+      "kind": "site",
+      "subject": "Add Google Search Console verification file"
+    },
+    {
+      "date": "2026-04-27",
+      "kind": "site",
+      "subject": "Fix 404 on blog post navigation across deployments"
+    },
+    {
+      "date": "2026-04-27",
+      "kind": "site",
+      "subject": "Update CLAUDE.md to reflect full blog rebuild + branch workflow"
+    },
+    {
+      "date": "2026-04-27",
+      "kind": "site",
+      "subject": "Remove accidentally-committed node_modules + add .gitignore"
+    },
+    {
+      "date": "2026-04-27",
+      "kind": "seo",
+      "subject": "Full blog rebuild: per-post URLs, SEO, 3 categories, structured data"
+    },
+    {
+      "date": "2026-04-27",
+      "kind": "site",
+      "subject": "Add Option C: bright NYC photos cross-fading behind hero"
+    },
+    {
+      "date": "2026-04-28",
+      "kind": "site",
+      "subject": "Update project memory: active design status + improvement roadmap"
+    },
+    {
+      "date": "2026-04-28",
+      "kind": "site",
+      "subject": "Fix hamburger invisible bug: move default CSS before responsive media query"
+    },
+    {
+      "date": "2026-04-28",
+      "kind": "site",
+      "subject": "UX fixes: hamburger alignment, eyebrow mobile, nav CTA, hero clearance"
+    },
+    {
+      "date": "2026-04-28",
+      "kind": "site",
+      "subject": "Fix hamburger placement: restore two-row nav, move button beside CTA"
+    },
+    {
+      "date": "2026-04-28",
+      "kind": "site",
+      "subject": "Add responsive hamburger menu with slide-in drawer"
+    },
+    {
+      "date": "2026-04-28",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-04-28"
+    },
+    {
+      "date": "2026-04-28",
+      "kind": "site",
+      "subject": "feat: rotating hero headline — price + tech variants, 4s interval"
+    },
+    {
+      "date": "2026-04-28",
+      "kind": "site",
+      "subject": "feat: CRO hero rewrite + pillar/stat icons for visual depth"
+    },
+    {
+      "date": "2026-04-28",
+      "kind": "site",
+      "subject": "redesign: centered portal strip with owner-focused headline"
+    },
+    {
+      "date": "2026-04-28",
+      "kind": "site",
+      "subject": "fix: unify portal card border + stronger CRM copy + tighter chips"
+    },
+    {
+      "date": "2026-04-29",
+      "kind": "site",
+      "subject": "Fix hero headline clipped on mobile: align both breakpoints to 140px"
+    },
+    {
+      "date": "2026-04-29",
+      "kind": "site",
+      "subject": "Fix hero clipped on small phones: bump 600px padding to 130px"
+    },
+    {
+      "date": "2026-04-29",
+      "kind": "site",
+      "subject": "Hide hero eyebrow on mobile, increase hero top padding"
+    },
+    {
+      "date": "2026-05-01",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-05-01"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Fix: wrap main post JSON.parse in try/catch to prevent crash on malformed response"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Add DoryAngel Digest strip under blog section, Digest nav link + tool card"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Add AI topic selection + Digest subscriber notification to blog automation"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Update scripts/generate-post.js"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Update index.html"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Fix logo href: relative path to avoid 404 on GitHub Pages subdirectory"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Add logo+hamburger promo flip animation every 22s"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Better a11y icon (filled), SMS button becomes Chat with us pill"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Fix a11y btn: move left, full icon, working click trigger"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Nav: single row, nowrap, align-items center, CTA flex:1"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Force rebuild: single-row nav with CTA + a11y + hamburger"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Fix nav row: all 3 controls on one line, no-wrap, CTA flex-grows"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Move accessibility button into nav bar next to hamburger"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Revert UserWay position attr, add float animation to both FABs"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Fix accessibility widget: transparent bg, bottom-right, above SMS"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Move accessibility btn above SMS, transparent bg, fix ghost boxes"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "seo",
+      "subject": "SMS button, square FABs, privacy page, SEO improvements"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "seo",
+      "subject": "SMS button, square FABs, privacy page, SEO improvements"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "seo",
+      "subject": "SMS button, square FABs, privacy page, SEO improvements"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "seo",
+      "subject": "SMS button, square FABs, privacy page, SEO improvements"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Fix logo path (relative for GitHub Pages), force UserWay to bottom-left"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Activate UserWay accessibility widget (account: lKWv8TGXed)"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Perf: replace base64 logo with /assets/logo.jpg (-55%), fix nav logo href"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Add logo as standalone asset (extracted from base64)"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Fix drawer logo clip, white+blue floating buttons, UserWay bottom-left override"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Fix drawer: no sticky hover on mobile, tighter nav items, UserWay bottom-left"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Design polish: navy phone button, subtle Facebook link, UserWay bottom-left + brand color"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "seo",
+      "subject": "Add robots.txt pointing to sitemap"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "seo",
+      "subject": "Add sitemap.xml for SEO/GEO indexing"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Add Privacy Policy page"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "seo",
+      "subject": "Add sticky call btn, pricing CTA, JSON-LD, accessibility widget, SEO meta"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Fix mobile hero clipping (172px top pad), Get My Free Property Audit links to #contact, desktop nav About link"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Announce bar hides on scroll, drawer compact + no double slogan, desktop nav adds About link"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "UX polish: stack tools vertically, dark nav announce bar, drawer logo, Doryangel branding, compact mobile menu, 3rd hero headline"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Fix scroll offset, announce bar positioning, nav cleanup, rename to Dror Angel Property Automation"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "White drawer, rename to Dror Angel Automation Tools, add tool callout in services"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Lighter blue drawer, rename tools, add announce bar, update footer"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Add Tools nav dropdown with roadmap, update mobile drawer, add coming-soon tools"
+    },
+    {
+      "date": "2026-05-03",
+      "kind": "site",
+      "subject": "Add Doryangel Automation Tools section with Compliance Calendar and Buildium links"
+    },
+    {
+      "date": "2026-05-04",
+      "kind": "site",
+      "subject": "Add mobile-only AI call button connecting to Retell AI channel (+15167743249)"
+    },
+    {
+      "date": "2026-05-04",
+      "kind": "site",
+      "subject": "Add missing legal pages and fix all footer links for production"
+    },
+    {
+      "date": "2026-05-04",
+      "kind": "site",
+      "subject": "Add .nojekyll to bypass Jekyll and ensure GitHub Pages serves all files directly"
+    },
+    {
+      "date": "2026-05-04",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-05-04"
+    },
+    {
+      "date": "2026-05-06",
+      "kind": "site",
+      "subject": "fix: constrain Retell chat panel to viewport on mobile"
+    },
+    {
+      "date": "2026-05-06",
+      "kind": "site",
+      "subject": "Restore Retell robot button — revert all custom pill/overlay code"
+    },
+    {
+      "date": "2026-05-06",
+      "kind": "site",
+      "subject": "Rethink chat pill: robot icon + transparent Retell overlay"
+    },
+    {
+      "date": "2026-05-06",
+      "kind": "site",
+      "subject": "Fix chat pill trigger: z-index cover instead of opacity hide"
+    },
+    {
+      "date": "2026-05-06",
+      "kind": "site",
+      "subject": "Fix: hide Retell robot button + wire chat pill correctly"
+    },
+    {
+      "date": "2026-05-06",
+      "kind": "site",
+      "subject": "Redesign floating CTA buttons: two matching navy pills"
+    },
+    {
+      "date": "2026-05-06",
+      "kind": "site",
+      "subject": "Fix CLAUDE.md: correct Retell chat paths and event names"
+    },
+    {
+      "date": "2026-05-06",
+      "kind": "site",
+      "subject": "Add Retell AI chat widget (Hailey) to website"
+    },
+    {
+      "date": "2026-05-06",
+      "kind": "site",
+      "subject": "Correct Retell lead capture mapping to use custom_analysis_data"
+    },
+    {
+      "date": "2026-05-06",
+      "kind": "site",
+      "subject": "Document Retell AI lead capture integration + note column offset fix"
+    },
+    {
+      "date": "2026-05-07",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-05-07"
+    },
+    {
+      "date": "2026-05-09",
+      "kind": "site",
+      "subject": "fix: update service areas, Facebook URL, and hide tweaks panel"
+    },
+    {
+      "date": "2026-05-10",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-05-10"
+    },
+    {
+      "date": "2026-05-10",
+      "kind": "site",
+      "subject": "Focus auto-generated blog posts on the Bronx exclusively"
+    },
+    {
+      "date": "2026-05-10",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-05-10"
+    },
+    {
+      "date": "2026-05-11",
+      "kind": "site",
+      "subject": "Add Property Automation category with 2 seed articles"
+    },
+    {
+      "date": "2026-05-11",
+      "kind": "site",
+      "subject": "Add 3 human photos to warm up the site for prospects"
+    },
+    {
+      "date": "2026-05-11",
+      "kind": "site",
+      "subject": "CRO: fix 4 conversion issues identified in UX review"
+    },
+    {
+      "date": "2026-05-12",
+      "kind": "site",
+      "subject": "Revert compliance calendar card to simple external link"
+    },
+    {
+      "date": "2026-05-12",
+      "kind": "site",
+      "subject": "Add inline Compliance Calendar signup form wired to Make.com webhook"
+    },
+    {
+      "date": "2026-05-13",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-05-13"
+    },
+    {
+      "date": "2026-05-14",
+      "kind": "site",
+      "subject": "Lift Call us 24/7 button so it clears the chat widget"
+    },
+    {
+      "date": "2026-05-15",
+      "kind": "seo",
+      "subject": "feat: pre-launch website improvements — SEO, phone CTA, internal links"
+    },
+    {
+      "date": "2026-05-15",
+      "kind": "site",
+      "subject": "Change mobile call button from AI channel to office number (516-847-4999)"
+    },
+    {
+      "date": "2026-05-15",
+      "kind": "site",
+      "subject": "Solid-fill Call FAB so it fits DoryAngels button system"
+    },
+    {
+      "date": "2026-05-15",
+      "kind": "site",
+      "subject": "Make Call FAB transparent outline + nudge 3px left"
+    },
+    {
+      "date": "2026-05-15",
+      "kind": "seo",
+      "subject": "Tighten chat title + restore Call FAB to a circle"
+    },
+    {
+      "date": "2026-05-15",
+      "kind": "site",
+      "subject": "Refresh Retell chat widget copy to sell the value"
+    },
+    {
+      "date": "2026-05-16",
+      "kind": "site",
+      "subject": "docs(claude.md): note hosting status — GH Pages live, Vercel pending owner go-ahead"
+    },
+    {
+      "date": "2026-05-16",
+      "kind": "seo",
+      "subject": "fix(contact-form): repair broken thank-you redirect + add honeypot spam defense"
+    },
+    {
+      "date": "2026-05-16",
+      "kind": "seo",
+      "subject": "fix(generate-post): prevent duplicate brand suffix and lossy truncation in seoTitle"
+    },
+    {
+      "date": "2026-05-16",
+      "kind": "seo",
+      "subject": "fix(seo): rewrite 13 broken seoTitles to ≤60 chars with single | DoryAngel suffix"
+    },
+    {
+      "date": "2026-05-16",
+      "kind": "site",
+      "subject": "feat: add Claude Code Skills for blog QA, authoring, PR flow, and lead-pipeline debug"
+    },
+    {
+      "date": "2026-05-16",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-05-16"
+    },
+    {
+      "date": "2026-05-17",
+      "kind": "site",
+      "subject": "Remove Retell popup attributes entirely (not just set to false)"
+    },
+    {
+      "date": "2026-05-17",
+      "kind": "site",
+      "subject": "Disable Retell chat auto-popup bubble"
+    },
+    {
+      "date": "2026-05-17",
+      "kind": "site",
+      "subject": "Update CLAUDE.md: log PR #43 merge and logo flip changes"
+    },
+    {
+      "date": "2026-05-17",
+      "kind": "site",
+      "subject": "Slow logo promo flip to every 5 seconds (was 3s)"
+    },
+    {
+      "date": "2026-05-17",
+      "kind": "site",
+      "subject": "Logo-only promo flip: remove hamburger animation, speed logo to 3s cycle"
+    },
+    {
+      "date": "2026-05-17",
+      "kind": "site",
+      "subject": "Fix accessibility: form labels, FAQ aria-expanded, hero image labels, blog fallback"
+    },
+    {
+      "date": "2026-05-17",
+      "kind": "site",
+      "subject": "Update CLAUDE.md with latest change log (portal card removal)"
+    },
+    {
+      "date": "2026-05-17",
+      "kind": "site",
+      "subject": "Remove Owner/Tenant Portal card from hero section"
+    },
+    {
+      "date": "2026-05-17",
+      "kind": "site",
+      "subject": "Update portal preview section label to Transparent Reporting — Pillar 01"
+    },
+    {
+      "date": "2026-05-17",
+      "kind": "site",
+      "subject": "Move portal preview into Pillars section, left-align, add pillar label"
+    },
+    {
+      "date": "2026-05-17",
+      "kind": "site",
+      "subject": "Make portal iframe edge-to-edge on mobile, full-width on desktop"
+    },
+    {
+      "date": "2026-05-17",
+      "kind": "site",
+      "subject": "Embed owner-portal-reports page directly via iframe"
+    },
+    {
+      "date": "2026-05-17",
+      "kind": "site",
+      "subject": "Simplify portal section to a direct link button"
+    },
+    {
+      "date": "2026-05-17",
+      "kind": "site",
+      "subject": "Add Owner Portal preview section with 4-slide feature modal"
+    },
+    {
+      "date": "2026-05-17",
+      "kind": "site",
+      "subject": "Redesign portal strip as a real Buildium-style ledger table"
+    },
+    {
+      "date": "2026-05-17",
+      "kind": "site",
+      "subject": "Replace portal strip chips with structured monthly report rows"
+    },
+    {
+      "date": "2026-05-18",
+      "kind": "site",
+      "subject": "Replace tablet photo with updated version (no turtle, bolder logo)"
+    },
+    {
+      "date": "2026-05-18",
+      "kind": "seo",
+      "subject": "Fix missing spacing between section subtitle and tablet image"
+    },
+    {
+      "date": "2026-05-18",
+      "kind": "site",
+      "subject": "Add photos to Tenants, Brokers, and Vendors audience cards"
+    },
+    {
+      "date": "2026-05-18",
+      "kind": "site",
+      "subject": "Shift call button and Retell widget 5px further right"
+    },
+    {
+      "date": "2026-05-18",
+      "kind": "site",
+      "subject": "Move call button and Retell widget 4px left"
+    },
+    {
+      "date": "2026-05-18",
+      "kind": "seo",
+      "subject": "QA pass: fix 8 issues across security, SEO, and accessibility"
+    },
+    {
+      "date": "2026-05-18",
+      "kind": "site",
+      "subject": "Add Microsoft Clarity pending task to project memory"
+    },
+    {
+      "date": "2026-05-18",
+      "kind": "site",
+      "subject": "Fix Elfsight overflow, restore buttons, make scroll-top transparent"
+    },
+    {
+      "date": "2026-05-18",
+      "kind": "site",
+      "subject": "Fix Elfsight overflow + restore Call FAB and Retell visibility"
+    },
+    {
+      "date": "2026-05-18",
+      "kind": "site",
+      "subject": "Fix announce bar text cut-off on narrow mobile screens"
+    },
+    {
+      "date": "2026-05-18",
+      "kind": "site",
+      "subject": "Add Elfsight FOMO sales notification widget"
+    },
+    {
+      "date": "2026-05-18",
+      "kind": "site",
+      "subject": "Add scroll-to-top button + FOMO widget placeholder"
+    },
+    {
+      "date": "2026-05-19",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-05-19"
+    },
+    {
+      "date": "2026-05-22",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-05-22"
+    },
+    {
+      "date": "2026-05-23",
+      "kind": "seo",
+      "subject": "SEO: RealEstateAgent schema + breadcrumbs on all blog posts + sitemap fix"
+    },
+    {
+      "date": "2026-05-23",
+      "kind": "site",
+      "subject": "Add email and phone fields to broker partner application form"
+    },
+    {
+      "date": "2026-05-23",
+      "kind": "site",
+      "subject": "Add Retell AI privacy disclosure, fix autopublish cron, blog script improvements"
+    },
+    {
+      "date": "2026-05-23",
+      "kind": "site",
+      "subject": "Add /roundtable skill — full 14-role virtual boardroom audit"
+    },
+    {
+      "date": "2026-05-23",
+      "kind": "site",
+      "subject": "Remove UserWay script — eliminates floating round accessibility widget"
+    },
+    {
+      "date": "2026-05-23",
+      "kind": "site",
+      "subject": "Match broker page nav exactly to main site two-row layout"
+    },
+    {
+      "date": "2026-05-23",
+      "kind": "site",
+      "subject": "Fix broker partner nav: blue icon buttons, remove float CTA, fix call FAB"
+    },
+    {
+      "date": "2026-05-23",
+      "kind": "site",
+      "subject": "Add announce bar and fix nav to fixed positioning"
+    },
+    {
+      "date": "2026-05-23",
+      "kind": "site",
+      "subject": "Fix mobile float CTA overflow; add Call FAB and Retell widget"
+    },
+    {
+      "date": "2026-05-23",
+      "kind": "site",
+      "subject": "Fix floating CTA covering page content on mobile"
+    },
+    {
+      "date": "2026-05-23",
+      "kind": "site",
+      "subject": "Add Broker Partner Landing Page"
+    },
+    {
+      "date": "2026-05-24",
+      "kind": "site",
+      "subject": "Revert \"Replace testimonials carousel with dual-row infinite marquee ticker\""
+    },
+    {
+      "date": "2026-05-24",
+      "kind": "site",
+      "subject": "Replace testimonials carousel with dual-row infinite marquee ticker"
+    },
+    {
+      "date": "2026-05-25",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-05-25"
+    },
+    {
+      "date": "2026-05-28",
+      "kind": "seo",
+      "subject": "Pre-launch cleanup: remove dead design-tool artifacts, fix broker canonical"
+    },
+    {
+      "date": "2026-05-28",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-05-28"
+    },
+    {
+      "date": "2026-06-01",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-01"
+    },
+    {
+      "date": "2026-06-01",
+      "kind": "site",
+      "subject": "Fix chip overflow and section bar wrapping on mobile"
+    },
+    {
+      "date": "2026-06-01",
+      "kind": "site",
+      "subject": "UX/UI polish pass on premium tool card"
+    },
+    {
+      "date": "2026-06-01",
+      "kind": "site",
+      "subject": "Redesign premium card header + fix PayPal flow + contrast"
+    },
+    {
+      "date": "2026-06-01",
+      "kind": "site",
+      "subject": "Fix 3 advisory board issues: motion, drawer close, tagline"
+    },
+    {
+      "date": "2026-06-01",
+      "kind": "site",
+      "subject": "Add Property P&L Dashboard premium tool card with carousel preview"
+    },
+    {
+      "date": "2026-06-02",
+      "kind": "site",
+      "subject": "Fix horizontal overflow causing hero content to clip on mobile"
+    },
+    {
+      "date": "2026-06-02",
+      "kind": "site",
+      "subject": "Product page: full main-site header, fix tab overflow, fix spacing"
+    },
+    {
+      "date": "2026-06-02",
+      "kind": "site",
+      "subject": "Fix broken card layout: remove orphaned pm-kpi-preview wrapper"
+    },
+    {
+      "date": "2026-06-02",
+      "kind": "site",
+      "subject": "Fix 404 link, PayPal visibility, mobile chip overflow, broken download"
+    },
+    {
+      "date": "2026-06-02",
+      "kind": "site",
+      "subject": "Fix 404: use relative path for P&L Dashboard card link"
+    },
+    {
+      "date": "2026-06-02",
+      "kind": "site",
+      "subject": "Polish product page header + PayPal btn; shrink P&L card on main site"
+    },
+    {
+      "date": "2026-06-02",
+      "kind": "site",
+      "subject": "Compact P&L card + full product page + update coming-soon tools"
+    },
+    {
+      "date": "2026-06-02",
+      "kind": "site",
+      "subject": "Redesign property automation tools section for monetization funnel"
+    },
+    {
+      "date": "2026-06-03",
+      "kind": "site",
+      "subject": "Add tool mention to Facebook post copy when relevant"
+    },
+    {
+      "date": "2026-06-03",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-03"
+    },
+    {
+      "date": "2026-06-03",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-03"
+    },
+    {
+      "date": "2026-06-03",
+      "kind": "site",
+      "subject": "Extend auto-publish bot to generate broker-partnerships posts"
+    },
+    {
+      "date": "2026-06-03",
+      "kind": "site",
+      "subject": "Add digest tool and dashboard posts (product-education)"
+    },
+    {
+      "date": "2026-06-03",
+      "kind": "site",
+      "subject": "Add 3 broker-partnerships blog posts"
+    },
+    {
+      "date": "2026-06-03",
+      "kind": "site",
+      "subject": "Add broker-partnerships category to blog navigation"
+    },
+    {
+      "date": "2026-06-03",
+      "kind": "site",
+      "subject": "Fix card horizontal overflow: add min-width:0 to grid items"
+    },
+    {
+      "date": "2026-06-03",
+      "kind": "site",
+      "subject": "Fix month pills overflow: 6-col grid → 4-col grid, compact chart"
+    },
+    {
+      "date": "2026-06-03",
+      "kind": "site",
+      "subject": "Tighten slide spacing; add min-width:0 to fix bar overflow root cause"
+    },
+    {
+      "date": "2026-06-03",
+      "kind": "site",
+      "subject": "Redesign product page carousel slides: compact, mobile-safe, flashy"
+    },
+    {
+      "date": "2026-06-03",
+      "kind": "site",
+      "subject": "Fix product page hero clipping on mobile; bump sticky panel offset"
+    },
+    {
+      "date": "2026-06-03",
+      "kind": "site",
+      "subject": "Add Excel dashboard mockup preview inside premium P&L card"
+    },
+    {
+      "date": "2026-06-03",
+      "kind": "site",
+      "subject": "Nav: revert P&L link to #tools; match product page nav to main site (links + mobile)"
+    },
+    {
+      "date": "2026-06-03",
+      "kind": "site",
+      "subject": "Nav: link P&L Dashboard to product page; add Leave a Google Review to footer"
+    },
+    {
+      "date": "2026-06-04",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-04"
+    },
+    {
+      "date": "2026-06-04",
+      "kind": "site",
+      "subject": "Replace Cal.com CTAs with #contact form + add Property Address field"
+    },
+    {
+      "date": "2026-06-04",
+      "kind": "site",
+      "subject": "Add beta qualifier to Broker Partner Program rate in system prompt"
+    },
+    {
+      "date": "2026-06-04",
+      "kind": "site",
+      "subject": "Add Compliance Calendar to blog bot + Broker Partner Program to nav"
+    },
+    {
+      "date": "2026-06-04",
+      "kind": "site",
+      "subject": "Add Broker Partner Program details to auto-publish system prompt"
+    },
+    {
+      "date": "2026-06-04",
+      "kind": "site",
+      "subject": "Add tool mention to Facebook post copy (#65)"
+    },
+    {
+      "date": "2026-06-04",
+      "kind": "site",
+      "subject": "Add force-publish bypass for test runs (#64)"
+    },
+    {
+      "date": "2026-06-04",
+      "kind": "site",
+      "subject": "Add natural tool-mention guidance to auto-publish system prompt (#63)"
+    },
+    {
+      "date": "2026-06-04",
+      "kind": "site",
+      "subject": "Add natural tool-mention guidance to auto-publish system prompt (#62)"
+    },
+    {
+      "date": "2026-06-06",
+      "kind": "site",
+      "subject": "Nav: AI Property Inspector links scroll to #tools card instead of external URL (#73)"
+    },
+    {
+      "date": "2026-06-06",
+      "kind": "site",
+      "subject": "Equalise free tool card heights with consistent 3-chip structure"
+    },
+    {
+      "date": "2026-06-06",
+      "kind": "site",
+      "subject": "Add AI Property Inspector to desktop nav dropdown and hamburger drawer (#71)"
+    },
+    {
+      "date": "2026-06-06",
+      "kind": "site",
+      "subject": "Add audio transcription chip and update card description (#70)"
+    },
+    {
+      "date": "2026-06-06",
+      "kind": "site",
+      "subject": "Add AI Property Inspector card to DIY Landlord Toolkit section"
+    },
+    {
+      "date": "2026-06-07",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-07"
+    },
+    {
+      "date": "2026-06-10",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-10"
+    },
+    {
+      "date": "2026-06-13",
+      "kind": "site",
+      "subject": "Set logo flip interval to 29s (fix collateral replace_all)"
+    },
+    {
+      "date": "2026-06-13",
+      "kind": "site",
+      "subject": "Slow logo flip interval from 5s to 10s"
+    },
+    {
+      "date": "2026-06-13",
+      "kind": "site",
+      "subject": "Add glow pulse to logo breathe + flash on flip-back"
+    },
+    {
+      "date": "2026-06-13",
+      "kind": "site",
+      "subject": "Logo flip: 3D rotateY flip + shimmer text in brand colors"
+    },
+    {
+      "date": "2026-06-13",
+      "kind": "site",
+      "subject": "Fix logo flip layout shift: lock stripe height/width, better CTA"
+    },
+    {
+      "date": "2026-06-13",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-13"
+    },
+    {
+      "date": "2026-06-13",
+      "kind": "site",
+      "subject": "Send blog approval email to office@doryangel.com"
+    },
+    {
+      "date": "2026-06-13",
+      "kind": "site",
+      "subject": "Replace generic stock photos with authentic, property-specific images"
+    },
+    {
+      "date": "2026-06-16",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-16"
+    },
+    {
+      "date": "2026-06-16",
+      "kind": "site",
+      "subject": "Revert Retell button clipping — restores chat open functionality"
+    },
+    {
+      "date": "2026-06-16",
+      "kind": "site",
+      "subject": "Clip Retell trigger to 60x60 circle via host CSS, restore click functionality"
+    },
+    {
+      "date": "2026-06-16",
+      "kind": "site",
+      "subject": "Force Retell trigger to 60x60 circle via direct JS style injection"
+    },
+    {
+      "date": "2026-06-16",
+      "kind": "site",
+      "subject": "Shrink Retell chat button to 60x60 circle matching Call button size"
+    },
+    {
+      "date": "2026-06-16",
+      "kind": "site",
+      "subject": "Make Retell chat trigger button a perfect circle like the Call button"
+    },
+    {
+      "date": "2026-06-16",
+      "kind": "site",
+      "subject": "Change Retell button from circle to rounded rectangle (16px radius)"
+    },
+    {
+      "date": "2026-06-16",
+      "kind": "site",
+      "subject": "Make Retell chat widget trigger button fully rounded"
+    },
+    {
+      "date": "2026-06-16",
+      "kind": "site",
+      "subject": "Fix Retell chat widget by upgrading to v2 script"
+    },
+    {
+      "date": "2026-06-16",
+      "kind": "site",
+      "subject": "Fix Retell widget placement - move inside body (#81)"
+    },
+    {
+      "date": "2026-06-16",
+      "kind": "seo",
+      "subject": "Fix canonical and OG URLs to beta.doryangel.com (#80)"
+    },
+    {
+      "date": "2026-06-16",
+      "kind": "site",
+      "subject": "Set base URL to beta.doryangel.com (#79)"
+    },
+    {
+      "date": "2026-06-16",
+      "kind": "site",
+      "subject": "Add Microsoft Clarity heatmap tracking (x7y1bk4fhc) (#78)"
+    },
+    {
+      "date": "2026-06-17",
+      "kind": "site",
+      "subject": "Add newsletter subscribers and website tool signups to lead stats (#97)"
+    },
+    {
+      "date": "2026-06-17",
+      "kind": "site",
+      "subject": "Read all 3 lead sheets (voice owner, voice tenant, Hailey chat)"
+    },
+    {
+      "date": "2026-06-17",
+      "kind": "site",
+      "subject": "Read Hailey lead stats from Google Sheets instead of Make.com API"
+    },
+    {
+      "date": "2026-06-17",
+      "kind": "site",
+      "subject": "Add Make.com Hailey lead stats to daily digest"
+    },
+    {
+      "date": "2026-06-17",
+      "kind": "site",
+      "subject": "Fix syntax error in GA4 stats function (line 157)"
+    },
+    {
+      "date": "2026-06-17",
+      "kind": "site",
+      "subject": "Name the daily audit agent \"Arlo\""
+    },
+    {
+      "date": "2026-06-17",
+      "kind": "seo",
+      "subject": "Multi-role audit improvements: GDPR, perf, UX, SEO, tracking"
+    },
+    {
+      "date": "2026-06-17",
+      "kind": "site",
+      "subject": "Add GA4 traffic stats to daily audit email (sessions/users/pageviews + top pages)"
+    },
+    {
+      "date": "2026-06-17",
+      "kind": "site",
+      "subject": "Enhance email digest: add day/week/month stats, category bars, recent posts"
+    },
+    {
+      "date": "2026-06-17",
+      "kind": "site",
+      "subject": "Fix YAML: collapse multi-line python3 to single line in run block"
+    },
+    {
+      "date": "2026-06-17",
+      "kind": "site",
+      "subject": "Fix workflow: force-push branch + handle existing PR on re-runs"
+    },
+    {
+      "date": "2026-06-17",
+      "kind": "site",
+      "subject": "Fix PR creation: replace gh CLI (GraphQL 401) with curl REST API"
+    },
+    {
+      "date": "2026-06-17",
+      "kind": "site",
+      "subject": "Fix workflow YAML parse error — remove heredoc from shell step"
+    },
+    {
+      "date": "2026-06-17",
+      "kind": "seo",
+      "subject": "Update CLAUDE.md: mark Clarity and LocalBusiness schema as done, update status"
+    },
+    {
+      "date": "2026-06-17",
+      "kind": "site",
+      "subject": "Add daily website audit automation + fix Clarity GDPR issue"
+    },
+    {
+      "date": "2026-06-17",
+      "kind": "site",
+      "subject": "Add client testimonials section + fix featured blog post"
+    },
+    {
+      "date": "2026-06-17",
+      "kind": "site",
+      "subject": "Add client testimonials section before contact form"
+    },
+    {
+      "date": "2026-06-18",
+      "kind": "seo",
+      "subject": "Update chat widget title and add agent name constant (#98)"
+    },
+    {
+      "date": "2026-06-19",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-19"
+    },
+    {
+      "date": "2026-06-20",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-20"
+    },
+    {
+      "date": "2026-06-20",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-20"
+    },
+    {
+      "date": "2026-06-20",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-20"
+    },
+    {
+      "date": "2026-06-20",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-20"
+    },
+    {
+      "date": "2026-06-20",
+      "kind": "site",
+      "subject": "Nave: send digest emails directly from subscriber sheet + fix git push race"
+    },
+    {
+      "date": "2026-06-20",
+      "kind": "site",
+      "subject": "feat: introduce Vera as a dedicated social distribution agent"
+    },
+    {
+      "date": "2026-06-20",
+      "kind": "site",
+      "subject": "feat: auto-post to Facebook Page via Graph API after each blog publish"
+    },
+    {
+      "date": "2026-06-20",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-20"
+    },
+    {
+      "date": "2026-06-20",
+      "kind": "site",
+      "subject": "Nave: include all 5 tool links with direct URLs in every Facebook post"
+    },
+    {
+      "date": "2026-06-20",
+      "kind": "site",
+      "subject": "Nave: add tools + broker partner links to every Facebook post"
+    },
+    {
+      "date": "2026-06-20",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-20"
+    },
+    {
+      "date": "2026-06-20",
+      "kind": "site",
+      "subject": "Fix Nave: send blog emails to dror75p@gmail.com and skip empty commit"
+    },
+    {
+      "date": "2026-06-21",
+      "kind": "site",
+      "subject": "Use mailto: link for digest unsubscribe instead of Make.com webhook"
+    },
+    {
+      "date": "2026-06-21",
+      "kind": "site",
+      "subject": "Nave: CSV fallback + one-click unsubscribe for digest emails"
+    },
+    {
+      "date": "2026-06-21",
+      "kind": "site",
+      "subject": "Nave: add subscriber email count to approval email"
+    },
+    {
+      "date": "2026-06-22",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-22"
+    },
+    {
+      "date": "2026-06-23",
+      "kind": "site",
+      "subject": "Add cinematic video divider strip between pricing and testimonials"
+    },
+    {
+      "date": "2026-06-24",
+      "kind": "site",
+      "subject": "Fix Arlo daily-audit: PR creation broken by expired GH_TOKEN (#109)"
+    },
+    {
+      "date": "2026-06-24",
+      "kind": "site",
+      "subject": "Auto-improve: Add dns-prefetch for analytics hosts (#108)"
+    },
+    {
+      "date": "2026-06-25",
+      "kind": "site",
+      "subject": "Fix form email confirmations — rows 15, 17, 18"
+    },
+    {
+      "date": "2026-06-25",
+      "kind": "site",
+      "subject": "Arlo: rename Website tool signups to PM tool subscribers (correct label)"
+    },
+    {
+      "date": "2026-06-25",
+      "kind": "site",
+      "subject": "Arlo: fetch all named tabs from Owner leads sheet to fix 400 error"
+    },
+    {
+      "date": "2026-06-25",
+      "kind": "site",
+      "subject": "Arlo: replace raw 403 badge with actionable message in lead summary"
+    },
+    {
+      "date": "2026-06-25",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-25"
+    },
+    {
+      "date": "2026-06-25",
+      "kind": "site",
+      "subject": "Mark next-session reminder as temporary (#122)"
+    },
+    {
+      "date": "2026-06-25",
+      "kind": "site",
+      "subject": "Add next-session reminder: fix digest signup → subscriber sheet capture (#121)"
+    },
+    {
+      "date": "2026-06-25",
+      "kind": "site",
+      "subject": "Make Arlos issue creation use built-in token + non-fatal"
+    },
+    {
+      "date": "2026-06-25",
+      "kind": "site",
+      "subject": "Add FAQPage JSON-LD matching the visible FAQ section"
+    },
+    {
+      "date": "2026-06-25",
+      "kind": "site",
+      "subject": "Fix hero image: 5-summer-security-upgrades-bronx-landlords-need-before-peak-"
+    },
+    {
+      "date": "2026-06-25",
+      "kind": "site",
+      "subject": "Add fix-single-image script and workflow for targeted image refresh (#113)"
+    },
+    {
+      "date": "2026-06-25",
+      "kind": "site",
+      "subject": "Fix property-automation hero images returning financial charts (#112)"
+    },
+    {
+      "date": "2026-06-25",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-25"
+    },
+    {
+      "date": "2026-06-25",
+      "kind": "site",
+      "subject": "Add Research Agent and Quality Reviewer steps to Naves pipeline (#111)"
+    },
+    {
+      "date": "2026-06-25",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-25"
+    },
+    {
+      "date": "2026-06-25",
+      "kind": "seo",
+      "subject": "Add E-E-A-T, answer front-loading, FAQ schema, and cliché ban to blog pipeline"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Document the planned beta.doryangel.com -> doryangel.com apex migration"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "seo",
+      "subject": "Pull legal/thank-you/broker canonicals back to beta.doryangel.com"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Align same-site URLs to production domain beta.doryangel.com"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Harden gate forms: debounce submit to prevent webhook double-fire"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Document Make.com scenarios and the Nave/Vera digest pipeline"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Segment the digest blast by subscriber topic + deliver via Gmail"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Add topic-interest picker to Digest signup and wire to Make.com"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Remove duplicate Web3Forms submission from tax checklist form"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Redesign tax checklist lead magnet as a matching tool card"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Wire tax checklist form to live Make.com webhook"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Redesign calculator CTA in pricing section into prominent card"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Fix flat-fee page header: match main site nav, fix mobile CTA overflow"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Add flat-fee vs. % commission savings calculator landing page"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Fix three code-review findings in Digest toolgate"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Fix Digest toolgate: skip window.open and show correct success message"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Redesign tax checklist pages with full DoryAngel site nav and footer"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Add Bronx Landlord Tax Deduction Checklist lead magnet (issue #123)"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Fix toolgate modal buried under sticky mobile buttons"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Fix toolgate modal buried under sticky mobile buttons on mobile"
+    },
+    {
+      "date": "2026-06-26",
+      "kind": "site",
+      "subject": "Remove resolved bug notice from CLAUDE.md (#124)"
+    },
+    {
+      "date": "2026-06-27",
+      "kind": "site",
+      "subject": "Document 2026-06-27 digest hardening, security pass, and Make gotchas"
+    },
+    {
+      "date": "2026-06-27",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-27"
+    },
+    {
+      "date": "2026-06-27",
+      "kind": "site",
+      "subject": "Digest: send every post to all active subscribers (reach-first)"
+    },
+    {
+      "date": "2026-06-27",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-27"
+    },
+    {
+      "date": "2026-06-27",
+      "kind": "site",
+      "subject": "Send digest topics as an array (mapper join() flattens it)"
+    },
+    {
+      "date": "2026-06-27",
+      "kind": "site",
+      "subject": "Fix digest signup dropping every submission: send topics as a string"
+    },
+    {
+      "date": "2026-06-28",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-28"
+    },
+    {
+      "date": "2026-06-28",
+      "kind": "site",
+      "subject": "Fix mobile horizontal-overflow clipping the hero (#156)"
+    },
+    {
+      "date": "2026-06-28",
+      "kind": "seo",
+      "subject": "Polish schema: collapse duplicate business entity + add image (#153) (#155)"
+    },
+    {
+      "date": "2026-06-28",
+      "kind": "seo",
+      "subject": "Add Service/neighborhood schema + tax-checklist breadcrumb (#153) (#154)"
+    },
+    {
+      "date": "2026-06-28",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-06-28"
+    },
+    {
+      "date": "2026-06-28",
+      "kind": "site",
+      "subject": "Add Tax Checklist + Flat-Fee Calculator to the Tools menu (#151)"
+    },
+    {
+      "date": "2026-06-28",
+      "kind": "site",
+      "subject": "Hotfix: strip Turnstile token from Web3Forms POST (#150)"
+    },
+    {
+      "date": "2026-06-28",
+      "kind": "site",
+      "subject": "Security hardening: webhook secret, Turnstile on lead forms, slug fix (#149)"
+    },
+    {
+      "date": "2026-06-29",
+      "kind": "site",
+      "subject": "Fix mobile overflow in contact section (Facebook link + form border) (#163)"
+    },
+    {
+      "date": "2026-06-29",
+      "kind": "site",
+      "subject": "Remove agent Tally (revert this sessions work) (#162)"
+    },
+    {
+      "date": "2026-06-29",
+      "kind": "site",
+      "subject": "Fix Tally Wix 403: send required wix-account-id header (#161)"
+    },
+    {
+      "date": "2026-06-29",
+      "kind": "site",
+      "subject": "Fix Tally Wix call: correct Analytics Data endpoint, method, and metrics (#160)"
+    },
+    {
+      "date": "2026-06-29",
+      "kind": "site",
+      "subject": "Add agent Tally: traffic comparison (beta GA4 vs old doryangel.com Wix)"
+    },
+    {
+      "date": "2026-06-29",
+      "kind": "seo",
+      "subject": "Tune Nave title formula from doryangel.com traffic data (#158)"
+    },
+    {
+      "date": "2026-07-01",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-01"
+    },
+    {
+      "date": "2026-07-01",
+      "kind": "seo",
+      "subject": "Add Organization type + logo/foundingDate/sameAs to LocalBusiness schema"
+    },
+    {
+      "date": "2026-07-01",
+      "kind": "site",
+      "subject": "Add blog post: Rent-control tenant screening compliance rules (Bronx)"
+    },
+    {
+      "date": "2026-07-04",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-04"
+    },
+    {
+      "date": "2026-07-05",
+      "kind": "seo",
+      "subject": "Add missing meta description to tax-checklist/checklist.html"
+    },
+    {
+      "date": "2026-07-05",
+      "kind": "site",
+      "subject": "Fix broken/Wix-pointing links found in the site-wide link audit"
+    },
+    {
+      "date": "2026-07-05",
+      "kind": "site",
+      "subject": "Exclude dev artifacts (project/, chats/, scripts, configs) from Vercel deploys"
+    },
+    {
+      "date": "2026-07-05",
+      "kind": "seo",
+      "subject": "Add vercel.json with 301 redirects for all 111 Wix /post/ URLs"
+    },
+    {
+      "date": "2026-07-05",
+      "kind": "site",
+      "subject": "Remove dev tweaks panel CSS/JS; bake its live defaults into static CSS"
+    },
+    {
+      "date": "2026-07-05",
+      "kind": "site",
+      "subject": "Remove three unverifiable persona review cards from Google Reviews carousel"
+    },
+    {
+      "date": "2026-07-05",
+      "kind": "site",
+      "subject": "Add Vercel Web Analytics (cookieless visitor counting)"
+    },
+    {
+      "date": "2026-07-07",
+      "kind": "site",
+      "subject": "Post-cutover: migrate beta → www.doryangel.com, disable auto-publish, security hardening (#175)"
+    },
+    {
+      "date": "2026-07-07",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-07"
+    },
+    {
+      "date": "2026-07-08",
+      "kind": "seo",
+      "subject": "Add catch-all redirect for unmapped old Wix /post/ URLs (#184)"
+    },
+    {
+      "date": "2026-07-08",
+      "kind": "seo",
+      "subject": "Redirect old Wix /property-management URL to homepage (#183)"
+    },
+    {
+      "date": "2026-07-08",
+      "kind": "site",
+      "subject": "Re-enable blog auto-publish workflow post-cutover (#182)"
+    },
+    {
+      "date": "2026-07-08",
+      "kind": "site",
+      "subject": "Pricing model corrected site-wide: $99 per unit per month (#181)"
+    },
+    {
+      "date": "2026-07-08",
+      "kind": "site",
+      "subject": "Add Vercel Speed Insights site-wide (+ Web Analytics beyond homepage) (#180)"
+    },
+    {
+      "date": "2026-07-08",
+      "kind": "site",
+      "subject": "Fix CSP frame-src blocking the Owner Portal Reports iframe (#179)"
+    },
+    {
+      "date": "2026-07-08",
+      "kind": "site",
+      "subject": "Add featured post: DIY vs flat-fee property management for Bronx landlords (#178)"
+    },
+    {
+      "date": "2026-07-09",
+      "kind": "site",
+      "subject": "Add consent-gated GA4 tracking to blog posts and landing pages (#187)"
+    },
+    {
+      "date": "2026-07-09",
+      "kind": "site",
+      "subject": "Document Retell chat domain-allowlist gotcha + v2 widget (#186)"
+    },
+    {
+      "date": "2026-07-10",
+      "kind": "site",
+      "subject": "DRY_RUN now sends the owner approval email (preview only) (#198)"
+    },
+    {
+      "date": "2026-07-10",
+      "kind": "site",
+      "subject": "Add DRY_RUN mode to Nave for safe tone/output previews (#197)"
+    },
+    {
+      "date": "2026-07-10",
+      "kind": "site",
+      "subject": "Nave: warmer, homeowner-friendly blog tone (#196)"
+    },
+    {
+      "date": "2026-07-10",
+      "kind": "site",
+      "subject": "Nave: auto-publish every 2 days + re-enable; approval email preps manual Instagram (#195)"
+    },
+    {
+      "date": "2026-07-10",
+      "kind": "site",
+      "subject": "Add Google Consent Mode v2 + generate_lead event for real conversion tracking"
+    },
+    {
+      "date": "2026-07-10",
+      "kind": "site",
+      "subject": "Merge duplicate NYC compliance posts into one 2026 guide"
+    },
+    {
+      "date": "2026-07-10",
+      "kind": "site",
+      "subject": "Re-anchor New Rochelle property-tax post to the Bronx (NYC tax system)"
+    },
+    {
+      "date": "2026-07-10",
+      "kind": "site",
+      "subject": "Re-anchor Mount Vernon vacancy post to the Bronx"
+    },
+    {
+      "date": "2026-07-10",
+      "kind": "seo",
+      "subject": "Retitle 6 underperforming posts to the traffic-validated formula"
+    },
+    {
+      "date": "2026-07-10",
+      "kind": "seo",
+      "subject": "Redirect beta.doryangel.com -> www with a 301 (kill duplicate domain)"
+    },
+    {
+      "date": "2026-07-10",
+      "kind": "site",
+      "subject": "Fix mobile contact-form overflow from fixed-width Turnstile widget"
+    },
+    {
+      "date": "2026-07-10",
+      "kind": "seo",
+      "subject": "SEO: add missing canonical on checklist page + tool pages to sitemap"
+    },
+    {
+      "date": "2026-07-10",
+      "kind": "site",
+      "subject": "Disable auto-publish workflow (switch to manual publishing)"
+    },
+    {
+      "date": "2026-07-10",
+      "kind": "site",
+      "subject": "Segment contact leads by role: required first-field dropdown + dynamic subject"
+    },
+    {
+      "date": "2026-07-11",
+      "kind": "site",
+      "subject": "Add static, crawlable /blog/ hub to fix blog indexing coverage"
+    },
+    {
+      "date": "2026-07-11",
+      "kind": "site",
+      "subject": "Remove throwaway coverage probe after verification"
+    },
+    {
+      "date": "2026-07-11",
+      "kind": "site",
+      "subject": "Add throwaway per-URL coverage probe"
+    },
+    {
+      "date": "2026-07-11",
+      "kind": "seo",
+      "subject": "Remove throwaway redirect probe after verification"
+    },
+    {
+      "date": "2026-07-11",
+      "kind": "seo",
+      "subject": "Add throwaway live redirect/indexability probe"
+    },
+    {
+      "date": "2026-07-11",
+      "kind": "site",
+      "subject": "perf-watch probe for PR #203 deploy"
+    },
+    {
+      "date": "2026-07-11",
+      "kind": "site",
+      "subject": "Trim unused third-party JS: remove dead marked.js, defer Elfsight"
+    },
+    {
+      "date": "2026-07-11",
+      "kind": "site",
+      "subject": "Defer Retell chat widget + preconnect font host (mobile perf)"
+    },
+    {
+      "date": "2026-07-11",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-11"
+    },
+    {
+      "date": "2026-07-11",
+      "kind": "site",
+      "subject": "Optimize images: WebP + compression to cut mobile LCP"
+    },
+    {
+      "date": "2026-07-11",
+      "kind": "site",
+      "subject": "Remove throwaway Lighthouse probe after verification"
+    },
+    {
+      "date": "2026-07-11",
+      "kind": "site",
+      "subject": "Add throwaway Lighthouse probe against live site"
+    },
+    {
+      "date": "2026-07-11",
+      "kind": "site",
+      "subject": "Remove throwaway Clarity probe workflow after verification"
+    },
+    {
+      "date": "2026-07-11",
+      "kind": "site",
+      "subject": "Switch Clarity probe to push trigger so it runs from the branch"
+    },
+    {
+      "date": "2026-07-11",
+      "kind": "site",
+      "subject": "Add throwaway Clarity Data Export API probe workflow"
+    },
+    {
+      "date": "2026-07-12",
+      "kind": "site",
+      "subject": "Pricing: set Professional tier to $199/unit/mo (3 distinct levels) (#211)"
+    },
+    {
+      "date": "2026-07-12",
+      "kind": "site",
+      "subject": "Feed Clarity engagement signal into Naves topic picker (#209)"
+    },
+    {
+      "date": "2026-07-12",
+      "kind": "site",
+      "subject": "Connect Arlo to Clarity behavioral data (learns from real UX signals) (#208)"
+    },
+    {
+      "date": "2026-07-12",
+      "kind": "seo",
+      "subject": "Consolidate near-duplicate summer blog posts (58 → 46) with 301 redirects (#207)"
+    },
+    {
+      "date": "2026-07-12",
+      "kind": "site",
+      "subject": "Reshape Naves content mix toward owner-facing property-management (#206)"
+    },
+    {
+      "date": "2026-07-13",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-13"
+    },
+    {
+      "date": "2026-07-14",
+      "kind": "seo",
+      "subject": "Add 301 redirect for legacy Wix /home homepage URL"
+    },
+    {
+      "date": "2026-07-14",
+      "kind": "seo",
+      "subject": "Add 301 redirects for legacy Wix URLs"
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "seo",
+      "subject": "Add /faq/ conversion FAQ page with FAQPage schema (closes #173) (#224)"
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "site",
+      "subject": "Arlo: real semantic dedupe gate before filing audit issues (#223)"
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-15"
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "site",
+      "subject": "Dual-tag GA4: send to both the new and legacy property (no history gap) (#222)"
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "site",
+      "subject": "Standardize P&L Dashboard checkout on one PayPal link (#220)"
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "site",
+      "subject": "Price P&L Dashboard consistently at $29.99 (display); keep mgmt fee separate (#219)"
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "site",
+      "subject": "Nave: fix P&L price contradiction ($29→$7.99), Clarity diagnostics, doc cadence (#218)"
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "site",
+      "subject": "Document Naves Clarity engagement signal + why its thin post-Vercel move (#217)"
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "site",
+      "subject": "Nave: add Bronx-vs-adjacent-area comparison format (Mount Vernon) (#216)"
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "site",
+      "subject": "Lower Property P&L Dashboard price to $7.99"
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "site",
+      "subject": "Set featured P&L card width to 384px to match top toolkit cards"
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "site",
+      "subject": "Reduce featured P&L card width to 420px"
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "site",
+      "subject": "Halve featured P&L card width and left-align it"
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "site",
+      "subject": "Widen featured P&L card to align with the 3-card toolkit row"
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "site",
+      "subject": "Revert toolkit redesign; restore original P&L Dashboard card"
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "site",
+      "subject": "Unify toolkit into one 5-card grid (3 top, 2 centered below)"
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "site",
+      "subject": "Align featured P&L Dashboard card to single top-card width"
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "site",
+      "subject": "Add flashy lead-capture form to all blog posts"
+    },
+    {
+      "date": "2026-07-16",
+      "kind": "seo",
+      "subject": "Remap 33 parked /post/ redirects to relevant blog posts (SEO authority)"
+    },
+    {
+      "date": "2026-07-16",
+      "kind": "seo",
+      "subject": "Fix soft-404s: real 404 for unmapped old URLs, add missing redirects"
+    },
+    {
+      "date": "2026-07-16",
+      "kind": "seo",
+      "subject": "Link every blog post to the new /faq/ page for internal SEO equity (#225)"
+    },
+    {
+      "date": "2026-07-17",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-17"
+    },
+    {
+      "date": "2026-07-17",
+      "kind": "site",
+      "subject": "Remove throwaway Clarity live-check workflow (verification complete)"
+    },
+    {
+      "date": "2026-07-17",
+      "kind": "site",
+      "subject": "Throwaway: verify Clarity cookieless fix is live on production (removed right after check)"
+    },
+    {
+      "date": "2026-07-17",
+      "kind": "site",
+      "subject": "Load Microsoft Clarity unconditionally in cookieless mode"
+    },
+    {
+      "date": "2026-07-18",
+      "kind": "site",
+      "subject": "Consolidate remaining spring/summer near-duplicate blog posts"
+    },
+    {
+      "date": "2026-07-18",
+      "kind": "site",
+      "subject": "Consolidate near-duplicate summer/spring blog posts flagged by GSC"
+    },
+    {
+      "date": "2026-07-18",
+      "kind": "seo",
+      "subject": "Add missing 301 redirect for old Wix /post/ URL"
+    },
+    {
+      "date": "2026-07-19",
+      "kind": "site",
+      "subject": "Fix broker-partnerships posts showing literal \"undefined\" for category"
+    },
+    {
+      "date": "2026-07-19",
+      "kind": "site",
+      "subject": "Fix broker-partner.html still loading the old v1 Retell widget"
+    },
+    {
+      "date": "2026-07-19",
+      "kind": "site",
+      "subject": "Ignore graphify-out/ (Graphify pipeline cache and intermediate output)"
+    },
+    {
+      "date": "2026-07-19",
+      "kind": "seo",
+      "subject": "Retitle the 5 \"5 Summer X\" posts to break the cookie-cutter pattern (#237)"
+    },
+    {
+      "date": "2026-07-19",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-19"
+    },
+    {
+      "date": "2026-07-19",
+      "kind": "site",
+      "subject": "Speed/stability wrap-up pass + CLAUDE.md changelog (#236)"
+    },
+    {
+      "date": "2026-07-19",
+      "kind": "site",
+      "subject": "Remove redundant \"Transparent Reporting\" eyebrow label in hero (#235)"
+    },
+    {
+      "date": "2026-07-19",
+      "kind": "site",
+      "subject": "Trim duplicate messaging in the hero portal-preview intro"
+    },
+    {
+      "date": "2026-07-19",
+      "kind": "site",
+      "subject": "Move owner-portal dashboard preview into the hero (#233)"
+    },
+    {
+      "date": "2026-07-19",
+      "kind": "site",
+      "subject": "Add animated property-overview widget to DIY Toolkit section (#232)"
+    },
+    {
+      "date": "2026-07-20",
+      "kind": "site",
+      "subject": "Add Birdeye reviews profile to LocalBusiness sameAs (#243)"
+    },
+    {
+      "date": "2026-07-20",
+      "kind": "site",
+      "subject": "Add LinkedIn company page to LocalBusiness sameAs (#242)"
+    },
+    {
+      "date": "2026-07-20",
+      "kind": "site",
+      "subject": "Add Google Business Profile link to LocalBusiness sameAs (#241)"
+    },
+    {
+      "date": "2026-07-20",
+      "kind": "site",
+      "subject": "Nave: add full-history topic dedupe gate + structural-variety rules (#238)"
+    },
+    {
+      "date": "2026-07-20",
+      "kind": "site",
+      "subject": "Add .gitattributes for graphifys graph.json merge driver"
+    },
+    {
+      "date": "2026-07-20",
+      "kind": "site",
+      "subject": "generate-post.js: use shared post-utils"
+    },
+    {
+      "date": "2026-07-20",
+      "kind": "site",
+      "subject": "Add offline regression check for post-utils.js"
+    },
+    {
+      "date": "2026-07-20",
+      "kind": "site",
+      "subject": "refresh-images.js: use shared searchUnsplashPhotos primitive"
+    },
+    {
+      "date": "2026-07-20",
+      "kind": "site",
+      "subject": "fix-single-image.js: use shared searchUnsplashPhotos primitive"
+    },
+    {
+      "date": "2026-07-20",
+      "kind": "site",
+      "subject": "seed-automation-posts.js: use shared post-utils, fixing stale generateSlug"
+    },
+    {
+      "date": "2026-07-20",
+      "kind": "site",
+      "subject": "migrate-posts-once.js: use shared wordsToMinutes"
+    },
+    {
+      "date": "2026-07-20",
+      "kind": "site",
+      "subject": "Add shared scripts/lib/post-utils.js for genuinely-duplicated helpers"
+    },
+    {
+      "date": "2026-07-21",
+      "kind": "site",
+      "subject": "Gate owner-portal iframe behind IntersectionObserver"
+    },
+    {
+      "date": "2026-07-21",
+      "kind": "site",
+      "subject": "Downsize hero background photos (w=1600→1000, q=70→60)"
+    },
+    {
+      "date": "2026-07-21",
+      "kind": "site",
+      "subject": "Pause below-fold canvas widget when off-screen or tab hidden"
+    },
+    {
+      "date": "2026-07-21",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-21"
+    },
+    {
+      "date": "2026-07-22",
+      "kind": "site",
+      "subject": "polish: symmetry + owner-lead emphasis (toolkit layout, owner card, testimonials) (#249)"
+    },
+    {
+      "date": "2026-07-22",
+      "kind": "site",
+      "subject": "perf/ux: replace hero owner-portal iframe with a lightweight rotating report stripe (#248)"
+    },
+    {
+      "date": "2026-07-22",
+      "kind": "site",
+      "subject": "chore: remove 5 orphaned images from assets/ (~1.4 MB) (#247)"
+    },
+    {
+      "date": "2026-07-22",
+      "kind": "site",
+      "subject": "perf: fix the slow-connection Speed Insights tail (P95/P99) (#246)"
+    },
+    {
+      "date": "2026-07-23",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-23"
+    },
+    {
+      "date": "2026-07-23",
+      "kind": "site",
+      "subject": "ux: slow the hero slogan rotation and add a gentle flag-wave at rest (#252)"
+    },
+    {
+      "date": "2026-07-23",
+      "kind": "site",
+      "subject": "copy: reposition the announce bar to trust-first (savings as support) (#251)"
+    },
+    {
+      "date": "2026-07-23",
+      "kind": "site",
+      "subject": "copy: reposition the hero from price-led to trust/peace-of-mind-led (#250)"
+    },
+    {
+      "date": "2026-07-24",
+      "kind": "seo",
+      "subject": "seo: Nave weaves contextual in-body internal links into new posts (#256)"
+    },
+    {
+      "date": "2026-07-24",
+      "kind": "seo",
+      "subject": "seo: cross-cluster \"Continue reading\" + hub up-links (#255)"
+    },
+    {
+      "date": "2026-07-24",
+      "kind": "site",
+      "subject": "feat: NYC Compliance Guide card in the DIY toolkit + generalize the guide name (#254)"
+    },
+    {
+      "date": "2026-07-24",
+      "kind": "seo",
+      "subject": "seo: add Bronx Landlord Compliance pillar hub page (#253)"
+    },
+    {
+      "date": "2026-07-25",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-25"
+    },
+    {
+      "date": "2026-07-26",
+      "kind": "site",
+      "subject": "content: steer Nave toward plain-English maintenance + shorten social captions"
+    },
+    {
+      "date": "2026-07-27",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-27"
+    },
+    {
+      "date": "2026-07-27",
+      "kind": "site",
+      "subject": "content: rename the CTA to \"Free Rental Analysis\" across the site"
+    },
+    {
+      "date": "2026-07-27",
+      "kind": "site",
+      "subject": "compliance: make TCPA consent optional, label lead form, fix focus ring"
+    },
+    {
+      "date": "2026-07-27",
+      "kind": "site",
+      "subject": "feat: bolder hero underline that changes colour per slogan"
+    },
+    {
+      "date": "2026-07-27",
+      "kind": "site",
+      "subject": "fix: nudge the sticky call button 15px down to bottom:111px"
+    },
+    {
+      "date": "2026-07-27",
+      "kind": "site",
+      "subject": "fix: lift the sticky call button clear of the Retell chat bar"
+    },
+    {
+      "date": "2026-07-27",
+      "kind": "site",
+      "subject": "fix: stop the sticky call button covering the hero stats on mobile"
+    },
+    {
+      "date": "2026-07-27",
+      "kind": "site",
+      "subject": "hero: crop the portal micro-sites caption strip out of the hero frame"
+    },
+    {
+      "date": "2026-07-27",
+      "kind": "site",
+      "subject": "hero: desktop split with the owner-portal screenshot, 2 hr response stat"
+    },
+    {
+      "date": "2026-07-27",
+      "kind": "site",
+      "subject": "hero: anchored rotating promise, Google rating above the fold"
+    },
+    {
+      "date": "2026-07-28",
+      "kind": "site",
+      "subject": "refactor(vera): post to Facebook via Make instead of the Graph API"
+    },
+    {
+      "date": "2026-07-28",
+      "kind": "site",
+      "subject": "fix(vera): revive Facebook auto-posting and stop the silent skip"
+    },
+    {
+      "date": "2026-07-29",
+      "kind": "site",
+      "subject": "blog: pin the next 10 posts to maintenance via a standing category plan"
+    },
+    {
+      "date": "2026-07-29",
+      "kind": "site",
+      "subject": "Fix hero image: what-should-a-bronx-landlord-actually-check-on-the-roof-befo"
+    },
+    {
+      "date": "2026-07-29",
+      "kind": "site",
+      "subject": "fix: match the hero image query to the posts subject"
+    },
+    {
+      "date": "2026-07-29",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-29"
+    },
+    {
+      "date": "2026-07-29",
+      "kind": "site",
+      "subject": "blog: force-category runs for Nave, and drop the 2026-07-29 post"
+    },
+    {
+      "date": "2026-07-29",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-29"
+    },
+    {
+      "date": "2026-07-30",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-30"
+    },
+    {
+      "date": "2026-07-30",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-30"
+    },
+    {
+      "date": "2026-07-30",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-30"
+    },
+    {
+      "date": "2026-07-30",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-30"
+    },
+    {
+      "date": "2026-07-31",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-07-31"
+    },
+    {
+      "date": "2026-07-31",
+      "kind": "seo",
+      "subject": "Add /tools/compliance-calendar/ to the sitemap"
+    },
+    {
+      "date": "2026-07-31",
+      "kind": "site",
+      "subject": "Point Compliance Calendar links at the on-site page"
+    },
+    {
+      "date": "2026-07-31",
+      "kind": "site",
+      "subject": "Import Compliance Calendar page under /tools/compliance-calendar/"
+    },
+    {
+      "date": "2026-07-31",
+      "kind": "site",
+      "subject": "Arlo: stop reporting the daily digest as sent when Resend rejected it"
+    },
+    {
+      "date": "2026-07-31",
+      "kind": "site",
+      "subject": "Arlo: report Google Search Console rankings in the daily email"
+    },
+    {
+      "date": "2026-08-01",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-08-01"
+    },
+    {
+      "date": "2026-08-02",
+      "kind": "site",
+      "subject": "Capture unit count and stop dropping role/address on contact form (#277)"
+    },
+    {
+      "date": "2026-08-02",
+      "kind": "seo",
+      "subject": "Retarget the homepage title and description at the Bronx queries"
+    },
+    {
+      "date": "2026-08-03",
+      "kind": "site",
+      "subject": "Arlo: fix the watch-term series matching nothing, silently"
+    },
+    {
+      "date": "2026-08-03",
+      "kind": "site",
+      "subject": "Arlo: per-day ranking series, host split, and a change log"
+    },
+    {
+      "date": "2026-08-03",
+      "kind": "site",
+      "subject": "Arlo: report a partial credential outage accurately (#282)"
+    },
+    {
+      "date": "2026-08-03",
+      "kind": "site",
+      "subject": "Fix Arlo: dead credential reported as \"not connected\" + zero lead counts + silent green run (#281)"
+    },
+    {
+      "date": "2026-08-03",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-08-03"
+    },
+    {
+      "date": "2026-08-05",
+      "kind": "site",
+      "subject": "Arlo: measure the query tail and attribute rankings to a host"
+    },
+    {
+      "date": "2026-08-05",
+      "kind": "site",
+      "subject": "Record the Phase 1 audit and correct the stale credential alarm"
+    },
+    {
+      "date": "2026-08-05",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-08-05"
+    },
+    {
+      "date": "2026-08-05",
+      "kind": "site",
+      "subject": "Fix unlabelled compliance-guide lead form + blog page load performance"
+    },
+    {
+      "date": "2026-08-06",
+      "kind": "site",
+      "subject": "Carry todays findings into the task list"
+    },
+    {
+      "date": "2026-08-06",
+      "kind": "site",
+      "subject": "Close the open verification on the rank-series code"
+    },
+    {
+      "date": "2026-08-06",
+      "kind": "site",
+      "subject": "Record the measured host check and the Actions outage"
+    },
+    {
+      "date": "2026-08-06",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-08-06"
+    },
+    {
+      "date": "2026-08-06",
+      "kind": "site",
+      "subject": "Put \"Bronx\" and \"property management\" into the pages headings"
+    },
+    {
+      "date": "2026-08-06",
+      "kind": "site",
+      "subject": "Add a manual host-consolidation probe"
+    },
+    {
+      "date": "2026-08-06",
+      "kind": "site",
+      "subject": "Arlo: store top pages by impressions, not only by clicks"
+    },
+    {
+      "date": "2026-08-06",
+      "kind": "site",
+      "subject": "Arlo: time out Google requests instead of hanging the runner"
+    },
+    {
+      "date": "2026-08-07",
+      "kind": "site",
+      "subject": "Drop the admin settings URL from the homepages sameAs"
+    },
+    {
+      "date": "2026-08-07",
+      "kind": "site",
+      "subject": "Give Arlo the git history its change log is derived from"
+    },
+    {
+      "date": "2026-08-07",
+      "kind": "site",
+      "subject": "Close the github.io duplicate — Pages is off and verified 404"
+    },
     {
       "date": "2026-08-07",
       "kind": "post",
