@@ -1,6 +1,6 @@
 # DoryAngel — Website Task List
 
-Living list of outstanding work. Newest status: **2026-08-06**.
+Living list of outstanding work. Newest status: **2026-08-09**.
 
 `CLAUDE.md` holds the *reasoning and history*; this file holds *what's left to do*. Tick items off here and move the detail there when something ships.
 
@@ -22,8 +22,9 @@ Living list of outstanding work. Newest status: **2026-08-06**.
 |---|---|---|---|
 | 1 | **Rotate the Web3Forms access keys.** Create a new key per form in the Web3Forms dashboard, send the values, they get swapped in, **then** delete the old key — that order, or all 8 forms break. | ~10 min | **This is what actually stops the inbox spam.** The current key is public in the page source, so bots POST directly and never load the site. No code change can stop that. |
 | 2 | **Request re-indexing of the homepage** in Search Console (paste `https://www.doryangel.com/`, click Request Indexing). | 30 sec | Cuts the wait on the new title from weeks to days. |
-| 3 | Verify `doryangel.com` in Resend. | ~10 min | Lifts the sandbox-sender restriction so agent email comes from the brand domain. Long-standing item. |
-| 4 | Set budget caps on Make.com and Anthropic. | ~5 min | Cost safety. Long-standing item. |
+| 3 | **Read the Page indexing counts** — Search Console → Indexing → **Pages** — and send a screenshot. | 1 min | The report lists `Discovered - not indexed`, `Crawled - not indexed` and `Duplicate, Google chose different canonical`, but the **counts have never been read**. Three trivial pages and a third of the site look identical until they are. Probably the highest-value unanswered SEO question, and the removal of the github.io duplicate on 08-07 should show up here. |
+| 4 | Verify `doryangel.com` in Resend. | ~10 min | Lifts the sandbox-sender restriction so agent email comes from the brand domain. Long-standing item. |
+| 5 | Set budget caps on Make.com and Anthropic. | ~5 min | Cost safety. Long-standing item. |
 
 ---
 
@@ -78,6 +79,8 @@ Roughly in order of value per unit of risk.
 - [ ] **Fix the `/tools` 404 landmine.** `scripts/generate-post.js:411` tells the model to write "free at doryangel.com/tools" into posts, but there is no `tools/index.html` and no rewrite. No post has emitted it yet — harmless today, broken the day one does. Cheapest fix is a `/tools` → `/#tools` redirect in `vercel.json`.
 - [ ] **Fix one truncated meta description.** `why-your-bronx-rentals-insurance-premium-could-jump-25-this` ends mid-word: `"…and how to fight ba"`. Only one of 56; renders verbatim in Google.
 - [ ] **Repoint one old github.io link.** `content/blog/posts-index.json:66` still links the retired Compliance Calendar URL, sending backlink credit to the personal subdomain the migration existed to retire.
+- [ ] **Update the tax checklist from 2025 to 2026.** `tax-checklist/index.html` title, meta description and H1 all advertise the prior tax year, as does the homepage tool card (`index.html:3213`, "Updated for 2025"). A live lead magnet presenting itself as a year out of date suppresses both the SERP click and the on-page signup. Four strings — but **ask the owner first whether the 28 deductions still hold for the 2026 tax year**; changing only the number would be worse than leaving it. Owner deferred this on 2026-08-05.
+- [ ] **Fix the hashtag chip overflowing the viewport on mobile.** A `.hashtag-row` chip sits ~9px past the right edge at 390px on **every** post page, causing horizontal scroll. Confirmed pre-existing — reproduced against the pre-change commit — so it is not a regression from the 2026-08-05 hero work. Likely one `flex-wrap` line in `scripts/build-blog.js`; regenerates all 58 pages.
 - [ ] **Add a sentence-shape rule to Nave's prompt** if the forced-category run is ever repeated. Six of the last eight titles opened `"Your Bronx Building's …"`; only category and subject are constrained, not shape.
 
 ---
