@@ -1,6 +1,6 @@
 # DoryAngel — Website Task List
 
-Living list of outstanding work. Newest status: **2026-08-09**.
+Living list of outstanding work. Newest status: **2026-08-11**.
 
 `CLAUDE.md` holds the *reasoning and history*; this file holds *what's left to do*. Tick items off here and move the detail there when something ships.
 
@@ -48,6 +48,8 @@ Living list of outstanding work. Newest status: **2026-08-09**.
 `bronx property management` has now gone 19.9 → 20.5 → 22.8 → 23.5 → 25.0 — **drifting the wrong way, and it was already sliding before the title merged**. Do not read it as the title hurting: consecutive snapshots share 27 of 28 days, which is exactly the confound the series files exist to remove. **Watch, do not act.**
 
 **🆕 But this no longer has to be guesswork.** Arlo's first real series run (2026-08-06) put **478 days of true per-day history** on disk in `project/seo/daily-series.json` + `query-series.json`, with `annotations.json` as the matching change log. **Answering this properly from the per-day data is the single highest-value analysis task now available** — see the code list below.
+
+**🆕 www-only baseline, 2026-08-11** (28 days, 07-13 → 08-09, from the `https://www.doryangel.com/` URL-prefix property — **not** the Domain property Arlo reads). **40 clicks / 3,859 impr / 1.04% CTR.** Position improved **41.8 → 23.4** across two *non-overlapping* 14-day halves — the comparison the rolling snapshots cannot make. Homepage carries **50% of impressions at position 47.6**; the blog sits at **15.6**. The homepage average is polluted by luxury/Brooklyn/Manhattan queries at positions 37–85 that will never convert. **The cluster to move is six Bronx queries, ~289 impressions, all banded at 26–31.** ⚠️ The `position 4.2` figure quoted on 08-05 was the **Domain** property — the apex URL. On www that query is **29.2**. Full detail in `CLAUDE.md`.
 
 **Host split, 2026-08-06:** www **4,309** impr @ **34.0** · apex **1,358** @ **6.2** · beta **1,123** @ **27.1**. Versus 08-03 (www 2,510 @ 47.7 · apex 1,355 @ 5.9 · beta 68 @ 11.2): www is genuinely improving, apex is flat at the local-pack signature, and **beta jumped ~16×**. Beta redirects correctly per-path (measured), so that is Google serving more beta URLs, not a fault. **Watch the beta number.**
 

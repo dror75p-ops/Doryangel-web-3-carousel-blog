@@ -8,7 +8,26 @@
 - Owner GitHub account: dror75p-ops
 - Owner email: office@doryangel.com (notification emails go to dror75p@gmail.com via Resend)
 
-### Last changes (as of 2026-08-06)
+### Last changes (as of 2026-08-11)
+
+- **📊 A `www`-ONLY Search Console export finally separated the canonical host from the three-host blend — and it corrects a figure quoted earlier in this project** (2026-08-11, owner exported *Performance on Search*, 28 days, **2026-07-13 → 08-09**). Every prior reading came from the **Domain property**, which merges www + apex + beta. This one is the **`https://www.doryangel.com/` URL-prefix property**, so it shows only the page that on-site work actually changes. Keep the distinction in mind whenever comparing against `rank-history.json`, which is Domain-wide.
+  - **Totals for www alone: 40 clicks / 3,859 impressions / 1.04% CTR.**
+  - **✅ Position improved 41.8 → 23.4, and this one is trustworthy.** Splitting the window into two **non-overlapping** 14-day halves: first half 21 clicks / 2,147 impr / **pos 41.8**, second half 19 clicks / 1,712 impr / **pos 23.4**. **This is exactly the comparison the 28-day rolling snapshots cannot make** (consecutive snapshots share 27 of 28 days), which is why it is worth more than any single `rank-history.json` delta. Impressions fell while position improved — Google is matching the site to fewer but far better-fitting queries.
+  - **📌 THE FINDING: the homepage carries half the impressions at position 47.6 and is what drags the site average down.** By section:
+
+| Section | Impressions | Avg position | Clicks |
+|---|---|---|---|
+| Homepage `/` | 2,143 (50%) | **47.6** | 25 |
+| Blog | 1,726 (40%) | **15.6** | 11 |
+| Legacy Wix paths | 353 (8%) | **8.2** | 8 |
+| Guides / tools | 77 (2%) | ~8–20 | 0 |
+
+  - **The blog outranks the homepage roughly 3:1.** And the legacy redirect paths still rank best of all — `/home` alone sits at **position 6.2** with 2 clicks while the real homepage sits at 47.6.
+  - **⚠️ WHY the homepage ranks 47.6 — it is winning impressions for queries the business does not serve.** The top homepage-driving queries by impression are `luxury property management company ny` (101 impr, **pos 54.3**), `luxury property management new york` (88, 56.9), `landlord leasing services brooklyn ny` (53, 37.2), `property management companies in brooklyn` (48, **75.2**), `property management company manhattan` (43, 52.4), `property managers nyc` (44, 49.0), `property management gravesend brooklyn` (35, **84.9**). Hundreds of impressions at positions 37–85, on **luxury / Brooklyn / Manhattan** intent, none of which will ever convert. **Do not read the 47.6 as "the homepage is bad" — read it as an average polluted by queries that should not be targeted.**
+  - **🎯 The cluster that actually matters is six near-identical Bronx queries carrying ~289 impressions, all sitting at 26–31:** `bronx property management` **31.5** (67 impr) · `property management companies bronx` **26.0** (50) · `property management companies bronx ny` **26.7** (47) · `bronx property management companies` **26.6** (45) · `property management bronx ny` **29.8** (41) · `property management in bronx` **27.9** (39). That tight banding is not noise — it is Google placing one topic consistently at the top of page 3. **This is the single group where movement pays.**
+  - **⚠️ CORRECTION TO A FIGURE USED EARLIER IN THIS PROJECT.** An analysis on 2026-08-05 reported `property management bronx` at **position 4.2 with 17% CTR** and used it to argue that word order alone decides rankings. That number came from the **Domain property**, where it is the *apex/legacy* URL that ranks ~4. **On `www` the same query sits at 29.2.** The word-order pattern is still real and still visible here, but **the "position 4" page is not the page any on-site change touches.** Quote www figures when discussing on-page work, Domain figures only when discussing host consolidation.
+  - **Mobile ranks better and converts better than desktop, on a third of the volume:** mobile 989 impr @ **23.2**, CTR **1.82%**; desktop 2,730 impr @ **36.4**, CTR **0.77%**; tablet 140 @ 53.9. Unexplained, and worth a look before any CRO work assumes desktop is the priority.
+  - **Site CTR of 1.04% is a symptom of position, not of titles.** Almost nobody scrolls to position 26. Do not "fix" it with title rewrites — and in any case **do not stack SEO changes before the ~2026-08-30 decision point**.
 
 - **Every host redirect was finally measured from the open internet — and GitHub Pages turned out to be serving a full live duplicate of the site** (2026-08-06, `.github/workflows/host-check.yml`, run 31122031759). Every redirect claim in this project had been verified *indirectly*: the CCR sandbox proxy blocks the live site, so checks went through the Vercel API, which answers for Vercel's **configuration** and returns a `Location` carrying a `_vercel_share=` token — not what an anonymous crawler sees. The probe is a manual, read-only, no-secrets workflow that curls each host from a runner with a Googlebot user agent. **Run it from the Actions tab whenever a redirect claim needs to be true rather than plausible.**
   - **✅ All eight redirects are correct, with clean public `Location` headers and no share token anywhere:**
