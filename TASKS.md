@@ -21,10 +21,30 @@ Living list of outstanding work. Newest status: **2026-08-09**.
 | | Task | Time | Why it matters |
 |---|---|---|---|
 | 1 | **Rotate the Web3Forms access keys.** Create a new key per form in the Web3Forms dashboard, send the values, they get swapped in, **then** delete the old key — that order, or all 8 forms break. | ~10 min | **This is what actually stops the inbox spam.** The current key is public in the page source, so bots POST directly and never load the site. No code change can stop that. |
+| 1b | **Protect `main`.** Settings → Branches → Add branch ruleset for `main` → *Require a pull request before merging* (1 approval) + *Block force pushes*. ⚠️ **Add the two bots to the bypass list first** (Arlo's rank snapshot and Nave's auto-publish both push directly to `main`) or both automations break the moment it is switched on. | ~5 min | **Verified 2026-08-16: `main` is currently unprotected** — the GitHub API reports `"protected": false`. Every PR gate in the repo, including Arlo's new approval flow, is a convention rather than an enforced control until this is on. |
 | 2 | **Request re-indexing of the homepage** in Search Console (paste `https://www.doryangel.com/`, click Request Indexing). | 30 sec | Cuts the wait on the new title from weeks to days. |
 | 3 | **Read the Page indexing counts** — Search Console → Indexing → **Pages** — and send a screenshot. | 1 min | The report lists `Discovered - not indexed`, `Crawled - not indexed` and `Duplicate, Google chose different canonical`, but the **counts have never been read**. Three trivial pages and a third of the site look identical until they are. Probably the highest-value unanswered SEO question, and the removal of the github.io duplicate on 08-07 should show up here. |
 | 4 | Verify `doryangel.com` in Resend. | ~10 min | Lifts the sandbox-sender restriction so agent email comes from the brand domain. Long-standing item. |
 | 5 | Set budget caps on Make.com and Anthropic. | ~5 min | Cost safety. Long-standing item. |
+
+---
+
+## 🔄 Arlo's 14-day improvement cycle — how to act on it
+
+Every 14 days Arlo's morning email carries three extra blocks: **14-day performance review**, **previous experiments**, and **3–5 new recommendations** with an ID like `ARLO-2026-08-16-02`.
+
+**Nothing is queued automatically. Arlo cannot publish, queue, approve or merge anything.** To act on one:
+
+```
+node scripts/queue-approved-post.js --id ARLO-2026-08-16-02 --approved-by "Dori"
+```
+
+- Add `--legal-reviewed` when the email marks the item **⚖️ Legal review required** — that means a human has actually checked the regulatory claims. It is a blocking control; the script refuses without it.
+- Add `--dry-run` first to see every validation without writing anything.
+- It opens a **pull request** and stops. Nothing goes live until you merge it.
+- ⚠️ It will not run in GitHub Actions, by design. Run it from a terminal, or ask Claude to.
+
+Arlo then measures the result 28 days after the change ships and reports whether it moved — so the next cycle's recommendations are informed by what actually worked.
 
 ---
 

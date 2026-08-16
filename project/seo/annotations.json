@@ -2561,6 +2561,11 @@
       "date": "2026-08-15",
       "kind": "post",
       "subject": "Auto-publish: new blog post 2026-08-15"
+    },
+    {
+      "date": "2026-08-16",
+      "kind": "site",
+      "subject": "Arlo: 14-day continuous-improvement cycle behind a human approval gate"
     }
   ]
 }
