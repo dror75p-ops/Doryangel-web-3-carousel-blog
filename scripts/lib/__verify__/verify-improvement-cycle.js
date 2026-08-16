@@ -49,7 +49,7 @@ execFileSync('git', ['-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q'
 // ─── API stubs ────────────────────────────────────────────────────────────────
 //
 // A fetch stub for the Google hosts, plus a local HTTP server for Anthropic
-// (see the note above anthropicStubResponse). Each records how Each records how
+// (see the note above anthropicStubResponse). Each records how
 // often it was called so the cost claims in the report can be checked rather
 // than trusted.
 
@@ -121,6 +121,19 @@ function anthropicStubResponse(body) {
           expected_result: 'a page-one entry for the violation queries', metric: 'position',
           category: 'property-management', impact: 5, confidence: 3, effort: 3,
           legal_review_required: false,          // the model forgot. The classifier must catch it.
+        },
+        {
+          action: 'improve-existing',
+          // A 92-char slug derived from a title. Well-formed, but no published
+          // slug is longer than 60 — this is the real failure from the first
+          // live run (2026-08-16), where the model invented a target.
+          target_slug: 'what-should-a-bronx-broker-tell-a-landlord-client-who-wants-to-self-manage-a-6-unit-building',
+          title: 'Rewrite the broker self-management post title and meta',
+          what: 'Retitle it around the co-op management query.',
+          why: 'Ranks position 1.0 with 57 impressions and 0% CTR.',
+          expected_result: 'CTR from 0% to 8-15%', metric: 'CTR',
+          category: null, impact: 3, confidence: 4, effort: 1,
+          legal_review_required: false,
         },
         {
           action: 'new-content', target_slug: 'a-fresh-slug-entirely',
@@ -255,6 +268,18 @@ const dupRec = recs.find(r => r.duplicateOf);
 check('an exact-duplicate "new post" was detected', Boolean(dupRec));
 check('...and re-framed as improve-existing rather than dropped', dupRec?.action === 'improve-existing');
 check('...pointing at the post it duplicates', dupRec?.targetSlug === realPosts[0].slug);
+
+// ⚠️ The hallucinated-target case, from the first live run.
+const broker = recs.find(r => /broker self-management/i.test(r.title));
+check('a recommendation naming a non-existent slug survives', Boolean(broker));
+check('...and its invented target was recorded', broker?.targetResolvedFrom?.length > 60);
+check('...and was resolved to a slug that actually exists',
+  broker?.targetSlug === null || realPosts.some(p => p.slug === broker.targetSlug));
+check('...resolving to the real broker post rather than an unrelated one',
+  broker?.targetSlug === null || /broker/.test(broker.targetSlug));
+check('no improve-existing recommendation points at a slug that does not exist',
+  recs.filter(r => r.action === 'improve-existing' && r.targetSlug)
+      .every(r => realPosts.some(p => p.slug === r.targetSlug)));
 
 const badCat = recs.find(r => /Listing Photos/i.test(r.title));
 check('an unapproved category is nulled rather than invented', badCat ? badCat.category === null : true);

@@ -1501,6 +1501,10 @@ ${RECOMMENDATION_SCHEMA_HINT}`;
  * the STRICTER of the two wins. A model that forgets the flag must not be able
  * to open the legal gate.
  */
+// "new-content" proposes a slug that must NOT exist yet; the other two act on
+// something already published, so their target has to be real.
+const needsExistingTarget = (action) => action === 'improve-existing' || action === 'site-change';
+
 function finaliseRecommendations(raw, { posts, experiments, todayISO, opportunities }) {
   const out = [];
   let n = 0;
@@ -1517,6 +1521,31 @@ function finaliseRecommendations(raw, { posts, experiments, todayISO, opportunit
 
     let targetSlug = String(r.target_slug || '').trim().toLowerCase() || null;
     if (targetSlug && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(targetSlug)) targetSlug = null;
+
+    // ⚠️ A WELL-FORMED SLUG IS NOT A REAL SLUG. On the first live run the model
+    // returned a 92-character slug derived from a post's TITLE for an
+    // improve-existing recommendation; published slugs are truncated to 60, so
+    // it matched nothing. The approval gate refuses an improve-existing whose
+    // target is not in the index — correct, but it means Dori hits a wall on an
+    // otherwise good recommendation and has to go find the real slug by hand.
+    //
+    // So resolve it here instead: keep a slug that exists, otherwise fall back
+    // to the closest published title. Only a confident match is accepted; below
+    // that the slug is dropped and the email says the target was unresolved,
+    // which is honest rather than a guess.
+    let targetResolvedFrom = null;
+    if (targetSlug && needsExistingTarget(action) && !posts.some(p => p.slug === targetSlug)) {
+      const best = posts
+        .map(p => ({ slug: p.slug, score: Math.max(titleSimilarity(title, p.title), titleSimilarity(targetSlug.replace(/-/g, ' '), p.title)) }))
+        .sort((a, b) => b.score - a.score)[0];
+      if (best && best.score >= 0.5) {
+        targetResolvedFrom = targetSlug;
+        targetSlug = best.slug;
+      } else {
+        targetResolvedFrom = targetSlug;
+        targetSlug = null;
+      }
+    }
 
     // Duplicate detection against the real catalogue — the model is told about
     // it, but told is not checked. A "new" post that matches a published one is
@@ -1577,6 +1606,7 @@ function finaliseRecommendations(raw, { posts, experiments, todayISO, opportunit
       ...scored,
       legal_review_required: legalRequired,
       legalReasons: legalRequired ? legalReviewReasons(title, what, why) : [],
+      targetResolvedFrom,
       duplicateOf: duplicateOf
         ? { kind: duplicateOf.kind, slug: duplicateOf.slug, title: duplicateOf.title, score: duplicateOf.score }
         : null,
@@ -1945,6 +1975,7 @@ function renderImprovementSections(improvement) {
         ? `${r.baseline.clicks} clicks / ${r.baseline.impressions} impressions${r.baseline.position != null ? ` at position ${Number(r.baseline.position).toFixed(1)}` : ''} (28 days to ${esc(r.baseline.capturedOn)})`
         : 'no measured baseline — this one cannot be scored against a before/after'}</p>
       <p style="margin:0 0 4px;color:#556070;font-size:12px;"><strong>Watch:</strong> ${esc(r.metric)} · <strong>Measure:</strong> ${esc(r.measurementWindow)}</p>
+      ${r.targetResolvedFrom ? `<p style="margin:0 0 4px;color:#92400E;font-size:12px;">↩︎ ${r.targetSlug ? `Target corrected to an existing post — the recommendation named <code>${esc(r.targetResolvedFrom)}</code>, which is not a published slug.` : `⚠️ Target unresolved — the recommendation named <code>${esc(r.targetResolvedFrom)}</code>, which is not a published slug and matched nothing closely enough. Identify the page yourself before approving.`}</p>` : ''}
       ${r.duplicateOf ? `<p style="margin:0 0 4px;color:#92400E;font-size:12px;">↩︎ Re-framed as an improvement: this overlaps the published post "${esc(r.duplicateOf.title)}" (${esc(r.duplicateOf.kind)}${r.duplicateOf.score ? `, ${r.duplicateOf.score}` : ''}).</p>` : ''}
       ${r.previouslyTried ? `<p style="margin:0 0 4px;color:#92400E;font-size:12px;">⚠️ Already tried on this target: ${esc(r.previouslyTried)}.</p>` : ''}
       <p style="margin:6px 0 0;font-size:12px;color:${r.legal_review_required ? '#B91C1C' : '#0D7B4E'};font-weight:700;">
