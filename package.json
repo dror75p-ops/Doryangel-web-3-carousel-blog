@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "generate": "node scripts/generate-post.js"
+    "generate": "node scripts/generate-post.js",
+    "verify": "node scripts/lib/__verify__/verify-post-utils.js && node scripts/lib/__verify__/verify-improvement-governance.js && node scripts/lib/__verify__/verify-improvement-cycle.js",
+    "verify:governance": "node scripts/lib/__verify__/verify-improvement-governance.js",
+    "verify:cycle": "node scripts/lib/__verify__/verify-improvement-cycle.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

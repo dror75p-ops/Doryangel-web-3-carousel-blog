@@ -74,8 +74,8 @@ jobs:
       # the runner has to be committed or it does not exist.
       - name: Commit rank history
         run: |
-          if [ ! -f project/seo/rank-history.json ]; then
-            echo "No rank history written — Search Console not connected yet."
+          if [ ! -f project/seo/rank-history.json ] && [ ! -f project/seo/improvement-state.json ]; then
+            echo "Nothing written under project/seo — Search Console not connected yet."
             exit 0
           fi
           git config user.name "Arlo (DoryAngel Bot)"
@@ -86,10 +86,22 @@ jobs:
           # means the backfill is re-fetched and re-thrown-away every single day,
           # and no trend ever accumulates — the exact bug that `git add` line
           # already exists to prevent for rank-history.json.
-          git add project/seo/rank-history.json \
-                  project/seo/daily-series.json \
-                  project/seo/query-series.json \
-                  project/seo/annotations.json
+          # ⚠️ Same rule applies to the three continuous-improvement files. They
+          # are written on the runner, so anything not added here is discarded
+          # with the container. If improvement-state.json is lost, the 14-day
+          # cadence resets and the expensive cycle re-runs EVERY morning; if
+          # experiments.json is lost, every approved change loses its baseline
+          # and the measure-the-result half of the loop silently stops working.
+          # Guarded with -f because they only appear on cycle days.
+          for f in project/seo/rank-history.json \
+                   project/seo/daily-series.json \
+                   project/seo/query-series.json \
+                   project/seo/annotations.json \
+                   project/seo/improvement-state.json \
+                   project/seo/recommendations.json \
+                   project/seo/experiments.json; do
+            if [ -f "$f" ]; then git add "$f"; fi
+          done
           git diff --staged --quiet && echo "No new snapshot today" && exit 0
           git commit -m "Arlo: rank snapshot $(date +'%Y-%m-%d')"
           git pull --rebase origin "$GITHUB_REF_NAME"

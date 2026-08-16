@@ -85,7 +85,13 @@ jobs:
           # category-plan.json carries the multi-run "next N posts are category X"
           # counter. It MUST be committed or the decrement is thrown away with the
           # runner and the plan never finishes.
+          # approved-queue.json carries the human-approved briefs and its entries
+          # are marked "published" on the runner. Same rule as category-plan.json:
+          # if it is not committed, the mark is thrown away with the container and
+          # the same brief is offered again on the next run — publishing the same
+          # approved post twice.
           git add content/blog/posts-index.json content/blog/category-plan.json blog/ sitemap.xml
+          if [ -f content/blog/approved-queue.json ]; then git add content/blog/approved-queue.json; fi
           git diff --staged --quiet && echo "Nothing to commit — post was skipped" && exit 0
           git commit -m "Auto-publish: new blog post $(date +'%Y-%m-%d')"
           # Commits back to whatever ref the run was started on. That is `main` for

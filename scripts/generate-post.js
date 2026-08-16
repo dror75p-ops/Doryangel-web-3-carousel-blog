@@ -117,6 +117,67 @@ function consumeCategoryPlan() {
   }
 }
 
+// ─── Approved-recommendation queue (Arlo → Dori → here) ──────────────────────
+//
+// The only way an outside instruction reaches Nave's topic choice, and it can
+// only be filled by a human running scripts/queue-approved-post.js and merging
+// the PR it opens. Arlo recommends; it cannot write this file, and nothing in
+// GitHub Actions can run the script that does.
+//
+// Same fail-open discipline as the category plan: a missing, malformed or
+// unwritable queue must never stop a post from publishing. A brief that has
+// already been validated at approval time is re-checked here only for the two
+// things that could have changed since: whether the slug got published in the
+// meantime, and whether the category is still a real one.
+const APPROVED_QUEUE_PATH = './content/blog/approved-queue.json';
+
+function readApprovedQueue() {
+  try {
+    const queue = JSON.parse(readFileSync(APPROVED_QUEUE_PATH, 'utf8'));
+    return Array.isArray(queue) ? queue : [];
+  } catch (err) {
+    if (err.code !== 'ENOENT') console.warn(`Approved queue unreadable (${err.message}) — ignoring it.`);
+    return [];
+  }
+}
+
+/** The oldest pending new-content brief, or null. Improvement briefs are for a
+ *  human to action — Nave only writes new posts. */
+function nextApprovedBrief(existingPosts) {
+  const queue = readApprovedQueue();
+  for (const entry of queue) {
+    if (entry?.status !== 'pending') continue;
+    if (entry.action !== 'new-content' || !entry.brief) continue;
+    const b = entry.brief;
+    if (!b.title || !CATEGORIES.includes(b.category)) {
+      console.warn(`Approved brief ${entry.recommendationId} has an unusable category "${b.category}" — skipping it.`);
+      continue;
+    }
+    if (existingPosts.some(p => p.slug === b.slug)) {
+      console.warn(`Approved brief ${entry.recommendationId} is already published (${b.slug}) — skipping it.`);
+      continue;
+    }
+    return { entry, brief: b };
+  }
+  return null;
+}
+
+/** Called once, after the index write, exactly like consumeCategoryPlan(). */
+function consumeApprovedBrief(recommendationId, publishedSlug) {
+  try {
+    const queue = readApprovedQueue();
+    const entry = queue.find(e => e?.recommendationId === recommendationId && e.status === 'pending');
+    if (!entry) return;
+    entry.status = 'published';
+    entry.publishedOn = toISODate(new Date());
+    entry.publishedSlug = publishedSlug;
+    writeFileSync(APPROVED_QUEUE_PATH, JSON.stringify(queue, null, 2) + '\n');
+    console.log(`Approved brief ${recommendationId} marked published — Arlo will measure it in a later cycle.`);
+  } catch (err) {
+    console.warn(`Could not update the approved queue (${err.message}) — it may be offered again next run.`);
+  }
+}
+
 // FORCE_CATEGORY pins today's post to one category, overriding both the picker's
 // own weighting and the HARD VARIETY RULE. Used from the workflow_dispatch
 // `category` input when a run needs to land in a specific bucket (e.g. "the last
@@ -811,8 +872,22 @@ async function main() {
   if (claritySignals) {
     console.log(`Clarity signal: ${claritySignals.categories.map(c => `${c.category}=${c.avgScroll}%/${c.sessions}s`).join(', ')}`);
   }
-  let topic = await pickTopicWithAI(posts, claritySignals);
-  let dupOf = await findSimilarPublishedTopic(topic, posts);
+  // A human-approved brief wins over the topic picker. This is the *only* input
+  // that outranks Nave's own choice apart from the operator's FORCE_CATEGORY,
+  // and it can only be filled through the manual approval gate + a merged PR.
+  // No dedupe retry loop here: the approval script already ran slug, exact-title
+  // and fuzzy-title checks against the full catalogue before it was queued.
+  const approved = nextApprovedBrief(posts);
+  let topic, approvedId = null;
+  if (approved) {
+    approvedId = approved.entry.recommendationId;
+    topic = { title: approved.brief.title, category: approved.brief.category };
+    console.log(`Using human-approved brief ${approvedId}: "${topic.title}" (${topic.category})`);
+  } else {
+    topic = await pickTopicWithAI(posts, claritySignals);
+  }
+
+  let dupOf = approved ? null : await findSimilarPublishedTopic(topic, posts);
   for (let attempt = 0; dupOf && attempt < 2; attempt++) {
     console.log(`Topic "${topic.title}" overlaps published post "${dupOf}" — retrying (attempt ${attempt + 1}/2)`);
     topic = await pickTopicWithAI(posts, claritySignals, dupOf);
@@ -874,6 +949,11 @@ async function main() {
   // after the index write and before any outbound step, so it counts exactly the
   // posts that actually got written.
   consumeCategoryPlan();
+
+  // Same placement and same reason: mark the approved brief done only once the
+  // post it produced is actually in the index, so a run that dies mid-generation
+  // does not burn the approval.
+  if (approvedId) consumeApprovedBrief(approvedId, postForIndex.slug);
 
   // A run on a branch writes the post but must NOT go outbound: the post URL only
   // goes live once the branch is merged and Vercel redeploys, so a digest blast or

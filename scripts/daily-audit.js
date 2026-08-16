@@ -10,6 +10,16 @@ import { Resend } from 'resend';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { execSync } from 'child_process';
 import { createSign } from 'crypto';
+import { pathToFileURL } from 'url';
+import {
+  CYCLE_DAYS, CYCLE_STATE_FILE, RECOMMENDATIONS_FILE, EXPERIMENTS_FILE, POSTS_INDEX_FILE,
+  sanitizeCycleState, isCycleDue, daysBetween, withBlogIndexFrozen,
+  APPROVED_CATEGORIES, resolveCategory,
+  requiresLegalReview, legalReviewReasons,
+  findDuplicate, titleSimilarity,
+  scoreRecommendation, makeRecommendationId,
+  redactPII, findPII,
+} from './lib/improvement-governance.js';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 3 });
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -1032,6 +1042,623 @@ async function getClarityStats() {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// CONTINUOUS IMPROVEMENT CYCLE — runs every 14 days inside this same daily run
+// ═══════════════════════════════════════════════════════════════════════════════
+//
+// PLAN → DO → CHECK → ACT, with the DO step behind a human.
+//
+//   Arlo (here)                     Dori                  queue-approved-post.js
+//   ───────────────────────────     ─────────────────     ──────────────────────
+//   measure what happened      →
+//   scout opportunities        →
+//   write recommendations      →    reads the email  →    validates + opens a PR
+//   measure the result of the       approves ONE by       (human merges)
+//   ones that shipped          ←    its ID           ←
+//
+// ⚠️ EVERYTHING IN THIS SECTION IS READ-ONLY WITH RESPECT TO THE BLOG.
+// It may write three files, all under project/seo/ (which .vercelignore
+// excludes): the cadence state, its recommendations, and its experiment ledger.
+// It must NEVER write content/blog/posts-index.json, and must never invoke the
+// approval script. main() enforces that at runtime — see withBlogIndexFrozen().
+// The reason is architectural, not stylistic: analysis that can also publish is
+// one careless edit away from being an autonomous publisher.
+
+// External research is the only part of this cycle with an unbounded cost, so it
+// is the only part with a hard cap. Five searches per fortnight, enforced twice:
+// once by max_uses on the server tool, and once by only asking at all when the
+// data we already hold cannot answer the question.
+const SCOUT_SEARCH_BUDGET = 5;
+
+// How long an approved change gets before its result is judged. 28 days matches
+// the GSC reporting window everything else here uses, and is about the shortest
+// span in which a ranking move is distinguishable from weekly noise.
+const EXPERIMENT_MEASURE_DAYS = 28;
+
+// Position band where a page is close enough that a real change might move it
+// onto page one. Below 8 it is already there; past 25 the gap is rarely a
+// content problem.
+const STRIKING_MIN = 8, STRIKING_MAX = 25;
+
+const CANONICAL_HOST = 'https://www.doryangel.com';
+
+// ─── Cadence state ────────────────────────────────────────────────────────────
+//
+// One key: lastCycleDate. See ALLOWED_CYCLE_STATE_KEYS in improvement-governance.js
+// for why it must stay that way.
+
+function readCycleState() {
+  return sanitizeCycleState(readJsonFile(CYCLE_STATE_FILE, {}));
+}
+
+function writeCycleState(dateISO) {
+  return writeJsonFile(CYCLE_STATE_FILE, { lastCycleDate: dateISO });
+}
+
+function readExperiments() {
+  const raw = readJsonFile(EXPERIMENTS_FILE, []);
+  return Array.isArray(raw) ? raw : [];
+}
+
+// The read-only guard around the whole cycle lives in improvement-governance.js
+// (withBlogIndexFrozen) so it can be tested without importing this script. It is
+// applied in main(); see the call site there.
+
+// ─── CHECK: how did previously approved changes do? ───────────────────────────
+//
+// This is the half that makes it a loop rather than a fortnightly idea
+// generator. Every recommendation Dori approves lands in experiments.json with
+// the baseline Arlo measured at the time; here we notice when it actually
+// shipped, wait EXPERIMENT_MEASURE_DAYS, then compare like for like.
+//
+// ⚠️ Correlation, not causation. GSC cannot tell us whether a change caused a
+// move — a Google update, a season, or a competitor's change would look
+// identical. The verdicts are worded accordingly and the email says so; do not
+// "tighten" them into causal claims.
+
+function experimentPageUrl(exp) {
+  if (exp.targetUrl) return exp.targetUrl;
+  if (exp.targetSlug) return `${CANONICAL_HOST}/blog/${exp.targetSlug}/`;
+  return null;
+}
+
+/** Has the approved change actually shipped yet? Read-only: posts index + git log. */
+function detectImplementation(exp, posts) {
+  if (exp.action === 'new-content') {
+    const post = posts.find(p => p.slug === exp.targetSlug);
+    return post ? post.publishedDate : null;
+  }
+  // improve-existing: look for a commit touching the generated page after approval.
+  if (!exp.targetSlug || !exp.approvedOn) return null;
+  try {
+    const out = execSync(
+      `git log --format=%cs -1 --since="${exp.approvedOn}" -- "blog/${exp.targetSlug}/index.html"`,
+      { stdio: ['ignore', 'pipe', 'ignore'] }
+    ).toString().trim();
+    return out || null;
+  } catch {
+    return null;
+  }
+}
+
+/** Per-day GSC pull for one page. One call per experiment, so it is bounded by
+ *  how many experiments are actually awaiting measurement. */
+async function fetchPageWindow(token, pageUrl, startDate, endDate) {
+  const rows = await querySearchConsole(token, {
+    startDate, endDate, dataState: 'final', type: 'web', rowLimit: 1,
+    dimensionFilterGroups: [{ filters: [{ dimension: 'page', operator: 'equals', expression: pageUrl }] }],
+  });
+  const r = rows[0];
+  return {
+    from: startDate, to: endDate,
+    clicks: r?.clicks ?? 0,
+    impressions: r?.impressions ?? 0,
+    ctr: r?.ctr ?? 0,
+    position: r?.position ?? null,
+  };
+}
+
+// Below this, a percentage move is arithmetic noise rather than a signal.
+const MIN_IMPRESSIONS_FOR_VERDICT = 60;
+
+function classifyExperiment(baseline, after) {
+  if (!baseline || !after) return { verdict: 'neutral', reason: 'no comparable data' };
+  if (baseline.impressions < MIN_IMPRESSIONS_FOR_VERDICT && after.impressions < MIN_IMPRESSIONS_FOR_VERDICT) {
+    return {
+      verdict: 'neutral',
+      reason: `insufficient evidence — ${baseline.impressions} → ${after.impressions} impressions is too little traffic to read either way`,
+    };
+  }
+  const pct = (a, b) => (a === 0 ? (b > 0 ? 1 : 0) : (b - a) / a);
+  const impr = pct(baseline.impressions, after.impressions);
+  const clicks = pct(baseline.clicks, after.clicks);
+  // Position is "lower is better", and null means the page fell out of the data.
+  const posMove = baseline.position != null && after.position != null
+    ? baseline.position - after.position
+    : null;
+
+  const up = clicks >= 0.20 || (impr >= 0.20 && clicks >= 0) || (posMove != null && posMove >= 2);
+  const down = clicks <= -0.20 || impr <= -0.20 || (posMove != null && posMove <= -2);
+
+  if (up && !down) {
+    return {
+      verdict: 'improving',
+      reason: `clicks ${baseline.clicks}→${after.clicks}, impressions ${baseline.impressions}→${after.impressions}${posMove != null ? `, position ${baseline.position.toFixed(1)}→${after.position.toFixed(1)}` : ''} — improved after the change (association, not proof of cause)`,
+    };
+  }
+  if (down && !up) {
+    return {
+      verdict: 'underperforming',
+      reason: `clicks ${baseline.clicks}→${after.clicks}, impressions ${baseline.impressions}→${after.impressions}${posMove != null ? `, position ${baseline.position.toFixed(1)}→${after.position.toFixed(1)}` : ''} — no improvement so far`,
+    };
+  }
+  return {
+    verdict: 'neutral',
+    reason: `clicks ${baseline.clicks}→${after.clicks}, impressions ${baseline.impressions}→${after.impressions} — flat within noise`,
+  };
+}
+
+async function reviewExperiments(posts, todayISO) {
+  const experiments = readExperiments();
+  if (!experiments.length) return { experiments, reviewed: [], gscCalls: 0, changed: false };
+
+  let token = null, gscCalls = 0, changed = false;
+  const saKey = process.env.GOOGLE_SA_KEY;
+  if (saKey) {
+    try {
+      token = await getGoogleAccessToken(JSON.parse(saKey), 'https://www.googleapis.com/auth/webmasters.readonly');
+    } catch (e) {
+      console.log(`::warning title=${AGENT_NAME}::Experiment measurement skipped — no Search Console token (${e.message}).`);
+    }
+  }
+
+  const reviewed = [];
+  for (const exp of experiments) {
+    // 1. Has it shipped since last time we looked?
+    if (exp.status === 'queued') {
+      const shipped = detectImplementation(exp, posts);
+      if (shipped) {
+        exp.status = 'implemented';
+        exp.implementedOn = shipped;
+        exp.measureAfter = isoDay(new Date(Date.parse(`${shipped}T00:00:00Z`) + (EXPERIMENT_MEASURE_DAYS + 3) * 864e5));
+        changed = true;
+      }
+    }
+
+    // 2. Old enough to judge?
+    if (exp.status === 'implemented' && token && exp.measureAfter && exp.measureAfter <= todayISO) {
+      const url = experimentPageUrl(exp);
+      const days = exp.baseline?.days || EXPERIMENT_MEASURE_DAYS;
+      if (url) {
+        try {
+          const end = dayOffset(3);
+          const start = isoDay(new Date(Date.parse(`${end}T00:00:00Z`) - (days - 1) * 864e5));
+          const after = await fetchPageWindow(token, url, start, end);
+          gscCalls++;
+          const { verdict, reason } = classifyExperiment(exp.baseline, after);
+          exp.status = 'measured';
+          exp.result = { verdict, reason, after, measuredOn: todayISO };
+          changed = true;
+        } catch (e) {
+          console.log(`::warning title=${AGENT_NAME}::Could not measure ${exp.id}: ${e.message}`);
+        }
+      }
+    }
+
+    reviewed.push(exp);
+  }
+
+  if (changed) writeJsonFile(EXPERIMENTS_FILE, experiments);
+  return { experiments, reviewed, gscCalls, changed };
+}
+
+// ─── SCOUT (part 1): opportunities the data we already hold can prove ─────────
+//
+// ⚠️ Run this BEFORE spending any external search. Anything findable in Search
+// Console is a wasted search — that is the explicit cost rule, and it is also
+// simply better evidence: our own impressions beat a competitor's blog post as a
+// reason to write something.
+
+function blogUrlToSlug(url) {
+  const m = String(url || '').match(/\/blog\/([^/?#]+)\/?/);
+  return m ? m[1] : null;
+}
+
+function findOpportunities({ gsc, posts }) {
+  const out = [];
+  const snap = gsc?.snapshot;
+  if (!snap) return out;
+
+  const queries = [...(snap.topByImpressions || []), ...(snap.topQueries || [])];
+  const seenQ = new Set();
+  const uniqueQueries = queries.filter(q => {
+    const k = q.key.toLowerCase();
+    if (seenQ.has(k)) return false;
+    seenQ.add(k);
+    return true;
+  });
+
+  // 1. Striking distance — ranked, but on page 2-3 where clicks are ~0.
+  for (const q of uniqueQueries) {
+    if (q.position >= STRIKING_MIN && q.position <= STRIKING_MAX && q.impressions >= 20) {
+      out.push({
+        kind: 'striking-distance',
+        subject: q.key,
+        evidence: `"${q.key}" — ${q.impressions} impressions at position ${q.position.toFixed(1)} over 28 days, ${q.clicks} clicks. Close enough that a real improvement could reach page one.`,
+        metric: 'position + clicks for this query',
+        baseline: { clicks: q.clicks, impressions: q.impressions, ctr: q.ctr, position: q.position },
+        weight: q.impressions * (1 / Math.max(1, q.position - 5)),
+      });
+    }
+  }
+
+  // 2. Ranking well but nobody clicks — a title/description problem, not a
+  //    ranking problem. Cheap to fix, and the fix is measurable.
+  for (const q of uniqueQueries) {
+    if (q.position <= 10 && q.impressions >= 30 && q.ctr < 0.02) {
+      out.push({
+        kind: 'weak-ctr',
+        subject: q.key,
+        evidence: `"${q.key}" ranks ${q.position.toFixed(1)} with ${q.impressions} impressions but only ${q.clicks} clicks (${(q.ctr * 100).toFixed(2)}% CTR). At that position the listing is being seen and skipped — usually the title or meta description.`,
+        metric: 'CTR for this query',
+        baseline: { clicks: q.clicks, impressions: q.impressions, ctr: q.ctr, position: q.position },
+        weight: q.impressions,
+      });
+    }
+  }
+
+  // 3. Pages that Google shows and nobody clicks.
+  const pages = [...(snap.topPagesByImpressions || [])];
+  for (const p of pages) {
+    if (p.impressions >= 100 && p.clicks === 0) {
+      const slug = blogUrlToSlug(p.key);
+      out.push({
+        kind: 'impressions-no-clicks',
+        subject: p.key,
+        targetSlug: slug,
+        evidence: `${p.key} — ${p.impressions} impressions, 0 clicks, average position ${p.position.toFixed(1)}. It is being served and skipped.`,
+        metric: 'clicks for this page',
+        baseline: { clicks: p.clicks, impressions: p.impressions, ctr: p.ctr, position: p.position },
+        weight: p.impressions,
+      });
+    }
+  }
+
+  // 4. Ageing posts with a real (but fading) search presence — the honest
+  //    "refresh this" candidates. A post absent from the top-250 page pull is
+  //    NOT evidence of zero traffic, so it is deliberately not flagged here.
+  const pageBySlug = new Map();
+  for (const p of pages) {
+    const slug = blogUrlToSlug(p.key);
+    if (slug && !pageBySlug.has(slug)) pageBySlug.set(slug, p);
+  }
+  const todayMs = Date.now();
+  for (const post of posts) {
+    const ageDays = Math.round((todayMs - Date.parse(post.publishedDate)) / 864e5);
+    if (ageDays < 270) continue;
+    const p = pageBySlug.get(post.slug);
+    if (p && p.impressions >= 30 && p.clicks <= 1) {
+      out.push({
+        kind: 'stale-content',
+        subject: post.title,
+        targetSlug: post.slug,
+        evidence: `Published ${post.publishedDate} (${ageDays} days ago); still earns ${p.impressions} impressions at position ${p.position.toFixed(1)} but only ${p.clicks} click(s). Dated figures and a refresh of the specifics would suit it.`,
+        metric: 'clicks + position for this page',
+        baseline: { clicks: p.clicks, impressions: p.impressions, ctr: p.ctr, position: p.position },
+        weight: p.impressions * 0.8,
+      });
+    }
+  }
+
+  // 5. Orphan posts — nothing else in the catalogue links to them. Cheap to fix
+  //    and it is the exact lever PRs #253-#256 were built around.
+  const linkedTo = new Set();
+  for (const post of posts) {
+    const body = String(post.content || '');
+    for (const m of body.matchAll(/\/blog\/([a-z0-9-]+)\/?/g)) linkedTo.add(m[1]);
+  }
+  const orphans = posts.filter(p => !linkedTo.has(p.slug));
+  if (orphans.length >= 3) {
+    out.push({
+      kind: 'missing-internal-links',
+      subject: `${orphans.length} posts with no inbound internal links`,
+      targetSlug: orphans[0].slug,
+      evidence: `${orphans.length} of ${posts.length} posts are not linked from any other post's body — e.g. "${orphans[0].title}". Nave adds outbound links to new posts, but older posts were never linked back to.`,
+      metric: 'impressions for the orphaned posts',
+      baseline: null,
+      weight: orphans.length * 8,
+    });
+  }
+
+  return out.sort((a, b) => b.weight - a.weight);
+}
+
+// ─── SCOUT (part 2): the capped external research ─────────────────────────────
+//
+// ⚠️ HARD CAP: SCOUT_SEARCH_BUDGET searches per 14-day cycle, and none at all
+// unless there is a question our own data cannot answer.
+//
+// Uses Anthropic's server-side web_search tool with the ANTHROPIC_API_KEY this
+// script already holds — no new credential, no new integration. `max_uses` is
+// enforced by Anthropic's API, not by us counting politely, and the count that
+// gets reported is read back from the response's usage block rather than
+// assumed. If the tool is not enabled on the account the call fails, we log it,
+// report zero searches, and the cycle proceeds on Search Console data alone.
+async function scoutExternal(topOpportunities) {
+  const subjects = topOpportunities.slice(0, 3).map(o => o.subject);
+  if (!subjects.length) {
+    return { used: 0, available: true, notes: '', skipped: 'no open question that needs external data' };
+  }
+
+  const prompt = `You are researching the NYC / Bronx property-management market for a small flat-fee property manager (DoryAngel, doryangel.com).
+
+Our own Search Console data already tells us WHERE we rank. Do not research that. Research only what we cannot see: what competitors publish on these subjects, and what angle is missing from the top results.
+
+Subjects, most important first:
+${subjects.map((s, i) => `${i + 1}. ${s}`).join('\n')}
+
+You may use at most ${SCOUT_SEARCH_BUDGET} web searches in total. Spend them on the first subject before the others.
+
+Reply with at most 200 words of plain notes: what the top-ranking pages cover, and the specific gap a Bronx-focused page could fill. No preamble, no headings.`;
+
+  try {
+    const res = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 900,
+      tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: SCOUT_SEARCH_BUDGET }],
+      messages: [{ role: 'user', content: prompt }],
+    });
+    const used = res?.usage?.server_tool_use?.web_search_requests ?? 0;
+    const notes = (res.content || [])
+      .filter(b => b.type === 'text')
+      .map(b => b.text)
+      .join('\n')
+      .trim();
+    console.log(`Scout: ${used}/${SCOUT_SEARCH_BUDGET} external searches used`);
+    return { used, available: true, notes: redactPII(notes).slice(0, 2000) };
+  } catch (e) {
+    // Never fatal. The cycle's real evidence is Search Console; external research
+    // is a bonus, and reporting a fake result would be worse than reporting none.
+    console.log(`::warning title=${AGENT_NAME}::External scouting unavailable (${e.message}) — recommendations use Search Console data only.`);
+    return { used: 0, available: false, notes: '', error: e.message.slice(0, 200) };
+  }
+}
+
+// ─── RECOMMEND ────────────────────────────────────────────────────────────────
+
+const RECOMMENDATION_SCHEMA_HINT = `Reply with ONLY a JSON array (no prose, no code fence) of 3 to 5 objects:
+[{
+  "action": "improve-existing" | "new-content" | "site-change",
+  "target_slug": "existing post slug, or a proposed new slug (lowercase-hyphenated, max 60 chars), or null for site-change",
+  "title": "short name for the change (for new-content, the proposed post title)",
+  "what": "one or two sentences: what should change",
+  "why": "the evidence that led here — cite the actual numbers you were given",
+  "expected_result": "which metric should move, and roughly how much",
+  "metric": "the single metric to watch",
+  "category": "diy-property-management" | "property-management" | "investments" | null,
+  "impact": 1-5, "confidence": 1-5, "effort": 1-5,
+  "legal_review_required": true | false
+}]`;
+
+async function draftRecommendations({ opportunities, scout, gsc, ga4, clarity, posts, experiments, todayISO }) {
+  const measured = experiments.filter(e => e.result?.verdict);
+  const pending = experiments.filter(e => e.status === 'queued' || e.status === 'implemented');
+
+  const historyBlock = experiments.length
+    ? `PREVIOUS EXPERIMENTS — do NOT re-recommend something already tried without saying so and proposing a DIFFERENT approach:
+${experiments.slice(-12).map(e =>
+  `- ${e.id} (${e.action}${e.targetSlug ? ` on ${e.targetSlug}` : ''}): ${e.status}${e.result ? ` → ${e.result.verdict}. ${e.result.reason}` : ''}`
+).join('\n')}`
+    : 'PREVIOUS EXPERIMENTS: none yet — this is the first cycle.';
+
+  const prompt = `You are Arlo, the continuous-improvement analyst for DoryAngel, a flat-fee property manager in the Bronx, NYC. Today is ${todayISO}.
+
+Your job is to pick the 3-5 highest-value improvements to recommend to the owner. You are NOT implementing anything — a human reads these and approves them one at a time.
+
+MEASURED OPPORTUNITIES (from our own Search Console data — this is the strongest evidence you have):
+${opportunities.slice(0, 12).map((o, i) => `${i + 1}. [${o.kind}] ${o.evidence}`).join('\n') || 'None surfaced this cycle.'}
+
+${scout.notes ? `EXTERNAL RESEARCH (${scout.used} searches):\n${scout.notes}` : 'EXTERNAL RESEARCH: none available this cycle.'}
+
+SITE CONTEXT:
+- ${posts.length} published posts. Existing titles (do not propose anything that duplicates these):
+${posts.slice(0, 40).map(p => `  - ${p.title}`).join('\n')}
+- 28-day search totals: ${gsc?.snapshot?.totals?.clicks ?? '?'} clicks / ${gsc?.snapshot?.totals?.impressions ?? '?'} impressions.
+${ga4 && !ga4.error ? `- GA4 30-day sessions: ${ga4.sessions.month}.` : ''}
+${clarity ? `- Clarity: ${clarity.sessions} sessions per 3 days, ${clarity.avgScrollDepth}% average scroll depth.` : ''}
+
+${historyBlock}
+${pending.length ? `\nStill awaiting results (do not recommend these again yet): ${pending.map(e => e.id).join(', ')}.` : ''}
+
+RULES:
+- Prefer "improve-existing" over "new-content" whenever a published post already covers the subject. A slightly different wording is NOT a new topic.
+- Only these categories may be proposed for new content: ${APPROVED_CATEGORIES.join(', ')}.
+- Every "why" must cite a number you were actually given above. Do not invent metrics.
+- Set legal_review_required=true for anything touching HPD, DOB, evictions, tenant rights, rent regulation, Local Law numbers, compliance deadlines, fines, taxes or legal obligations.
+- Never include any person's name, email address or phone number.
+- Bronx must be the primary geography of any new post title.
+
+${RECOMMENDATION_SCHEMA_HINT}`;
+
+  const res = await anthropic.messages.create({
+    model: 'claude-opus-4-7',
+    max_tokens: 3000,
+    messages: [{ role: 'user', content: prompt }],
+  });
+
+  const raw = res.content.find(b => b.type === 'text')?.text ?? '';
+  const match = raw.match(/\[[\s\S]*\]/);
+  if (!match) throw new Error('recommendation response was not a JSON array');
+  const parsed = JSON.parse(match[0]);
+  if (!Array.isArray(parsed)) throw new Error('recommendation response was not an array');
+  return parsed;
+}
+
+/**
+ * Everything the model returns passes through here before it is reported.
+ * ⚠️ The model's own legal flag is treated as a suggestion, never as an
+ * authority: the regex classifier runs over the title, action and evidence and
+ * the STRICTER of the two wins. A model that forgets the flag must not be able
+ * to open the legal gate.
+ */
+function finaliseRecommendations(raw, { posts, experiments, todayISO, opportunities }) {
+  const out = [];
+  let n = 0;
+
+  for (const r of raw.slice(0, 5)) {
+    const title = redactPII(String(r.title || '').trim()).slice(0, 160);
+    if (!title) continue;
+
+    const action = ['improve-existing', 'new-content', 'site-change'].includes(r.action)
+      ? r.action : 'site-change';
+    const category = resolveCategory(r.category);
+    const what = redactPII(String(r.what || '').trim()).slice(0, 600);
+    const why  = redactPII(String(r.why || '').trim()).slice(0, 600);
+
+    let targetSlug = String(r.target_slug || '').trim().toLowerCase() || null;
+    if (targetSlug && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(targetSlug)) targetSlug = null;
+
+    // Duplicate detection against the real catalogue — the model is told about
+    // it, but told is not checked. A "new" post that matches a published one is
+    // converted into an improve-existing recommendation rather than dropped:
+    // the underlying opportunity is usually real, only the framing is wrong.
+    let duplicateOf = null;
+    if (action === 'new-content') {
+      const dup = findDuplicate(posts, { slug: targetSlug, title });
+      if (dup) {
+        duplicateOf = dup;
+        targetSlug = dup.slug;
+      }
+    }
+    const finalAction = duplicateOf ? 'improve-existing' : action;
+
+    // Has this exact target been tried before?
+    const prior = experiments.filter(e => e.targetSlug && e.targetSlug === targetSlug);
+    const priorSummary = prior.length
+      ? prior.map(e => `${e.id} (${e.status}${e.result ? ` → ${e.result.verdict}` : ''})`).join(', ')
+      : null;
+    // Drop only exact repeats that are still in flight — re-recommending a page
+    // whose first experiment has not been judged yet just spends Dori's attention
+    // on a question already asked.
+    if (prior.some(e => (e.status === 'queued' || e.status === 'implemented') && e.action === finalAction)) {
+      continue;
+    }
+
+    const legalByRule = requiresLegalReview(title, what, why);
+    const legalRequired = Boolean(r.legal_review_required) || legalByRule;
+
+    const scored = scoreRecommendation(r);
+    n += 1;
+
+    // The baseline the result will eventually be judged against. Taken from the
+    // measured opportunity that matches, so it is a real number from GSC rather
+    // than something the model wrote.
+    const opp = opportunities.find(o =>
+      (targetSlug && o.targetSlug === targetSlug) ||
+      o.subject.toLowerCase() === title.toLowerCase()
+    );
+    const baseline = opp?.baseline
+      ? { days: 28, ...opp.baseline, capturedOn: todayISO, source: 'Search Console 28-day window' }
+      : null;
+
+    out.push({
+      id: makeRecommendationId(todayISO, n),
+      reportDate: todayISO,
+      action: finalAction,
+      targetSlug,
+      title,
+      what,
+      why,
+      expectedResult: redactPII(String(r.expected_result || '').trim()).slice(0, 300),
+      metric: redactPII(String(r.metric || '').trim()).slice(0, 160) || 'clicks',
+      measurementWindow: `${EXPERIMENT_MEASURE_DAYS} days after the change ships`,
+      category,
+      baseline,
+      ...scored,
+      legal_review_required: legalRequired,
+      legalReasons: legalRequired ? legalReviewReasons(title, what, why) : [],
+      duplicateOf: duplicateOf
+        ? { kind: duplicateOf.kind, slug: duplicateOf.slug, title: duplicateOf.title, score: duplicateOf.score }
+        : null,
+      previouslyTried: priorSummary,
+    });
+  }
+
+  return out.sort((a, b) => b.score - a.score);
+}
+
+// ─── The cycle ────────────────────────────────────────────────────────────────
+
+async function runImprovementCycle({ posts, gsc, ga4, clarity, todayISO }) {
+  const state = readCycleState();
+
+  // ⚠️ THE CADENCE IS ENFORCED HERE, IN CODE — not by the cron. The daily
+  // workflow fires every morning and workflow_dispatch can fire it again five
+  // minutes later; a second run on the same day must not re-spend the search
+  // budget or re-open measurement windows that overlap the ones just written.
+  if (!isCycleDue(state, todayISO)) {
+    const elapsed = state.lastCycleDate ? daysBetween(state.lastCycleDate, todayISO) : null;
+    return {
+      ran: false,
+      lastCycleDate: state.lastCycleDate ?? null,
+      daysUntilNext: elapsed == null ? 0 : Math.max(0, CYCLE_DAYS - elapsed),
+      reason: elapsed === 0 ? 'already ran today' : `next cycle in ${CYCLE_DAYS - elapsed} day(s)`,
+    };
+  }
+
+  console.log(`[improvement-cycle] due (last ran ${state.lastCycleDate || 'never'}) — measuring, scouting, recommending`);
+
+  // CHECK — how did the last approved changes do?
+  const { experiments, gscCalls } = await reviewExperiments(posts, todayISO);
+
+  // PLAN, part 1 — what does our own data say?
+  const opportunities = findOpportunities({ gsc, posts });
+  console.log(`[improvement-cycle] ${opportunities.length} opportunities from Search Console data`);
+
+  // PLAN, part 2 — the capped external look
+  const scout = await scoutExternal(opportunities);
+
+  // PLAN, part 3 — rank and write them up
+  let recommendations = [];
+  let error = null;
+  try {
+    const raw = await draftRecommendations({ opportunities, scout, gsc, ga4, clarity, posts, experiments, todayISO });
+    recommendations = finaliseRecommendations(raw, { posts, experiments, todayISO, opportunities });
+    console.log(`[improvement-cycle] ${recommendations.length} recommendations: ${recommendations.map(r => r.id).join(', ')}`);
+  } catch (e) {
+    error = e.message;
+    console.log(`::warning title=${AGENT_NAME}::Recommendation drafting failed (${e.message}) — the measurement and experiment sections still ran.`);
+  }
+
+  // The machine-readable record the approval script reads by ID. Overwritten
+  // each cycle on purpose: an approved recommendation is copied into
+  // experiments.json at approval time, so the ledger — not this file — is the
+  // permanent record.
+  writeJsonFile(RECOMMENDATIONS_FILE, {
+    reportDate: todayISO,
+    cycleDays: CYCLE_DAYS,
+    scoutSearchesUsed: scout.used,
+    scoutSearchBudget: SCOUT_SEARCH_BUDGET,
+    recommendations,
+  });
+
+  // Only stamp the cadence once the cycle has actually done its work. A run that
+  // dies before here re-runs tomorrow rather than silently skipping a fortnight.
+  writeCycleState(todayISO);
+
+  return {
+    ran: true,
+    reportDate: todayISO,
+    previousCycle: state.lastCycleDate ?? null,
+    recommendations,
+    experiments,
+    opportunities,
+    scout,
+    gscCalls,
+    error,
+  };
+}
+
 // ─── Auto-implementable improvements (highest priority first) ─────────────────
 
 const AUTO_TASKS = [
@@ -1240,8 +1867,116 @@ Return ONLY JSON: {"duplicate": true|false, "of": "<exact existing title, or emp
 
 // ─── Email digest ─────────────────────────────────────────────────────────────
 
-async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make, clarity, gsc }) {
+// ─── The 14-day cycle's three email blocks ────────────────────────────────────
+//
+// Rendered separately from the daily audit's own sections so the reader can see
+// at a glance which half of the email is "how the website is doing today" and
+// which half is "what we learned this fortnight and what to do next".
+//
+// ⚠️ THERE IS NO APPROVAL LINK ANYWHERE IN HERE, AND THERE MUST NEVER BE ONE.
+// No approve-by-URL, no webhook, no reply-to-approve, no button that writes to
+// the repository. A recommendation becomes work only when a human runs
+// queue-approved-post.js with its ID. An "approve" link in an email is a
+// one-click bridge from analysis to publishing, which is exactly the authority
+// boundary this whole system exists to hold.
+function renderImprovementSections(improvement) {
+  if (!improvement?.ran) {
+    return `
+    <div style="background:#F8FAFB;border:1px solid #E2E8F0;border-radius:8px;padding:10px 14px;margin:0 0 24px;">
+      <p style="margin:0;color:#8B9BAE;font-size:12px;">🔄 14-day improvement cycle — not due today${improvement?.reason ? ` (${improvement.reason})` : ''}. It runs every ${CYCLE_DAYS} days; the daily audit above runs every morning.</p>
+    </div>`;
+  }
+
+  const esc = s => String(s ?? '').replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
+  const { recommendations = [], experiments = [], scout = {}, opportunities = [], gscCalls = 0 } = improvement;
+
+  // ── 14-day performance review ──
+  const measuredExp = experiments.filter(e => e.result?.verdict);
+  const pendingExp  = experiments.filter(e => e.status === 'queued' || e.status === 'implemented');
+
+  const oppRows = opportunities.slice(0, 6).map(o => `
+      <tr style="background:#ffffff;border-top:1px solid #E2E8F0;">
+        <td style="padding:8px 12px;color:#8B9BAE;font-size:11px;text-transform:uppercase;white-space:nowrap;vertical-align:top;">${esc(o.kind)}</td>
+        <td style="padding:8px 12px;color:#556070;font-size:12px;">${esc(o.evidence)}</td>
+      </tr>`).join('');
+
+  const performanceBlock = `
+    <h2 style="font-size:15px;color:#0F2847;margin:28px 0 4px;border-top:2px solid #0F2847;padding-top:16px;">🔄 14-day performance review</h2>
+    <p style="color:#8B9BAE;font-size:11px;margin:0 0 12px;">Cycle ${esc(improvement.reportDate)}${improvement.previousCycle ? ` · previous cycle ${esc(improvement.previousCycle)}` : ' · first cycle'}</p>
+    ${opportunities.length ? `
+    <p style="font-size:12px;color:#556070;margin:0 0 8px;">What the data surfaced this cycle (${opportunities.length} opportunit${opportunities.length === 1 ? 'y' : 'ies'}, top ${Math.min(6, opportunities.length)} shown):</p>
+    <table style="border-collapse:collapse;width:100%;margin-bottom:20px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">${oppRows}</table>`
+    : '<p style="font-size:12px;color:#8B9BAE;margin:0 0 20px;">No measurable opportunities surfaced from Search Console this cycle.</p>'}`;
+
+  // ── Previous experiments ──
+  const verdictStyle = {
+    improving:        { bg: '#E8F8E8', border: '#8FCB8F', text: '#1B6B1B', icon: '📈 Improving' },
+    neutral:          { bg: '#F8FAFB', border: '#E2E8F0', text: '#556070', icon: '➖ Neutral / insufficient evidence' },
+    underperforming:  { bg: '#FFFBEB', border: '#FCD34D', text: '#92400E', icon: '📉 Underperforming' },
+  };
+
+  const experimentBlock = `
+    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">🧪 Previous experiments</h3>
+    ${measuredExp.length ? measuredExp.slice(-6).map(e => {
+      const s = verdictStyle[e.result.verdict] || verdictStyle.neutral;
+      return `
+    <div style="background:${s.bg};border:1px solid ${s.border};border-radius:8px;padding:10px 14px;margin-bottom:8px;">
+      <p style="margin:0;color:${s.text};font-size:12px;font-weight:700;">${s.icon} — ${esc(e.id)}</p>
+      <p style="margin:4px 0 0;color:${s.text};font-size:12px;">${esc(e.title || e.targetSlug || '')}</p>
+      <p style="margin:4px 0 0;color:${s.text};font-size:11px;">${esc(e.result.reason)}</p>
+    </div>`;
+    }).join('') : '<p style="font-size:12px;color:#8B9BAE;margin:0 0 8px;">No approved change has been running long enough to judge yet.</p>'}
+    ${pendingExp.length ? `<p style="font-size:11px;color:#8B9BAE;margin:0 0 20px;">Awaiting results: ${pendingExp.map(e => `${esc(e.id)} (${esc(e.status)})`).join(' · ')}</p>` : '<div style="margin-bottom:20px;"></div>'}
+    <p style="font-size:11px;color:#8B9BAE;margin:-12px 0 20px;font-style:italic;">These compare before and after the change. Search Console cannot prove a change <em>caused</em> a move — a Google update or a seasonal shift looks the same — so read them as association.</p>`;
+
+  // ── New recommendations ──
+  const priorityColor = { high: '#0D7B4E', medium: '#1E5AA8', low: '#8B9BAE' };
+  const recBlock = `
+    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">💡 New recommendations</h3>
+    ${improvement.error ? `<div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:10px 14px;margin-bottom:12px;"><p style="margin:0;color:#92400E;font-size:12px;">Recommendation drafting failed this cycle: ${esc(improvement.error)}. The measurements above still ran.</p></div>` : ''}
+    ${recommendations.length ? recommendations.map(r => `
+    <div style="border:1px solid #E2E8F0;border-left:4px solid ${priorityColor[r.priority]};border-radius:6px;padding:12px 14px;margin-bottom:10px;background:#ffffff;">
+      <p style="margin:0 0 2px;font-family:monospace;font-size:11px;color:#8B9BAE;">${esc(r.id)} · ${esc(r.action)}${r.targetSlug ? ` · ${esc(r.targetSlug)}` : ''} · <span style="color:${priorityColor[r.priority]};font-weight:700;">${esc(r.priority)} priority</span></p>
+      <p style="margin:0 0 6px;color:#0F2847;font-size:13px;font-weight:700;">${esc(r.title)}</p>
+      <p style="margin:0 0 4px;color:#556070;font-size:12px;"><strong>What:</strong> ${esc(r.what)}</p>
+      <p style="margin:0 0 4px;color:#556070;font-size:12px;"><strong>Why:</strong> ${esc(r.why)}</p>
+      <p style="margin:0 0 4px;color:#556070;font-size:12px;"><strong>Expected:</strong> ${esc(r.expectedResult)}</p>
+      <p style="margin:0 0 4px;color:#556070;font-size:12px;"><strong>Baseline:</strong> ${r.baseline
+        ? `${r.baseline.clicks} clicks / ${r.baseline.impressions} impressions${r.baseline.position != null ? ` at position ${Number(r.baseline.position).toFixed(1)}` : ''} (28 days to ${esc(r.baseline.capturedOn)})`
+        : 'no measured baseline — this one cannot be scored against a before/after'}</p>
+      <p style="margin:0 0 4px;color:#556070;font-size:12px;"><strong>Watch:</strong> ${esc(r.metric)} · <strong>Measure:</strong> ${esc(r.measurementWindow)}</p>
+      ${r.duplicateOf ? `<p style="margin:0 0 4px;color:#92400E;font-size:12px;">↩︎ Re-framed as an improvement: this overlaps the published post "${esc(r.duplicateOf.title)}" (${esc(r.duplicateOf.kind)}${r.duplicateOf.score ? `, ${r.duplicateOf.score}` : ''}).</p>` : ''}
+      ${r.previouslyTried ? `<p style="margin:0 0 4px;color:#92400E;font-size:12px;">⚠️ Already tried on this target: ${esc(r.previouslyTried)}.</p>` : ''}
+      <p style="margin:6px 0 0;font-size:12px;color:${r.legal_review_required ? '#B91C1C' : '#0D7B4E'};font-weight:700;">
+        ${r.legal_review_required
+          ? `⚖️ Legal review required${r.legalReasons?.length ? ` (${esc(r.legalReasons.join(', '))})` : ''} — cannot be queued without it`
+          : '✓ No legal review flagged'}
+      </p>
+    </div>`).join('') : '<p style="font-size:12px;color:#8B9BAE;margin:0 0 12px;">No recommendations this cycle.</p>'}
+
+    <div style="background:#EBF3FD;border:1px solid #8FBCEB;border-radius:8px;padding:12px 14px;margin:4px 0 20px;">
+      <p style="margin:0 0 6px;color:#1B4F8A;font-size:12px;font-weight:700;">These are recommendations, not changes. Nothing has been queued.</p>
+      <p style="margin:0;color:#1B4F8A;font-size:12px;">To approve one, run it yourself (or ask Claude to):</p>
+      <p style="margin:6px 0 0;font-family:monospace;font-size:11px;color:#0F2847;background:#ffffff;padding:8px 10px;border-radius:4px;word-break:break-all;">node scripts/queue-approved-post.js --id ${esc(recommendations[0]?.id || 'ARLO-YYYY-MM-DD-NN')} --approved-by "Dori"${recommendations.some(r => r.legal_review_required) ? ' --legal-reviewed' : ''}</p>
+      <p style="margin:6px 0 0;color:#1B4F8A;font-size:11px;">It re-validates the recommendation, opens a pull request, and stops there. Nothing publishes until you merge it.</p>
+    </div>`;
+
+  // ── Cost / activity ──
+  const costBlock = `
+    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">💰 Cycle cost &amp; activity</h3>
+    <table style="border-collapse:collapse;width:100%;margin-bottom:24px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;font-size:12px;">
+      <tr style="background:#ffffff;"><td style="padding:8px 12px;color:#556070;">External Scout searches</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:#0F2847;">${scout.used ?? 0} of ${SCOUT_SEARCH_BUDGET} allowed${scout.available === false ? ' — unavailable this cycle' : ''}</td></tr>
+      <tr style="background:#F8FAFB;"><td style="padding:8px 12px;color:#556070;">Extra Search Console queries (experiment measurement)</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:#0F2847;">${gscCalls}</td></tr>
+      <tr style="background:#ffffff;"><td style="padding:8px 12px;color:#556070;">Claude calls this cycle</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:#0F2847;">${scout.available === false ? 1 : 2} (scout + recommendations)</td></tr>
+      <tr style="background:#F8FAFB;"><td style="padding:8px 12px;color:#556070;">Cycle completed</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:#0D7B4E;">yes — next in ${CYCLE_DAYS} days</td></tr>
+    </table>`;
+
+  return performanceBlock + experimentBlock + recBlock + costBlock;
+}
+
+async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make, clarity, gsc, improvement }) {
   const { stats, categoryCounts, postCount } = state;
+  const improvementSections = renderImprovementSections(improvement);
 
   // ── Shared-credential banner ─────────────────────────────────────────────────
   // One card, at the very top, when the single service account behind GA4 +
@@ -1765,6 +2500,9 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
          Search Console + the lead sheets is what broke) -->
     ${credentialBanner}
 
+    <!-- ── WEBSITE HEALTH: the daily audit. Runs every morning. ── -->
+    <h2 style="font-size:15px;color:#0F2847;margin:0 0 12px;border-bottom:2px solid #0F2847;padding-bottom:8px;">🩺 Website health</h2>
+
     <!-- Today's task -->
     <h2 style="font-size:15px;color:#0F2847;margin:0 0 5px;">Today: ${taskLabel}</h2>
     <p style="color:#556070;font-size:13px;margin:0 0 14px;">${taskWhy}</p>
@@ -1813,6 +2551,10 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
     <table style="border-collapse:collapse;width:100%;margin-bottom:8px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;font-size:12px;">
       ${recentRows}
     </table>
+
+    <!-- ── CONTINUOUS IMPROVEMENT: the 14-day cycle. Recommendations only —
+         nothing here queues, approves or publishes anything. ── -->
+    ${improvementSections}
 
     <!-- Footer -->
     <p style="margin:28px 0 0;font-size:11px;color:#8B9BAE;text-align:center;">
@@ -1886,6 +2628,35 @@ async function main() {
     if (h && h.chat) console.log(`Hailey: ${h.chat.qualified}/${h.chat.sessions} sessions = ${h.chat.successRate}% success rate`);
   }
 
+  // ── The 14-day continuous-improvement cycle ────────────────────────────────
+  //
+  // ⚠️ Wrapped in withBlogIndexFrozen. The cycle observes, measures, scouts and
+  // recommends; it must not touch content/blog/posts-index.json. If it ever
+  // does, this throws rather than letting the run report success — publishing
+  // stays behind scripts/queue-approved-post.js and a human, always.
+  //
+  // A failure inside the cycle must not cost the daily audit its report, so
+  // everything except a governance violation is caught and reported as a
+  // degraded cycle.
+  let improvement = { ran: false, reason: 'not evaluated' };
+  try {
+    improvement = await withBlogIndexFrozen(
+      'the 14-day improvement cycle',
+      () => runImprovementCycle({
+        posts: JSON.parse(readFileSync(POSTS_INDEX_FILE, 'utf8')),
+        gsc, ga4, clarity, todayISO: today(),
+      }),
+      (msg) => console.log(`::error title=${AGENT_NAME}::${msg}`)
+    );
+  } catch (err) {
+    if (/GOVERNANCE VIOLATION/.test(err.message)) throw err;
+    console.log(`::warning title=${AGENT_NAME}::Improvement cycle failed (${err.message}) — the daily audit continues.`);
+    improvement = { ran: false, reason: `failed: ${err.message}`, error: err.message };
+  }
+  console.log(improvement.ran
+    ? `Improvement cycle: RAN — ${improvement.recommendations?.length ?? 0} recommendations, ${improvement.scout?.used ?? 0}/${SCOUT_SEARCH_BUDGET} external searches`
+    : `Improvement cycle: skipped (${improvement.reason})`);
+
   // Find the first pending auto-task
   const pendingTask = AUTO_TASKS.find(t => t.isNeeded(state));
 
@@ -1948,13 +2719,26 @@ async function main() {
 
   // Report what actually happened. This line used to print unconditionally,
   // so a rejected email still read as "Digest sent" in the run log.
-  const messageId = await sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make, clarity, gsc });
+  const messageId = await sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make, clarity, gsc, improvement });
   console.log(messageId
     ? `Digest delivered to ${NOTIFY_EMAIL} (Resend id ${messageId})`
     : `Digest NOT delivered to ${NOTIFY_EMAIL} — see the error annotation above.`);
 }
 
-main().catch(err => {
-  console.error('daily-audit error:', err.message);
-  process.exit(1);
-});
+// Only auto-run when this file is the entry point. The workflow invokes it as
+// `node scripts/daily-audit.js`, which is unchanged; the guard exists so the
+// verification harness can import the improvement-cycle functions and drive them
+// against stubbed APIs without kicking off a real audit (and a real email).
+if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
+  main().catch(err => {
+    console.error('daily-audit error:', err.message);
+    process.exit(1);
+  });
+}
+
+// Exported for scripts/lib/__verify__/verify-improvement-cycle.js only. Nothing
+// in production imports this file.
+export {
+  runImprovementCycle, findOpportunities, finaliseRecommendations,
+  classifyExperiment, renderImprovementSections, readCycleState,
+};
