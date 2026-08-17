@@ -1,6 +1,6 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-08-16",
+  "updatedAt": "2026-08-17",
   "events": [
     {
       "date": "2026-04-25",
@@ -2561,6 +2561,11 @@
       "date": "2026-08-15",
       "kind": "post",
       "subject": "Auto-publish: new blog post 2026-08-15"
+    },
+    {
+      "date": "2026-08-16",
+      "kind": "site",
+      "subject": "Arlo: resolve invented target slugs against the real catalogue"
     },
     {
       "date": "2026-08-16",
