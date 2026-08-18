@@ -1,6 +1,6 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-08-17",
+  "updatedAt": "2026-08-18",
   "events": [
     {
       "date": "2026-04-25",
@@ -2571,6 +2571,11 @@
       "date": "2026-08-16",
       "kind": "site",
       "subject": "Arlo: 14-day continuous-improvement cycle behind a human approval gate"
+    },
+    {
+      "date": "2026-08-17",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-08-17"
     }
   ]
 }
