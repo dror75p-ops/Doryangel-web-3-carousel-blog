@@ -1,6 +1,6 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-08-21",
+  "updatedAt": "2026-08-22",
   "events": [
     {
       "date": "2026-04-25",
@@ -2581,6 +2581,11 @@
       "date": "2026-08-19",
       "kind": "post",
       "subject": "Auto-publish: new blog post 2026-08-19"
+    },
+    {
+      "date": "2026-08-21",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-08-21"
     }
   ]
 }
