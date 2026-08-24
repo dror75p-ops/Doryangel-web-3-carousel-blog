@@ -1302,6 +1302,12 @@ footer {
   cursor: pointer; flex-shrink: 0;
   transition: background 0.2s;
 }
+/* The accessibility trigger is NOT mobile-only. UserWay's own icon is parked
+   off-screen (see #userwayAccessibilityIcon above), so this button is the only
+   way into the accessibility menu. Pairing it with .hamburger-btn meant it was
+   display:none until 900px, leaving every desktop visitor with no trigger at
+   all. The hamburger stays mobile-only; this must not. */
+.a11y-nav-btn { display: flex; }
 .hamburger-btn:hover, .a11y-nav-btn:hover { background: #2e69c7; }
 .hamburger-btn svg, .a11y-nav-btn svg { display: block; pointer-events: none; }
 
@@ -5021,6 +5027,7 @@ retell-chat-web-component {
           <li><a href="./disclaimer.html">Disclaimer</a></li>
           <li><a href="./sms-consent.html">SMS Consent</a></li>
           <li><a href="./terms.html">Terms of Service</a></li>
+          <li><a href="./accessibility.html">Accessibility Statement</a></li>
         </ul>
       </div>
     </div>

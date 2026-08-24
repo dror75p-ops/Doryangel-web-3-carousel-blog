@@ -116,8 +116,26 @@ footer a { color: rgba(255,255,255,0.7); }
 </div>
 
 <footer>
-  <p>© 2026 DoryAngel LLC · <a href="./">Home</a> · <a href="./terms.html">Terms &amp; Conditions</a> · <a href="./privacy.html">Privacy Policy</a> · <a href="./sms-consent.html">SMS Consent</a></p>
+  <p>© 2026 DoryAngel LLC · <a href="./">Home</a> · <a href="./terms.html">Terms &amp; Conditions</a> · <a href="./privacy.html">Privacy Policy</a> · <a href="./sms-consent.html">SMS Consent</a> · <a href="./accessibility.html">Accessibility Statement</a></p>
 </footer>
+
+<!-- UserWay accessibility widget. Deliberately WITHOUT the
+     #userwayAccessibilityIcon off-screen park rule used on index.html and the
+     landing pages: those carry their own in-nav accessibility button, this page
+     does not, so UserWay's own floating icon is the only trigger here and must
+     stay visible. This page has no other fixed corner element to collide with. -->
+<script>
+(function(d){
+  var s = d.createElement("script");
+  s.setAttribute("data-account", "lKWv8TGXed");
+  s.setAttribute("data-position", "2");
+  s.setAttribute("data-size", "small");
+  s.setAttribute("data-color", "#3A7BDD");
+  s.setAttribute("data-mobile", true);
+  s.setAttribute("src", "https://cdn.userway.org/widget.js");
+  (d.body || d.head).appendChild(s);
+})(document)
+</script>
 
 </body>
 </html>

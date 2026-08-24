@@ -241,7 +241,14 @@ h1.post-title {
 .post-body strong { color: var(--navy); }
 .post-body em { color: var(--text-muted); }
 .post-body hr { border: none; border-top: 1px solid var(--grey-mid); margin: 36px 0; }
-.post-body table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 15px; }
+/* Comparison tables are wider than a phone. WCAG 2.1 SC 1.4.10 exempts content
+   that genuinely needs two-dimensional layout, but only if the PAGE itself does
+   not scroll sideways — so the table scrolls inside its own box instead. It is
+   focusable so a keyboard user can reach that scroll, and labelled so a screen
+   reader announces the region. */
+.post-body .table-scroll { overflow-x: auto; margin: 24px 0; -webkit-overflow-scrolling: touch; }
+.post-body .table-scroll:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.post-body table { width: 100%; border-collapse: collapse; margin: 0; font-size: 15px; }
 .post-body th { background: var(--navy); color: white; padding: 12px 14px; text-align: left; font-weight: 600; }
 .post-body td { border: 1px solid var(--grey-mid); padding: 12px 14px; }
 .post-body tr:nth-child(even) td { background: var(--grey-light); }
@@ -278,8 +285,15 @@ h1.post-title {
 .hashtag-row {
   margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--grey-mid);
   font-size: 13px; color: var(--text-muted);
+  /* The tags are emitted with no whitespace between them (.join('') below), so
+     as plain inline spans the browser saw the whole row as one unbreakable word
+     and it ran off the side of the screen: 68/68 posts overflowed horizontally
+     at 320px, by up to 247px — WCAG 2.1 SC 1.4.10 Reflow. margin-right gave the
+     chips visual spacing but a margin is not a line-break opportunity. Flex wrap
+     gives every chip its own; the gap reproduces the old 6px. */
+  display: flex; flex-wrap: wrap; gap: 6px;
 }
-.hashtag-row span { color: var(--blue); margin-right: 6px; }
+.hashtag-row span { color: var(--blue); }
 
 .related-posts {
   background: var(--grey-light);
@@ -343,7 +357,7 @@ footer.post-footer a { color: white; text-decoration: none; }
 <h2>Why Does the Bronx vs. Mount Vernon Comparison Even Matter Here?</h2>
 <p>On paper, the buildings look similar: pre-war multifamilies, basement laundry, 2-inch or 3-inch cast-iron waste lines feeding a main stack. The difference is enforcement and cost exposure.</p>
 <p>A backed-up laundry drain in the Bronx that seeps into a hallway or a first-floor unit is a Class B violation under <strong>NYC Housing Maintenance Code § 27-2004</strong> — 30-day cure order, $350–$1,000 in HPD fines if you miss it, and it sits on your building&#39;s record. In Mount Vernon (the Westchester city right over the border), the code exposure is looser and slower, so Mount Vernon owners often let the slow-drain warning ride. Bronx owners can&#39;t afford to, which is actually why the ones who take it seriously come out ahead financially.</p>
-<table>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Comparison table, scrollable"><table>
 <thead>
 <tr>
 <th></th>
@@ -371,7 +385,7 @@ footer.post-footer a { color: white; text-decoration: none; }
 <td>0</td>
 <td>2–4 (guaranteed)</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <h2>Why Do Laundry Room Drains Fail in the Fall?</h2>
 <p>Laundry drains almost never fail suddenly. They fail on a schedule, and fall is the tipping point.</p>
 <p>Here&#39;s what&#39;s actually happening inside that 2-inch or 3-inch waste line (the pipe that carries the washer&#39;s dirty water from the standpipe down to the main stack): every wash cycle sends lint, soap scum, and hard-water minerals into the pipe. In summer, warm water keeps most of that gunk moving. Once outdoor temperatures drop in October and November, the pipe walls stay colder, water flows slower, detergent residue hardens onto the pipe walls like candle wax, and lint that used to wash through starts sticking to it.</p>
@@ -474,6 +488,7 @@ footer.post-footer a { color: white; text-decoration: none; }
 <footer class="post-footer">
   <p>DoryAngel LLC · <a href="mailto:office@doryangel.com">office@doryangel.com</a> · (516) 847-4999</p>
   <p style="margin-top:6px;">557 Grand Concourse Ave #4123, Bronx NY 10451</p>
+  <p style="margin-top:10px;font-size:12px;"><a href="/privacy.html">Privacy Policy</a> &middot; <a href="/disclaimer.html">Disclaimer</a> &middot; <a href="/sms-consent.html">SMS Consent</a> &middot; <a href="/terms.html">Terms of Service</a> &middot; <a href="/accessibility.html">Accessibility Statement</a></p>
 </footer>
 
 <script defer src="/_vercel/insights/script.js"></script>
@@ -481,6 +496,24 @@ footer.post-footer a { color: white; text-decoration: none; }
 
 <!-- Consent-gated GA4 + Clarity (shared loader) -->
 <script src="/analytics.js"></script>
+
+<!-- UserWay accessibility widget. Deliberately WITHOUT the
+     #userwayAccessibilityIcon off-screen park rule used on index.html and the
+     landing pages: those carry their own in-nav accessibility button, these do
+     not, so UserWay's own floating icon is the only trigger here and must stay
+     visible. These pages have no other fixed corner element to collide with. -->
+<script>
+(function(d){
+  var s = d.createElement("script");
+  s.setAttribute("data-account", "lKWv8TGXed");
+  s.setAttribute("data-position", "2");
+  s.setAttribute("data-size", "small");
+  s.setAttribute("data-color", "#3A7BDD");
+  s.setAttribute("data-mobile", true);
+  s.setAttribute("src", "https://cdn.userway.org/widget.js");
+  (d.body || d.head).appendChild(s);
+})(document)
+</script>
 
 </body>
 </html>

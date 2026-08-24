@@ -496,7 +496,7 @@ body {
 }
 
 .success-state { display: none; text-align: center; padding: 12px 0; }
-.success-state h3 {
+.success-state h2 {
   font-family: var(--font-display);
   font-size: 22px; font-weight: 700;
   text-transform: uppercase; color: var(--charcoal); margin-bottom: 8px;
@@ -1094,15 +1094,15 @@ footer a:hover { text-decoration: underline; }
         <div class="fc-title">Get My Free Calendar Now</div>
         <div class="fc-sub">Takes 20 seconds. No credit card. Cancel any time.</div>
         <div class="field">
-          <label>First Name</label>
+          <label for="fname">First Name</label>
           <input type="text" id="fname" placeholder="Your first name" autocomplete="given-name">
         </div>
         <div class="field">
-          <label>Email Address</label>
+          <label for="femail">Email Address</label>
           <input type="email" id="femail" placeholder="you@email.com" autocomplete="email">
         </div>
         <div class="field">
-          <label>Building Address <span class="opt-l">(optional)</span></label>
+          <label for="faddress">Building Address <span class="opt-l">(optional)</span></label>
           <input type="text" id="faddress" placeholder="123 Grand Concourse, Bronx" autocomplete="street-address">
         </div>
         <div class="form-urgency-nudge">May ends in <span id="days-left">29</span> days — don&rsquo;t miss June&rsquo;s 4 deadlines</div>
@@ -1117,7 +1117,7 @@ footer a:hover { text-decoration: underline; }
             <path d="M14 24l8 8 12-14" stroke="#3E8FD4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <h3>Calendar Unlocked</h3>
+        <h2>Calendar Unlocked</h2>
         <p>All 12 months are now visible below. Your first monthly reminder arrives June 1.</p>
       </div>
     </div>
@@ -1895,5 +1895,23 @@ initCurrentMonth();
     <rect x="85" y="58" width="22" height="14" rx="2" fill="white" opacity="0.25"/>
   </svg>
 </template>
+<!-- UserWay accessibility widget. Deliberately WITHOUT the
+     #userwayAccessibilityIcon off-screen park rule used on index.html and the
+     landing pages: those carry their own in-nav accessibility button, this page
+     does not, so UserWay's own floating icon is the only trigger here and must
+     stay visible. This page has no other fixed corner element to collide with. -->
+<script>
+(function(d){
+  var s = d.createElement("script");
+  s.setAttribute("data-account", "lKWv8TGXed");
+  s.setAttribute("data-position", "2");
+  s.setAttribute("data-size", "small");
+  s.setAttribute("data-color", "#3A7BDD");
+  s.setAttribute("data-mobile", true);
+  s.setAttribute("src", "https://cdn.userway.org/widget.js");
+  (d.body || d.head).appendChild(s);
+})(document)
+</script>
+
 </body>
 </html>
