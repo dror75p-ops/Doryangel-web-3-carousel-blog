@@ -1,0 +1,48 @@
+# Accessibility-widget reachability check — manual, read-only, no secrets.
+#
+# WHY THIS EXISTS: the repo's CSS parks UserWay's own icon off-screen and shows
+# the in-nav accessibility button only below 900px. Read statically that means
+# desktop has no trigger — but only if UserWay still renders
+# #userwayAccessibilityIcon. If it doesn't, the park rule is dead code, its own
+# button shows everywhere, and the in-nav button is the thing that's broken.
+# Those are opposite defects and the fix differs, so it must be measured.
+#
+# The CCR sandbox proxy blocks www.doryangel.com and cdn.userway.org (403), so
+# this runs from a runner, which is on the open internet. Writes nothing.
+
+name: Accessibility widget check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Playwright + Chromium
+        run: |
+          npm init -y >/dev/null 2>&1 || true
+          npm install --no-save playwright@1.47.0
+          npx playwright install --with-deps chromium
+
+      - name: Probe the live site
+        run: node scripts/a11y-widget-probe.mjs
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-screenshots
+          path: shot-*.png
+          if-no-files-found: warn
