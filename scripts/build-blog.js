@@ -174,6 +174,15 @@ function getRelatedPosts(currentPost, allPosts) {
   return picks.slice(0, 3);
 }
 
+// marked emits a bare <table>; a wide one made the whole page scroll sideways on
+// a phone. Wrapping it in a focusable, labelled scroll box keeps the table intact
+// and the page reflowing. Markdown tables never nest, so this pairing is safe.
+function wrapTables(html) {
+  return html
+    .replace(/<table>/g, '<div class="table-scroll" tabindex="0" role="region" aria-label="Comparison table, scrollable"><table>')
+    .replace(/<\/table>/g, '</table></div>');
+}
+
 function renderPage(post, related) {
   const url = `${SITE_URL}/blog/${post.slug}/`;
   const categoryLabel = CATEGORY_LABEL[post.category] || post.category;
@@ -386,7 +395,14 @@ h1.post-title {
 .post-body strong { color: var(--navy); }
 .post-body em { color: var(--text-muted); }
 .post-body hr { border: none; border-top: 1px solid var(--grey-mid); margin: 36px 0; }
-.post-body table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 15px; }
+/* Comparison tables are wider than a phone. WCAG 2.1 SC 1.4.10 exempts content
+   that genuinely needs two-dimensional layout, but only if the PAGE itself does
+   not scroll sideways — so the table scrolls inside its own box instead. It is
+   focusable so a keyboard user can reach that scroll, and labelled so a screen
+   reader announces the region. */
+.post-body .table-scroll { overflow-x: auto; margin: 24px 0; -webkit-overflow-scrolling: touch; }
+.post-body .table-scroll:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.post-body table { width: 100%; border-collapse: collapse; margin: 0; font-size: 15px; }
 .post-body th { background: var(--navy); color: white; padding: 12px 14px; text-align: left; font-weight: 600; }
 .post-body td { border: 1px solid var(--grey-mid); padding: 12px 14px; }
 .post-body tr:nth-child(even) td { background: var(--grey-light); }
@@ -423,8 +439,15 @@ h1.post-title {
 .hashtag-row {
   margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--grey-mid);
   font-size: 13px; color: var(--text-muted);
+  /* The tags are emitted with no whitespace between them (.join('') below), so
+     as plain inline spans the browser saw the whole row as one unbreakable word
+     and it ran off the side of the screen: 68/68 posts overflowed horizontally
+     at 320px, by up to 247px — WCAG 2.1 SC 1.4.10 Reflow. margin-right gave the
+     chips visual spacing but a margin is not a line-break opportunity. Flex wrap
+     gives every chip its own; the gap reproduces the old 6px. */
+  display: flex; flex-wrap: wrap; gap: 6px;
 }
-.hashtag-row span { color: var(--blue); margin-right: 6px; }
+.hashtag-row span { color: var(--blue); }
 
 .related-posts {
   background: var(--grey-light);
@@ -483,7 +506,7 @@ footer.post-footer a { color: white; text-decoration: none; }
   <p class="post-excerpt">${escape(post.excerpt)}</p>
 
   <div class="post-body">
-    ${marked.parse(post.content)}
+    ${wrapTables(marked.parse(post.content))}
   </div>
 
   <div class="cta-block">
@@ -516,6 +539,7 @@ ${relatedHtml}
 <footer class="post-footer">
   <p>${COMPANY_NAME} · <a href="mailto:office@doryangel.com">office@doryangel.com</a> · (516) 847-4999</p>
   <p style="margin-top:6px;">557 Grand Concourse Ave #4123, Bronx NY 10451</p>
+  <p style="margin-top:10px;font-size:12px;"><a href="/privacy.html">Privacy Policy</a> &middot; <a href="/disclaimer.html">Disclaimer</a> &middot; <a href="/sms-consent.html">SMS Consent</a> &middot; <a href="/terms.html">Terms of Service</a> &middot; <a href="/accessibility.html">Accessibility Statement</a></p>
 </footer>
 
 <script defer src="/_vercel/insights/script.js"></script>
@@ -523,6 +547,24 @@ ${relatedHtml}
 
 <!-- Consent-gated GA4 + Clarity (shared loader) -->
 <script src="/analytics.js"></script>
+
+<!-- UserWay accessibility widget. Deliberately WITHOUT the
+     #userwayAccessibilityIcon off-screen park rule used on index.html and the
+     landing pages: those carry their own in-nav accessibility button, these do
+     not, so UserWay's own floating icon is the only trigger here and must stay
+     visible. These pages have no other fixed corner element to collide with. -->
+<script>
+(function(d){
+  var s = d.createElement("script");
+  s.setAttribute("data-account", "lKWv8TGXed");
+  s.setAttribute("data-position", "2");
+  s.setAttribute("data-size", "small");
+  s.setAttribute("data-color", "#3A7BDD");
+  s.setAttribute("data-mobile", true);
+  s.setAttribute("src", "https://cdn.userway.org/widget.js");
+  (d.body || d.head).appendChild(s);
+})(document)
+</script>
 
 </body>
 </html>
@@ -716,11 +758,30 @@ ${sectionsHtml}
 <footer class="post-footer">
   <p>${COMPANY_NAME} &middot; <a href="mailto:office@doryangel.com">office@doryangel.com</a> &middot; (516) 847-4999</p>
   <p style="margin-top:6px;">557 Grand Concourse Ave #4123, Bronx NY 10451</p>
+  <p style="margin-top:10px;font-size:12px;"><a href="/privacy.html">Privacy Policy</a> &middot; <a href="/disclaimer.html">Disclaimer</a> &middot; <a href="/sms-consent.html">SMS Consent</a> &middot; <a href="/terms.html">Terms of Service</a> &middot; <a href="/accessibility.html">Accessibility Statement</a></p>
 </footer>
 
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 <script src="/analytics.js"></script>
+
+<!-- UserWay accessibility widget. Deliberately WITHOUT the
+     #userwayAccessibilityIcon off-screen park rule used on index.html and the
+     landing pages: those carry their own in-nav accessibility button, these do
+     not, so UserWay's own floating icon is the only trigger here and must stay
+     visible. These pages have no other fixed corner element to collide with. -->
+<script>
+(function(d){
+  var s = d.createElement("script");
+  s.setAttribute("data-account", "lKWv8TGXed");
+  s.setAttribute("data-position", "2");
+  s.setAttribute("data-size", "small");
+  s.setAttribute("data-color", "#3A7BDD");
+  s.setAttribute("data-mobile", true);
+  s.setAttribute("src", "https://cdn.userway.org/widget.js");
+  (d.body || d.head).appendChild(s);
+})(document)
+</script>
 
 </body>
 </html>
@@ -739,6 +800,7 @@ function buildSitemap(posts) {
     `  <url><loc>${SITE_URL}/tax-checklist/</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
     `  <url><loc>${SITE_URL}/guides/bronx-landlord-compliance/</loc><lastmod>2026-07-24</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
     `  <url><loc>${SITE_URL}/faq/</loc><lastmod>2026-07-15</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
+    `  <url><loc>${SITE_URL}/accessibility.html</loc><lastmod>2026-08-24</lastmod><changefreq>yearly</changefreq><priority>0.4</priority></url>`,
     `  <url><loc>${SITE_URL}/tools/compliance-calendar/</loc><lastmod>2026-07-31</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
     ...posts.map(p =>
       `  <url><loc>${SITE_URL}/blog/${p.slug}/</loc><lastmod>${p.publishedDate}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`

@@ -123,6 +123,11 @@ button { cursor: pointer; font-family: inherit; }
   cursor: pointer; transition: background 0.2s;
   color: #fff;
 }
+/* The accessibility trigger is NOT mobile-only. .bp-icon-btn is shared with the
+   hamburger, so the a11y button is targeted by id: the hamburger stays hidden
+   until 768px, this must not — UserWay's own icon is parked off-screen below,
+   which left every desktop visitor with no way into the accessibility menu. */
+#a11y-nav-btn { display: flex; }
 .bp-icon-btn:hover { background: #2e69c7; }
 .bp-icon-btn svg { display: block; pointer-events: none; }
 /* Mobile drawer */
@@ -1237,7 +1242,8 @@ input[type=range]::-moz-range-thumb {
     <div class="footer-bottom">
       © <span id="copy-year"></span> DoryAngel LLC · Consulting Agency, Not a Licensed Brokerage · All Rights Reserved ·
       <a href="privacy.html" style="color:rgba(255,255,255,0.3);">Privacy</a> ·
-      <a href="terms.html" style="color:rgba(255,255,255,0.3);">Terms</a>
+      <a href="terms.html" style="color:rgba(255,255,255,0.3);">Terms</a> ·
+      <a href="accessibility.html" style="color:rgba(255,255,255,0.3);">Accessibility</a>
     </div>
   </div>
 </footer>
@@ -1444,5 +1450,23 @@ document.addEventListener('DOMContentLoaded', function() {
   else { window.addEventListener('load', function () { setTimeout(loadRetell, 3500); }); }
 })();
 </script>
+<!-- UserWay accessibility widget. The park rule IS used here (unlike the blog
+     and legal pages) because this page carries its own in-nav accessibility
+     button plus a sticky call button and the Retell chat bar in the bottom
+     corners — a second floating icon would land on top of them. -->
+<style>#userwayAccessibilityIcon { position: fixed !important; left: -9999px !important; top: -9999px !important; }</style>
+<script>
+(function(d){
+  var s = d.createElement("script");
+  s.setAttribute("data-account", "lKWv8TGXed");
+  s.setAttribute("data-position", "2");
+  s.setAttribute("data-size", "small");
+  s.setAttribute("data-color", "#3A7BDD");
+  s.setAttribute("data-mobile", true);
+  s.setAttribute("src", "https://cdn.userway.org/widget.js");
+  (d.body || d.head).appendChild(s);
+})(document)
+</script>
+
 </body>
 </html>

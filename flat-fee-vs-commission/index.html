@@ -169,6 +169,12 @@ nav.bar-hidden { top: 0; }
   border: none; border-radius: 8px; cursor: pointer; flex-shrink: 0;
   transition: background 0.2s;
 }
+/* The accessibility trigger is NOT mobile-only. UserWay's own icon is parked
+   off-screen (see #userwayAccessibilityIcon above), so this button is the only
+   way into the accessibility menu. Pairing it with .hamburger-btn meant it was
+   display:none until 900px, leaving every desktop visitor with no trigger at
+   all. The hamburger stays mobile-only; this must not. */
+.a11y-nav-btn { display: flex; }
 .hamburger-btn:hover, .a11y-nav-btn:hover { background: #2e69c7; }
 .hamburger-btn svg, .a11y-nav-btn svg { display: block; pointer-events: none; }
 /* Park UserWay's own button off-screen so we trigger it via our icon */
@@ -355,7 +361,7 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
 .footer-logo-wrap { background: #fff; display: inline-block; border-radius: 8px; padding: 6px 12px; margin-bottom: 4px; }
 .footer-logo-wrap img { height: 36px; display: block; }
 .footer-desc { font-size: 14px; color: rgba(255,255,255,0.65); line-height: 1.7; margin-top: 16px; max-width: 280px; }
-.footer-col h4 { font-size: 13px; font-weight: 700; color: #fff; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 18px; }
+.footer-col h3 { font-size: 13px; font-weight: 700; color: #fff; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 18px; }
 .footer-col ul { list-style: none; }
 .footer-col ul li { margin-bottom: 10px; }
 .footer-col ul li a { font-size: 14px; color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.2s; }
@@ -630,7 +636,7 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
         </a>
       </div>
       <div class="footer-col">
-        <h4>Services</h4>
+        <h3>Services</h3>
         <ul>
           <li><a href="../#services">Property Owners</a></li>
           <li><a href="../#services">Tenants</a></li>
@@ -639,7 +645,7 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Resources</h4>
+        <h3>Resources</h3>
         <ul>
           <li><a href="../#blog">Blog</a></li>
           <li><a href="../#faq">FAQ</a></li>
@@ -648,12 +654,13 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Legal</h4>
+        <h3>Legal</h3>
         <ul>
           <li><a href="../privacy.html">Privacy Policy</a></li>
           <li><a href="../disclaimer.html">Disclaimer</a></li>
           <li><a href="../sms-consent.html">SMS Consent</a></li>
           <li><a href="../terms.html">Terms of Service</a></li>
+          <li><a href="../accessibility.html">Accessibility Statement</a></li>
         </ul>
       </div>
     </div>
