@@ -1,6 +1,6 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-08-25",
+  "updatedAt": "2026-08-26",
   "events": [
     {
       "date": "2026-04-25",
@@ -2601,6 +2601,11 @@
       "date": "2026-08-24",
       "kind": "site",
       "subject": "Add a read-only probe for accessibility-widget reachability"
+    },
+    {
+      "date": "2026-08-25",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-08-25"
     }
   ]
 }
