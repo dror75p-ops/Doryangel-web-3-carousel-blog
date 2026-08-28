@@ -1,9 +1,9 @@
 {
   "format": "days[YYYY-MM-DD] = { total|www|apex|beta: [clicks, impressions, avgPosition] }",
   "note": "Per-day, non-overlapping. Use this — not rank-history.json — to attribute a change to a date.",
-  "updatedAt": "2026-08-27",
-  "fetchedFrom": "2026-08-13",
-  "fetchedTo": "2026-08-24",
+  "updatedAt": "2026-08-28",
+  "fetchedFrom": "2026-08-14",
+  "fetchedTo": "2026-08-25",
   "days": {
     "2025-04-13": {
       "total": [
@@ -10981,6 +10981,28 @@
         0,
         3,
         7.67
+      ]
+    },
+    "2026-08-25": {
+      "total": [
+        2,
+        148,
+        18.31
+      ],
+      "www": [
+        2,
+        113,
+        18.58
+      ],
+      "apex": [
+        1,
+        44,
+        10.48
+      ],
+      "beta": [
+        0,
+        6,
+        39.67
       ]
     }
   }
