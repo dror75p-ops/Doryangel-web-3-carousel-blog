@@ -71,7 +71,7 @@ function collect() {
 }
 
 const browser = await chromium.launch();
-let anyDesktopTrigger = null;
+const results = [];
 
 for (const [label, url] of PAGES) {
   for (const [vpName, viewport] of VIEWPORTS) {
@@ -79,11 +79,17 @@ for (const [label, url] of PAGES) {
     const page = await ctx.newPage();
     let res;
     try {
-      await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 });
-      await page.waitForTimeout(4000); // UserWay injects late
+      // NOT networkidle: index.html carries Retell, Elfsight, Clarity and GA4,
+      // which keep the connection busy indefinitely, so networkidle times out and
+      // the most important page never gets probed at all. Wait for the document,
+      // then give UserWay time to inject.
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 });
+      await page.waitForLoadState('load', { timeout: 20000 }).catch(() => {});
+      await page.waitForTimeout(6000); // UserWay injects late
       res = await page.evaluate(collect);
     } catch (err) {
       console.log(`\n### ${label} @ ${vpName}\n  LOAD FAILED: ${err.message}`);
+      results.push({ label, vpName, loaded: false, visible: 0 });
       await ctx.close();
       continue;
     }
@@ -98,7 +104,7 @@ for (const [label, url] of PAGES) {
       console.log(`         label=${JSON.stringify(c.label)} display=${c.display} vis=${c.visibility} op=${c.opacity} box=${JSON.stringify(c.box)}`);
     }
 
-    if (label === 'homepage' && vpName.startsWith('desktop')) anyDesktopTrigger = visible.length;
+    results.push({ label, vpName, loaded: true, visible: visible.length });
 
     await page.screenshot({ path: `shot-${label.replace(/\W+/g, '-')}-${vpName.replace(/\W+/g, '-')}.png`, fullPage: false });
     await ctx.close();
@@ -107,7 +113,26 @@ for (const [label, url] of PAGES) {
 
 await browser.close();
 
+// A page that never loaded is an untested page, NOT a page without a trigger.
+// Conflating the two is how the first run reported "Homepage desktop has NO
+// reachable accessibility trigger" when the homepage had simply timed out.
 console.log('\n================ VERDICT ================');
-console.log(anyDesktopTrigger > 0
-  ? `Homepage desktop HAS ${anyDesktopTrigger} reachable accessibility trigger(s).`
-  : 'Homepage desktop has NO reachable accessibility trigger.');
+let failures = 0;
+for (const r of results) {
+  const where = `${r.label} @ ${r.vpName}`;
+  if (!r.loaded)          console.log(`  ⚠️  NOT TESTED  ${where} — page failed to load, this says nothing about the trigger`);
+  else if (r.visible > 0) console.log(`  ✅  OK          ${where} — ${r.visible} reachable trigger(s)`);
+  else { failures++;      console.log(`  ❌  NO TRIGGER  ${where} — page loaded and nothing reachable was found`); }
+}
+const untested = results.filter(r => !r.loaded).length;
+console.log(`\n${results.length - untested}/${results.length} page-viewport combinations tested; ${failures} with no reachable trigger.`);
+if (untested) console.log(`${untested} could not be loaded — re-run before drawing any conclusion about those.`);
+// A run that tested nothing must not pass as a green tick — that is the same
+// silent-success trap the verdict wording above exists to close.
+if (untested === results.length) {
+  console.log('\n::error::Probe tested nothing — every page failed to load. This run proves nothing.');
+  process.exitCode = 1;
+} else {
+  if (untested) console.log(`::warning::${untested} of ${results.length} page-viewport combinations could not be loaded.`);
+  process.exitCode = failures > 0 ? 1 : 0;
+}
