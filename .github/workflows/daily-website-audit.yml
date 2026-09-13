@@ -24,23 +24,12 @@ permissions:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    # A backstop, not the real fix — the per-request timeouts in daily-audit.js
-    # are. Without this the job inherits GitHub's 360-minute default, so a hang
-    # burns six hours of runner time before anyone hears about it. With it, a
-    # stuck run fails as a timeout that names itself instead of the bare
-    # "cancelled" with no logs that run 31118286414 produced on 2026-08-06.
     timeout-minutes: 20
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          # buildAnnotations() runs `git log --since="<backfill> days ago"` to
-          # derive the change log that daily-series.json is read against.
-          # checkout defaults to a depth-1 shallow clone, so that log returned a
-          # single commit — filtered out as noise — and annotations.json was
-          # written empty every run with no error anywhere. Full history is the
-          # only thing that makes the file mean anything.
           fetch-depth: 0
 
       - name: Set up Node.js
@@ -60,18 +49,17 @@ jobs:
           GA4_PROPERTY_ID: ${{ secrets.GA4_PROPERTY_ID }}
           GOOGLE_SA_KEY: ${{ secrets.GOOGLE_SA_KEY }}
           CLARITY_API_TOKEN: ${{ secrets.CLARITY_API_TOKEN }}
-          # Must be the sc-domain: form — the owner's Search Console property is
-          # a Domain property, and a URL-prefix value 403s against it. Not a
-          # secret, so it is a plain literal.
           GSC_SITE_URL: 'sc-domain:doryangel.com'
         run: node scripts/daily-audit.js
 
-      # ⚠️ Separate from the PR step below, and deliberately unconditional.
-      # That step only runs when an auto-task fired, which is the minority of
-      # days — so if the rank snapshot rode along with it, it would be thrown
-      # away with the runner on every other day and the trend would never
-      # accumulate. This is the category-plan.json lesson: anything written on
-      # the runner has to be committed or it does not exist.
+      # Separate, decision-focused message. The script sends only when the
+      # recommendations file was generated today, so this does not create a
+      # daily nag. It contains no approval link/webhook and cannot queue work.
+      - name: Send Arlo approval decision email
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: node scripts/arlo-approval-reminder.js
+
       - name: Commit rank history
         run: |
           if [ ! -f project/seo/rank-history.json ] && [ ! -f project/seo/improvement-state.json ]; then
@@ -80,19 +68,6 @@ jobs:
           fi
           git config user.name "Arlo (DoryAngel Bot)"
           git config user.email "office@doryangel.com"
-          # ⚠️ ALL FOUR of these are written on the runner and all four must be
-          # added here. daily-series.json is the per-day (non-overlapping) history
-          # and query-series.json the per-term one; leaving either out of this line
-          # means the backfill is re-fetched and re-thrown-away every single day,
-          # and no trend ever accumulates — the exact bug that `git add` line
-          # already exists to prevent for rank-history.json.
-          # ⚠️ Same rule applies to the three continuous-improvement files. They
-          # are written on the runner, so anything not added here is discarded
-          # with the container. If improvement-state.json is lost, the 14-day
-          # cadence resets and the expensive cycle re-runs EVERY morning; if
-          # experiments.json is lost, every approved change loses its baseline
-          # and the measure-the-result half of the loop silently stops working.
-          # Guarded with -f because they only appear on cycle days.
           for f in project/seo/rank-history.json \
                    project/seo/daily-series.json \
                    project/seo/query-series.json \
@@ -109,9 +84,6 @@ jobs:
 
       - name: Commit improvements and open PR
         env:
-          # Use the workflow's built-in GITHUB_TOKEN (has contents+pull-requests write)
-          # for both push and PR creation. The standalone GH_TOKEN secret was expired
-          # (401 Bad credentials), which silently broke PR creation for weeks.
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           DID_CHANGE=$(cat /tmp/audit-changed.txt 2>/dev/null || echo "false")
@@ -128,8 +100,6 @@ jobs:
             git commit -m "Auto-improve: $TASK" || echo "Nothing new to commit"
             git push --force origin "$BRANCH"
 
-            # Create the PR with the gh CLI (authenticates via GH_TOKEN = GITHUB_TOKEN).
-            # If a PR already exists for this branch, gh exits non-zero — treat as success.
             PR_URL=$(gh pr create \
               --title "Auto-improve: $TASK" \
               --body "Auto-implemented by Arlo, DoryAngel's daily audit agent. Review the diff and merge to apply. Generated on $(date +'%Y-%m-%d')." \
