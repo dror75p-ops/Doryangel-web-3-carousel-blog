@@ -1,0 +1,22 @@
+// Security regression checks for the email -> owner GitHub issue -> approval gate.
+import { readFileSync } from 'fs';
+let failures=0, checks=0; const check=(n,c)=>{checks++;if(!c){failures++;console.error('FAIL:',n)}};
+const bridge=readFileSync('./scripts/approve-from-owner-issue.js','utf8');
+const workflow=readFileSync('./.github/workflows/arlo-owner-approval.yml','utf8');
+const email=readFileSync('./scripts/arlo-approval-reminder.js','utf8');
+const page=readFileSync('./arlo-approve.html','utf8');
+check('bridge pins authorized owner', /const OWNER = 'dror75p-ops'/.test(bridge));
+check('bridge requires issues event', /GITHUB_EVENT_NAME !== 'issues'/.test(bridge));
+check('bridge checks GitHub actor', /GITHUB_ACTOR !== OWNER/.test(bridge));
+check('bridge independently checks issue author', /issue\?\.user\?\.login !== OWNER/.test(bridge));
+check('bridge accepts opened event only', /payload\.action !== 'opened'/.test(bridge));
+check('bridge requires exact recommendation title', /\^Arlo approval:/.test(bridge));
+check('bridge requires matching explicit APPROVE body', /body\.startsWith\(`APPROVE/.test(bridge));
+check('email legal recommendations cannot use button', /email approval disabled/.test(email));
+check('bridge refuses legal-review attestation from email', /LEGAL REVIEWED/.test(bridge));
+check('workflow has no schedule or workflow_dispatch', !/schedule:|workflow_dispatch:/.test(workflow));
+check('workflow independently pins actor and issue author', /github\.actor == 'dror75p-ops'/.test(workflow) && /issue\.user\.login == 'dror75p-ops'/.test(workflow));
+check('approval page does not execute repository writes', !/api\.github\.com|fetch\s*\(/.test(page));
+check('approval page routes to GitHub authenticated issue creation', /github\.com\/dror75p-ops\/Doryangel-web-3-carousel-blog\/issues\/new/.test(page));
+check('workflow never merges', !/gh pr merge|merge_pull_request|\/merge\b/.test(workflow));
+console.log(`Owner approval gateway: ${checks-failures}/${checks} checks passed`); if(failures) process.exit(1);
