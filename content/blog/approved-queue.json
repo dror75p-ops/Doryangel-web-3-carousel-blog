@@ -1,0 +1,12 @@
+[
+  {
+    "recommendationId": "ARLO-2026-09-13-01",
+    "reportDate": "2026-09-13",
+    "approvedOn": "2026-09-13",
+    "approvedBy": "Dory (authenticated GitHub email gateway)",
+    "action": "improve-existing",
+    "status": "pending",
+    "targetSlug": "flat-fee-property-management-vs-percentage",
+    "note": "Rewrite the SEO title and meta description to lead with a concrete year-one cost comparison (base + leasing + setup + renewal fees) and Bronx-specific framing. Current listing is being served and skipped at position 8.4."
+  }
+]
