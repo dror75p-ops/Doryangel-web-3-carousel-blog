@@ -1,0 +1,52 @@
+name: Arlo Owner Approval Gateway
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: arlo-owner-approval-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  approve:
+    # First gate at workflow level. The Node bridge independently verifies the
+    # actor, issue author, event type, exact title and matching body again.
+    if: >-
+      github.actor == 'dror75p-ops' &&
+      github.event.issue.user.login == 'dror75p-ops' &&
+      startsWith(github.event.issue.title, 'Arlo approval: ARLO-')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout latest main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Verify Dory approval and run existing governance gate
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/approve-from-owner-issue.js
+
+      - name: Close successful approval request
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" --body "✅ Dory's authenticated approval was accepted. Existing governance checks passed and the approval gate completed. Any resulting work remains subject to the normal PR/merge controls."
+          gh issue close "${{ github.event.issue.number }}"
