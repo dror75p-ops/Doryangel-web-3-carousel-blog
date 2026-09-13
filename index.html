@@ -5121,7 +5121,7 @@ function filterFaq(cat, btn) {
 
 
 <!-- Cloudflare Turnstile — bot protection for the lead forms -->
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
 <script>
 async function handleFormSubmit(e) {
   e.preventDefault();
@@ -6253,5 +6253,18 @@ document.addEventListener('DOMContentLoaded', function() {
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 
+<!-- Turnstile: real key in production, Cloudflare's always-pass test key on Vercel previews. -->
+<script>
+(function () {
+  var isVercelPreview = window.location.hostname.endsWith('.vercel.app');
+  var turnstileSiteKey = isVercelPreview
+    ? '1x00000000000000000000AA'
+    : '0x4AAAAAADr7qlYcZ_8Gw2v3';
+  document.querySelectorAll('.cf-turnstile').forEach(function (widget) {
+    widget.setAttribute('data-sitekey', turnstileSiteKey);
+  });
+})();
+</script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
 </body>
 </html>
