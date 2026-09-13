@@ -1,0 +1,27 @@
+[
+  {
+    "id": "ARLO-2026-09-13-01",
+    "title": "Rewrite title and meta description for flat-fee vs percentage post",
+    "action": "improve-existing",
+    "targetSlug": "flat-fee-property-management-vs-percentage",
+    "recommendedOn": "2026-09-13",
+    "approvedOn": "2026-09-13",
+    "approvedBy": "Dory (authenticated GitHub email gateway)",
+    "legalReviewed": false,
+    "metric": "clicks on /blog/flat-fee-property-management-vs-percentage/",
+    "expectedResult": "CTR from 0% to 2-4%, yielding roughly 4-8 clicks per 28 days on this URL alone",
+    "baseline": {
+      "days": 28,
+      "clicks": 0,
+      "impressions": 187,
+      "ctr": 0,
+      "position": 8.368983957219251,
+      "capturedOn": "2026-09-13",
+      "source": "Search Console 28-day window"
+    },
+    "status": "queued",
+    "implementedOn": null,
+    "measureAfter": null,
+    "result": null
+  }
+]
