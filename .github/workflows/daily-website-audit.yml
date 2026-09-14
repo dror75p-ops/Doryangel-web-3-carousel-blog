@@ -4,6 +4,13 @@ on:
   schedule:
     # Runs every day at 9 AM EST (14:00 UTC)
     - cron: '0 14 * * *'
+  # A workflow edit should prove itself immediately after merge instead of
+  # waiting for the next cron. Restricted to this workflow file only, so normal
+  # website/content pushes do not create extra Arlo runs.
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/daily-website-audit.yml'
   workflow_dispatch:
     inputs:
       force:
