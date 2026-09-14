@@ -1,6 +1,6 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-09-13",
+  "updatedAt": "2026-09-14",
   "events": [
     {
       "date": "2026-04-25",
@@ -2656,6 +2656,41 @@
       "date": "2026-09-11",
       "kind": "site",
       "subject": "Add direct link to NYC compliance check"
+    },
+    {
+      "date": "2026-09-13",
+      "kind": "site",
+      "subject": "Approve Arlo recommendation ARLO-2026-09-13-01"
+    },
+    {
+      "date": "2026-09-13",
+      "kind": "site",
+      "subject": "Fix Arlo approval gateway git identity"
+    },
+    {
+      "date": "2026-09-13",
+      "kind": "site",
+      "subject": "Arlo: add owner-confirmed email approval gateway"
+    },
+    {
+      "date": "2026-09-13",
+      "kind": "site",
+      "subject": "Arlo: make recommendation approval unmistakable"
+    },
+    {
+      "date": "2026-09-13",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-09-13"
+    },
+    {
+      "date": "2026-09-14",
+      "kind": "site",
+      "subject": "Arlo: self-test audit workflow changes"
+    },
+    {
+      "date": "2026-09-14",
+      "kind": "site",
+      "subject": "Arlo: concise evidence-first improvement decisions"
     }
   ]
 }
