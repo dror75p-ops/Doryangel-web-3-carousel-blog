@@ -6,6 +6,10 @@
 // script on purpose; see each call site for why.
 
 export function generateSlug(title) {
+  return slugify(title, 60);
+}
+
+function slugify(title, max) {
   return title
     .toLowerCase()
     .replace(/[‐-―−]/g, ' ')  // em/en/figure dashes + minus → space, so "tenants—smart" → "tenants-smart" not "tenantssmart"
@@ -13,8 +17,25 @@ export function generateSlug(title) {
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '')                  // trim leading/trailing hyphens before slicing
-    .slice(0, 60)
-    .replace(/-+$/g, '');                     // re-trim if the 60-char cut landed on a hyphen
+    .slice(0, max)
+    .replace(/-+$/g, '');                     // re-trim if the cut landed on a hyphen
+}
+
+// A slug that is NOT already in the index. Two titles that share their first 60
+// characters ("Bronx vs. Mount Vernon: Which Landlords Actually Spend Less on…")
+// used to get the same slug, and build-blog.js then wrote both to one page — the
+// oldest entry won and the newer post never rendered. The words that tell such
+// titles apart come after the cut, so extend the slug first; number it only as a
+// last resort. Existing slugs are unaffected: a non-colliding title keeps the
+// plain 60-char form.
+export function uniqueSlug(title, takenSlugs) {
+  const taken = new Set(takenSlugs);
+  const base = generateSlug(title);
+  if (!taken.has(base)) return base;
+  const full = slugify(title, 1000);
+  const longer = full.length <= 90 ? full : full.slice(0, 90).replace(/-[^-]*$/, ''); // whole words only
+  if (!taken.has(longer)) return longer;
+  for (let n = 2; ; n++) if (!taken.has(`${base}-${n}`)) return `${base}-${n}`;
 }
 
 // Date object -> "YYYY-MM-DD". Not to be confused with build-blog.js's own

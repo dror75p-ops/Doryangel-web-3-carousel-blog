@@ -10,7 +10,7 @@
 // consolidation). Does not call any network API and does not write anything.
 
 import { readFileSync } from 'fs';
-import { generateSlug, toISODate, wordsToMinutes } from '../post-utils.js';
+import { generateSlug, uniqueSlug, toISODate, wordsToMinutes } from '../post-utils.js';
 
 // Reference copy of generate-post.js's original (fixed) generateSlug, as it
 // was before this consolidation — the shared module must match this exactly.
@@ -89,6 +89,20 @@ for (const title of dashTitles) {
   if (differs) fixConfirmed++;
 }
 console.log(`em-dash fix: ${fixConfirmed}/${dashTitles.length} synthetic titles confirm the fix propagated`);
+
+// 5. Every live slug is unique (a duplicate renders as one page, hiding a post),
+//    and uniqueSlug() never hands back a slug that is already taken.
+const liveSlugs = posts.map(p => p.slug);
+const dupSlugs = liveSlugs.filter((s, i) => liveSlugs.indexOf(s) !== i);
+check(`live slugs are unique (duplicates: ${[...new Set(dupSlugs)].join(', ')})`, dupSlugs.length === 0);
+let uniqueOk = 0;
+for (const p of posts) {
+  const s = uniqueSlug(p.title, liveSlugs);
+  const ok = !liveSlugs.includes(s) && s.length <= 90 && !/-$/.test(s);
+  check(`uniqueSlug("${p.title}") → "${s}" is new and clean`, ok);
+  if (ok) uniqueOk++;
+}
+console.log(`uniqueSlug: ${uniqueOk}/${posts.length} titles get a fresh slug against the live index; ${dupSlugs.length} duplicate live slugs`);
 
 if (failures > 0) {
   console.error(`\n${failures} check(s) failed.`);

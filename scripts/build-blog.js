@@ -816,6 +816,17 @@ ${urls}
 
 const posts = JSON.parse(readFileSync('./content/blog/posts-index.json', 'utf8'));
 
+// Two entries with one slug render as ONE page, and the later write (the older
+// post) silently replaces the newer one — six posts disappeared that way in
+// Aug–Sep 2026. Warn loudly rather than fail: failing here would throw away a
+// freshly generated post mid-publish.
+const seenSlugs = new Map();
+for (const p of posts) {
+  if (seenSlugs.has(p.slug)) {
+    console.log(`::warning::Duplicate slug "${p.slug}" (${seenSlugs.get(p.slug)} and ${p.publishedDate}) — only one of these posts will render.`);
+  } else seenSlugs.set(p.slug, p.publishedDate);
+}
+
 if (existsSync('./blog')) rmSync('./blog', { recursive: true, force: true });
 
 let count = 0;

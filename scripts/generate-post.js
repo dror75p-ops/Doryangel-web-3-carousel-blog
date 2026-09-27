@@ -4,7 +4,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { Resend } from 'resend';
 import { readFileSync, writeFileSync } from 'fs';
 import { createSign } from 'crypto';
-import { generateSlug, toISODate, wordsToMinutes, searchUnsplashPhotos, pickImageQuery } from './lib/post-utils.js';
+import { generateSlug, uniqueSlug, toISODate, wordsToMinutes, searchUnsplashPhotos, pickImageQuery } from './lib/post-utils.js';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 4 });
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -288,6 +288,8 @@ async function pickTopicWithAI(existingPosts, claritySignals, avoidNote = null) 
 Recent posts to avoid repeating:
 ${recentTitles}
 
+Never open the title with the same first six words as any recent post above — a new subject inside a reused opening ("Bronx vs. Mount Vernon: Which Landlords Actually …") is still a repeat, and so is the same opening with a different comparison city. A comparison is still welcome; give it a different sentence shape after the colon.
+
 Rules:
 - Geography: anchor every title to the Bronx as the primary location. Two natural extensions are allowed: (a) a second adjacent NYC borough (Queens or Manhattan) when it reads naturally — e.g. "...Your Bronx or Queens Rental?"; (b) a Bronx-vs-adjacent-area COMPARISON, a proven high-traffic format — the "Bronx vs. Mount Vernon" comparison was one of the best-performing posts. Mount Vernon (the Westchester city bordering the Bronx) is allowed ONLY inside a Bronx-anchored comparison, never as the sole location. Never use a non-Bronx borough or city as the sole anchor.
 - COMPARISON FORMAT IS THE TOP PERFORMER — lean into it: the Bronx-vs-adjacent-area comparison (and self-manage-vs-hire comparisons) has been our single best-performing shape by real traffic. Aim for roughly 1 in every 3-4 posts to use a head-to-head comparison ("Bronx vs. Mount Vernon", "Bronx vs. Yonkers", "Bronx vs. New Rochelle", "Self-Managing vs. Flat-Fee Management") whenever a natural angle exists for today's category — don't save it for only rare occasions.
@@ -344,6 +346,29 @@ Reply ONLY with valid JSON: {"title": "...", "category": "..."}`,
 // a new "August move-out costs" post re-covering old "cut vacancy time in half" /
 // "reduce vacancy rates" ground. Mirrors Arlo's findDuplicateOpenIssue() in
 // daily-audit.js. Fails open (treats as not-duplicate) on any error, same as Arlo.
+// Title-template repetition check, in code rather than in the prompt. From
+// 2026-08-17 to 09-27 Nave opened eight titles with "Bronx vs. Mount Vernon:
+// Which Landlords Actually …" — six collided on one slug and never rendered, and
+// the semantic dedupe gate passed them all because the SUBJECTS differed. Returns
+// the recent title that shares the opening, or null.
+const OPENING_WORDS = 6;
+function titleOpening(title) {
+  // Swapping the comparison city is not a new shape: "Bronx vs. Yonkers: Which
+  // Landlords Actually…" and "Bronx vs. Mount Vernon: Which Landlords Actually…"
+  // both normalise to "bronx vs x which landlords actually". Comparisons stay
+  // welcome — they just need a different sentence after the colon.
+  return String(title).toLowerCase()
+    .replace(/^\s*bronx\s+vs\.?\s+[^:?]{1,40}:/, 'bronx vs x ')
+    .replace(/[^a-z0-9 ]/g, ' ').split(/\s+/)
+    .filter(Boolean).slice(0, OPENING_WORDS).join(' ');
+}
+function sharedTitleOpening(title, existingPosts, recent = 15) {
+  const opening = titleOpening(title);
+  if (opening.split(' ').length < OPENING_WORDS) return null;
+  const hit = existingPosts.slice(0, recent).find(p => titleOpening(p.title) === opening);
+  return hit ? hit.title : null;
+}
+
 async function findSimilarPublishedTopic(topic, existingPosts) {
   if (!existingPosts.length) return null;
   const titles = existingPosts.map(p => `${p.title} [${p.category}]`);
@@ -887,11 +912,13 @@ async function main() {
     topic = await pickTopicWithAI(posts, claritySignals);
   }
 
-  let dupOf = approved ? null : await findSimilarPublishedTopic(topic, posts);
+  const overlapOf = async (t) =>
+    sharedTitleOpening(t.title, posts) || await findSimilarPublishedTopic(t, posts);
+  let dupOf = approved ? null : await overlapOf(topic);
   for (let attempt = 0; dupOf && attempt < 2; attempt++) {
     console.log(`Topic "${topic.title}" overlaps published post "${dupOf}" — retrying (attempt ${attempt + 1}/2)`);
     topic = await pickTopicWithAI(posts, claritySignals, dupOf);
-    dupOf = await findSimilarPublishedTopic(topic, posts);
+    dupOf = await overlapOf(topic);
   }
   if (dupOf) console.log(`Still overlapping after retries ("${dupOf}") — proceeding anyway (fail-open)`);
   console.log(`Topic: "${topic.title}" (${topic.category})`);
@@ -917,6 +944,9 @@ async function main() {
   const capWords = post.facebookPost.trim().split(/\s+/).length;
   const capHook = post.facebookPost.trim().split('\n')[0];
   console.log(`Caption: ${capWords} words / ${capChars} chars, hook ${capHook.length} chars${capChars > 900 ? ' — LONG, check the caption rules held' : ''}`);
+
+  // Never reuse a slug already in the index — see uniqueSlug() in post-utils.js.
+  post.slug = uniqueSlug(post.title, posts.map(p => p.slug));
 
   // facebookPost is for the email only — strip before persisting
   const { facebookPost, ...postForIndex } = post;
