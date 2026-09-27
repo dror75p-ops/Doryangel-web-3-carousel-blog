@@ -19,9 +19,9 @@
       "capturedOn": "2026-09-13",
       "source": "Search Console 28-day window"
     },
-    "status": "queued",
-    "implementedOn": null,
-    "measureAfter": null,
+    "status": "implemented",
+    "implementedOn": "2026-09-15",
+    "measureAfter": "2026-10-16",
     "result": null
   }
 ]
