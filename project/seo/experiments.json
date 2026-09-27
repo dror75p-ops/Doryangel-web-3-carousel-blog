@@ -23,5 +23,22 @@
     "implementedOn": "2026-09-15",
     "measureAfter": "2026-10-16",
     "result": null
+  },
+  {
+    "id": "ARLO-2026-09-27-03",
+    "title": "Backfill internal links into the 45 orphaned older posts",
+    "action": "site-change",
+    "targetSlug": null,
+    "recommendedOn": "2026-09-27",
+    "approvedOn": "2026-09-27",
+    "approvedBy": "Dory (authenticated GitHub email gateway)",
+    "legalReviewed": false,
+    "metric": "average position for 'property management bronx ny' cluster + total site clicks",
+    "expectedResult": "Average position on the three striking-distance 'property management ... bronx' queries improves from ~9 to ~7; total site clicks +15-25% within 6-8 weeks.",
+    "baseline": null,
+    "status": "queued",
+    "implementedOn": null,
+    "measureAfter": null,
+    "result": null
   }
 ]
