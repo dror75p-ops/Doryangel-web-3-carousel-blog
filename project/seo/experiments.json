@@ -23,5 +23,22 @@
     "implementedOn": "2026-09-15",
     "measureAfter": "2026-10-16",
     "result": null
+  },
+  {
+    "id": "ARLO-2026-09-27-04",
+    "title": "Rewrite homepage/service page title tag targeting Bronx property management queries",
+    "action": "site-change",
+    "targetSlug": null,
+    "recommendedOn": "2026-09-27",
+    "approvedOn": "2026-09-27",
+    "approvedBy": "Dory (authenticated GitHub email gateway)",
+    "legalReviewed": false,
+    "metric": "combined clicks on the 4 'property management bronx' queries",
+    "expectedResult": "CTR across the cluster rises from 0.6% to 3-5%; +8-15 clicks/month.",
+    "baseline": null,
+    "status": "queued",
+    "implementedOn": null,
+    "measureAfter": null,
+    "result": null
   }
 ]
