@@ -1,6 +1,16 @@
 {
   "redirects": [
     {
+      "source": "/blog/bronx-vs-mount-vernon-which-landlords-actually-spend-less-on-2",
+      "destination": "/blog/bronx-vs-mount-vernon-which-landlords-actually-spend-less-on-fall-roof-gutter-repairs/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/bronx-vs-mount-vernon-which-landlords-actually-spend-less-on-2/",
+      "destination": "/blog/bronx-vs-mount-vernon-which-landlords-actually-spend-less-on-fall-roof-gutter-repairs/",
+      "permanent": true
+    },
+    {
       "source": "/blog/bronx-vs-yonkers-why-your-summer-tenant-turnover-could-cost",
       "destination": "/blog/",
       "permanent": true
