@@ -8,5 +8,15 @@
     "status": "pending",
     "targetSlug": "flat-fee-property-management-vs-percentage",
     "note": "Rewrite the SEO title and meta description to lead with a concrete year-one cost comparison (base + leasing + setup + renewal fees) and Bronx-specific framing. Current listing is being served and skipped at position 8.4."
+  },
+  {
+    "recommendationId": "ARLO-2026-09-27-03",
+    "reportDate": "2026-09-27",
+    "approvedOn": "2026-09-27",
+    "approvedBy": "Dory (authenticated GitHub email gateway)",
+    "action": "site-change",
+    "status": "pending",
+    "targetSlug": null,
+    "note": "Run a one-time pass adding 2-4 contextual body links from newer posts into each of the 45 orphaned older posts, and add outbound links from those orphans to related newer posts. Prioritize linking to the two homepage/service pages that rank for 'property management bronx ny' variants to pass authority."
   }
 ]
