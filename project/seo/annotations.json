@@ -1,6 +1,6 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-09-27",
+  "updatedAt": "2026-09-28",
   "events": [
     {
       "date": "2026-04-25",
@@ -2726,6 +2726,21 @@
       "date": "2026-09-25",
       "kind": "post",
       "subject": "Auto-publish: new blog post 2026-09-25"
+    },
+    {
+      "date": "2026-09-27",
+      "kind": "seo",
+      "subject": "Fix duplicate slugs that hid 6 posts; block repeated title template"
+    },
+    {
+      "date": "2026-09-27",
+      "kind": "site",
+      "subject": "Backfill internal links into 45 orphaned blog posts (ARLO-2026-09-27-03)"
+    },
+    {
+      "date": "2026-09-27",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-09-27"
     }
   ]
 }
