@@ -1,7 +1,7 @@
 {
   "format": "queries[term][YYYY-MM-DD] = [clicks, impressions, avgPosition]",
   "note": "A missing date means the term drew no impressions that day — that is signal, not a gap.",
-  "updatedAt": "2026-09-29",
+  "updatedAt": "2026-09-30",
   "queries": {
     "bronx property management": {
       "2025-04-13": [
@@ -2663,6 +2663,11 @@
         0,
         2,
         1
+      ],
+      "2026-09-27": [
+        0,
+        2,
+        9.5
       ]
     },
     "property management bronx": {
@@ -5325,6 +5330,11 @@
         0,
         0,
         0
+      ],
+      "2026-09-27": [
+        0,
+        2,
+        2
       ]
     },
     "property management bronx ny": {
@@ -7987,6 +7997,11 @@
         0,
         2,
         1
+      ],
+      "2026-09-27": [
+        0,
+        2,
+        1.5
       ]
     },
     "bronx property manager": {
@@ -10646,6 +10661,11 @@
         0
       ],
       "2026-09-26": [
+        0,
+        0,
+        0
+      ],
+      "2026-09-27": [
         0,
         0,
         0
@@ -13311,6 +13331,11 @@
         0,
         0,
         0
+      ],
+      "2026-09-27": [
+        0,
+        0,
+        0
       ]
     },
     "nyc property management": {
@@ -15970,6 +15995,11 @@
         0
       ],
       "2026-09-26": [
+        0,
+        0,
+        0
+      ],
+      "2026-09-27": [
         0,
         0,
         0
@@ -18635,6 +18665,11 @@
         0,
         0,
         0
+      ],
+      "2026-09-27": [
+        0,
+        0,
+        0
       ]
     },
     "flat fee property management nyc": {
@@ -21294,6 +21329,11 @@
         0
       ],
       "2026-09-26": [
+        0,
+        0,
+        0
+      ],
+      "2026-09-27": [
         0,
         0,
         0
