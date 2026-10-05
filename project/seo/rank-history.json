@@ -79813,5 +79813,1296 @@
         }
       }
     ]
+  },
+  {
+    "runDate": "2026-10-05",
+    "window": {
+      "startDate": "2026-09-05",
+      "endDate": "2026-10-02"
+    },
+    "totals": {
+      "clicks": 110,
+      "impressions": 5058,
+      "ctr": 0.021747726374060895,
+      "position": 10.151640964808225
+    },
+    "watch": [
+      {
+        "query": "bronx property management",
+        "clicks": 2,
+        "impressions": 60,
+        "ctr": 0.03333333333333333,
+        "position": 14.716666666666667
+      },
+      {
+        "query": "property management bronx",
+        "clicks": 1,
+        "impressions": 15,
+        "ctr": 0.06666666666666667,
+        "position": 2.8
+      },
+      {
+        "query": "property management bronx ny",
+        "clicks": 3,
+        "impressions": 90,
+        "ctr": 0.03333333333333333,
+        "position": 6.944444444444445
+      },
+      {
+        "query": "bronx property manager",
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0,
+        "position": null
+      },
+      {
+        "query": "property management company bronx",
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0,
+        "position": null
+      },
+      {
+        "query": "nyc property management",
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0,
+        "position": null
+      },
+      {
+        "query": "flat fee property management",
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0,
+        "position": null
+      },
+      {
+        "query": "flat fee property management nyc",
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0,
+        "position": null
+      }
+    ],
+    "topQueries": [
+      {
+        "key": "property management bronx ny",
+        "clicks": 3,
+        "impressions": 90,
+        "ctr": 0.03333333333333333,
+        "position": 6.944444444444445
+      },
+      {
+        "key": "property manager in new york",
+        "clicks": 3,
+        "impressions": 3,
+        "ctr": 1,
+        "position": 74.33333333333333
+      },
+      {
+        "key": "bronx apartment management companies",
+        "clicks": 2,
+        "impressions": 5,
+        "ctr": 0.4,
+        "position": 1
+      },
+      {
+        "key": "bronx property management",
+        "clicks": 2,
+        "impressions": 60,
+        "ctr": 0.03333333333333333,
+        "position": 14.716666666666667
+      },
+      {
+        "key": "apartment management companies",
+        "clicks": 1,
+        "impressions": 5,
+        "ctr": 0.2,
+        "position": 10.8
+      },
+      {
+        "key": "bronx property management companies",
+        "clicks": 1,
+        "impressions": 80,
+        "ctr": 0.0125,
+        "position": 9.8375
+      },
+      {
+        "key": "building management companies",
+        "clicks": 1,
+        "impressions": 1,
+        "ctr": 1,
+        "position": 6
+      },
+      {
+        "key": "management apartments for rent",
+        "clicks": 1,
+        "impressions": 2,
+        "ctr": 0.5,
+        "position": 3
+      },
+      {
+        "key": "property management bronx",
+        "clicks": 1,
+        "impressions": 15,
+        "ctr": 0.06666666666666667,
+        "position": 2.8
+      },
+      {
+        "key": "property management companies bronx",
+        "clicks": 1,
+        "impressions": 76,
+        "ctr": 0.013157894736842105,
+        "position": 9.342105263157896
+      },
+      {
+        "key": "property management in new york city",
+        "clicks": 1,
+        "impressions": 1,
+        "ctr": 1,
+        "position": 81
+      },
+      {
+        "key": "property rental agencies near me",
+        "clicks": 1,
+        "impressions": 3,
+        "ctr": 0.3333333333333333,
+        "position": 1.6666666666666665
+      },
+      {
+        "key": "rental management companies near me",
+        "clicks": 1,
+        "impressions": 3,
+        "ctr": 0.3333333333333333,
+        "position": 1.6666666666666665
+      },
+      {
+        "key": "rental property real estate",
+        "clicks": 1,
+        "impressions": 1,
+        "ctr": 1,
+        "position": 7
+      },
+      {
+        "key": "residential property management",
+        "clicks": 1,
+        "impressions": 1,
+        "ctr": 1,
+        "position": 6
+      },
+      {
+        "key": "trackmybuilding.nyc",
+        "clicks": 1,
+        "impressions": 41,
+        "ctr": 0.024390243902439025,
+        "position": 3.4146341463414633
+      },
+      {
+        "key": "wavecrest management bronx ny",
+        "clicks": 1,
+        "impressions": 1,
+        "ctr": 1,
+        "position": 3
+      },
+      {
+        "key": "1118 grand concourse bronx ny 10456",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0,
+        "position": 20
+      },
+      {
+        "key": "1118 grand concourse housing court",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 14
+      },
+      {
+        "key": "1980 unionport road",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 44
+      },
+      {
+        "key": "314 w 82nd st new york landlord home improvement rules",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 91
+      },
+      {
+        "key": "53 west 174th st bronx ny 10453 eviction cases",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0,
+        "position": 30.5
+      },
+      {
+        "key": "80 carpet rule nyc",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 57
+      },
+      {
+        "key": "affordable housing property management",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 13
+      },
+      {
+        "key": "agency for apartments",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 8
+      }
+    ],
+    "topByImpressions": [
+      {
+        "key": "property management company",
+        "clicks": 0,
+        "impressions": 210,
+        "ctr": 0,
+        "position": 1.5571428571428572
+      },
+      {
+        "key": "property management bronx ny",
+        "clicks": 3,
+        "impressions": 90,
+        "ctr": 0.03333333333333333,
+        "position": 6.944444444444445
+      },
+      {
+        "key": "bronx property management companies",
+        "clicks": 1,
+        "impressions": 80,
+        "ctr": 0.0125,
+        "position": 9.8375
+      },
+      {
+        "key": "property management companies bronx ny",
+        "clicks": 0,
+        "impressions": 78,
+        "ctr": 0,
+        "position": 7.897435897435898
+      },
+      {
+        "key": "property management companies bronx",
+        "clicks": 1,
+        "impressions": 76,
+        "ctr": 0.013157894736842105,
+        "position": 9.342105263157896
+      },
+      {
+        "key": "luxury property management company ny",
+        "clicks": 0,
+        "impressions": 61,
+        "ctr": 0,
+        "position": 57.57377049180328
+      },
+      {
+        "key": "bronx property management",
+        "clicks": 2,
+        "impressions": 60,
+        "ctr": 0.03333333333333333,
+        "position": 14.716666666666667
+      },
+      {
+        "key": "property management in bronx",
+        "clicks": 0,
+        "impressions": 59,
+        "ctr": 0,
+        "position": 7.864406779661017
+      },
+      {
+        "key": "reduce rental vacancy rates",
+        "clicks": 0,
+        "impressions": 58,
+        "ctr": 0,
+        "position": 11.689655172413794
+      },
+      {
+        "key": "yonkers vs bronx living",
+        "clicks": 0,
+        "impressions": 46,
+        "ctr": 0,
+        "position": 21.608695652173914
+      },
+      {
+        "key": "property management in the bronx",
+        "clicks": 0,
+        "impressions": 45,
+        "ctr": 0,
+        "position": 7.133333333333334
+      },
+      {
+        "key": "trackmybuilding.nyc",
+        "clicks": 1,
+        "impressions": 41,
+        "ctr": 0.024390243902439025,
+        "position": 3.4146341463414633
+      },
+      {
+        "key": "estate managers",
+        "clicks": 0,
+        "impressions": 25,
+        "ctr": 0,
+        "position": 75.4
+      },
+      {
+        "key": "property management services bronx ny",
+        "clicks": 0,
+        "impressions": 25,
+        "ctr": 0,
+        "position": 16.28
+      },
+      {
+        "key": "yonkers multifamily cap rates",
+        "clicks": 0,
+        "impressions": 25,
+        "ctr": 0,
+        "position": 10.36
+      },
+      {
+        "key": "property management",
+        "clicks": 0,
+        "impressions": 23,
+        "ctr": 0,
+        "position": 6.173913043478261
+      },
+      {
+        "key": "yonkers office cap rates",
+        "clicks": 0,
+        "impressions": 21,
+        "ctr": 0,
+        "position": 14.285714285714286
+      },
+      {
+        "key": "reduce vacancy rate in rentals",
+        "clicks": 0,
+        "impressions": 20,
+        "ctr": 0,
+        "position": 12.8
+      },
+      {
+        "key": "yonkers vs bronx",
+        "clicks": 0,
+        "impressions": 20,
+        "ctr": 0,
+        "position": 4.65
+      },
+      {
+        "key": "property management bronx",
+        "clicks": 1,
+        "impressions": 15,
+        "ctr": 0.06666666666666667,
+        "position": 2.8
+      },
+      {
+        "key": "apartment management companies in the bronx",
+        "clicks": 0,
+        "impressions": 14,
+        "ctr": 0,
+        "position": 2.2142857142857144
+      },
+      {
+        "key": "local law 84 compliance consulting services",
+        "clicks": 0,
+        "impressions": 14,
+        "ctr": 0,
+        "position": 1.6428571428571428
+      },
+      {
+        "key": "nyc rent stabilized lease renewal",
+        "clicks": 0,
+        "impressions": 14,
+        "ctr": 0,
+        "position": 25.928571428571427
+      },
+      {
+        "key": "hunts point property managers",
+        "clicks": 0,
+        "impressions": 13,
+        "ctr": 0,
+        "position": 5
+      },
+      {
+        "key": "hunts point property management cost",
+        "clicks": 0,
+        "impressions": 12,
+        "ctr": 0,
+        "position": 23.666666666666668
+      }
+    ],
+    "queryMix": [
+      {
+        "key": "address",
+        "label": "Building / address lookups",
+        "queries": 6,
+        "clicks": 0,
+        "impressions": 9,
+        "position": 36.33
+      },
+      {
+        "key": "branded",
+        "label": "Brand searches",
+        "queries": 1,
+        "clicks": 0,
+        "impressions": 1,
+        "position": 4
+      },
+      {
+        "key": "commercial",
+        "label": "Property-management intent",
+        "queries": 104,
+        "clicks": 18,
+        "impressions": 1029,
+        "position": 11.46
+      },
+      {
+        "key": "other",
+        "label": "Everything else",
+        "queries": 198,
+        "clicks": 5,
+        "impressions": 628,
+        "position": 20.24
+      }
+    ],
+    "topPages": [
+      {
+        "key": "http://doryangel.com/",
+        "clicks": 66,
+        "impressions": 1403,
+        "ctr": 0.047042052744119746,
+        "position": 5.304347826086956
+      },
+      {
+        "key": "https://www.doryangel.com/",
+        "clicks": 18,
+        "impressions": 749,
+        "ctr": 0.02403204272363151,
+        "position": 20.0173564753004
+      },
+      {
+        "key": "https://www.doryangel.com/blog/bronx-vs-yonkers-which-landlords-actually-collect-more-rent/",
+        "clicks": 4,
+        "impressions": 46,
+        "ctr": 0.08695652173913043,
+        "position": 5.043478260869565
+      },
+      {
+        "key": "https://www.doryangel.com/blog/nyc-housing-court-and-the-eviction-process-explained-for-lan/",
+        "clicks": 2,
+        "impressions": 207,
+        "ctr": 0.00966183574879227,
+        "position": 15.893719806763285
+      },
+      {
+        "key": "https://www.doryangel.com/blog/yonkers-vs-bronx-which-is-the-better-rental-investment-in-20/",
+        "clicks": 2,
+        "impressions": 330,
+        "ctr": 0.006060606060606061,
+        "position": 8.645454545454545
+      },
+      {
+        "key": "https://www.doryangel.com/blog/your-bronx-buildings-tenant-screening-vs-mount-vernon-which/",
+        "clicks": 2,
+        "impressions": 46,
+        "ctr": 0.043478260869565216,
+        "position": 7.891304347826087
+      },
+      {
+        "key": "https://www.doryangel.com/faq/",
+        "clicks": 2,
+        "impressions": 143,
+        "ctr": 0.013986013986013986,
+        "position": 5.510489510489511
+      },
+      {
+        "key": "https://www.doryangel.com/blog/bronx-landlord-property-dashboard-real-numbers/",
+        "clicks": 1,
+        "impressions": 11,
+        "ctr": 0.09090909090909091,
+        "position": 3.909090909090909
+      },
+      {
+        "key": "https://www.doryangel.com/blog/bronx-rental-investment-roi-2026/",
+        "clicks": 1,
+        "impressions": 52,
+        "ctr": 0.019230769230769232,
+        "position": 5.576923076923077
+      },
+      {
+        "key": "https://www.doryangel.com/blog/bronx-vs-manhattan-where-do-self-managing-landlords-actually/",
+        "clicks": 1,
+        "impressions": 17,
+        "ctr": 0.058823529411764705,
+        "position": 6.529411764705882
+      },
+      {
+        "key": "https://www.doryangel.com/blog/bronx-vs-yonkers-which-landlords-actually-collect-rent-on-ti/",
+        "clicks": 1,
+        "impressions": 73,
+        "ctr": 0.0136986301369863,
+        "position": 6.328767123287672
+      },
+      {
+        "key": "https://www.doryangel.com/blog/bronx-vs-yonkers-which-landlords-actually-keep-tenants-throu/",
+        "clicks": 1,
+        "impressions": 88,
+        "ctr": 0.011363636363636364,
+        "position": 9.147727272727273
+      },
+      {
+        "key": "https://www.doryangel.com/blog/nyc-local-law-compliance-guide-2026/",
+        "clicks": 1,
+        "impressions": 29,
+        "ctr": 0.034482758620689655,
+        "position": 12.448275862068966
+      },
+      {
+        "key": "https://www.doryangel.com/blog/what-bronx-landlords-need-to-know-about-property-taxes-2026/",
+        "clicks": 1,
+        "impressions": 50,
+        "ctr": 0.02,
+        "position": 9.8
+      },
+      {
+        "key": "https://www.doryangel.com/blog/why-are-bronx-landlords-losing-spring-lease-renewals-a-rent-/",
+        "clicks": 1,
+        "impressions": 53,
+        "ctr": 0.018867924528301886,
+        "position": 7.132075471698113
+      },
+      {
+        "key": "https://www.doryangel.com/blog/why-your-bronx-rentals-insurance-premium-could-jump-25-this/",
+        "clicks": 1,
+        "impressions": 16,
+        "ctr": 0.0625,
+        "position": 5.5
+      },
+      {
+        "key": "https://www.doryangel.com/blog/your-bronx-buildings-gutters-and-downspouts-before-fall-what/",
+        "clicks": 1,
+        "impressions": 44,
+        "ctr": 0.022727272727272728,
+        "position": 30.727272727272727
+      },
+      {
+        "key": "https://www.doryangel.com/blog/your-bronx-buildings-september-lease-renewals-vs-mount-verno/",
+        "clicks": 1,
+        "impressions": 27,
+        "ctr": 0.037037037037037035,
+        "position": 5.333333333333333
+      },
+      {
+        "key": "https://www.doryangel.com/disclaimer.html",
+        "clicks": 1,
+        "impressions": 2,
+        "ctr": 0.5,
+        "position": 1.5
+      },
+      {
+        "key": "https://www.doryangel.com/flat-fee-vs-commission/",
+        "clicks": 1,
+        "impressions": 53,
+        "ctr": 0.018867924528301886,
+        "position": 10.943396226415095
+      },
+      {
+        "key": "https://www.doryangel.com/guides/bronx-landlord-compliance/",
+        "clicks": 1,
+        "impressions": 98,
+        "ctr": 0.01020408163265306,
+        "position": 6.591836734693878
+      },
+      {
+        "key": "https://beta.doryangel.com/blog/are-bronx-landlords-losing-money-on-summer-vacancies-3-alter/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0,
+        "position": 7
+      },
+      {
+        "key": "https://beta.doryangel.com/blog/are-bronx-landlords-prepared-for-spring-pest-season-a-comple/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 8
+      },
+      {
+        "key": "https://beta.doryangel.com/blog/how-ai-security-cameras-are-reducing-vacancy-crimes-in-nyc-re/",
+        "clicks": 0,
+        "impressions": 8,
+        "ctr": 0,
+        "position": 10
+      },
+      {
+        "key": "https://beta.doryangel.com/blog/nyc-local-law-compliance-guide-2026/",
+        "clicks": 0,
+        "impressions": 66,
+        "ctr": 0,
+        "position": 32.57575757575758
+      }
+    ],
+    "topPagesByImpressions": [
+      {
+        "key": "http://doryangel.com/",
+        "clicks": 66,
+        "impressions": 1403,
+        "ctr": 0.047042052744119746,
+        "position": 5.304347826086956
+      },
+      {
+        "key": "https://www.doryangel.com/",
+        "clicks": 18,
+        "impressions": 749,
+        "ctr": 0.02403204272363151,
+        "position": 20.0173564753004
+      },
+      {
+        "key": "https://www.doryangel.com/blog/yonkers-vs-bronx-which-is-the-better-rental-investment-in-20/",
+        "clicks": 2,
+        "impressions": 330,
+        "ctr": 0.006060606060606061,
+        "position": 8.645454545454545
+      },
+      {
+        "key": "https://www.doryangel.com/blog/flat-fee-property-management-vs-percentage/",
+        "clicks": 0,
+        "impressions": 269,
+        "ctr": 0,
+        "position": 8.973977695167285
+      },
+      {
+        "key": "https://www.doryangel.com/blog/nyc-housing-court-and-the-eviction-process-explained-for-lan/",
+        "clicks": 2,
+        "impressions": 207,
+        "ctr": 0.00966183574879227,
+        "position": 15.893719806763285
+      },
+      {
+        "key": "https://www.doryangel.com/blog/nyc-rent-stabilization-rules-every-landlord-must-know/",
+        "clicks": 0,
+        "impressions": 174,
+        "ctr": 0,
+        "position": 14.25287356321839
+      },
+      {
+        "key": "https://www.doryangel.com/faq/",
+        "clicks": 2,
+        "impressions": 143,
+        "ctr": 0.013986013986013986,
+        "position": 5.510489510489511
+      },
+      {
+        "key": "https://www.doryangel.com/blog/how-to-reduce-vacancy-rates-in-your-bronx-rental-property/",
+        "clicks": 0,
+        "impressions": 118,
+        "ctr": 0,
+        "position": 12.322033898305085
+      },
+      {
+        "key": "https://www.doryangel.com/blog/tenant-screening-bronx-landlord-guide/",
+        "clicks": 0,
+        "impressions": 107,
+        "ctr": 0,
+        "position": 9.710280373831775
+      },
+      {
+        "key": "https://www.doryangel.com/blog/good-cause-eviction-nyc-landlord-guide/",
+        "clicks": 0,
+        "impressions": 100,
+        "ctr": 0,
+        "position": 10.64
+      },
+      {
+        "key": "https://www.doryangel.com/guides/bronx-landlord-compliance/",
+        "clicks": 1,
+        "impressions": 98,
+        "ctr": 0.01020408163265306,
+        "position": 6.591836734693878
+      },
+      {
+        "key": "https://www.doryangel.com/blog/bronx-vs-yonkers-which-landlords-actually-keep-tenants-throu/",
+        "clicks": 1,
+        "impressions": 88,
+        "ctr": 0.011363636363636364,
+        "position": 9.147727272727273
+      },
+      {
+        "key": "https://www.doryangel.com/blog/why-are-your-bronx-buildings-august-utility-bills-40-higher/",
+        "clicks": 0,
+        "impressions": 84,
+        "ctr": 0,
+        "position": 6.154761904761905
+      },
+      {
+        "key": "https://www.doryangel.com/blog/why-are-brooklyn-landlords-facing-higher-insurance-costs-in-/",
+        "clicks": 0,
+        "impressions": 75,
+        "ctr": 0,
+        "position": 7.56
+      },
+      {
+        "key": "https://www.doryangel.com/blog/bronx-vs-yonkers-which-landlords-actually-collect-rent-on-ti/",
+        "clicks": 1,
+        "impressions": 73,
+        "ctr": 0.0136986301369863,
+        "position": 6.328767123287672
+      },
+      {
+        "key": "https://www.doryangel.com/blog/rent-control-tenant-screening-rules-bronx-landlords/",
+        "clicks": 0,
+        "impressions": 70,
+        "ctr": 0,
+        "position": 10.085714285714285
+      },
+      {
+        "key": "https://beta.doryangel.com/blog/nyc-local-law-compliance-guide-2026/",
+        "clicks": 0,
+        "impressions": 66,
+        "ctr": 0,
+        "position": 32.57575757575758
+      },
+      {
+        "key": "https://www.doryangel.com/blog/why-are-bronx-landlords-losing-spring-lease-renewals-a-rent-/",
+        "clicks": 1,
+        "impressions": 53,
+        "ctr": 0.018867924528301886,
+        "position": 7.132075471698113
+      },
+      {
+        "key": "https://www.doryangel.com/flat-fee-vs-commission/",
+        "clicks": 1,
+        "impressions": 53,
+        "ctr": 0.018867924528301886,
+        "position": 10.943396226415095
+      },
+      {
+        "key": "https://www.doryangel.com/blog/bronx-rental-investment-roi-2026/",
+        "clicks": 1,
+        "impressions": 52,
+        "ctr": 0.019230769230769232,
+        "position": 5.576923076923077
+      },
+      {
+        "key": "https://www.doryangel.com/blog/what-bronx-landlords-need-to-know-about-property-taxes-2026/",
+        "clicks": 1,
+        "impressions": 50,
+        "ctr": 0.02,
+        "position": 9.8
+      },
+      {
+        "key": "https://www.doryangel.com/blog/how-do-you-prepare-a-queens-rental-for-spring-turnover-seaso/",
+        "clicks": 0,
+        "impressions": 50,
+        "ctr": 0,
+        "position": 8.24
+      },
+      {
+        "key": "https://www.doryangel.com/blog/bronx-vs-yonkers-which-landlords-actually-collect-more-rent/",
+        "clicks": 4,
+        "impressions": 46,
+        "ctr": 0.08695652173913043,
+        "position": 5.043478260869565
+      },
+      {
+        "key": "https://www.doryangel.com/blog/your-bronx-buildings-tenant-screening-vs-mount-vernon-which/",
+        "clicks": 2,
+        "impressions": 46,
+        "ctr": 0.043478260869565216,
+        "position": 7.891304347826087
+      },
+      {
+        "key": "https://www.doryangel.com/blog/your-bronx-buildings-gutters-and-downspouts-before-fall-what/",
+        "clicks": 1,
+        "impressions": 44,
+        "ctr": 0.022727272727272728,
+        "position": 30.727272727272727
+      }
+    ],
+    "hosts": [
+      {
+        "key": "www",
+        "label": "www.doryangel.com",
+        "pages": 108,
+        "clicks": 44,
+        "impressions": 4112,
+        "position": 11.34362840466926
+      },
+      {
+        "key": "apex",
+        "label": "doryangel.com",
+        "pages": 1,
+        "clicks": 66,
+        "impressions": 1403,
+        "position": 5.304347826086956
+      },
+      {
+        "key": "beta",
+        "label": "beta.doryangel.com",
+        "pages": 4,
+        "clicks": 0,
+        "impressions": 77,
+        "position": 29.246753246753247
+      }
+    ],
+    "hostQueries": [
+      {
+        "query": "property management company",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 208,
+            "position": 1.48
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 2,
+            "position": 9.5
+          }
+        }
+      },
+      {
+        "query": "property management bronx ny",
+        "hosts": {
+          "apex": {
+            "clicks": 3,
+            "impressions": 62,
+            "position": 1.06
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 32,
+            "position": 18.94
+          }
+        }
+      },
+      {
+        "query": "bronx property management companies",
+        "hosts": {
+          "apex": {
+            "clicks": 1,
+            "impressions": 51,
+            "position": 5.94
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 35,
+            "position": 16.34
+          }
+        }
+      },
+      {
+        "query": "property management companies bronx ny",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 51,
+            "position": 2.12
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 32,
+            "position": 17.5
+          }
+        }
+      },
+      {
+        "query": "property management companies bronx",
+        "hosts": {
+          "apex": {
+            "clicks": 1,
+            "impressions": 47,
+            "position": 4.23
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 33,
+            "position": 16.91
+          }
+        }
+      },
+      {
+        "query": "property management in bronx",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 36,
+            "position": 1
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 26,
+            "position": 18.85
+          }
+        }
+      },
+      {
+        "query": "bronx property management",
+        "hosts": {
+          "apex": {
+            "clicks": 2,
+            "impressions": 17,
+            "position": 3.65
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 43,
+            "position": 19.09
+          }
+        }
+      },
+      {
+        "query": "property management in the bronx",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 28,
+            "position": 1
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 28,
+            "position": 16.07
+          }
+        }
+      },
+      {
+        "query": "property management",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 11,
+            "position": 3.45
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 30,
+            "position": 10.77
+          }
+        }
+      },
+      {
+        "query": "property management services bronx ny",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 3,
+            "position": 1
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 23,
+            "position": 18.43
+          }
+        }
+      },
+      {
+        "query": "property management bronx",
+        "hosts": {
+          "www": {
+            "clicks": 1,
+            "impressions": 6,
+            "position": 9.83
+          },
+          "apex": {
+            "clicks": 0,
+            "impressions": 13,
+            "position": 1.54
+          }
+        }
+      },
+      {
+        "query": "apartment management companies in the bronx",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 13,
+            "position": 1
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 6,
+            "position": 17.67
+          }
+        }
+      },
+      {
+        "query": "hunts point property managers",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 12,
+            "position": 1.25
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 6,
+            "position": 48.67
+          }
+        }
+      },
+      {
+        "query": "apartment management in the bronx",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 8,
+            "position": 1
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 5,
+            "position": 23
+          }
+        }
+      },
+      {
+        "query": "management office near me",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 4,
+            "position": 11
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 5,
+            "position": 7.8
+          }
+        }
+      },
+      {
+        "query": "property management companies in the bronx",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 5,
+            "position": 4
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 2,
+            "position": 12
+          }
+        }
+      },
+      {
+        "query": "property management nyc",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 6,
+            "position": 3.33
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 1,
+            "position": 1
+          }
+        }
+      },
+      {
+        "query": "property management services",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 3,
+            "position": 1
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 3,
+            "position": 4.67
+          }
+        }
+      },
+      {
+        "query": "rental management companies near me",
+        "hosts": {
+          "apex": {
+            "clicks": 1,
+            "impressions": 3,
+            "position": 1.67
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 1,
+            "position": 12
+          }
+        }
+      },
+      {
+        "query": "hunts point property management company",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 3,
+            "position": 1
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 1,
+            "position": 37
+          }
+        }
+      },
+      {
+        "query": "property management companies nyc",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 3,
+            "position": 7.67
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 1,
+            "position": 21
+          }
+        }
+      },
+      {
+        "query": "yes",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 2,
+            "position": 3
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 2,
+            "position": 5
+          }
+        }
+      },
+      {
+        "query": "apartment management bronx",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 2,
+            "position": 5
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 1,
+            "position": 76
+          }
+        }
+      },
+      {
+        "query": "management companies near me",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 2,
+            "position": 10.5
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 1,
+            "position": 7
+          }
+        }
+      },
+      {
+        "query": "property managment company",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 2,
+            "position": 1
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 1,
+            "position": 7
+          }
+        }
+      },
+      {
+        "query": "local property management companies",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 1,
+            "position": 1
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 1,
+            "position": 10
+          }
+        }
+      },
+      {
+        "query": "property management apartments",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 1,
+            "position": 2
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 1,
+            "position": 11
+          }
+        }
+      },
+      {
+        "query": "property management near me",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 1,
+            "position": 5
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 1,
+            "position": 6
+          }
+        }
+      },
+      {
+        "query": "property managers",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 1,
+            "position": 9
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 1,
+            "position": 7
+          }
+        }
+      },
+      {
+        "query": "property rental managers",
+        "hosts": {
+          "apex": {
+            "clicks": 0,
+            "impressions": 1,
+            "position": 1
+          },
+          "www": {
+            "clicks": 0,
+            "impressions": 1,
+            "position": 11
+          }
+        }
+      }
+    ]
   }
 ]
