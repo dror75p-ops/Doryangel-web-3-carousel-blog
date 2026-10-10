@@ -1,7 +1,7 @@
 {
   "format": "queries[term][YYYY-MM-DD] = [clicks, impressions, avgPosition]",
   "note": "A missing date means the term drew no impressions that day — that is signal, not a gap.",
-  "updatedAt": "2026-10-09",
+  "updatedAt": "2026-10-10",
   "queries": {
     "bronx property management": {
       "2025-04-15": [
