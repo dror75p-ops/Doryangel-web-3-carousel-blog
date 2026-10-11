@@ -2775,6 +2775,21 @@
     {
       "date": "2026-10-11",
       "kind": "site",
+      "subject": "Trust bar: even bullets and weights, no height jump on mobile"
+    },
+    {
+      "date": "2026-10-11",
+      "kind": "site",
+      "subject": "Arlo: drop legal-topic recommendations per owner direction (#320)"
+    },
+    {
+      "date": "2026-10-11",
+      "kind": "site",
+      "subject": "Arlo: detect real implementation of improve-existing; apply ARLO-2026-09-13-01 rewrite (#319)"
+    },
+    {
+      "date": "2026-10-11",
+      "kind": "site",
       "subject": "Promo terms: any website enrollee; regular price = written quote (#318)"
     },
     {
