@@ -21,5 +21,22 @@
     },
     "status": "queued",
     "result": null
+  },
+  {
+    "id": "ARLO-2026-10-11-04",
+    "title": "Add internal links to the 3 orphaned posts",
+    "action": "site-change",
+    "targetSlug": null,
+    "recommendedOn": "2026-10-11",
+    "approvedOn": "2026-10-11",
+    "approvedBy": "Dory (authenticated GitHub email gateway)",
+    "legalReviewed": false,
+    "metric": "impressions on the 3 orphan URLs",
+    "expectedResult": "Those 3 URLs begin accumulating impressions in Search Console within 2-4 weeks; expect at least one to start showing non-zero impressions where it currently shows none.",
+    "baseline": null,
+    "status": "queued",
+    "implementedOn": null,
+    "measureAfter": null,
+    "result": null
   }
 ]
