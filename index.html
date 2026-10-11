@@ -563,13 +563,20 @@ nav.bar-hidden { top: 0; }
 .trust-bar {
   background: var(--navy);
   padding: 20px 40px;
-  display: flex; justify-content: center; gap: 60px; flex-wrap: wrap;
+  display: flex; justify-content: center; gap: 14px 36px; flex-wrap: wrap;
 }
 .trust-item {
-  font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.82);
-  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; font-weight: 500; line-height: 1.45; color: rgba(255,255,255,0.86);
+  position: relative; padding-left: 22px;
 }
-.trust-item strong { color: white; }
+/* Hexagon bullet drawn in CSS: the old "⬡" text glyph came from a fallback font and, as a
+   bare text node in a flex row, split the line into separate flex items. */
+.trust-item::before {
+  content: ''; position: absolute; left: 0; top: 0.42em; width: 10px; height: 10px;
+  background: #5B9FEA;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+.trust-item strong { color: #fff; font-weight: 700; }
 
 /* SECTION SHARED */
 section { padding: 96px 40px; }
@@ -1381,7 +1388,9 @@ footer {
   .footer-top { grid-template-columns: 1fr 1fr; }
   .footer-logo-wrap { background: white; display: inline-block; border-radius: 6px; padding: 6px 10px; }
   section { padding: 64px 20px; }
-  .trust-bar { gap: 16px; padding: 16px 20px; flex-direction: column; align-items: flex-start; }
+  .trust-bar { gap: 14px; padding: 20px 24px; flex-direction: column; align-items: stretch; }
+  /* Two-line floor so the bar does not change height each time the rotating line swaps. */
+  .trust-rotator { min-height: calc(1.45em * 2); }
   .blog-tab { padding: 14px 20px; min-height: 44px; }
 }
 @media (max-width: 600px) {
@@ -2835,11 +2844,11 @@ retell-chat-web-component {
 
 <!-- TRUST BAR -->
 <div class="trust-bar">
-  <div class="trust-item trust-rotator" id="trust-rotator">⬡ <strong>Bronx</strong> · Queens · Yonkers · Mount Vernon · New Rochelle · North Jersey</div>
-  <div class="trust-item">⬡ <strong>Founded 2010</strong></div>
-  <div class="trust-item">⬡ Coop · Condo · Residential · Commercial</div>
-  <div class="trust-item">⬡ Insured</div>
-  <div class="trust-item">⬡ Bronx office meetings by appointment</div>
+  <div class="trust-item trust-rotator" id="trust-rotator"><strong>Bronx</strong> · Queens · Yonkers · Mount Vernon · New Rochelle · North Jersey</div>
+  <div class="trust-item"><strong>Founded</strong> 2010</div>
+  <div class="trust-item"><strong>Coop</strong> · Condo · Residential · Commercial</div>
+  <div class="trust-item"><strong>Insured</strong></div>
+  <div class="trust-item"><strong>Bronx office</strong> meetings by appointment</div>
 </div>
 
 <!-- AUDIENCE CARDS -->
@@ -5444,12 +5453,12 @@ async function handleFormSubmit(e) {
 
   var trustRotator = document.getElementById('trust-rotator');
   var trustLines = [
-    '⬡ <strong>Bronx</strong> · Queens · Yonkers · Mount Vernon · New Rochelle · North Jersey',
-    '⬡ <strong>100+</strong> properties under management',
-    '⬡ <strong>$99</strong> per occupied unit · 10+ units, one agreement',
-    '⬡ <strong>15+ years</strong> serving NYC owners',
-    '⬡ Rent paid <strong>directly to owners</strong> · no fee on vacant units',
-    '⬡ <strong>24/7</strong> emergency maintenance line',
+    '<strong>Bronx</strong> · Queens · Yonkers · Mount Vernon · New Rochelle · North Jersey',
+    '<strong>100+</strong> properties under management',
+    '<strong>$99</strong> per occupied unit · 10+ units, one agreement',
+    '<strong>15+ years</strong> serving NYC owners',
+    'Rent paid <strong>directly to owners</strong> · no fee on vacant units',
+    '<strong>24/7</strong> emergency maintenance line',
   ];
   if (trustRotator && !prefersReduced) {
     var trustIdx = 0;
