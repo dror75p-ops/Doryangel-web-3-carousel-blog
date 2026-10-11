@@ -714,6 +714,22 @@ picture { display: contents; }
 .rent-direct p { margin: 0 auto; max-width: 640px; line-height: 1.65; color: var(--text-muted); font-size: 16px; }
 @media (max-width: 755px) { .pricing-grid.pricing-grid--two { grid-template-columns: 1fr; max-width: 420px; } }
 
+/* Online enrollment preview (interest test only: no payment, no signature) */
+.enroll-preview { max-width: 820px; margin: 32px auto 0; padding: 26px 28px; background: #fff; border: 2px dashed var(--blue); border-radius: 16px; text-align: center; }
+.enroll-preview-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--blue); background: var(--blue-dim); padding: 4px 12px; border-radius: 999px; margin-bottom: 12px; }
+.enroll-preview h3 { font-family: 'DM Serif Display', serif; color: var(--navy); font-size: clamp(20px, 3.4vw, 26px); line-height: 1.25; margin: 0 0 10px; }
+.enroll-preview p { margin: 0 auto 14px; max-width: 620px; line-height: 1.6; color: var(--text-muted); }
+.enroll-preview-steps { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; list-style: none; padding: 0; margin: 0 0 18px; }
+.enroll-preview-steps li { font-size: 13px; font-weight: 600; color: var(--navy); background: var(--blue-dim); padding: 6px 12px; border-radius: 8px; }
+.enroll-preview .btn-secondary { min-height: 48px; }
+.enroll-preview-note { font-size: 13px; font-weight: 700; color: var(--navy); margin: 14px auto 0 !important; }
+.ep-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 480px) { .ep-field-row { grid-template-columns: 1fr; } }
+.ep-consent { display: flex; gap: 10px; align-items: flex-start; font-size: 12px; line-height: 1.5; color: #4B5563; margin: 4px 0 12px; }
+.ep-consent input { width: 20px; height: 20px; margin-top: 2px; flex-shrink: 0; }
+.ep-error { display: none; font-size: 13px; color: #B42318; background: #FEF3F2; border-radius: 8px; padding: 10px 12px; margin: 0 0 12px; }
+.toolgate-field input:focus-visible, .ep-consent input:focus-visible, .toolgate-submit:focus-visible, .toolgate-close:focus-visible { outline: 3px solid #1E5AA8; outline-offset: 2px; }
+
 /* PRICING */
 .pricing-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
@@ -2309,6 +2325,63 @@ retell-chat-web-component {
   </div>
 </div>
 
+<!-- Online enrollment interest (Batch 2 preview): Web3Forms inbox only. No payment, no signature,
+     no Make webhook (the notify-gate confirmation email would promise a tool launch). -->
+<div class="toolgate-overlay hidden" id="enrollOverlay" role="dialog" aria-modal="true" aria-labelledby="enrollTitle">
+  <div class="toolgate-modal" id="enrollModal" style="width:min(460px,94vw);max-height:92vh;overflow:auto;">
+    <div class="toolgate-head">
+      <button class="toolgate-close" id="enrollClose" type="button" aria-label="Close">&times;</button>
+      <h4 id="enrollTitle">Notify me when online enrollment opens</h4>
+      <p>Coming soon. No payment or agreement is processed here.</p>
+    </div>
+    <div class="toolgate-body">
+      <form id="enrollForm" novalidate>
+        <input type="hidden" name="access_key" value="6991fa6b-8f6c-4c24-9167-b7ee52026a98">
+        <input type="checkbox" name="botcheck" id="enrollBotcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none">
+        <input type="hidden" name="subject" value="Online Enrollment Interest (coming-soon preview)">
+        <input type="hidden" name="from_name" value="DoryAngel Website">
+        <input type="hidden" name="source" value="website_online_enrollment_preview">
+        <input type="hidden" name="interest" value="online_enrollment_preview_99_first_6_months">
+        <div class="toolgate-field">
+          <label for="enrollAddress">Property address <span style="font-weight:400;">(optional)</span></label>
+          <input type="text" id="enrollAddress" name="property_address" autocomplete="street-address" placeholder="Street, Bronx NY">
+        </div>
+        <div class="ep-field-row">
+          <div class="toolgate-field">
+            <label for="enrollCovered">Units to manage <span style="font-weight:400;">(optional)</span></label>
+            <input type="number" id="enrollCovered" name="units_to_manage" min="1" max="999" inputmode="numeric">
+          </div>
+          <div class="toolgate-field">
+            <label for="enrollOccupied">Occupied today <span style="font-weight:400;">(optional)</span></label>
+            <input type="number" id="enrollOccupied" name="units_occupied" min="0" max="999" inputmode="numeric">
+          </div>
+        </div>
+        <div class="toolgate-field">
+          <label for="enrollEmail">Email <span style="color:#D14343;">*</span></label>
+          <input type="email" id="enrollEmail" name="email" required autocomplete="email" placeholder="you@email.com">
+        </div>
+        <div class="toolgate-field">
+          <label for="enrollPhone">Phone <span style="font-weight:400;">(optional)</span></label>
+          <input type="tel" id="enrollPhone" name="phone" autocomplete="tel" placeholder="(555) 555-5555">
+        </div>
+        <div class="ep-consent">
+          <input type="checkbox" id="enrollConsent" name="tcpa_consent" value="yes">
+          <label for="enrollConsent"><strong>Optional:</strong> let <strong>DoryAngel LLC</strong> contact me by phone or text about this. Not required to submit or to use our services. Message frequency varies; message and data rates may apply. Reply STOP to opt out. See <a href="./sms-consent.html">SMS Consent</a> and <a href="./privacy.html">Privacy Policy</a>.</label>
+        </div>
+        <p class="ep-error" id="enrollError" role="alert"></p>
+        <button type="submit" class="toolgate-submit" id="enrollSubmit">Notify Me &rarr;</button>
+        <p class="toolgate-note">We will email you when enrollment opens. Nothing is charged or signed.</p>
+      </form>
+      <div id="enrollSuccess" class="toolgate-success" style="display:none;" role="status" tabindex="-1">
+        <div class="toolgate-success-icon" style="background:#EEF4FF;">&#10003;</div>
+        <h5>You&rsquo;re on the list.</h5>
+        <p>We&rsquo;ll email you when online enrollment opens. In the meantime you can <a href="#contact" id="enrollToContact">request a free rental analysis</a>.</p>
+        <button type="button" id="enrollDone" style="margin-top:16px;background:#1E5AA8;color:#fff;border:none;padding:10px 22px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;min-height:44px;">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Property P&L Dashboard checkout modal -->
 <div class="pm-overlay hidden" id="pmModal" role="dialog" aria-modal="true" aria-label="Purchase Property P&L Dashboard">
   <div class="pm-modal-box" id="pmModalBox">
@@ -3086,10 +3159,23 @@ retell-chat-web-component {
     </div>
     <p class="pricing-terms">Only occupied covered units are billed. Lease-renewal administration is $100 per completed renewal. Brokerage work (handled by licensed brokers or other authorized providers) and third-party vendor costs are disclosed before you authorize them. Full terms are in your written management agreement.</p>
 
+    <div class="enroll-preview" id="enroll-preview">
+      <span class="enroll-preview-tag">Coming soon</span>
+      <h3>Online Enrollment Preview &mdash; $99/occupied unit/month for the first 6 months</h3>
+      <p>Interested in signing up online? Be among the first to know when enrollment opens. The regular price after six months will be displayed and expressly agreed before any enrollment or higher charge.</p>
+      <ol class="enroll-preview-steps" aria-label="How the preview offer is planned to work">
+        <li>1. First 6 months: $99/occupied unit/mo</li>
+        <li>2. Then: your regular agreed fee</li>
+        <li>3. You approve before any higher charge</li>
+      </ol>
+      <button type="button" class="btn-secondary" id="enroll-interest-open" aria-haspopup="dialog">I&rsquo;m Interested &mdash; Notify Me</button>
+      <p class="enroll-preview-note">Coming soon. No payment or agreement is processed here yet.</p>
+    </div>
+
     <div class="pricing-faq" role="group" aria-label="Pricing questions">
       <details><summary>What counts as an occupied or covered unit?</summary><p>Covered units are the units listed in your management agreement. You are billed only for covered units that are occupied. Vacant covered units cost $0 until a tenant moves in. Units outside the agreement are not managed or charged.</p></details>
       <details><summary>Is the $99 rate available for my 2-unit property?</summary><p>The ongoing $99 rate applies when at least 10 units are included in one management agreement. Smaller properties are quoted individually, so request a quote and we will tell you the flat fee for your building.</p></details>
-      <details><summary>What happens to pricing after month six of an online promotion?</summary><p>Online enrollment is not open yet. If a promotional rate is offered later, the regular price will be shown and agreed in writing before enrollment, and we will not charge more without your approval.</p></details>
+      <details><summary>What happens to pricing after month six of an online promotion?</summary><p>Online enrollment is not open yet. The planned preview offer is $99 per occupied unit per month for the first six months. After that, your regular agreed fee applies. It will be shown and agreed in writing before enrollment, and we will not charge more without your approval.</p></details>
       <details><summary>What is the $100 lease-renewal fee?</summary><p>It covers the administration and coordination of a completed lease renewal. It is listed separately from the monthly rate so you can see it up front.</p></details>
       <details><summary>Who receives my tenants’ rent?</summary><p>You do. Tenants pay directly into your bank account. We review payment receipts and your confirmations, flag discrepancies, and send a monthly Owner Statement. We do not hold your rent funds.</p></details>
       <details><summary>How do I meet someone in person?</summary><p>We hold scheduled meetings at our Bronx office, 440 E 140th St, Bronx, NY 10454. Call <a href="tel:+15168474999">(516) 847-4999</a> to book a time. Our licensed broker partner can join when a listing or sale is involved.</p></details>
@@ -4914,8 +5000,21 @@ retell-chat-web-component {
             </svg>
           </div>
           <div>
+            <div class="contact-detail-label">Headquarters</div>
+            <div class="contact-detail-val">557 Grand Concourse #4123, Bronx, NY 10451</div>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="contact-detail-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+          </div>
+          <div>
             <div class="contact-detail-label">Bronx Office Meetings</div>
-            <div class="contact-detail-val">440 E 140th St, Bronx, NY 10454<br><a href="tel:+15168474999" style="color:var(--blue);font-weight:600;text-decoration:none;">Call (516) 847-4999 to schedule</a><div style="font-size:13px;font-weight:400;color:var(--text-muted);margin-top:4px;">By appointment only. Mailing correspondence: 557 Grand Concourse #4123, Bronx, NY 10451</div></div>
+            <div class="contact-detail-val">440 E 140th St, Bronx, NY 10454<br><a href="tel:+15168474999" style="color:var(--blue);font-weight:600;text-decoration:none;">Call (516) 847-4999 to schedule</a><div style="font-size:13px;font-weight:400;color:var(--text-muted);margin-top:4px;">Face-to-face meetings by appointment only</div></div>
           </div>
         </div>
 
@@ -6210,6 +6309,70 @@ document.addEventListener('DOMContentLoaded', function() {
     }).catch(function(){});
     form.style.display = 'none';
     document.getElementById('notifyGateSuccess').style.display = 'block';
+  });
+});
+</script>
+
+<script>
+/* Online enrollment interest: open / close / submit, with focus handling and real error reporting.
+   Unlike the notify gate, a failed submit is shown to the visitor instead of reported as success. */
+document.addEventListener('DOMContentLoaded', function () {
+  var openBtn = document.getElementById('enroll-interest-open');
+  var overlay = document.getElementById('enrollOverlay');
+  if (!openBtn || !overlay) return;
+  var form = document.getElementById('enrollForm'), ok = document.getElementById('enrollSuccess');
+  var err = document.getElementById('enrollError'), btn = document.getElementById('enrollSubmit');
+  var email = document.getElementById('enrollEmail'), lastFocus = null;
+  function ga(name, label) { try { if (typeof gtag !== 'undefined') gtag('event', name, { event_category: 'lead', event_label: label }); } catch (e) {} }
+  function focusables() { return Array.prototype.filter.call(overlay.querySelectorAll('button, [href], input:not([type=hidden]):not([name=botcheck]), select, textarea'), function (el) { return el.offsetParent !== null && !el.disabled; }); }
+  function open() {
+    lastFocus = document.activeElement;
+    form.style.display = ''; ok.style.display = 'none'; err.style.display = 'none'; btn.disabled = false;
+    overlay.classList.remove('hidden'); document.body.style.overflow = 'hidden';
+    ga('online_enrollment_interest_open', 'pricing_preview');
+    setTimeout(function () { document.getElementById('enrollAddress').focus(); }, 60);
+  }
+  function close() {
+    overlay.classList.add('hidden'); document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  openBtn.addEventListener('click', open);
+  document.getElementById('enrollClose').addEventListener('click', close);
+  document.getElementById('enrollDone').addEventListener('click', close);
+  document.getElementById('enrollToContact').addEventListener('click', close);
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+  document.addEventListener('keydown', function (e) {
+    if (overlay.classList.contains('hidden')) return;
+    if (e.key === 'Escape') { close(); return; }
+    if (e.key === 'Tab') {
+      var f = focusables(); if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+  function fail(msg) { err.innerHTML = msg; err.style.display = 'block'; btn.disabled = false; }
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    err.style.display = 'none';
+    var v = email.value.trim();
+    if (!v || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) { email.style.borderColor = '#D14343'; email.focus(); fail('Please enter a valid email address.'); return; }
+    email.style.borderColor = '';
+    if (btn.disabled) return;
+    btn.disabled = true;   // debounce: one submit, one inbox email
+    var data = new FormData(form);
+    if (!document.getElementById('enrollConsent').checked) data.set('tcpa_consent', 'no');
+    fetch('https://api.web3forms.com/submit', { method: 'POST', body: data })
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (!res || res.success !== true) throw new Error('rejected');
+        ga('online_enrollment_interest_submit', 'pricing_preview');
+        if (typeof gtag !== 'undefined') { try { gtag('event', 'generate_lead', { event_category: 'lead', event_label: 'online_enrollment_interest' }); } catch (e2) {} }
+        form.style.display = 'none'; ok.style.display = 'block'; ok.focus();
+      })
+      .catch(function () {
+        fail('Sorry, that did not go through. Please try again or call <a href="tel:+15168474999">(516) 847-4999</a>.');
+      });
   });
 });
 </script>

@@ -55,12 +55,24 @@ check('blog pages were scanned', pages > 0);
 // Facts that MUST be present.
 const idx = read('index.html');
 check('index.html shows the Bronx meeting office', idx.includes('440 E 140th St, Bronx, NY 10454'));
-check('index.html keeps the mailing address labelled as mailing', /Mailing correspondence: 557 Grand Concourse #4123/.test(idx));
+check('index.html keeps 557 Grand Concourse as Headquarters', /Headquarters<\/div>\s*<div class="contact-detail-val">557 Grand Concourse #4123/.test(idx));
+check('440 E 140th is labelled as appointment-only meetings, not HQ', /Bronx Office Meetings<\/div>/.test(idx) && /Face-to-face meetings by appointment only/.test(idx));
 check('index.html states the 10+ unit threshold next to $99', /\$99<span>\/occupied unit\/mo<\/span>/.test(idx) && /10 or more units/.test(idx));
 check('index.html states the $100 renewal fee', /\$100 per completed (?:lease )?renewal/.test(idx));
 check('index.html says rent is paid directly to the owner', /Your Rent Goes Directly to You/.test(idx));
 check('hero CTA stays Free Rental Analysis', /Get My Free Rental Analysis/.test(idx));
 check('Nave prompt carries the 10+ rule', /ONLY when at least 10 units/.test(read('scripts/generate-post.js')));
+
+
+// Batch 2: the online-enrollment teaser is an interest test only.
+check('teaser says coming soon with no payment or agreement', /Coming soon\. No payment or agreement is processed here yet\./.test(idx));
+check('teaser CTA is Notify Me, not Enroll', /I&rsquo;m Interested &mdash; Notify Me/.test(idx) && !/Enroll Now|Sign Up Now|Pay Now/i.test(idx));
+const modal = (idx.match(/id="enrollOverlay"[\s\S]*?<!-- Property P&L Dashboard checkout modal -->/) || [''])[0];
+check('interest form is tagged with a source and interest', /name="source" value="website_online_enrollment_preview"/.test(modal) && /name="interest" value="online_enrollment_preview/.test(modal));
+check('interest form uses the Web3Forms honeypot (botcheck), not _honey', /name="botcheck"/.test(modal) && !/_honey/.test(modal));
+check('interest form keeps call/text consent optional', /name="tcpa_consent"/.test(modal) && !/name="tcpa_consent"[^>]*required/.test(modal));
+check('interest form does not hit the Make webhook', !/hook\.eu1\.make\.com/.test((idx.match(/Online enrollment interest: open[\s\S]*?<\/script>/) || [''])[0]));
+check('teaser GA4 events are wired', /online_enrollment_interest_open/.test(idx) && /online_enrollment_interest_submit/.test(idx));
 
 // Calculator must never compute $99 below 10 units.
 const calc = read('flat-fee-vs-commission/index.html');
