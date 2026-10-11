@@ -2237,6 +2237,7 @@ retell-chat-web-component {
           </div>
         </div>
         <div class="cf-turnstile" data-sitekey="0x4AAAAAADr7qlYcZ_8Gw2v3" data-theme="light" data-refresh-expired="auto" style="margin:4px 0 14px;"></div>
+        <p id="toolGateSecurityError" role="alert" aria-live="polite" style="display:none;color:#B42318;font-size:13px;margin:-4px 0 12px;">Please complete the security check.</p>
         <button type="submit" class="toolgate-submit">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           Open the Tool &rarr;
@@ -2273,6 +2274,8 @@ retell-chat-web-component {
           <label for="notifyGateEmail">Your email address <span style="color:#D14343;">*</span></label>
           <input type="email" id="notifyGateEmail" name="email" placeholder="you@email.com" required autocomplete="email">
         </div>
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAADr7qlYcZ_8Gw2v3" data-theme="light" data-refresh-expired="auto" style="margin:4px 0 14px;"></div>
+        <p id="notifyGateSecurityError" role="alert" aria-live="polite" style="display:none;color:#B42318;font-size:13px;margin:-4px 0 12px;">Please complete the security check.</p>
         <button type="submit" class="toolgate-submit" style="background:linear-gradient(135deg,#374151,#64748B);">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           Notify Me &rarr;
@@ -5118,12 +5121,18 @@ function filterFaq(cat, btn) {
 
 
 <!-- Cloudflare Turnstile — bot protection for the lead forms -->
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
 <script>
 async function handleFormSubmit(e) {
   e.preventDefault();
   const form = e.target;
   const btn = form.querySelector('.form-submit');
+  const cfToken = (form.querySelector('[name="cf-turnstile-response"]') || {}).value || '';
+  if (!cfToken) {
+    btn.textContent = 'Complete the security check';
+    btn.disabled = false;
+    return;
+  }
   btn.textContent = 'Sending...';
   btn.disabled = true;
   // Segment the lead by role: put it in the Web3Forms subject for instant inbox filtering
@@ -5143,7 +5152,6 @@ async function handleFormSubmit(e) {
       const firstName = (form.querySelector('[name="first-name"]') || {}).value || '';
       const lastName  = (form.querySelector('[name="last-name"]')  || {}).value || '';
       const email     = (form.querySelector('[name="email"]')       || {}).value || '';
-      const cfToken   = (form.querySelector('[name="cf-turnstile-response"]') || {}).value || '';
       // `role` and `property-address` used to be collected and then thrown away here — the
       // sheet could never tell an owner from a tenant. Send everything the visitor gave us.
       // NOTE: hook 3296084 has no attached data structure, so Make auto-learned the old
@@ -6037,6 +6045,8 @@ function openToolGate(toolUrl, toolName) {
   document.getElementById('toolGateSuccess').style.display = 'none';
   document.getElementById('toolGateEmail').value = '';
   document.getElementById('toolGateName').value = '';
+  var securityError = document.getElementById('toolGateSecurityError');
+  if (securityError) securityError.style.display = 'none';
   document.getElementById('toolGateOverlay').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
   setTimeout(function() { document.getElementById('toolGateEmail').focus(); }, 100);
@@ -6064,6 +6074,13 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     document.getElementById('toolGateEmail').style.borderColor = '';
+    var cfToken = (form.querySelector('[name="cf-turnstile-response"]') || {}).value || '';
+    var securityError = document.getElementById('toolGateSecurityError');
+    if (!cfToken) {
+      if (securityError) securityError.style.display = 'block';
+      return;
+    }
+    if (securityError) securityError.style.display = 'none';
 
     // Debounce: block rapid repeat submits from firing the webhook multiple times
     var toolGateSubmitBtn = form.querySelector('button[type="submit"]');
@@ -6092,7 +6109,6 @@ document.addEventListener('DOMContentLoaded', function() {
         form.querySelectorAll('input[name="topic"]:checked'),
         function (c) { return c.value; }
       );
-      var cfToken = (form.querySelector('[name="cf-turnstile-response"]') || {}).value || '';
       fetch('https://hook.eu1.make.com/2qo6r1tr15cckv1opo8em9x89ip3ku4x', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -6133,6 +6149,8 @@ function openNotifyGate(toolName) {
   var notifySubmitBtn = document.querySelector('#notifyGateForm button[type="submit"]');
   if (notifySubmitBtn) notifySubmitBtn.disabled = false;   // reset debounce from any prior submit
   document.getElementById('notifyGateEmail').value = '';
+  var securityError = document.getElementById('notifyGateSecurityError');
+  if (securityError) securityError.style.display = 'none';
   document.getElementById('notifyGateOverlay').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
   setTimeout(function() { document.getElementById('notifyGateEmail').focus(); }, 100);
@@ -6160,6 +6178,13 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     document.getElementById('notifyGateEmail').style.borderColor = '';
+    var cfToken = (form.querySelector('[name="cf-turnstile-response"]') || {}).value || '';
+    var securityError = document.getElementById('notifyGateSecurityError');
+    if (!cfToken) {
+      if (securityError) securityError.style.display = 'block';
+      return;
+    }
+    if (securityError) securityError.style.display = 'none';
 
     // Debounce: block rapid repeat submits from firing the webhook multiple times
     var notifyGateSubmitBtn = form.querySelector('button[type="submit"]');
@@ -6176,9 +6201,11 @@ document.addEventListener('DOMContentLoaded', function() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email:     email,
-        tool_name: document.getElementById('notifyGateToolName').value
+        tool_name: document.getElementById('notifyGateToolName').value,
+        turnstileToken: cfToken
       })
     }).catch(function(){});
+    if (window.turnstile) { try { turnstile.reset(form.querySelector('.cf-turnstile')); } catch (err) {} }
     form.style.display = 'none';
     document.getElementById('notifyGateSuccess').style.display = 'block';
   });
@@ -6226,5 +6253,18 @@ document.addEventListener('DOMContentLoaded', function() {
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 
+<!-- Turnstile: real key in production, Cloudflare's always-pass test key on Vercel previews. -->
+<script>
+(function () {
+  var isVercelPreview = window.location.hostname.endsWith('.vercel.app');
+  var turnstileSiteKey = isVercelPreview
+    ? '1x00000000000000000000AA'
+    : '0x4AAAAAADr7qlYcZ_8Gw2v3';
+  document.querySelectorAll('.cf-turnstile').forEach(function (widget) {
+    widget.setAttribute('data-sitekey', turnstileSiteKey);
+  });
+})();
+</script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
 </body>
 </html>
