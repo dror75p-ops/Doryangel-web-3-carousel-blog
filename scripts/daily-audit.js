@@ -9,7 +9,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { Resend } from 'resend';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { execSync } from 'child_process';
-import { createSign } from 'crypto';
+import { createSign, createHash } from 'crypto';
 import { pathToFileURL } from 'url';
 import {
   CYCLE_DAYS, CYCLE_STATE_FILE, RECOMMENDATIONS_FILE, EXPERIMENTS_FILE, POSTS_INDEX_FILE,
@@ -1128,14 +1128,51 @@ function detectImplementation(exp, posts) {
     const post = posts.find(p => p.slug === exp.targetSlug);
     return post ? post.publishedDate : null;
   }
-  // improve-existing: look for a commit touching the generated page after approval.
+  // improve-existing: the change counts as shipped only when the post's own SEO fields or
+  // body differ from what they were when the recommendation was approved.
+  //
+  // This used to look for ANY commit touching blog/<slug>/index.html after approval. That is
+  // wrong: every auto-publish rewrites the "Continue reading" block of many older pages, and a
+  // generator change rebuilds all of them, so an approved rewrite was marked "implemented"
+  // (ARLO-2026-09-13-01, 2026-09-15) while its title and meta were untouched, and the 28-day
+  // verdict would have measured a page nobody had changed. The source of truth for the fields
+  // is content/blog/posts-index.json, so compare those against the version committed alongside
+  // the approval. If the baseline cannot be established we say "not shipped" rather than guess.
   if (!exp.targetSlug || !exp.approvedOn) return null;
+  const current = posts.find(p => p.slug === exp.targetSlug);
+  const baseline = baselinePostFor(exp);
+  if (!current || !baseline) return null;
+  if (postFingerprint(current) === postFingerprint(baseline)) return null;
   try {
     const out = execSync(
-      `git log --format=%cs -1 --since="${exp.approvedOn}" -- "blog/${exp.targetSlug}/index.html"`,
+      `git log --format=%cs -1 --since="${exp.approvedOn}" -- content/blog/posts-index.json`,
       { stdio: ['ignore', 'pipe', 'ignore'] }
     ).toString().trim();
-    return out || null;
+    return out || isoDay(new Date());
+  } catch {
+    return isoDay(new Date());
+  }
+}
+
+/** What an improve-existing recommendation is allowed to change: the SEO fields and the body. */
+function postFingerprint(p) {
+  return createHash('sha1')
+    .update([p.seoTitle || '', p.seoDescription || '', p.content || ''].join('\u0001'))
+    .digest('hex');
+}
+
+/** The post as it stood in the commit that first recorded this experiment (the approval commit). */
+function baselinePostFor(exp) {
+  try {
+    const commits = execSync(
+      `git log --format=%H -S"${exp.id}" -- project/seo/experiments.json`,
+      { stdio: ['ignore', 'pipe', 'ignore'] }
+    ).toString().trim().split('\n').filter(Boolean);
+    const rev = commits[commits.length - 1];          // oldest = the approval commit
+    if (!rev) return null;
+    const raw = execSync(`git show ${rev}:content/blog/posts-index.json`,
+      { stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 64 * 1024 * 1024 }).toString();
+    return JSON.parse(raw).find(p => p.slug === exp.targetSlug) || null;
   } catch {
     return null;
   }
@@ -2771,5 +2808,5 @@ if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) 
 // in production imports this file.
 export {
   runImprovementCycle, findOpportunities, finaliseRecommendations,
-  classifyExperiment, renderImprovementSections, readCycleState,
+  classifyExperiment, renderImprovementSections, readCycleState, detectImplementation,
 };
