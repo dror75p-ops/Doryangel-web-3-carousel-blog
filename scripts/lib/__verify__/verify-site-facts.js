@@ -72,6 +72,7 @@ check('interest form is tagged with a source and interest', /name="source" value
 check('interest form uses the Web3Forms honeypot (botcheck), not _honey', /name="botcheck"/.test(modal) && !/_honey/.test(modal));
 check('interest form keeps call/text consent optional', /name="tcpa_consent"/.test(modal) && !/name="tcpa_consent"[^>]*required/.test(modal));
 check('interest form does not hit the Make webhook', !/hook\.eu1\.make\.com/.test((idx.match(/Online enrollment interest: open[\s\S]*?<\/script>/) || [''])[0]));
+check('teaser states promo eligibility and that the regular price is the written quote', /of any size/.test(idx) && /your written quote, shown and expressly agreed/.test(idx));
 check('teaser GA4 events are wired', /online_enrollment_interest_open/.test(idx) && /online_enrollment_interest_submit/.test(idx));
 
 check('hero keeps the office card and trust strip', /class="hero-office"/.test(idx) && /class="hero-trust"/.test(idx));
