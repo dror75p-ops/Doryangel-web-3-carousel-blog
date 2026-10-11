@@ -74,6 +74,9 @@ check('interest form keeps call/text consent optional', /name="tcpa_consent"/.te
 check('interest form does not hit the Make webhook', !/hook\.eu1\.make\.com/.test((idx.match(/Online enrollment interest: open[\s\S]*?<\/script>/) || [''])[0]));
 check('teaser GA4 events are wired', /online_enrollment_interest_open/.test(idx) && /online_enrollment_interest_submit/.test(idx));
 
+check('hero keeps the office card and trust strip', /class="hero-office"/.test(idx) && /class="hero-trust"/.test(idx));
+check('hero no longer ships the eager portal screenshot', !/class="hero-shot"/.test(idx.split('<!-- DIRECT RENT -->')[0].split('id="hero-promise"')[1] || ''));
+
 // Calculator must never compute $99 below 10 units.
 const calc = read('flat-fee-vs-commission/index.html');
 check('calculator has no unconditional units*99', !/units\s*\*\s*99/.test(calc));
