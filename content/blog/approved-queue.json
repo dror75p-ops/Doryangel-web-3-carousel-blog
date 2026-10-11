@@ -8,5 +8,15 @@
     "status": "pending",
     "targetSlug": "flat-fee-property-management-vs-percentage",
     "note": "Rewrite the SEO title and meta description to lead with a concrete year-one cost comparison (base + leasing + setup + renewal fees) and Bronx-specific framing. Current listing is being served and skipped at position 8.4."
+  },
+  {
+    "recommendationId": "ARLO-2026-10-11-04",
+    "reportDate": "2026-10-11",
+    "approvedOn": "2026-10-11",
+    "approvedBy": "Dory (authenticated GitHub email gateway)",
+    "action": "site-change",
+    "status": "pending",
+    "targetSlug": null,
+    "note": "From 2-3 topically-related existing posts, add contextual body links to each of the 3 posts currently unlinked from any other post body (including the Bronx vs. Yonkers fall pipe freeze post). Use descriptive anchor text."
   }
 ]
