@@ -22,6 +22,8 @@
   - **Hero (PR #316, owner chose options A+B from `project/preview-hero/`):** H1, rotating slogans, "Get My Free Rental Analysis", rating badge and stats are unchanged. The three invariants from 2026-07-27 still hold. LCP is now the hero text (~0.15-0.33s in headless Chromium) because the eager screenshot is gone. `"Licensed & Insured."` was replaced in the slogan list by `"Fully Insured."` (same line-fit). `python3 project/preview-hero/build.py` regenerates the A/B/C previews from the live `index.html`.
   - **ChatGPT Sites:** design explorations are concept references only; see `project/preview-313/SITES-BRIEF.md` for which blocks are replaceable and the acceptance rules.
 
+- **Arlo no longer surfaces legal-topic recommendations (owner direction 2026-10-11).** The owner prefers practical building problems (no heat, leaks, boiler/electrical failures, pests, emergency repairs) over HPD/DOB/eviction/rent-regulation/compliance content. The prompt says so, and `runImprovementCycle` drops any recommendation that the model or the independent `requiresLegalReview()` classifier flags. The legal gate in `queue-approved-post.js` is unchanged. `detectImplementation` (PR #319) now compares the target post's SEO fields and body with the version at approval time, so an unrelated commit no longer marks an `improve-existing` recommendation as implemented.
+
 ### Older changes (as of 2026-09-27)
 
 - **Arlo cycle 2026-09-27: 03 shipped, 04 closed as a false premise, the three legal-review items skipped by the owner.**
