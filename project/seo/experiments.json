@@ -21,5 +21,30 @@
     },
     "status": "queued",
     "result": null
+  },
+  {
+    "id": "ARLO-2026-10-11-03",
+    "title": "Rewrite title/meta for Bronx vacancy post",
+    "action": "improve-existing",
+    "targetSlug": "how-to-reduce-vacancy-rates-in-your-bronx-rental-property",
+    "recommendedOn": "2026-10-11",
+    "approvedOn": "2026-10-11",
+    "approvedBy": "Dory (authenticated GitHub email gateway)",
+    "legalReviewed": false,
+    "metric": "impressions + clicks on this URL",
+    "expectedResult": "Position moves from 12.7 toward 8-10; CTR moves off 0%. Estimate 1-3 clicks over next 28 days.",
+    "baseline": {
+      "days": 28,
+      "clicks": 0,
+      "impressions": 104,
+      "ctr": 0,
+      "position": 12.73076923076923,
+      "capturedOn": "2026-10-11",
+      "source": "Search Console 28-day window"
+    },
+    "status": "queued",
+    "implementedOn": null,
+    "measureAfter": null,
+    "result": null
   }
 ]

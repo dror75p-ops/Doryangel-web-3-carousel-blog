@@ -8,5 +8,15 @@
     "status": "pending",
     "targetSlug": "flat-fee-property-management-vs-percentage",
     "note": "Rewrite the SEO title and meta description to lead with a concrete year-one cost comparison (base + leasing + setup + renewal fees) and Bronx-specific framing. Current listing is being served and skipped at position 8.4."
+  },
+  {
+    "recommendationId": "ARLO-2026-10-11-03",
+    "reportDate": "2026-10-11",
+    "approvedOn": "2026-10-11",
+    "approvedBy": "Dory (authenticated GitHub email gateway)",
+    "action": "improve-existing",
+    "status": "pending",
+    "targetSlug": "how-to-reduce-vacancy-rates-in-your-bronx-rental-property",
+    "note": "Rewrite SEO title and meta to lead with a specific dollar/days-vacant number and the Bronx geography; add internal links from 2-3 related fall turnover posts to boost authority and position."
   }
 ]
