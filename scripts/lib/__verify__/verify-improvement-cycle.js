@@ -260,9 +260,10 @@ check('they are sorted by score, highest first',
   recs.every((r, i) => i === 0 || recs[i - 1].score >= r.score));
 
 const hpd = recs.find(r => /HPD/i.test(r.title));
-check('the HPD recommendation survived', Boolean(hpd));
-check('⚠️ the classifier overrode the model\'s missing legal flag', hpd?.legal_review_required === true);
-check('the legal flag says why', (hpd?.legalReasons || []).length > 0);
+// Owner direction 2026-10-11: legal-topic recommendations are dropped, even when
+// the model forgot to flag them (the classifier still runs independently).
+check('⚠️ the HPD recommendation is dropped, not surfaced', !hpd);
+check('no surfaced recommendation is legal-flagged', recs.every(r => !r.legal_review_required));
 
 const dupRec = recs.find(r => r.duplicateOf);
 check('an exact-duplicate "new post" was detected', Boolean(dupRec));
@@ -384,7 +385,6 @@ check('the new-recommendations block renders', html.includes('New recommendation
 check('the cost block renders', html.includes('Cycle cost'));
 check('the search count is stated', /4 of 5 allowed/.test(html));
 check('every recommendation ID appears', recs.every(r => html.includes(r.id)));
-check('the legal requirement is visible on the flagged item', html.includes('Legal review required'));
 check('the reader is told nothing was queued', html.includes('Nothing has been queued'));
 check('the manual approval command is shown', html.includes('queue-approved-post.js --id'));
 

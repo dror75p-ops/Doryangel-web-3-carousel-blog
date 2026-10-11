@@ -1511,7 +1511,7 @@ RULES:
 - Prefer "improve-existing" over "new-content" whenever a published post already covers the subject. A slightly different wording is NOT a new topic.
 - Only these categories may be proposed for new content: ${APPROVED_CATEGORIES.join(', ')}.
 - Every "why" must cite a number you were actually given above. Do not invent metrics.
-- Set legal_review_required=true for anything touching HPD, DOB, evictions, tenant rights, rent regulation, Local Law numbers, compliance deadlines, fines, taxes or legal obligations.
+- Owner direction (2026-10-11): do NOT recommend anything on legal or regulatory topics (HPD, DOB, evictions, housing court, tenant rights, rent regulation, Local Laws, compliance deadlines, fines, taxes). Prefer practical building problems that need a response at any hour: no heat or hot water, leaks and floods, boiler or electrical failures, pests, locked-out or emergency repairs, vendor response. Still set legal_review_required=true if a recommendation touches those topics anyway.
 - Never include any person's name, email address or phone number.
 - Bronx must be the primary geography of any new post title.
 
@@ -1612,6 +1612,10 @@ function finaliseRecommendations(raw, { posts, experiments, todayISO, opportunit
 
     const legalByRule = requiresLegalReview(title, what, why);
     const legalRequired = Boolean(r.legal_review_required) || legalByRule;
+    // Owner direction (2026-10-11): the owner is not interested in legal-topic
+    // content, so Arlo does not surface it at all. The legal gate in
+    // queue-approved-post.js is unchanged and still blocks anything flagged.
+    if (legalRequired) continue;
 
     const scored = scoreRecommendation(r);
     n += 1;
