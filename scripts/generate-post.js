@@ -924,10 +924,11 @@ async function main() {
       `TITLE REJECTED: ${clash}. Keep the subject but write a title with a clearly different opening (different first six words) and a different sentence shape. Do not start with "Bronx vs.".`,
       linkInfo);
   }
+  // Publishing always wins over style: if the title still repeats a recent
+  // opening after two rewrites, say so loudly and publish anyway.
   const finalClash = approved ? null : titleClash(post.title, posts);
   if (finalClash) {
-    console.error(`::error::Nave stopped without publishing: the final title "${post.title}" is rejected because ${finalClash}. Re-run the workflow.`);
-    process.exit(1);
+    console.log(`::warning::Publishing anyway: final title "${post.title}" still ${finalClash}.`);
   }
 
   // Surface the caption size in the run log. Facebook and Instagram both hide
