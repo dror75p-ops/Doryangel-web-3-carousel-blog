@@ -399,6 +399,26 @@ const notDue = audit.renderImprovementSections({ ran: false, reason: 'next cycle
 check('an off-cycle day renders a one-line note instead of a stale report',
   notDue.includes('not due today') && !notDue.includes('New recommendations'));
 
+section('detectImplementation: an unrelated commit is not an implementation');
+{
+  const git = (...a) => execFileSync('git', ['-c', 'user.email=t@t', '-c', 'user.name=t', ...a], { cwd: sandbox, stdio: 'pipe' });
+  const idxPath = join(sandbox, 'content/blog/posts-index.json');
+  const base = JSON.parse(readFileSync(idxPath, 'utf8'));
+  const target = base[0].slug;
+  const exp = { id: 'ARLO-TEST-01', action: 'improve-existing', targetSlug: target, approvedOn: '2000-01-01' };
+  writeFileSync(join(sandbox, 'project/seo/experiments.json'), JSON.stringify([exp]));
+  git('add', '-A'); git('commit', '-q', '-m', 'approve ARLO-TEST-01');
+  // another post changes, target untouched
+  const other = JSON.parse(JSON.stringify(base)); other[1].content += ' x';
+  writeFileSync(idxPath, JSON.stringify(other, null, 2));
+  git('commit', '-q', '-am', 'touch other post');
+  check('commit touching another post is NOT an implementation', audit.detectImplementation(exp, other) === null);
+  const changed = JSON.parse(JSON.stringify(other)); changed[0].seoTitle = 'A brand new title | DoryAngel';
+  writeFileSync(idxPath, JSON.stringify(changed, null, 2));
+  git('commit', '-q', '-am', 'rewrite target');
+  check('changed SEO title IS an implementation', !!audit.detectImplementation(exp, changed));
+}
+
 // ─── Done ────────────────────────────────────────────────────────────────────
 
 process.chdir(repoRoot);
