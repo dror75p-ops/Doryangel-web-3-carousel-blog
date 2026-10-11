@@ -4,7 +4,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { Resend } from 'resend';
 import { readFileSync, writeFileSync } from 'fs';
 import { createSign } from 'crypto';
-import { generateSlug, uniqueSlug, toISODate, wordsToMinutes, searchUnsplashPhotos, pickImageQuery } from './lib/post-utils.js';
+import { generateSlug, uniqueSlug, toISODate, wordsToMinutes, searchUnsplashPhotos, pickImageQuery, sharedTitleOpening, titleClash } from './lib/post-utils.js';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 4 });
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -292,7 +292,7 @@ Never open the title with the same first six words as any recent post above — 
 
 Rules:
 - Geography: anchor every title to the Bronx as the primary location. Two natural extensions are allowed: (a) a second adjacent NYC borough (Queens or Manhattan) when it reads naturally — e.g. "...Your Bronx or Queens Rental?"; (b) a Bronx-vs-adjacent-area COMPARISON, a proven high-traffic format — the "Bronx vs. Mount Vernon" comparison was one of the best-performing posts. Mount Vernon (the Westchester city bordering the Bronx) is allowed ONLY inside a Bronx-anchored comparison, never as the sole location. Never use a non-Bronx borough or city as the sole anchor.
-- COMPARISON FORMAT IS THE TOP PERFORMER — lean into it: the Bronx-vs-adjacent-area comparison (and self-manage-vs-hire comparisons) has been our single best-performing shape by real traffic. Aim for roughly 1 in every 3-4 posts to use a head-to-head comparison ("Bronx vs. Mount Vernon", "Bronx vs. Yonkers", "Bronx vs. New Rochelle", "Self-Managing vs. Flat-Fee Management") whenever a natural angle exists for today's category — don't save it for only rare occasions.
+- COMPARISON FORMAT IS CAPPED (owner direction 2026-10-11): a "Bronx vs. <city>" head-to-head may be at most 1 post in every 5, and never if one of the last 4 posts already was. From 2026-09-11 to 10-08 ten of fifteen titles were comparisons and none reached the top pages. Prefer practical problems an owner has to deal with at any hour, including the middle of the night: no heat or hot water, burst pipes and leaks, flooding, boiler or electrical failure, pests, lockouts, a vendor who does not pick up. Frame them as "what do you do when…" with a concrete first step and a cost.
 - WINNING TITLE FORMULA (validated by real traffic): lead with the OWNER'S pain or cost and address the owner directly with "you"/"your". Include a concrete number, dollar figure, or NYC law. These outperform service-description titles. Head-to-head comparisons ("X vs. Y", "Is A cheaper than B?") perform especially well — especially owner-facing self-manage-vs-hire and Bronx-vs-neighboring-area angles.
   Gold-standard examples to emulate the SHAPE of:
     • "How Much Is Inefficient Management Costing Your Bronx or Queens Rental?"
@@ -346,29 +346,6 @@ Reply ONLY with valid JSON: {"title": "...", "category": "..."}`,
 // a new "August move-out costs" post re-covering old "cut vacancy time in half" /
 // "reduce vacancy rates" ground. Mirrors Arlo's findDuplicateOpenIssue() in
 // daily-audit.js. Fails open (treats as not-duplicate) on any error, same as Arlo.
-// Title-template repetition check, in code rather than in the prompt. From
-// 2026-08-17 to 09-27 Nave opened eight titles with "Bronx vs. Mount Vernon:
-// Which Landlords Actually …" — six collided on one slug and never rendered, and
-// the semantic dedupe gate passed them all because the SUBJECTS differed. Returns
-// the recent title that shares the opening, or null.
-const OPENING_WORDS = 6;
-function titleOpening(title) {
-  // Swapping the comparison city is not a new shape: "Bronx vs. Yonkers: Which
-  // Landlords Actually…" and "Bronx vs. Mount Vernon: Which Landlords Actually…"
-  // both normalise to "bronx vs x which landlords actually". Comparisons stay
-  // welcome — they just need a different sentence after the colon.
-  return String(title).toLowerCase()
-    .replace(/^\s*bronx\s+vs\.?\s+[^:?]{1,40}:/, 'bronx vs x ')
-    .replace(/[^a-z0-9 ]/g, ' ').split(/\s+/)
-    .filter(Boolean).slice(0, OPENING_WORDS).join(' ');
-}
-function sharedTitleOpening(title, existingPosts, recent = 15) {
-  const opening = titleOpening(title);
-  if (opening.split(' ').length < OPENING_WORDS) return null;
-  const hit = existingPosts.slice(0, recent).find(p => titleOpening(p.title) === opening);
-  return hit ? hit.title : null;
-}
-
 async function findSimilarPublishedTopic(topic, existingPosts) {
   if (!existingPosts.length) return null;
   const titles = existingPosts.map(p => `${p.title} [${p.category}]`);
@@ -464,7 +441,7 @@ const SYSTEM_PROMPT = `You are a content writer for DoryAngel LLC, a NYC propert
 
 CRITICAL RULES — what works for our audience (validated by real traffic data):
 
-1. Title formula (validated by real traffic): must be either a question OR start with a number ("5 Free Tools...", "Top 3 Mistakes..."). Address the owner directly with "you"/"your". Usually lead with the owner's pain or cost — problem-first beats service-description. EXCEPTION for maintenance/how-to posts: a practical "how do you actually do this" or "what should you check" title is equally valid and does NOT need to be framed as a cost ("What Should a Bronx Landlord Actually Check on the Roof Every Spring?", "How Do You Get a Bronx Boiler Through Heat Season Without an HPD Complaint?"). Do not bolt a dollar figure onto a how-to title just to satisfy the pain-first habit. Anchor to the Bronx as the primary location; a second adjacent borough (Queens or Manhattan) may be included when natural (e.g. "...Your Bronx or Queens Rental?"), but never a non-Bronx borough alone. A Bronx-vs-adjacent-area COMPARISON is a proven top-traffic format — the "Bronx vs. Mount Vernon" comparison was one of the best-performing posts; Mount Vernon (the Westchester city bordering the Bronx) is allowed ONLY inside a Bronx-anchored comparison, never as the sole location. Favor owner-facing DIY and self-manage-vs-hire angles — these convert best. Gold-standard shapes to emulate: "How Much Is Inefficient Management Costing Your Bronx or Queens Rental?", "Bronx vs. Mount Vernon: Where Do Landlords Actually Keep More of Their Rent?", "Should You Self-Manage Your Bronx Rental or Hire Flat-Fee Management? A Real Cost Breakdown", "How to Screen Tenants in NYC Without Getting Sued", "Flat-Fee PM in the Bronx: What Does a Flat Monthly Fee Actually Cover?". Never write generic, geo-less, marketing-speak titles ("Maximizing Returns with Management Investment Strategies", "The Power of Transparent Management Practices") — these got zero traffic.
+1. Title formula (validated by real traffic): must be either a question OR start with a number ("5 Free Tools...", "Top 3 Mistakes..."). Address the owner directly with "you"/"your". Usually lead with the owner's pain or cost — problem-first beats service-description. EXCEPTION for maintenance/how-to posts: a practical "how do you actually do this" or "what should you check" title is equally valid and does NOT need to be framed as a cost ("What Should a Bronx Landlord Actually Check on the Roof Every Spring?", "How Do You Get a Bronx Boiler Through Heat Season Without an HPD Complaint?"). Do not bolt a dollar figure onto a how-to title just to satisfy the pain-first habit. Anchor to the Bronx as the primary location; a second adjacent borough (Queens or Manhattan) may be included when natural (e.g. "...Your Bronx or Queens Rental?"), but never a non-Bronx borough alone. A Bronx-vs-adjacent-area comparison is allowed but capped (at most 1 post in 5; the code rejects a second one inside four posts); Mount Vernon (the Westchester city bordering the Bronx) is allowed ONLY inside a Bronx-anchored comparison, never as the sole location. Favor practical problems an owner must handle at any hour (no heat or hot water, leaks and flooding, boiler or electrical failure, pests, lockouts) and owner-facing DIY and self-manage-vs-hire angles. Never open a title with "Bronx vs." unless it is a genuine comparison. Gold-standard shapes to emulate: "How Much Is Inefficient Management Costing Your Bronx or Queens Rental?", "Bronx vs. Mount Vernon: Where Do Landlords Actually Keep More of Their Rent?", "Should You Self-Manage Your Bronx Rental or Hire Flat-Fee Management? A Real Cost Breakdown", "How to Screen Tenants in NYC Without Getting Sued", "Flat-Fee PM in the Bronx: What Does a Flat Monthly Fee Actually Cover?". Never write generic, geo-less, marketing-speak titles ("Maximizing Returns with Management Investment Strategies", "The Power of Transparent Management Practices") — these got zero traffic.
 
 2. Excerpts: 1-2 sentences, concrete and never abstract or marketing-speak. Usually focus on a real landlord pain point — money lost, tenant trouble, compliance fines — and match the pain in the title. For a maintenance or how-to post whose title is practical rather than pain-framed, the excerpt should instead say plainly what the reader will be able to do or check after reading, still in specific terms ("what to look at on the roof each spring, what it costs, and which parts need a licensed roofer"). Match the excerpt to the title's promise, whichever kind it is.
 
@@ -935,6 +912,22 @@ async function main() {
     console.log(`Rewriting with feedback: ${review.feedback}`);
     post = await generatePost(topic, researchNotes, review.feedback, linkInfo);
     console.log(`Rewrite complete: "${post.title}"`);
+  }
+
+  // Final-title gate (deterministic, never fails open). The topic-stage checks
+  // above only see the picker's title; the writer and the editor can reword it.
+  for (let i = 0; i < 2; i++) {
+    const clash = approved ? null : titleClash(post.title, posts);
+    if (!clash) break;
+    console.log(`Final title "${post.title}" rejected: ${clash} — rewriting (attempt ${i + 1}/2)`);
+    post = await generatePost(topic, researchNotes,
+      `TITLE REJECTED: ${clash}. Keep the subject but write a title with a clearly different opening (different first six words) and a different sentence shape. Do not start with "Bronx vs.".`,
+      linkInfo);
+  }
+  const finalClash = approved ? null : titleClash(post.title, posts);
+  if (finalClash) {
+    console.error(`::error::Nave stopped without publishing: the final title "${post.title}" is rejected because ${finalClash}. Re-run the workflow.`);
+    process.exit(1);
   }
 
   // Surface the caption size in the run log. Facebook and Instagram both hide

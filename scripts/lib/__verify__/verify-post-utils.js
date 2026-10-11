@@ -10,7 +10,7 @@
 // consolidation). Does not call any network API and does not write anything.
 
 import { readFileSync } from 'fs';
-import { generateSlug, uniqueSlug, toISODate, wordsToMinutes } from '../post-utils.js';
+import { generateSlug, uniqueSlug, toISODate, wordsToMinutes, sharedTitleOpening, titleClash } from '../post-utils.js';
 
 // Reference copy of generate-post.js's original (fixed) generateSlug, as it
 // was before this consolidation — the shared module must match this exactly.
@@ -103,6 +103,27 @@ for (const p of posts) {
   if (ok) uniqueOk++;
 }
 console.log(`uniqueSlug: ${uniqueOk}/${posts.length} titles get a fresh slug against the live index; ${dupSlugs.length} duplicate live slugs`);
+
+
+// ── Final-title gate (titleClash) ─────────────────────────────────────────────
+{
+  const recent = [
+    { title: 'Bronx vs. Mount Vernon: Which Landlords Actually Avoid $3,000+ in Emergency Basement Repairs?' },
+    { title: 'Do Your Bronx Rental\'s Radiators Need a Fall Bleed? What $50 in Parts Prevents' },
+    { title: 'Should You Replace Your Bronx Rental\'s Weatherstripping This Fall?' },
+  ];
+  check('same opening with a different city is a clash',
+    !!titleClash('Bronx vs. Yonkers: Which Landlords Actually Keep Tenants Through Winter?', recent));
+  check('a comparison inside the last 4 posts is a clash even with a new opening',
+    !!titleClash('Bronx vs. Queens: Who Pays Less for a Boiler Swap?', recent));
+  check('a practical night-time title passes',
+    titleClash('No Heat at 2 AM in Your Bronx Building: What Do You Do First?', recent) === null);
+  const older = [...recent.map(r => ({ title: r.title.replace(/^Bronx vs\.[^:]*:/, 'Why') })), { title: 'x' }, { title: 'y' }];
+  check('a comparison is allowed once none ran in the last 4 posts',
+    titleClash('Bronx vs. Queens: Who Pays Less for a Boiler Swap?', older) === null);
+  check('sharedTitleOpening still works through the shared module',
+    sharedTitleOpening('Bronx vs. Yonkers: Which Landlords Actually Keep More?', recent) !== null);
+}
 
 if (failures > 0) {
   console.error(`\n${failures} check(s) failed.`);

@@ -101,3 +101,45 @@ export async function searchUnsplashPhotos(query) {
   if (!data.results || data.results.length === 0) throw new Error('No results');
   return data.results;
 }
+
+// Title-template repetition check, in code rather than in the prompt. From
+// 2026-08-17 to 09-27 Nave opened eight titles with "Bronx vs. Mount Vernon:
+// Which Landlords Actually …" — six collided on one slug and never rendered, and
+// the semantic dedupe gate passed them all because the SUBJECTS differed. Returns
+// the recent title that shares the opening, or null.
+export const OPENING_WORDS = 6;
+export function titleOpening(title) {
+  // Swapping the comparison city is not a new shape: "Bronx vs. Yonkers: Which
+  // Landlords Actually…" and "Bronx vs. Mount Vernon: Which Landlords Actually…"
+  // both normalise to "bronx vs x which landlords actually". Comparisons stay
+  // welcome — they just need a different sentence after the colon.
+  return String(title).toLowerCase()
+    .replace(/^\s*bronx\s+vs\.?\s+[^:?]{1,40}:/, 'bronx vs x ')
+    .replace(/[^a-z0-9 ]/g, ' ').split(/\s+/)
+    .filter(Boolean).slice(0, OPENING_WORDS).join(' ');
+}
+export function sharedTitleOpening(title, existingPosts, recent = 15) {
+  const opening = titleOpening(title);
+  if (opening.split(' ').length < OPENING_WORDS) return null;
+  const hit = existingPosts.slice(0, recent).find(p => titleOpening(p.title) === opening);
+  return hit ? hit.title : null;
+}
+
+// Comparison titles ("Bronx vs. <city>: …") were 10 of the 15 posts from
+// 2026-09-11 to 10-08 and none of them reached the top pages, so the format is
+// capped: at most one in every COMPARISON_WINDOW recent titles.
+export const COMPARISON_WINDOW = 5;
+const isComparison = t => /^\s*bronx\s+vs\.?\s/i.test(String(t));
+
+// Deterministic title gate, run on the FINAL title (the one that will be
+// published), not just on the topic the picker chose: the writer is free to
+// reword the title, and the 2026-10-05/10-09 posts slipped through that way.
+// Returns a one-line reason, or null when the title is fine.
+export function titleClash(title, existingPosts) {
+  const hit = sharedTitleOpening(title, existingPosts);
+  if (hit) return `its opening repeats the recent post "${hit}"`;
+  if (isComparison(title) && existingPosts.slice(0, COMPARISON_WINDOW - 1).some(p => isComparison(p.title))) {
+    return `a "Bronx vs. <city>" comparison already ran in the last ${COMPARISON_WINDOW - 1} posts`;
+  }
+  return null;
+}
