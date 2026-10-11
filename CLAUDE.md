@@ -24,6 +24,8 @@
 
 - **Arlo no longer surfaces legal-topic recommendations (owner direction 2026-10-11).** The owner prefers practical building problems (no heat, leaks, boiler/electrical failures, pests, emergency repairs) over HPD/DOB/eviction/rent-regulation/compliance content. The prompt says so, and `runImprovementCycle` drops any recommendation that the model or the independent `requiresLegalReview()` classifier flags. The legal gate in `queue-approved-post.js` is unchanged. `detectImplementation` (PR #319) now compares the target post's SEO fields and body with the version at approval time, so an unrelated commit no longer marks an `improve-existing` recommendation as implemented.
 
+- **Monthly status review 2026-09-11 to 2026-10-08: `project/reviews/2026-10-11-monthly-status.md`.** Clicks 77 → 107 (+39%), impressions flat (~4.8k), position 13.5 → 9.6. 15 posts published, none in the top pages; the homepage (apex + www) earns 76% of clicks. Patterns: traffic does not follow post volume; apex host still holds 56% of clicks; Monday spike; "Bronx vs. <city>" title opener and the Maintenance category dominate again (10/15 and 14/15). The title-opener guard fails open after 2 retries. Issues #321/#322 (approvals for ARLO-2026-10-11-03/-04) were opened through the session account; confirm Arlo's gateway accepted them. ARLO-2026-09-13-01 is back to `queued` until the new `detectImplementation` sees the change.
+
 ### Older changes (as of 2026-09-27)
 
 - **Arlo cycle 2026-09-27: 03 shipped, 04 closed as a false premise, the three legal-review items skipped by the owner.**
