@@ -419,6 +419,25 @@ section('detectImplementation: an unrelated commit is not an implementation');
   check('changed SEO title IS an implementation', !!audit.detectImplementation(exp, changed));
 }
 
+section('summariseRecentPosts: per-post Search Console view');
+{
+  const rows = [
+    { keys: ['https://www.doryangel.com/blog/new-post/'], clicks: 2, impressions: 100, position: 8 },
+    { keys: ['https://beta.doryangel.com/blog/new-post/'], clicks: 0, impressions: 100, position: 12 },
+    { keys: ['https://www.doryangel.com/blog/old-post/'], clicks: 9, impressions: 900, position: 3 },
+  ];
+  const posts = [
+    { slug: 'new-post', publishedDate: '2026-10-05' },
+    { slug: 'missing-post', publishedDate: '2026-10-07' },
+    { slug: 'old-post', publishedDate: '2026-01-01' },
+  ];
+  const out = audit.summariseRecentPosts(rows, posts, '2026-10-11');
+  check('old posts are left out', out.length === 2);
+  const np = out.find(o => o.slug === 'new-post');
+  check('hosts are summed and position is impression-weighted', np.clicks === 2 && np.impressions === 200 && np.position === 10);
+  check('a post below the pulled rows is found:false, not zero', out.find(o => o.slug === 'missing-post').found === false);
+}
+
 // ─── Done ────────────────────────────────────────────────────────────────────
 
 process.chdir(repoRoot);
