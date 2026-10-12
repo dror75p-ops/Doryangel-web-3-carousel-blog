@@ -8,6 +8,23 @@
 - Owner GitHub account: dror75p-ops
 - Owner email: office@doryangel.com (notification emails go to dror75p@gmail.com via Resend)
 
+### ⏸️ OPEN — n8n stability work (paused 2026-10-12, resume next session)
+
+Not website work. This is the owner's n8n instance on Railway (project `refreshing-eagerness` a8eb3d6c-…, env production 6ac709ad-…, service `n8n` fd8630da-…). The owner approved A+B+C and the migration below.
+
+- **A, pin the n8n version: DEPLOY STATUS UNKNOWN. Check this first.** `infra/n8n-railway/Dockerfile` pins `n8nio/n8n@sha256:bcef56dd…` (the image running since 2026-10-05). Railway staged patch a65afb01: source → this repo, branch `claude/upbeat-lovelace-myqxpf`, commit 0870272, root dir `infra/n8n-railway`, watch pattern `/infra/n8n-railway/**`. `accept-deploy` was sent and **timed out after 60s**. The next check showed no new deployment, and further Railway reads were then blocked by the session's permission classifier. Ask the owner to look at Railway → n8n → Deployments:
+  - Success → done.
+  - Failed → most likely Railway has no GitHub access to this repo; the old deployment keeps running.
+  - Still staged → click Deploy.
+  - **Afterwards:** re-point the service to a `main` commit once this branch is merged, so the pinned commit cannot become unreachable.
+- **B, nightly backup of workflows to Drive:** not started. The owner must create an n8n API credential (base `https://n8n-production-7ed4.up.railway.app/api/v1`) and a Google Drive OAuth2 credential, pasted into n8n directly, never into chat. Then build the export workflow.
+- **C, UptimeRobot on `/healthz`:** the owner signs up.
+- **Encryption key backup:** run `railway ssh` → `cat /home/node/.n8n/config` from the owner's computer. Railway Hobby plan has no volume backups.
+- **Then:** move Dialpad SMS collection from Make 6980113 to n8n. Run it in parallel first, writing the same `SMS Log` schema plus contact enrichment, and only then turn Make off. Later, Calls 7550012.
+- **Deadlines:** by **2026-10-19** publish the GCP OAuth app ("n8n Sheets", currently in Testing, where tokens expire after 7 days) and rotate its client secret, which was pasted in chat.
+- **Also open:** the direct Dialpad API key in n8n ("Dialpad API (office)") returns 401. Sends currently go through Make hook 7003073 (about 2 credits each).
+- **Live and working:** office Gmail collector (n8n 5hTATdQ47SKMpB1Y; Make 7526969 retired) and the Dialpad SMS → Telegram 10-minute alert with send/edit/handled buttons (7xjTSsNtvkShFDVU + unsU62DEl8ysOSer).
+
 ### Last changes (as of 2026-10-11)
 
 - **Site contract alignment, Issue #313 / PR #314 (merged 2026-10-11).** The visible site was brought in line with the confirmed business rules; nothing else about the funnel changed (Web3Forms/Make, Turnstile, Retell, Arlo, Vera untouched).
