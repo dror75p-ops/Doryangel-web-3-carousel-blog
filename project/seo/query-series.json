@@ -1,14 +1,9 @@
 {
   "format": "queries[term][YYYY-MM-DD] = [clicks, impressions, avgPosition]",
   "note": "A missing date means the term drew no impressions that day — that is signal, not a gap.",
-  "updatedAt": "2026-10-19",
+  "updatedAt": "2026-10-20",
   "queries": {
     "bronx property management": {
-      "2025-04-25": [
-        0,
-        0,
-        0
-      ],
       "2025-04-26": [
         1,
         1,
@@ -2703,14 +2698,14 @@
         0,
         4,
         13
+      ],
+      "2026-10-17": [
+        0,
+        2,
+        14.5
       ]
     },
     "property management bronx": {
-      "2025-04-25": [
-        0,
-        0,
-        0
-      ],
       "2025-04-26": [
         0,
         0,
@@ -5405,14 +5400,14 @@
         0,
         1,
         2
+      ],
+      "2026-10-17": [
+        0,
+        0,
+        0
       ]
     },
     "property management bronx ny": {
-      "2025-04-25": [
-        2,
-        6,
-        8.5
-      ],
       "2025-04-26": [
         1,
         1,
@@ -8107,14 +8102,14 @@
         0,
         1,
         1
+      ],
+      "2026-10-17": [
+        0,
+        2,
+        1
       ]
     },
     "bronx property manager": {
-      "2025-04-25": [
-        0,
-        0,
-        0
-      ],
       "2025-04-26": [
         0,
         0,
@@ -10809,14 +10804,14 @@
         0,
         0,
         0
-      ]
-    },
-    "property management company bronx": {
-      "2025-04-25": [
+      ],
+      "2026-10-17": [
         0,
         0,
         0
-      ],
+      ]
+    },
+    "property management company bronx": {
       "2025-04-26": [
         0,
         0,
@@ -13511,14 +13506,14 @@
         0,
         0,
         0
-      ]
-    },
-    "nyc property management": {
-      "2025-04-25": [
+      ],
+      "2026-10-17": [
         0,
         0,
         0
-      ],
+      ]
+    },
+    "nyc property management": {
       "2025-04-26": [
         0,
         0,
@@ -16213,14 +16208,14 @@
         0,
         0,
         0
-      ]
-    },
-    "flat fee property management": {
-      "2025-04-25": [
+      ],
+      "2026-10-17": [
         0,
         0,
         0
-      ],
+      ]
+    },
+    "flat fee property management": {
       "2025-04-26": [
         0,
         0,
@@ -18915,14 +18910,14 @@
         0,
         0,
         0
-      ]
-    },
-    "flat fee property management nyc": {
-      "2025-04-25": [
+      ],
+      "2026-10-17": [
         0,
         0,
         0
-      ],
+      ]
+    },
+    "flat fee property management nyc": {
       "2025-04-26": [
         0,
         0,
@@ -21614,6 +21609,11 @@
         0
       ],
       "2026-10-16": [
+        0,
+        0,
+        0
+      ],
+      "2026-10-17": [
         0,
         0,
         0
