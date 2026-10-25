@@ -802,6 +802,7 @@ function buildSitemap(posts) {
     `  <url><loc>${SITE_URL}/faq/</loc><lastmod>2026-07-15</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
     `  <url><loc>${SITE_URL}/accessibility.html</loc><lastmod>2026-08-24</lastmod><changefreq>yearly</changefreq><priority>0.4</priority></url>`,
     `  <url><loc>${SITE_URL}/tools/compliance-calendar/</loc><lastmod>2026-07-31</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
+    `  <url><loc>${SITE_URL}/tools/pl-dashboard/</loc><lastmod>2026-10-26</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`,
     ...posts.map(p =>
       `  <url><loc>${SITE_URL}/blog/${p.slug}/</loc><lastmod>${p.publishedDate}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`
     ),
