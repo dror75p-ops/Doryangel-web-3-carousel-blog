@@ -260,9 +260,10 @@ check('they are sorted by score, highest first',
   recs.every((r, i) => i === 0 || recs[i - 1].score >= r.score));
 
 const hpd = recs.find(r => /HPD/i.test(r.title));
-check('the HPD recommendation survived', Boolean(hpd));
-check('⚠️ the classifier overrode the model\'s missing legal flag', hpd?.legal_review_required === true);
-check('the legal flag says why', (hpd?.legalReasons || []).length > 0);
+// Owner direction 2026-10-11: legal-topic recommendations are dropped, even when
+// the model forgot to flag them (the classifier still runs independently).
+check('⚠️ the HPD recommendation is dropped, not surfaced', !hpd);
+check('no surfaced recommendation is legal-flagged', recs.every(r => !r.legal_review_required));
 
 const dupRec = recs.find(r => r.duplicateOf);
 check('an exact-duplicate "new post" was detected', Boolean(dupRec));
@@ -384,7 +385,6 @@ check('the new-recommendations block renders', html.includes('New recommendation
 check('the cost block renders', html.includes('Cycle cost'));
 check('the search count is stated', /4 of 5 allowed/.test(html));
 check('every recommendation ID appears', recs.every(r => html.includes(r.id)));
-check('the legal requirement is visible on the flagged item', html.includes('Legal review required'));
 check('the reader is told nothing was queued', html.includes('Nothing has been queued'));
 check('the manual approval command is shown', html.includes('queue-approved-post.js --id'));
 
@@ -398,6 +398,26 @@ check('no credential appears in the rendered report',
 const notDue = audit.renderImprovementSections({ ran: false, reason: 'next cycle in 6 day(s)' });
 check('an off-cycle day renders a one-line note instead of a stale report',
   notDue.includes('not due today') && !notDue.includes('New recommendations'));
+
+section('detectImplementation: an unrelated commit is not an implementation');
+{
+  const git = (...a) => execFileSync('git', ['-c', 'user.email=t@t', '-c', 'user.name=t', ...a], { cwd: sandbox, stdio: 'pipe' });
+  const idxPath = join(sandbox, 'content/blog/posts-index.json');
+  const base = JSON.parse(readFileSync(idxPath, 'utf8'));
+  const target = base[0].slug;
+  const exp = { id: 'ARLO-TEST-01', action: 'improve-existing', targetSlug: target, approvedOn: '2000-01-01' };
+  writeFileSync(join(sandbox, 'project/seo/experiments.json'), JSON.stringify([exp]));
+  git('add', '-A'); git('commit', '-q', '-m', 'approve ARLO-TEST-01');
+  // another post changes, target untouched
+  const other = JSON.parse(JSON.stringify(base)); other[1].content += ' x';
+  writeFileSync(idxPath, JSON.stringify(other, null, 2));
+  git('commit', '-q', '-am', 'touch other post');
+  check('commit touching another post is NOT an implementation', audit.detectImplementation(exp, other) === null);
+  const changed = JSON.parse(JSON.stringify(other)); changed[0].seoTitle = 'A brand new title | DoryAngel';
+  writeFileSync(idxPath, JSON.stringify(changed, null, 2));
+  git('commit', '-q', '-am', 'rewrite target');
+  check('changed SEO title IS an implementation', !!audit.detectImplementation(exp, changed));
+}
 
 // ─── Done ────────────────────────────────────────────────────────────────────
 

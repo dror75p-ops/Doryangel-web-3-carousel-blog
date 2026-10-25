@@ -511,7 +511,7 @@ footer.post-footer a { color: white; text-decoration: none; }
 
   <div class="cta-block">
     <div class="city">Managing rental property in NYC?</div>
-    <p>DoryAngel handles everything for a flat <strong>$99/unit/month</strong> — no hidden fees, no percentage tricks. Bronx, Manhattan, Queens, Brooklyn.</p>
+    <p>DoryAngel offers flat-fee management instead of a percentage of your rent: $99 per occupied unit per month for 10+ units under one agreement, and a quote for smaller properties. Extras are disclosed before you authorize them. Bronx, Manhattan, Queens, Brooklyn.</p>
     <a class="btn" href="${CONTACT_URL}">
       Get a Free Consultation →
     </a>
@@ -521,7 +521,7 @@ footer.post-footer a { color: white; text-decoration: none; }
     <p>Explore DoryAngel:</p>
     <ul>
       ${hubForPost(post) ? `<li><a href="${hubForPost(post).url}">${escape(hubForPost(post).label)}</a></li>` : ''}
-      <li><a href="${SITE_URL}/#pricing">View flat-fee pricing plans — from $99/month →</a></li>
+      <li><a href="${SITE_URL}/#pricing">View flat-fee pricing and request a quote →</a></li>
       <li><a href="${SITE_URL}/#services">Full list of property management services →</a></li>
       <li><a href="${SITE_URL}/blog/">More articles for NYC landlords →</a></li>
       <li><a href="${SITE_URL}/faq/">Bronx landlord FAQ: costs, compliance &amp; more →</a></li>
@@ -751,7 +751,7 @@ ${sectionsHtml}
 
 <div class="hub-cta">
   <div class="t">Managing rental property in NYC?</div>
-  <p>DoryAngel handles everything for a flat <strong>$99/unit/month</strong> — no hidden fees, no percentage tricks.</p>
+  <p>DoryAngel offers flat-fee management instead of a percentage of your rent: $99 per occupied unit per month for 10+ units under one agreement, and a quote for smaller properties.</p>
   <a class="btn" href="${CONTACT_URL}">Get a Free Consultation &rarr;</a>
 </div>
 
@@ -802,6 +802,7 @@ function buildSitemap(posts) {
     `  <url><loc>${SITE_URL}/faq/</loc><lastmod>2026-07-15</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
     `  <url><loc>${SITE_URL}/accessibility.html</loc><lastmod>2026-08-24</lastmod><changefreq>yearly</changefreq><priority>0.4</priority></url>`,
     `  <url><loc>${SITE_URL}/tools/compliance-calendar/</loc><lastmod>2026-07-31</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
+    `  <url><loc>${SITE_URL}/tools/pl-dashboard/</loc><lastmod>2026-10-26</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`,
     ...posts.map(p =>
       `  <url><loc>${SITE_URL}/blog/${p.slug}/</loc><lastmod>${p.publishedDate}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`
     ),
