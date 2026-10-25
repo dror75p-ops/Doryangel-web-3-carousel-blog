@@ -10,6 +10,7 @@
 
 ### Last changes (as of 2026-10-11)
 
+- **Nave cadence cut to weekly (2026-10-26, owner-approved).** `blog-autopublish.yml` now fires Tuesdays 14:00 UTC (`0 14 * * 2`) instead of every odd calendar day. Reason: 99 posts already, many near-duplicate comparison titles; effort moves to the Google Business Profile, reviews and service pages. The same-day guard and `workflow_dispatch` are unchanged, so an extra post can still be run by hand.
 - **Site contract alignment, Issue #313 / PR #314 (merged 2026-10-11).** The visible site was brought in line with the confirmed business rules; nothing else about the funnel changed (Web3Forms/Make, Turnstile, Retell, Arlo, Vera untouched).
   - **⚠️ THE FACTS. Do not drift from them; `npm run verify:site-facts` fails on the old claims.** (1) **$99 per OCCUPIED managed unit per month applies only when at least 10 units are covered by ONE management agreement.** 1-9 units are quoted individually; never show a universal $99, a "$199 Professional" tier, or "$99 for a single unit". (2) Vacant covered units are not billed. (3) **Tenants pay rent directly into the owner's bank account. DoryAngel does not collect, hold or disburse rent**; it reviews payment receipts, flags discrepancies and sends a monthly Owner Statement. Never write "online rent collection" or "owner disbursements". (4) **$100 per completed lease renewal** is an extra fee; never "included" and never "no hidden fees". (5) Brokerage and leasing work is done by licensed partner brokers, never by DoryAngel (so no `RealEstateAgent` schema type; it is `ProfessionalService`). (6) Only **insurance** is claimed. "Licensed & Insured" and "Licensed Property Manager" were removed as unsubstantiated.
   - **Addresses, per owner:** **557 Grand Concourse #4123, Bronx 10451 stays the Headquarters** (page, schema `address`, legal pages). **440 E 140th St, Bronx 10454 is the face-to-face meeting and scheduling office, by appointment only**, shown as a matching second row with tap-to-call (516) 847-4999. Never imply walk-in service. 440 is NOT in JSON-LD until Google Business Profile matches (NAP consistency).
@@ -416,7 +417,7 @@
 - `scripts/migrate-posts-once.js` — One-time schema migration (kept for reference)
 - `scripts/refresh-images.js` — One-shot workflow to refresh all post hero images
 - `blog/[slug]/index.html` — Auto-generated per-post pages (NEVER hand-edit; rerun build-blog.js)
-- `.github/workflows/blog-autopublish.yml` — Cron-triggered every 2 days at 14:00 UTC (odd calendar days)
+- `.github/workflows/blog-autopublish.yml` — Cron-triggered once a week, Tuesdays 14:00 UTC (was every 2 days until 2026-10-26)
 - `.github/workflows/refresh-images.yml` — Manual one-shot for image refresh
 - `sitemap.xml`, `robots.txt` — SEO
 - `.gitignore` — node_modules, .env, .DS_Store, logs, /tmp/
@@ -453,7 +454,7 @@
 - **SEO per post**: `<title>`, meta description, canonical, Open Graph, Twitter Card, JSON-LD BlogPosting schema
 - **Featured post** flag on JSON for the larger card on the index
 - **Post page** has: full-width hero image, sticky CTA, markdown body, CTA block, "Continue reading" related posts (3 from same category)
-- **Auto-publish workflow** (`blog-autopublish.yml`, every 2 days): Nave (`generate-post.js`, also sends the topic-segmented digest) → `build-blog.js` → commit all to main → Vera (`social-post.js`, Facebook via Make). **Vera is deliberately LAST** (since 2026-07-28) so the post page is already committed and deploying when the Facebook link goes out; it also polls the URL before posting. Do not reorder it above the commit. The digest broadcast needs no new secret (the Make webhook is a public URL); it reads subscribers via `GOOGLE_SA_KEY` (or public CSV fallback). Note: the digest fires before the post page is committed/deployed, so a clicked link can 404 for the ~1–2 min until Vercel redeploys — pre-existing, low-impact.
+- **Auto-publish workflow** (`blog-autopublish.yml`, weekly on Tuesdays): Nave (`generate-post.js`, also sends the topic-segmented digest) → `build-blog.js` → commit all to main → Vera (`social-post.js`, Facebook via Make). **Vera is deliberately LAST** (since 2026-07-28) so the post page is already committed and deploying when the Facebook link goes out; it also polls the URL before posting. Do not reorder it above the commit. The digest broadcast needs no new secret (the Make webhook is a public URL); it reads subscribers via `GOOGLE_SA_KEY` (or public CSV fallback). Note: the digest fires before the post page is committed/deployed, so a clicked link can 404 for the ~1–2 min until Vercel redeploys — pre-existing, low-impact.
 
 ### Post schema (current)
 

@@ -36,7 +36,7 @@ There are exactly **three**, and that is deliberate — a proposal to add a four
 
 | Agent | Script | Does |
 |---|---|---|
-| **Nave** | `scripts/generate-post.js` | Writes and publishes a blog post every 2 days, emails the owner, fires the subscriber digest. |
+| **Nave** | `scripts/generate-post.js` | Writes and publishes a blog post once a week (Tuesdays), emails the owner, fires the subscriber digest. |
 | **Arlo** | `scripts/daily-audit.js` | Daily site audit + auto-fixes + a report email covering GA4 traffic, leads, Clarity behaviour and Google Search Console rankings. |
 | **Vera** | `scripts/social-post.js` | Posts each new article to the Facebook Page via Make. |
 
