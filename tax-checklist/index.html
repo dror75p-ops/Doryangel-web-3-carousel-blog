@@ -373,7 +373,7 @@
       <h2>Get Your Free Checklist</h2>
       <p>Instant access — no spam, unsubscribe any time.</p>
       <form id="lpForm" novalidate>
-        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="lp-field">
           <label for="lpName">First name</label>
           <input type="text" id="lpName" name="name" placeholder="e.g. Mark" autocomplete="given-name">
@@ -615,6 +615,13 @@
 <script>
 document.getElementById('lpForm').addEventListener('submit', async function(e) {
   e.preventDefault();
+  // Honeypot: a bot that ticks the hidden botcheck box gets the success screen and nothing is sent.
+  var trap = document.querySelector('#lpForm [name="botcheck"]');
+  if (trap && trap.checked) {
+    document.getElementById('lpFormWrap').style.display = 'none';
+    document.getElementById('lpSuccess').style.display = 'block';
+    return;
+  }
   var email = document.getElementById('lpEmail').value.trim();
   if (!email || !email.includes('@')) {
     document.getElementById('lpEmail').style.borderColor = '#D14343';
