@@ -817,6 +817,17 @@ ${urls}
 
 const posts = JSON.parse(readFileSync('./content/blog/posts-index.json', 'utf8'));
 
+// The homepage blog section (blog-loader.js) only needs card fields. Loading the
+// full index there pulled every article's body (~260 KB gzipped) on each visit,
+// so write a light copy without `content` for it to read instead.
+const CARD_FIELDS = ['slug', 'title', 'category', 'excerpt', 'publishedDate', 'date',
+  'minutesToRead', 'heroImage', 'heroImageAlt', 'featured', 'author'];
+writeFileSync('./content/blog/posts-cards.json', JSON.stringify(posts.map(p => {
+  const card = {};
+  for (const k of CARD_FIELDS) if (p[k] !== undefined) card[k] = p[k];
+  return card;
+})));
+
 // Two entries with one slug render as ONE page, and the later write (the older
 // post) silently replaces the newer one — six posts disappeared that way in
 // Aug–Sep 2026. Warn loudly rather than fail: failing here would throw away a

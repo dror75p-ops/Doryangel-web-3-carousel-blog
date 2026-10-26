@@ -7,7 +7,10 @@
 
   var posts = [];
   try {
-    var res = await fetch('./content/blog/posts-index.json');
+    // posts-cards.json is the light card-only copy written by scripts/build-blog.js;
+    // fall back to the full index if it is missing.
+    var res = await fetch('./content/blog/posts-cards.json');
+    if (!res.ok) res = await fetch('./content/blog/posts-index.json');
     if (!res.ok) throw new Error('failed');
     posts = await res.json();
   } catch (e) {

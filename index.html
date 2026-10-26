@@ -5109,8 +5109,44 @@ function filterFaq(cat, btn) {
 </script>
 
 
-<!-- Cloudflare Turnstile — bot protection for the lead forms -->
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<!-- Cloudflare Turnstile — bot protection for the lead forms.
+     Loaded on demand: rendering both widgets on page load cost ~1.4 MB on every
+     visit. The script loads when a visitor starts on a form (or opens the tool
+     gate) and then renders the .cf-turnstile boxes on its own. -->
+<script>
+(function () {
+  var loaded = false;
+  function loadTurnstile() {
+    if (loaded) return;
+    loaded = true;
+    var s = document.createElement('script');
+    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+    s.async = true;
+    document.head.appendChild(s);
+  }
+  window.daLoadTurnstile = loadTurnstile;
+  function onFormEvent(e) {
+    var form = e.target && e.target.closest && e.target.closest('form');
+    if (form && form.querySelector('.cf-turnstile')) loadTurnstile();
+  }
+  document.addEventListener('focusin', onFormEvent);
+  document.addEventListener('pointerdown', onFormEvent, { passive: true });
+  // Wait (up to 6 s) for the form's Turnstile token, so a fast submit still sends one.
+  window.daTurnstileToken = function (form) {
+    loadTurnstile();
+    var read = function () { return (form.querySelector('[name="cf-turnstile-response"]') || {}).value || ''; };
+    return new Promise(function (resolve) {
+      var waited = 0;
+      (function check() {
+        var t = read();
+        if (t || waited >= 6000) return resolve(t);
+        waited += 250;
+        setTimeout(check, 250);
+      })();
+    });
+  };
+})();
+</script>
 <script>
 async function handleFormSubmit(e) {
   e.preventDefault();
@@ -5136,7 +5172,7 @@ async function handleFormSubmit(e) {
       const firstName = fullName || (form.querySelector('[name="first-name"]') || {}).value || '';
       const lastName  = fullName ? '' : ((form.querySelector('[name="last-name"]') || {}).value || '');
       const email     = (form.querySelector('[name="email"]')       || {}).value || '';
-      const cfToken   = (form.querySelector('[name="cf-turnstile-response"]') || {}).value || '';
+      const cfToken   = await window.daTurnstileToken(form);
       // `role` and `property-address` used to be collected and then thrown away here — the
       // sheet could never tell an owner from a tenant. Send everything the visitor gave us.
       // NOTE: hook 3296084 has no attached data structure, so Make auto-learned the old
@@ -6027,6 +6063,7 @@ function openToolGate(toolUrl, toolName) {
     topicsField.style.display = isDigest ? 'block' : 'none';
     Array.prototype.forEach.call(topicsField.querySelectorAll('input[name="topic"]'), function (c) { c.checked = false; });
   }
+  if (window.daLoadTurnstile) window.daLoadTurnstile();
   document.getElementById('toolGateForm').style.display = 'block';
   document.getElementById('toolGateSuccess').style.display = 'none';
   document.getElementById('toolGateEmail').value = '';
