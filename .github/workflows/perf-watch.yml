@@ -1,6 +1,5 @@
 name: perf-watch
-# Throwaway: detect the PR #203 deploy (marked.js removed + Elfsight deferred),
-# then run Lighthouse. Re-triggered by pushing to this branch.
+# Throwaway probe: Lighthouse on the live homepage (mobile), with per-file detail.
 on:
   push:
     branches:
@@ -13,47 +12,24 @@ jobs:
   watch:
     runs-on: ubuntu-latest
     steps:
-      - name: Is the PR #203 build live?
-        id: check
-        run: |
-          HTML=$(curl -sS --max-time 25 "https://www.doryangel.com/?cb=$RANDOM")
-          LM=$(curl -sSI --max-time 25 "https://www.doryangel.com/?cb=$RANDOM" | grep -i '^last-modified' | tr -d '\r')
-          HAS_MARKED=$(printf '%s' "$HTML" | grep -c 'marked.min.js' || true)
-          HAS_ELF_DEFER=$(printf '%s' "$HTML" | grep -c 'loadElfsight' || true)
-          echo "last-modified: $LM"
-          echo "marked.min.js present: $HAS_MARKED (want 0) | Elfsight deferred: $HAS_ELF_DEFER (want >=1)"
-          if [ "$HAS_MARKED" -eq 0 ] && [ "$HAS_ELF_DEFER" -ge 1 ]; then
-            echo "live=yes" >> "$GITHUB_OUTPUT"; echo ">>> PR #203 build IS LIVE"
-          else
-            echo "live=no" >> "$GITHUB_OUTPUT"; echo ">>> Not deployed yet"
-          fi
-
       - name: Install Lighthouse
-        if: steps.check.outputs.live == 'yes'
         run: npm install -g lighthouse@11
-
-      - name: Measure live (mobile x3 median + desktop)
-        if: steps.check.outputs.live == 'yes'
+      - name: Measure live mobile with detail
         run: |
-          FLAGS="--headless=new --no-sandbox --disable-gpu"
-          one () {
-            lighthouse "https://www.doryangel.com/?lh=$RANDOM" --quiet --only-categories=performance \
-              --chrome-flags="$FLAGS" --output=json --output-path=./lh.json "$@" 2>/dev/null || { echo "lh failed"; return; }
-            node -e '
-              const r=require("./lh.json"),a=r.audits,g=id=>(a[id]&&a[id].displayValue)||"n/a";
-              console.log(Math.round(r.categories.performance.score*100)+"|FCP "+g("first-contentful-paint")+" LCP "+g("largest-contentful-paint")+" TBT "+g("total-blocking-time")+" TTI "+g("interactive"));
-            '
-          }
-          echo "==== MOBILE (3 runs) ===="
-          ms=""
-          for i in 1 2 3; do line=$(one); echo "  run $i: score ${line%%|*}  (${line#*|})"; ms="$ms ${line%%|*}"; done
-          echo "MOBILE median score: $(echo $ms | tr ' ' '\n' | sort -n | awk '{v[NR]=$1} END{print v[2]}')"
-          echo "==== DESKTOP ===="
-          line=$(one --preset=desktop); echo "  score ${line%%|*}  (${line#*|})"
-          echo "==== remaining top opportunities (mobile) ===="
-          lighthouse "https://www.doryangel.com/?lh=$RANDOM" --quiet --only-categories=performance --chrome-flags="$FLAGS" --output=json --output-path=./lh.json 2>/dev/null
+          lighthouse "https://www.doryangel.com/?lh=$RANDOM" --quiet --only-categories=performance \
+            --chrome-flags="--headless=new --no-sandbox --disable-gpu" --output=json --output-path=./lh.json 2>/dev/null
           node -e '
-            const a=require("./lh.json").audits;
-            const o=Object.values(a).filter(x=>x.details&&x.details.type==="opportunity"&&x.numericValue>100).sort((x,y)=>y.numericValue-x.numericValue).slice(0,5).map(x=>"  - "+x.title+" (~"+Math.round(x.numericValue)+" ms)");
-            console.log(o.join("\n"));
+            const r=require("./lh.json"),a=r.audits,g=id=>(a[id]&&a[id].displayValue)||"n/a";
+            console.log("SCORE "+Math.round(r.categories.performance.score*100)+" FCP "+g("first-contentful-paint")+" LCP "+g("largest-contentful-paint")+" TBT "+g("total-blocking-time")+" CLS "+g("cumulative-layout-shift")+" SI "+g("speed-index")+" weight "+g("total-byte-weight"));
+            const show=(id,f)=>{const d=a[id]&&a[id].details;if(!d)return;console.log("== "+id);(d.items||[]).slice(0,10).forEach(i=>console.log("  "+f(i)));};
+            show("unused-javascript",i=>Math.round(i.wastedBytes/1024)+"KB unused of "+Math.round(i.totalBytes/1024)+"KB "+String(i.url).slice(0,110));
+            show("bootup-time",i=>Math.round(i.total)+"ms (script "+Math.round(i.scripting)+") "+String(i.url).slice(0,110));
+            show("third-party-summary",i=>Math.round(i.mainThreadTime)+"ms main, "+Math.round(i.transferSize/1024)+"KB "+(i.entity&&i.entity.text||i.entity));
+            show("uses-responsive-images",i=>Math.round(i.wastedBytes/1024)+"KB extra "+String(i.url).slice(0,110));
+            show("offscreen-images",i=>Math.round(i.wastedBytes/1024)+"KB "+String(i.url).slice(0,110));
+            show("layout-shifts",i=>(i.score||0).toFixed(3)+" "+(i.node&&i.node.selector));
+            show("largest-contentful-paint-element",i=>JSON.stringify(i).slice(0,160));
+            const n=(a["network-requests"].details.items||[]).sort((x,y)=>y.transferSize-x.transferSize).slice(0,12);
+            console.log("== biggest downloads");n.forEach(i=>console.log("  "+Math.round(i.transferSize/1024)+"KB "+String(i.url).slice(0,110)));
+            const lt=(a["long-tasks"].details.items||[]).slice(0,8);console.log("== long tasks");lt.forEach(i=>console.log("  "+Math.round(i.duration)+"ms "+String(i.url).slice(0,100)));
           '
