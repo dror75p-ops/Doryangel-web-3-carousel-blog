@@ -1,6 +1,6 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-10-25",
+  "updatedAt": "2026-10-26",
   "events": [
     {
       "date": "2026-04-25",
@@ -2730,6 +2730,11 @@
     {
       "date": "2026-09-27",
       "kind": "seo",
+      "subject": "Remove duplicate 2026-09-27 roof & gutter post; redirect its URL"
+    },
+    {
+      "date": "2026-09-27",
+      "kind": "seo",
       "subject": "Fix duplicate slugs that hid 6 posts; block repeated title template"
     },
     {
@@ -2846,6 +2851,46 @@
       "date": "2026-10-23",
       "kind": "post",
       "subject": "Auto-publish: new blog post 2026-10-23"
+    },
+    {
+      "date": "2026-10-25",
+      "kind": "seo",
+      "subject": "SEO: replace 7 cut-off blog meta descriptions"
+    },
+    {
+      "date": "2026-10-25",
+      "kind": "site",
+      "subject": "Homepage: move the contact form up and shorten it"
+    },
+    {
+      "date": "2026-10-25",
+      "kind": "seo",
+      "subject": "SEO: rewrite titles and descriptions of 4 pages with impressions but no clicks"
+    },
+    {
+      "date": "2026-10-25",
+      "kind": "seo",
+      "subject": "Phase 1 quick fixes: working honeypot on 5 forms, P&L tool in sitemap, link 8 orphan posts"
+    },
+    {
+      "date": "2026-10-25",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-10-25"
+    },
+    {
+      "date": "2026-10-26",
+      "kind": "site",
+      "subject": "Lighter homepage on mobile: load Turnstile on demand, light blog card list (#335)"
+    },
+    {
+      "date": "2026-10-26",
+      "kind": "site",
+      "subject": "Tax checklist card: updated for 2026"
+    },
+    {
+      "date": "2026-10-26",
+      "kind": "site",
+      "subject": "Fix compliance calendar facts, remove two unused tools, update tax checklist to 2026"
     }
   ]
 }
