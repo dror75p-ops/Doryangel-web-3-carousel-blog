@@ -84,7 +84,9 @@ async function postViaMake(secret, slug, caption) {
   const res = await fetch(SOCIAL_WEBHOOK, {
     method:  'POST',
     headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({ secret, slug, message: caption, link: blogUrl }),
+    // ?src=facebook lets lead-source.js credit Facebook on the lead email.
+    // The readiness check above stays on the clean URL.
+    body:    JSON.stringify({ secret, slug, message: caption, link: `${blogUrl}?src=facebook` }),
   });
 
   const { data, raw } = await readJson(res);
@@ -116,7 +118,7 @@ async function emailFallback(slug, caption, reason) {
     log('RESEND_API_KEY not set — no fallback email sent');
     return;
   }
-  const blogUrl = `${BASE_URL}/blog/${slug}/`;
+  const blogUrl = `${BASE_URL}/blog/${slug}/?src=facebook`;  // tagged: this is the link to paste into Facebook
   try {
     const { Resend } = await import('resend');
     await new Resend(process.env.RESEND_API_KEY).emails.send({

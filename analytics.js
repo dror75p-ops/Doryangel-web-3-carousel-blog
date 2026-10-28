@@ -140,4 +140,13 @@
   } else {
     init();
   }
+
+  // Lead-source tagging rides along on every page that loads this file, so a
+  // visitor's first channel is remembered from a blog post onward.
+  if (!window.__daLeadSourceLoaded) {
+    var ls = document.createElement('script');
+    ls.src = '/lead-source.js';
+    ls.defer = true;
+    document.head.appendChild(ls);
+  }
 })();
