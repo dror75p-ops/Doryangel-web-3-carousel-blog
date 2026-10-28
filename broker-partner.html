@@ -1372,7 +1372,7 @@ function handleBrokerSubmit(e) {
   fetch('https://api.web3forms.com/submit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({
+    body: JSON.stringify(Object.assign({
       access_key: '6991fa6b-8f6c-4c24-9167-b7ee52026a98',
       subject:    'New Broker Partner Application — DoryAngel',
       from_name:  'DoryAngel Broker Partner Page',
@@ -1381,7 +1381,7 @@ function handleBrokerSubmit(e) {
       phone:      phone,
       brokerage:  brokerage,
       units:      units
-    })
+    }, window.daLeadSource ? window.daLeadSource() : {}))
   })
   .then(function(r) { return r.json(); })
   .then(function(data) {
@@ -1468,5 +1468,6 @@ document.addEventListener('DOMContentLoaded', function() {
 })(document)
 </script>
 
+<script src="/lead-source.js" defer></script>
 </body>
 </html>
