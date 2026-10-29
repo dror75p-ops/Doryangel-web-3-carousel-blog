@@ -2,7 +2,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import { Resend } from 'resend';
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { createSign } from 'crypto';
 import { generateSlug, uniqueSlug, toISODate, wordsToMinutes, searchUnsplashPhotos, pickImageQuery } from './lib/post-utils.js';
 
@@ -996,11 +996,12 @@ async function main() {
     return;
   }
 
-  // Run subscriber digest first so the count lands in the approval email
-  const digestStats = await notifyDigestSubscribers(postForIndex);
-
-  await sendApprovalEmail(post, digestStats);
-  console.log(`Approval email sent to ${APPROVAL_EMAIL}`);
+  // Subscriber digest + approval email do NOT go out here. This step runs before
+  // the commit/push, so a failed push (2026-10-27) used to email every subscriber
+  // a link to a post that never went live. Hand them to the "email subscribers"
+  // workflow step, which runs only after the push succeeds and the page answers.
+  writeFileSync(BROADCAST_QUEUE_FILE, JSON.stringify({ post, postForIndex }));
+  console.log(`Broadcast queued for after the push → ${BROADCAST_QUEUE_FILE}`);
 
   // Hand off to Vera (social-post.js) via a temp file — keeps Nave's scope clean
   const { writeFileSync: wf } = await import('fs');
@@ -1157,7 +1158,42 @@ async function notifyDigestSubscribers(post) {
   return { sent, total: subscribers.length };
 }
 
-main().catch(err => {
+const BROADCAST_QUEUE_FILE = '/tmp/broadcast-queue.json';
+const LIVE_TRIES    = 8;
+const LIVE_DELAY_MS = 15_000;
+
+// BROADCAST_ONLY=true: the workflow step after "Commit and push". Waits for the
+// post page to answer, then emails subscribers and sends the approval email.
+// Never fails the workflow, so Vera's Facebook step still runs after it.
+async function broadcastAfterPublish() {
+  if (!existsSync(BROADCAST_QUEUE_FILE)) {
+    console.log('No broadcast queued (no new post this run) — nothing to send.');
+    return;
+  }
+  try {
+    const { post, postForIndex } = JSON.parse(readFileSync(BROADCAST_QUEUE_FILE, 'utf8'));
+    const url = `https://www.doryangel.com/blog/${postForIndex.slug}/`;
+    let live = false;
+    for (let i = 1; i <= LIVE_TRIES && !live; i++) {
+      try { live = (await fetch(url, { method: 'HEAD' })).ok; } catch { /* not ready yet */ }
+      if (!live && i < LIVE_TRIES) await new Promise(r => setTimeout(r, LIVE_DELAY_MS));
+    }
+    let digestStats;
+    if (live) {
+      console.log(`Post page live: ${url}`);
+      digestStats = await notifyDigestSubscribers(postForIndex);
+    } else {
+      console.log(`::warning title=${AGENT_NAME}::Post page not live after ${LIVE_TRIES} checks — subscribers were NOT emailed.`);
+      digestStats = { sent: 0, total: 0, error: 'post page was not live yet, so subscribers were NOT emailed' };
+    }
+    await sendApprovalEmail(post, digestStats);
+    console.log(`Approval email sent to ${APPROVAL_EMAIL}`);
+  } catch (err) {
+    console.log(`::warning title=${AGENT_NAME}::Subscriber broadcast step failed: ${err.message}`);
+  }
+}
+
+(process.env.BROADCAST_ONLY === 'true' ? broadcastAfterPublish() : main()).catch(err => {
   if (err instanceof Anthropic.APIError) {
     console.error(`Anthropic API error ${err.status}: ${err.message}`);
     if (err.request_id) console.error(`Request ID: ${err.request_id}`);

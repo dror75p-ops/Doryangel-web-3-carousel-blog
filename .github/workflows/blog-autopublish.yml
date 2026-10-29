@@ -104,6 +104,19 @@ jobs:
           git pull --rebase origin "$GITHUB_REF_NAME"
           git push origin "HEAD:$GITHUB_REF_NAME"
 
+      # Runs only after the push succeeded, so subscribers never get a link to a
+      # post that failed to publish (2026-10-27). Waits for the page to answer,
+      # then sends the subscriber digest and the owner approval email.
+      - name: Nave — email subscribers once the post is live
+        if: ${{ github.event.inputs.dry_run != 'true' && github.ref_name == 'main' }}
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          GOOGLE_SA_KEY: ${{ secrets.GOOGLE_SA_KEY }}
+          DIGEST_WEBHOOK_SECRET: ${{ secrets.DIGEST_WEBHOOK_SECRET }}
+          BROADCAST_ONLY: 'true'
+        run: node scripts/generate-post.js
+
       # Runs AFTER the commit on purpose: Vera waits for the post page to go live
       # on Vercel before handing Facebook the link, so the first click isn't a 404.
       # Vera never fails the workflow — a skip or error surfaces as an annotation.
