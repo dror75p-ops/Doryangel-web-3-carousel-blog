@@ -34,7 +34,8 @@ jobs:
           git config user.name "DoryAngel Bot"
           git config user.email "office@doryangel.com"
           git remote set-url origin https://dror75p-ops:${GH_TOKEN}@github.com/dror75p-ops/Doryangel-web-3-carousel-blog.git
-          git add content/blog/posts-index.json blog/ sitemap.xml
+          # build-blog.js also rewrites posts-cards.json (see blog-autopublish.yml).
+          git add content/blog/posts-index.json content/blog/posts-cards.json blog/ sitemap.xml
           git diff --staged --quiet && echo "No changes" && exit 0
           git commit -m "Fix hero image: ${{ github.event.inputs.slug || 'most recent post' }}"
           # Same reason as blog-autopublish.yml: pushing back to the ref the run
