@@ -1,6 +1,6 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-10-28",
+  "updatedAt": "2026-10-29",
   "events": [
     {
       "date": "2026-04-25",
@@ -2891,6 +2891,21 @@
       "date": "2026-10-26",
       "kind": "site",
       "subject": "Fix compliance calendar facts, remove two unused tools, update tax checklist to 2026"
+    },
+    {
+      "date": "2026-10-28",
+      "kind": "seo",
+      "subject": "Homepage: flat-fee title and niche description (ARLO-2026-10-25-01/-02)"
+    },
+    {
+      "date": "2026-10-28",
+      "kind": "site",
+      "subject": "Tag every lead with its source channel"
+    },
+    {
+      "date": "2026-10-29",
+      "kind": "site",
+      "subject": "Blog workflows: commit posts-cards.json so the push is not blocked"
     }
   ]
 }
