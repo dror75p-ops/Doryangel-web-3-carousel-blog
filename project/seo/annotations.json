@@ -1,6 +1,6 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-10-31",
+  "updatedAt": "2026-11-01",
   "events": [
     {
       "date": "2026-04-25",
@@ -2910,7 +2910,17 @@
     {
       "date": "2026-10-29",
       "kind": "site",
+      "subject": "Blog: email subscribers only after the post is live"
+    },
+    {
+      "date": "2026-10-29",
+      "kind": "site",
       "subject": "Blog workflows: commit posts-cards.json so the push is not blocked"
+    },
+    {
+      "date": "2026-10-31",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-10-31"
     }
   ]
 }
