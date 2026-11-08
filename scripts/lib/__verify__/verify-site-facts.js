@@ -72,7 +72,10 @@ check('interest form is tagged with a source and interest', /name="source" value
 check('interest form uses the Web3Forms honeypot (botcheck), not _honey', /name="botcheck"/.test(modal) && !/_honey/.test(modal));
 check('interest form keeps call/text consent optional', /name="tcpa_consent"/.test(modal) && !/name="tcpa_consent"[^>]*required/.test(modal));
 check('interest form does not hit the Make webhook', !/hook\.eu1\.make\.com/.test((idx.match(/Online enrollment interest: open[\s\S]*?<\/script>/) || [''])[0]));
-check('teaser states eligibility, $150 after six months only with owner agreement, and written confirmation', /of any size/.test(idx) && /\$150 per occupied unit per month only with your agreement/.test(idx) && /Then: \$150\/occupied unit\/mo, with your agreement/.test(idx));
+check('teaser states eligibility, the 48-hour $99 offer, $150 after six months, and written confirmation', /of any size/.test(idx) && /within 48 hours pay \$99 per occupied unit per month for the first 6 months/.test(idx) && /After 6 months the price is \$150 per occupied unit per month/.test(idx) && /shown and confirmed in writing before you enroll/.test(idx));
+check('1-9 unit card shows the $150 regular price', /\$150<span>\/occupied unit\/mo<\/span>/.test(idx));
+check('no unverified compliance-check or landlord-count claims', !/Email and PDF report/.test(idx) && !/1,200\+ NYC landlords/.test(idx));
+check('DAWEB-24 click tracking is wired', /'phone_click'/.test(idx) && /'booking_click'/.test(idx) && /'pl_download'/.test(idx) && /'pl_payment_confirm_click'/.test(idx));
 check('teaser GA4 events are wired', /online_enrollment_interest_open/.test(idx) && /online_enrollment_interest_submit/.test(idx));
 
 check('hero keeps the office card and trust strip', /class="hero-office"/.test(idx) && /class="hero-trust"/.test(idx));
