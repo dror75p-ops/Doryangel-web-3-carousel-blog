@@ -77,7 +77,7 @@
       "name": "How accurate is this calculator?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The yearly figure uses DoryAngel's rate after the first 6 months: $125 per occupied unit per month for 10 or more units in one agreement, $150 for 1–9 units. It compares that to a percentage you choose between 6% and 12% of collected rent. The 5-year figure for 10+ units includes the first 6 months at $99. The calculator assumes every unit is occupied and excludes the $100 lease-renewal fee and other disclosed extras. Request a free rental analysis for an exact figure."
+        "text": "The yearly figure uses DoryAngel's rate after the first 6 months: $125 per occupied unit per month for 10 or more units in one agreement, $150 for 1–9 units. It compares that to a percentage you choose between 6% and 12% of collected rent. The 5-year figure includes the first 6 months at $99, our online signup offer for any size. The calculator assumes every unit is occupied and excludes the $100 lease-renewal fee and other disclosed extras. Request a free rental analysis for an exact figure."
       }
     }
   ]
@@ -504,7 +504,7 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
         <div class="calc-savings-sub" id="saveSub">per year · <span id="fiveOut">$41,472</span> over 5 years</div>
       </div>
       <a href="#estimate" class="calc-cta">Get my free rental analysis &rarr;</a>
-      <p class="calc-note">Yearly figure at the rate after the first 6 months: $125 per occupied unit per month for 10+ units in one agreement ($99 for the first 6 months), $150 under 10 units. Assumes all units occupied; excludes the $100 lease-renewal fee and other disclosed extras. <a href="../#contact">Request a quote.</a></p>
+      <p class="calc-note">Yearly figure at the rate after the first 6 months: $125 per occupied unit per month for 10+ units in one agreement, $150 under 10 units. The first 6 months are $99 for any size (online signup offer); the 5-year figure includes them. Assumes all units occupied; excludes the $100 lease-renewal fee and other disclosed extras. <a href="../#contact">Request a quote.</a></p>
     </div>
   </div>
 </section>
@@ -588,7 +588,7 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
     </div>
     <div class="faq-item">
       <button class="faq-q" aria-expanded="false"><span>How accurate is this calculator?</span><span class="faq-icon">+</span></button>
-      <div class="faq-a"><div class="faq-a-inner">The yearly figure uses DoryAngel's rate after the first 6 months: $125 per occupied unit per month for 10 or more units in one agreement, $150 for 1–9 units, versus a percentage you choose between 6% and 12% of collected rent. The 5-year figure for 10+ units includes the first 6 months at $99. The calculator assumes every unit is occupied and excludes the $100 lease-renewal fee and other disclosed extras. Request a free rental analysis for an exact figure.</div></div>
+      <div class="faq-a"><div class="faq-a-inner">The yearly figure uses DoryAngel's rate after the first 6 months: $125 per occupied unit per month for 10 or more units in one agreement, $150 for 1–9 units, versus a percentage you choose between 6% and 12% of collected rent. The 5-year figure includes the first 6 months at $99, our online signup offer for any size. The calculator assumes every unit is occupied and excludes the $100 lease-renewal fee and other disclosed extras. Request a free rental analysis for an exact figure.</div></div>
     </div>
   </div>
 </section>
@@ -692,15 +692,14 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
 
   function fmt(n) { return Math.round(n).toLocaleString('en-US'); }
 
-  // Owner pricing 2026-11-08: 10+ units in one agreement pay $99 per OCCUPIED unit per
-  // month for the first 6 months, then $125; under 10 units the regular rate is $150.
+  // Owner pricing 2026-11-08: the online signup offer is $99 per OCCUPIED unit per month
+  // for the first 6 months, any size; then $125 for 10+ units in one agreement, $150 under 10.
   // The yearly figure uses the rate after month 6; the 5-year figure adds the first
-  // 6 months at $99 for 10+ units.
+  // 6 months at $99 for every size.
   var INTRO_RATE = 99, LARGE_RATE = 125, SMALL_RATE = 150, MIN_UNITS = 10;
   function ratePerUnit(units) { return units >= MIN_UNITS ? LARGE_RATE : SMALL_RATE; }
   function fiveYearFlat(units) {
-    if (units >= MIN_UNITS) return units * (6 * INTRO_RATE + 54 * LARGE_RATE);
-    return units * 60 * SMALL_RATE;
+    return units * (6 * INTRO_RATE + 54 * ratePerUnit(units));
   }
 
   function update() {
