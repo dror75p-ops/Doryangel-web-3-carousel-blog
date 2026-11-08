@@ -1,6 +1,6 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-11-07",
+  "updatedAt": "2026-11-08",
   "events": [
     {
       "date": "2026-04-25",
@@ -2936,6 +2936,51 @@
       "date": "2026-11-05",
       "kind": "post",
       "subject": "Auto-publish: new blog post 2026-11-05"
+    },
+    {
+      "date": "2026-11-07",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-11-07"
+    },
+    {
+      "date": "2026-11-08",
+      "kind": "site",
+      "subject": "Calculator FAQ: list the $100 renewal fee instead of saying there are no extra fees"
+    },
+    {
+      "date": "2026-11-08",
+      "kind": "site",
+      "subject": "Preview: calculator 5-year figure counts the first 6 months at $99 for every size"
+    },
+    {
+      "date": "2026-11-08",
+      "kind": "site",
+      "subject": "Preview: calculator and blog CTA use $99 for 6 months, then $125 (10+), $150 (under 10)"
+    },
+    {
+      "date": "2026-11-08",
+      "kind": "site",
+      "subject": "Preview: 10+ unit buildings pay $99 for the first 6 months, then $125"
+    },
+    {
+      "date": "2026-11-08",
+      "kind": "site",
+      "subject": "Remove the 21+ Google Reviews stat tile from the testimonials strip"
+    },
+    {
+      "date": "2026-11-08",
+      "kind": "site",
+      "subject": "Rating badges: show 5-Star Rated on Google without the review count"
+    },
+    {
+      "date": "2026-11-08",
+      "kind": "site",
+      "subject": "Preview: one unit count (500+), $99 online offer named for 10+ unit buildings too"
+    },
+    {
+      "date": "2026-11-08",
+      "kind": "site",
+      "subject": "Site preview: click tracking, compliance card text, $150/48h pricing, NJ, 1000+ units"
     }
   ]
 }
