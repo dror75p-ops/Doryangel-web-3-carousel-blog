@@ -18,6 +18,8 @@ const FORBIDDEN = [
   [/online rent collection/i, 'DoryAngel does not collect rent; tenants pay owners directly'],
   [/owner disbursements?/i, 'DoryAngel does not disburse funds'],
   [/automated monthly rent collection/i, 'DoryAngel does not collect rent'],
+  [/rent is collected online/i, 'DoryAngel does not collect rent; tenants pay owners directly'],
+  [/collect rent and send owner/i, 'DoryAngel does not collect rent or send deposits'],
   [/Ideal for single-unit owners/i, '$99 applies to 10+ units in one agreement'],
   [/"@type":\s*"RealEstateAgent"|"RealEstateAgent"/, 'DoryAngel is not a real estate agent; brokerage is done by licensed partners'],
   [/Licensed\s*(?:&|&amp;)\s*Insured/i, 'only insurance is substantiated'],
