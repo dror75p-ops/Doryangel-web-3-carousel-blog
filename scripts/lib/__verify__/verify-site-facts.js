@@ -61,7 +61,7 @@ check('index.html states the 10+ unit threshold next to $99', /\$99<span>\/occup
 check('index.html states the $100 renewal fee', /\$100 per completed (?:lease )?renewal/.test(idx));
 check('index.html says rent is paid directly to the owner', /Your Rent Goes Directly to You/.test(idx));
 check('hero CTA stays Free Rental Analysis', /Get My Free Rental Analysis/.test(idx));
-check('Nave prompt carries the 10+ rule', /ONLY when at least 10 units/.test(read('scripts/generate-post.js')));
+check('Nave prompt carries the 10+ rule', /at least 10 units are covered by one management agreement the rate is \$99 per occupied managed unit per month for the first 6 months, then \$125/.test(read('scripts/generate-post.js')));
 
 
 // Batch 2: the online-enrollment teaser is an interest test only.
@@ -86,6 +86,8 @@ check('hero no longer ships the eager portal screenshot', !/class="hero-shot"/.t
 const calc = read('flat-fee-vs-commission/index.html');
 check('calculator has no unconditional units*99', !/units\s*\*\s*99/.test(calc));
 check('calculator gates the standard rate at 10 units', /MIN_UNITS\s*=\s*10/.test(calc) && /units\s*>=\s*MIN_UNITS/.test(calc));
+check('calculator uses $125 for 10+ (after 6 months at $99) and $150 under 10 (owner, 2026-11-08)', /LARGE_RATE = 125/.test(calc) && /SMALL_RATE = 150/.test(calc) && /INTRO_RATE = 99/.test(calc) && !/no standard rate/i.test(calc));
+check('blog CTA and Nave prompt carry the 6-month $99, then $125 rule', /then \$125; for smaller properties, \$150/.test(read('scripts/build-blog.js')) && /first 6 months, then \$125/.test(read('scripts/generate-post.js')) && !/long-term rate is \$99/.test(read('scripts/generate-post.js')));
 
 if (failed) { console.error(`${failed} site-fact check(s) FAILED.`); process.exit(1); }
 console.log('All site-fact checks passed.');

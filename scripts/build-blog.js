@@ -511,7 +511,7 @@ footer.post-footer a { color: white; text-decoration: none; }
 
   <div class="cta-block">
     <div class="city">Managing rental property in NYC?</div>
-    <p>DoryAngel offers flat-fee management instead of a percentage of your rent: $99 per occupied unit per month for 10+ units under one agreement, and a quote for smaller properties. Extras are disclosed before you authorize them. Bronx, Manhattan, Queens, Brooklyn.</p>
+    <p>DoryAngel offers flat-fee management instead of a percentage of your rent: for 10+ units under one agreement, $99 per occupied unit per month for the first 6 months, then $125; for smaller properties, $150. Extras are disclosed before you authorize them. Bronx, Manhattan, Queens, Brooklyn.</p>
     <a class="btn" href="${CONTACT_URL}">
       Get a Free Consultation →
     </a>
@@ -751,7 +751,7 @@ ${sectionsHtml}
 
 <div class="hub-cta">
   <div class="t">Managing rental property in NYC?</div>
-  <p>DoryAngel offers flat-fee management instead of a percentage of your rent: $99 per occupied unit per month for 10+ units under one agreement, and a quote for smaller properties.</p>
+  <p>DoryAngel offers flat-fee management instead of a percentage of your rent: for 10+ units under one agreement, $99 per occupied unit per month for the first 6 months, then $125; for smaller properties, $150.</p>
   <a class="btn" href="${CONTACT_URL}">Get a Free Consultation &rarr;</a>
 </div>
 

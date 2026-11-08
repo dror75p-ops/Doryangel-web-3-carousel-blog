@@ -11,7 +11,7 @@
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Flat-Fee vs % Property Management Calculator | DoryAngel">
-<meta property="og:description" content="Input your units and rent, see your annual savings instantly. DoryAngel flat-fee vs. traditional percentage management for Bronx & NYC landlords. $99 per occupied unit applies to 10+ units under one agreement.">
+<meta property="og:description" content="Input your units and rent, see your annual savings instantly. DoryAngel flat-fee vs. traditional percentage management for Bronx & NYC landlords. 10+ units under one agreement: $99 per occupied unit for the first 6 months, then $125; under 10 units $150.">
 <meta property="og:url" content="https://www.doryangel.com/flat-fee-vs-commission/">
 <meta property="og:image" content="https://www.doryangel.com/assets/logo.jpg">
 
@@ -45,7 +45,7 @@
       "name": "Is flat-fee property management really cheaper than a percentage?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Often, for larger portfolios. A traditional manager charging 8–10% of rent collects a fee that grows every time your rent does. DoryAngel charges a flat monthly fee that does not rise with your rent: $99 per occupied unit per month when at least 10 units are in one management agreement. For example, a 9% manager on a 12-unit building renting at $2,000/unit costs about $25,920 a year, versus about $14,256 at $99 per unit. Smaller properties are quoted individually, so enter your quote in the calculator to compare."
+        "text": "Often, for larger portfolios. A traditional manager charging 8–10% of rent collects a fee that grows every time your rent does. DoryAngel charges a flat monthly fee that does not rise with your rent: with at least 10 units in one management agreement, $99 per occupied unit per month for the first 6 months, then $125; under 10 units, $150. For example, a 9% manager on a 12-unit building renting at $2,000/unit costs about $25,920 a year, versus about $18,000 a year at $125 per unit."
       }
     },
     {
@@ -77,7 +77,7 @@
       "name": "How accurate is this calculator?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "For 10 or more units in one agreement it uses DoryAngel's $99 per occupied unit per month and compares it to a percentage you choose between 6% and 12% of collected rent. For 1–9 units there is no standard rate: enter the monthly rate from your own quote. The calculator assumes every unit is occupied and excludes the $100 lease-renewal fee and other disclosed extras. Request a free rental analysis for an exact figure."
+        "text": "The yearly figure uses DoryAngel's rate after the first 6 months: $125 per occupied unit per month for 10 or more units in one agreement, $150 for 1–9 units. It compares that to a percentage you choose between 6% and 12% of collected rent. The 5-year figure for 10+ units includes the first 6 months at $99. The calculator assumes every unit is occupied and excludes the $100 lease-renewal fee and other disclosed extras. Request a free rental analysis for an exact figure."
       }
     }
   ]
@@ -471,11 +471,6 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
         <div class="calc-readout"><span id="unitsOut">12</span> <span>units</span></div>
         <div class="calc-row-labels"><span>1</span><span>50</span></div>
       </div>
-      <div class="calc-field" id="quoteField" hidden>
-        <label for="quote">Monthly rate per occupied unit from your DoryAngel quote ($)</label>
-        <div class="calc-hint">Under 10 units there is no standard rate. Enter the figure from your written quote to compare.</div>
-        <input type="number" id="quote" min="1" max="999" step="1" inputmode="decimal" placeholder="e.g. your quoted rate" class="calc-num">
-      </div>
       <div class="calc-field">
         <label for="rent">Average monthly rent per unit</label>
         <div class="calc-hint">What one unit rents for each month.</div>
@@ -500,16 +495,16 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
         </div>
         <div class="calc-card flat">
           <div class="calc-card-label">DoryAngel flat fee</div>
-          <div class="calc-card-amt"><span id="flatPre">$</span><span id="flatOut">14,256</span><small>/year</small></div>
+          <div class="calc-card-amt"><span id="flatPre">$</span><span id="flatOut">18,000</span><small>/year</small></div>
         </div>
       </div>
       <div class="calc-savings">
         <div class="calc-savings-label" id="saveLabel">Estimated difference</div>
-        <div class="calc-savings-amt"><span id="savePre">$</span><span id="saveOut">11,664</span></div>
-        <div class="calc-savings-sub" id="saveSub">per year · <span id="fiveOut">$58,320</span> over 5 years</div>
+        <div class="calc-savings-amt"><span id="savePre">$</span><span id="saveOut">7,920</span></div>
+        <div class="calc-savings-sub" id="saveSub">per year · <span id="fiveOut">$41,472</span> over 5 years</div>
       </div>
       <a href="#estimate" class="calc-cta">Get my free rental analysis &rarr;</a>
-      <p class="calc-note">10+ units in one agreement: $99 per occupied unit per month. Under 10 units: enter your quoted rate. Assumes all units occupied; excludes the $100 lease-renewal fee and other disclosed extras. <a href="../#contact">Request a quote.</a></p>
+      <p class="calc-note">Yearly figure at the rate after the first 6 months: $125 per occupied unit per month for 10+ units in one agreement ($99 for the first 6 months), $150 under 10 units. Assumes all units occupied; excludes the $100 lease-renewal fee and other disclosed extras. <a href="../#contact">Request a quote.</a></p>
     </div>
   </div>
 </section>
@@ -524,7 +519,7 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
         <tr><th>&nbsp;</th><th>Traditional % Manager</th><th>DoryAngel Flat Fee</th></tr>
       </thead>
       <tbody>
-        <tr><td>Monthly cost</td><td>8–10% of every rent check, forever</td><td class="yes">$99 per occupied unit/mo (10+ units, one agreement); smaller properties by quote</td></tr>
+        <tr><td>Monthly cost</td><td>8–10% of every rent check, forever</td><td class="yes">10+ units: $99 per occupied unit/mo for 6 months, then $125. Under 10 units: $150</td></tr>
         <tr><td>Cost when your rent goes up</td><td class="no">Goes up too</td><td class="yes">Stays the same</td></tr>
         <tr><td>Tenant placement &amp; screening</td><td>Often a separate leasing fee</td><td>Coordinated with licensed partner brokers; any brokerage fee disclosed first</td></tr>
         <tr><td>Maintenance costs</td><td class="no">Markups are common</td><td>Third-party vendor costs disclosed before you authorize</td></tr>
@@ -540,31 +535,31 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
 <!-- BRONX EXAMPLES -->
 <section class="lp-section" style="padding-top:0;">
   <h2>Examples at the 10+ unit rate</h2>
-  <p class="lp-sub">Illustrative portfolios at $99 per occupied unit, compared with a 9% percentage fee.</p>
+  <p class="lp-sub">Illustrative portfolios at $125 per occupied unit (the rate after the first 6 months at $99), compared with a 9% percentage fee.</p>
   <div class="ex-grid">
     <div class="ex-card">
       <h3>12-unit building</h3>
       <div class="ex-meta">12 units · $2,100/unit/mo</div>
       <div class="ex-row"><span>Monthly rent collected</span><span>$25,200</span></div>
       <div class="ex-row trad"><span>9% manager / year</span><span>$27,216</span></div>
-      <div class="ex-row flat"><span>DoryAngel / year</span><span>$14,256</span></div>
-      <div class="ex-save"><div class="ex-save-amt">$12,960</div><div class="ex-save-label">difference per year</div></div>
+      <div class="ex-row flat"><span>DoryAngel / year</span><span>$18,000</span></div>
+      <div class="ex-save"><div class="ex-save-amt">$9,216</div><div class="ex-save-label">difference per year</div></div>
     </div>
     <div class="ex-card">
       <h3>20-unit portfolio</h3>
       <div class="ex-meta">20 units · $2,000/unit/mo</div>
       <div class="ex-row"><span>Monthly rent collected</span><span>$40,000</span></div>
       <div class="ex-row trad"><span>9% manager / year</span><span>$43,200</span></div>
-      <div class="ex-row flat"><span>DoryAngel / year</span><span>$23,760</span></div>
-      <div class="ex-save"><div class="ex-save-amt">$19,440</div><div class="ex-save-label">difference per year</div></div>
+      <div class="ex-row flat"><span>DoryAngel / year</span><span>$30,000</span></div>
+      <div class="ex-save"><div class="ex-save-amt">$13,200</div><div class="ex-save-label">difference per year</div></div>
     </div>
     <div class="ex-card">
       <h3>30-unit portfolio</h3>
       <div class="ex-meta">30 units · $2,200/unit/mo</div>
       <div class="ex-row"><span>Monthly rent collected</span><span>$66,000</span></div>
       <div class="ex-row trad"><span>9% manager / year</span><span>$71,280</span></div>
-      <div class="ex-row flat"><span>DoryAngel / year</span><span>$35,640</span></div>
-      <div class="ex-save"><div class="ex-save-amt">$35,640</div><div class="ex-save-label">difference per year</div></div>
+      <div class="ex-row flat"><span>DoryAngel / year</span><span>$45,000</span></div>
+      <div class="ex-save"><div class="ex-save-amt">$26,280</div><div class="ex-save-label">difference per year</div></div>
     </div>
   </div>
   <p class="lp-sub" style="margin-top:16px;font-size:13px;">Illustrations only, not a quote. All units assumed occupied; excludes the $100 lease-renewal fee and other disclosed extras.</p>
@@ -577,7 +572,7 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
   <div id="faqList">
     <div class="faq-item">
       <button class="faq-q" aria-expanded="false"><span>Is flat-fee property management really cheaper than a percentage?</span><span class="faq-icon">+</span></button>
-      <div class="faq-a"><div class="faq-a-inner">Often, for larger portfolios. A manager charging 8–10% of rent collects a fee that grows every time your rent does. DoryAngel charges a flat monthly fee that does not rise with your rent: $99 per occupied unit per month when at least 10 units are in one management agreement. For example, a 9% manager on a 12-unit building at $2,000/unit costs about $25,920/year, versus about $14,256 at $99 per unit. Smaller properties are quoted individually, so enter your quote in the calculator to compare.</div></div>
+      <div class="faq-a"><div class="faq-a-inner">Often, for larger portfolios. A manager charging 8–10% of rent collects a fee that grows every time your rent does. DoryAngel charges a flat monthly fee that does not rise with your rent: with at least 10 units in one management agreement, $99 per occupied unit per month for the first 6 months, then $125; under 10 units, $150. For example, a 9% manager on a 12-unit building at $2,000/unit costs about $25,920/year, versus about $18,000/year at $125 per unit.</div></div>
     </div>
     <div class="faq-item">
       <button class="faq-q" aria-expanded="false"><span>What's included in DoryAngel's flat fee?</span><span class="faq-icon">+</span></button>
@@ -593,7 +588,7 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
     </div>
     <div class="faq-item">
       <button class="faq-q" aria-expanded="false"><span>How accurate is this calculator?</span><span class="faq-icon">+</span></button>
-      <div class="faq-a"><div class="faq-a-inner">For 10 or more units in one agreement it uses DoryAngel's $99 per occupied unit per month versus a percentage you choose between 6% and 12% of collected rent. For 1–9 units there is no standard rate: enter the monthly rate from your own quote. The calculator assumes every unit is occupied and excludes the $100 lease-renewal fee and other disclosed extras. Request a free rental analysis for an exact figure.</div></div>
+      <div class="faq-a"><div class="faq-a-inner">The yearly figure uses DoryAngel's rate after the first 6 months: $125 per occupied unit per month for 10 or more units in one agreement, $150 for 1–9 units, versus a percentage you choose between 6% and 12% of collected rent. The 5-year figure for 10+ units includes the first 6 months at $99. The calculator assumes every unit is occupied and excludes the $100 lease-renewal fee and other disclosed extras. Request a free rental analysis for an exact figure.</div></div>
     </div>
   </div>
 </section>
@@ -697,16 +692,15 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
 
   function fmt(n) { return Math.round(n).toLocaleString('en-US'); }
 
-  // $99 per OCCUPIED unit per month applies only when >=10 units are covered by one
-  // management agreement. Under 10 units there is no standard price, so the rate comes
-  // from the visitor's own quote and nothing is computed until they enter it.
-  var quoteEl = document.getElementById('quote');
-  var quoteField = document.getElementById('quoteField');
-  var STANDARD_RATE = 99, MIN_UNITS = 10;
-  function ratePerUnit(units) {
-    if (units >= MIN_UNITS) return STANDARD_RATE;
-    var q = parseFloat(quoteEl.value);
-    return (isFinite(q) && q > 0) ? q : null;
+  // Owner pricing 2026-11-08: 10+ units in one agreement pay $99 per OCCUPIED unit per
+  // month for the first 6 months, then $125; under 10 units the regular rate is $150.
+  // The yearly figure uses the rate after month 6; the 5-year figure adds the first
+  // 6 months at $99 for 10+ units.
+  var INTRO_RATE = 99, LARGE_RATE = 125, SMALL_RATE = 150, MIN_UNITS = 10;
+  function ratePerUnit(units) { return units >= MIN_UNITS ? LARGE_RATE : SMALL_RATE; }
+  function fiveYearFlat(units) {
+    if (units >= MIN_UNITS) return units * (6 * INTRO_RATE + 54 * LARGE_RATE);
+    return units * 60 * SMALL_RATE;
   }
 
   function update() {
@@ -717,35 +711,28 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
     var monthlyRent = units * rent;
     var tradAnnual  = monthlyRent * (rate / 100) * 12;
     var perUnit     = ratePerUnit(units);
-    quoteField.hidden = units >= MIN_UNITS;
 
     unitsOut.textContent = units;
     rentOut.textContent  = fmt(rent);
     rateOut.textContent  = rate;
     tradOut.textContent  = fmt(tradAnnual);
-    var flatPre = document.getElementById('flatPre'), savePre = document.getElementById('savePre');
+    var savePre = document.getElementById('savePre');
     var saveLabel = document.getElementById('saveLabel'), saveSub = document.getElementById('saveSub');
-    if (perUnit === null) {
-      flatPre.textContent = ''; savePre.textContent = '';
-      flatOut.textContent = '—'; saveOut.textContent = '—';
-      saveLabel.textContent = 'Enter your quoted rate to compare';
-      saveSub.textContent = 'No standard rate under 10 units';
-    } else {
-      var flatAnnual = units * perUnit * 12;
-      var diff = tradAnnual - flatAnnual;
-      flatPre.textContent = '$'; savePre.textContent = diff < 0 ? '-$' : '$';
-      flatOut.textContent = fmt(flatAnnual);
-      saveOut.textContent = fmt(Math.abs(diff));
-      saveLabel.textContent = diff < 0 ? 'Flat fee would cost more' : 'Estimated difference';
-      saveSub.textContent = 'per year · $' + fmt(Math.abs(diff) * 5) + ' over 5 years';
-    }
+    var flatAnnual = units * perUnit * 12;
+    var diff = tradAnnual - flatAnnual;
+    var five = tradAnnual * 5 - fiveYearFlat(units);
+    savePre.textContent = diff < 0 ? '-$' : '$';
+    flatOut.textContent = fmt(flatAnnual);
+    saveOut.textContent = fmt(Math.abs(diff));
+    saveLabel.textContent = diff < 0 ? 'Flat fee would cost more' : 'Estimated difference';
+    saveSub.textContent = 'per year · ' + (five < 0 ? '-$' : '$') + fmt(Math.abs(five)) + ' over 5 years';
 
     if (typeof gtag !== 'undefined') {
       gtag('event', 'calculator_interaction', { event_category: 'engagement', event_label: 'flat_fee_calc' });
     }
   }
 
-  [unitsEl, rentEl, rateEl, quoteEl].forEach(function (el) {
+  [unitsEl, rentEl, rateEl].forEach(function (el) {
     el.addEventListener('input', update);
   });
   update();
