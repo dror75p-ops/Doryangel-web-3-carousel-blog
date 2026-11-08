@@ -1366,6 +1366,10 @@ footer {
 .hamburger-btn svg, .a11y-nav-btn svg { display: block; pointer-events: none; }
 
 /* RESPONSIVE */
+/* 10 top-menu items (Online Enrollment added 2026-11-08): tighter gaps on small desktops so the Free Rental Analysis button stays on the same row. */
+@media (min-width: 901px) and (max-width: 1279px) {
+  .nav-links { gap: 16px; }
+}
 @media (max-width: 900px) {
   nav { padding: 8px 16px 0; }
   .nav-links { display: none; }
@@ -2560,6 +2564,7 @@ retell-chat-web-component {
       <li><a href="#services">Services</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#enroll-preview">Online Enrollment</a></li>
       <li><a href="#testimonials">Reviews</a></li>
       <li><a href="#faq">FAQ</a></li>
       <li><a href="#blog">Blog</a></li>
