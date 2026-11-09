@@ -10,6 +10,16 @@
     "note": "Rewrite the SEO title and meta description to lead with a concrete year-one cost comparison (base + leasing + setup + renewal fees) and Bronx-specific framing. Current listing is being served and skipped at position 8.4."
   },
   {
+    "recommendationId": "ARLO-2026-11-08-03",
+    "reportDate": "2026-11-08",
+    "approvedOn": "2026-11-09",
+    "approvedBy": "Dory (authenticated GitHub email gateway)",
+    "action": "site-change",
+    "status": "pending",
+    "targetSlug": null,
+    "note": "From 5–10 well-linked existing posts in the same seasonal/topical cluster (fall winterization, pipes, basements), add contextual body links to the 6 orphaned posts, including 'Why Your Bronx Rental's Pipes Freeze Before January'. Nave only links outward from new posts, so this fills the backlink gap for older content."
+  },
+  {
     "recommendationId": "ARLO-2026-11-08-04",
     "reportDate": "2026-11-08",
     "approvedOn": "2026-11-09",
