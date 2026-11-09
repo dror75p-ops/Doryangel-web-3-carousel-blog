@@ -18,5 +18,15 @@
     "status": "pending",
     "targetSlug": null,
     "note": "From 5–10 well-linked existing posts in the same seasonal/topical cluster (fall winterization, pipes, basements), add contextual body links to the 6 orphaned posts, including 'Why Your Bronx Rental's Pipes Freeze Before January'. Nave only links outward from new posts, so this fills the backlink gap for older content."
+  },
+  {
+    "recommendationId": "ARLO-2026-11-08-04",
+    "reportDate": "2026-11-08",
+    "approvedOn": "2026-11-09",
+    "approvedBy": "Dory (authenticated GitHub email gateway)",
+    "action": "improve-existing",
+    "status": "pending",
+    "targetSlug": "why-your-bronx-rentals-pipes-freeze-before-january-and-what",
+    "note": "Expand this post with a section on 'what to do at 2am when a pipe bursts in a Bronx rental' — vendor call tree, typical response windows, cost of emergency plumber vs. flat-fee managed response. Add internal links to and from the service page so it reinforces rankings for 'bronx property management' (position 12.0, striking distance)."
   }
 ]

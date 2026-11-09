@@ -40,5 +40,22 @@
     "implementedOn": null,
     "measureAfter": null,
     "result": null
+  },
+  {
+    "id": "ARLO-2026-11-08-04",
+    "title": "Expand the pipe-freeze post with a 24/7 emergency response angle targeting 'bronx property management'",
+    "action": "improve-existing",
+    "targetSlug": "why-your-bronx-rentals-pipes-freeze-before-january-and-what",
+    "recommendedOn": "2026-11-08",
+    "approvedOn": "2026-11-09",
+    "approvedBy": "Dory (authenticated GitHub email gateway)",
+    "legalReviewed": false,
+    "metric": "average position for 'bronx property management'",
+    "expectedResult": "Move 'bronx property management' from position 12 to 8–10; first clicks on the query.",
+    "baseline": null,
+    "status": "queued",
+    "implementedOn": null,
+    "measureAfter": null,
+    "result": null
   }
 ]
