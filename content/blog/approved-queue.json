@@ -8,5 +8,15 @@
     "status": "pending",
     "targetSlug": "flat-fee-property-management-vs-percentage",
     "note": "Rewrite the SEO title and meta description to lead with a concrete year-one cost comparison (base + leasing + setup + renewal fees) and Bronx-specific framing. Current listing is being served and skipped at position 8.4."
+  },
+  {
+    "recommendationId": "ARLO-2026-11-08-04",
+    "reportDate": "2026-11-08",
+    "approvedOn": "2026-11-09",
+    "approvedBy": "Dory (authenticated GitHub email gateway)",
+    "action": "improve-existing",
+    "status": "pending",
+    "targetSlug": "why-your-bronx-rentals-pipes-freeze-before-january-and-what",
+    "note": "Expand this post with a section on 'what to do at 2am when a pipe bursts in a Bronx rental' — vendor call tree, typical response windows, cost of emergency plumber vs. flat-fee managed response. Add internal links to and from the service page so it reinforces rankings for 'bronx property management' (position 12.0, striking distance)."
   }
 ]
