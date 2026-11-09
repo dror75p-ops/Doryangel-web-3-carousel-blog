@@ -1,6 +1,6 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-11-08",
+  "updatedAt": "2026-11-09",
   "events": [
     {
       "date": "2026-04-25",
@@ -2945,6 +2945,21 @@
     {
       "date": "2026-11-08",
       "kind": "site",
+      "subject": "Rent goes directly to the owner: fix FAQ and broker page wording"
+    },
+    {
+      "date": "2026-11-08",
+      "kind": "site",
+      "subject": "Desktop menu: add Online Enrollment after Pricing"
+    },
+    {
+      "date": "2026-11-08",
+      "kind": "site",
+      "subject": "Link the online enrollment preview from the mobile menu and the thank-you page"
+    },
+    {
+      "date": "2026-11-08",
+      "kind": "site",
       "subject": "Calculator FAQ: list the $100 renewal fee instead of saying there are no extra fees"
     },
     {
@@ -2981,6 +2996,31 @@
       "date": "2026-11-08",
       "kind": "site",
       "subject": "Site preview: click tracking, compliance card text, $150/48h pricing, NJ, 1000+ units"
+    },
+    {
+      "date": "2026-11-09",
+      "kind": "site",
+      "subject": "Add compliance checker operations handoff"
+    },
+    {
+      "date": "2026-11-09",
+      "kind": "site",
+      "subject": "Broker page: add Imagine this illustrative stories, quarterly visit instead of call, 99% of the work (#347)"
+    },
+    {
+      "date": "2026-11-09",
+      "kind": "site",
+      "subject": "Ship ARLO-2026-11-08-03 and -04: orphan-post links + 2 a.m. burst section (#346)"
+    },
+    {
+      "date": "2026-11-09",
+      "kind": "site",
+      "subject": "Queue approved recommendation ARLO-2026-11-08-04 (#344)"
+    },
+    {
+      "date": "2026-11-09",
+      "kind": "site",
+      "subject": "Queue approved recommendation ARLO-2026-11-08-03 (#345)"
     }
   ]
 }
