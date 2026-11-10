@@ -1792,7 +1792,7 @@ footer {
 /* ── TOOLS NAV DROPDOWN ── */
 .nav-has-dropdown { position: relative; }
 .nav-dropdown {
-  display: none;
+  display: block;
   position: absolute;
   top: calc(100% + 10px);
   left: 50%;
@@ -1805,7 +1805,13 @@ footer {
   z-index: 300;
   border: 1px solid #E5E7EB;
 }
-.nav-has-dropdown:hover .nav-dropdown { display: block; }
+/* Invisible bridge over the 10px gap between "Tools" and the panel, so the
+   pointer never leaves the hover area on its way down (that gap closed the menu).
+   The short hide delay forgives a slip; :focus-within opens it from the keyboard. */
+.nav-dropdown::before { content: ""; position: absolute; left: 0; right: 0; top: -14px; height: 14px; }
+.nav-has-dropdown .nav-dropdown { visibility: hidden; opacity: 0; transition: opacity .15s ease, visibility 0s linear .2s; }
+.nav-has-dropdown:hover .nav-dropdown,
+.nav-has-dropdown:focus-within .nav-dropdown { display: block; visibility: visible; opacity: 1; transition-delay: 0s; }
 .nav-dd-label {
   font-size: 10px; font-weight: 700; letter-spacing: 0.13em;
   text-transform: uppercase; color: #9CA3AF; margin: 0 0 8px 4px;
