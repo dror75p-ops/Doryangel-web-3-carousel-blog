@@ -36,9 +36,9 @@
     "metric": "impressions on the 6 previously orphaned URLs",
     "expectedResult": "Orphaned posts begin receiving impressions in Search Console within 4–6 weeks; small lift in total site sessions.",
     "baseline": null,
-    "status": "queued",
-    "implementedOn": null,
-    "measureAfter": null,
+    "status": "implemented",
+    "implementedOn": "2026-11-09",
+    "measureAfter": "2026-12-10",
     "result": null
   },
   {
@@ -53,9 +53,9 @@
     "metric": "average position for 'bronx property management'",
     "expectedResult": "Move 'bronx property management' from position 12 to 8–10; first clicks on the query.",
     "baseline": null,
-    "status": "queued",
-    "implementedOn": null,
-    "measureAfter": null,
+    "status": "implemented",
+    "implementedOn": "2026-11-10",
+    "measureAfter": "2026-12-11",
     "result": null
   }
 ]

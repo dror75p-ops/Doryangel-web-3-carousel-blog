@@ -1,6 +1,6 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-11-09",
+  "updatedAt": "2026-11-10",
   "events": [
     {
       "date": "2026-04-25",
@@ -2999,6 +2999,11 @@
     },
     {
       "date": "2026-11-09",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-11-09"
+    },
+    {
+      "date": "2026-11-09",
       "kind": "site",
       "subject": "Add compliance checker operations handoff"
     },
@@ -3021,6 +3026,21 @@
       "date": "2026-11-09",
       "kind": "site",
       "subject": "Queue approved recommendation ARLO-2026-11-08-03 (#345)"
+    },
+    {
+      "date": "2026-11-10",
+      "kind": "site",
+      "subject": "Fix Tools dropdown closing before the pointer reaches it (desktop) (#351)"
+    },
+    {
+      "date": "2026-11-10",
+      "kind": "site",
+      "subject": "Broker page: tracking, referral-model copy, share image (#349)"
+    },
+    {
+      "date": "2026-11-10",
+      "kind": "site",
+      "subject": "Arlo stage A: stop repeating handled work, skip fresh pages, check approvals daily (#348)"
     }
   ]
 }
