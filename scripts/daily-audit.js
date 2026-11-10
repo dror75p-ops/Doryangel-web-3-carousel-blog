@@ -554,6 +554,33 @@ const QUERY_BUCKETS = [
   { key: 'other',      label: 'Everything else',            test: () => true },
 ];
 
+// Per-post view of Search Console for recently published posts. Built from the
+// page rows the snapshot already pulls, so it costs no extra API call. A post
+// that is missing from the pulled rows is reported as such (found:false), which
+// means "below the 250-row cut", not "zero impressions". Owner question
+// 2026-10-11: did the new posts earn anything? Until now there was no way to say.
+function summariseRecentPosts(pageRows, posts, todayISO, days = 60) {
+  const cutoff = new Date(new Date(todayISO).getTime() - days * 864e5).toISOString().split('T')[0];
+  return (posts || [])
+    .filter(p => p.publishedDate && p.publishedDate >= cutoff)
+    .map(p => {
+      const needle = `/blog/${p.slug}/`;
+      const rows = (pageRows || []).filter(r => r.keys[0].includes(needle));
+      const impressions = rows.reduce((n, r) => n + r.impressions, 0);
+      return {
+        slug: p.slug,
+        publishedDate: p.publishedDate,
+        found: rows.length > 0,
+        clicks: rows.reduce((n, r) => n + r.clicks, 0),
+        impressions,
+        position: impressions
+          ? Math.round(rows.reduce((n, r) => n + r.position * r.impressions, 0) / impressions * 10) / 10
+          : null,
+      };
+    })
+    .sort((a, b) => a.publishedDate < b.publishedDate ? 1 : -1);
+}
+
 function summariseQueryMix(rows) {
   const buckets = QUERY_BUCKETS.map(b => ({ key: b.key, label: b.label, queries: 0, clicks: 0, impressions: 0, weighted: 0 }));
   for (const r of rows) {
@@ -772,10 +799,20 @@ async function getSearchConsoleStats() {
       console.log(`::warning title=${AGENT_NAME}::page×query unavailable: ${e.message}`);
     }
 
+    // Fails soft: a missing or unreadable blog index only costs this one field.
+    let recentPosts = [];
+    try {
+      const idx = JSON.parse(readFileSync('./content/blog/posts-index.json', 'utf8'));
+      recentPosts = summariseRecentPosts(pageRows, idx, today());
+    } catch (e) {
+      console.log(`::warning title=${AGENT_NAME}::recentPosts unavailable: ${e.message}`);
+    }
+
     const snapshot = {
       runDate: today(), window, totals, watch,
       topQueries, topByImpressions, queryMix, topPages, topPagesByImpressions, hosts,
       hostQueries: hostQueries?.split || [],
+      recentPosts,
     };
 
     // The series files are the point of this whole block — see the comment on
@@ -2812,5 +2849,5 @@ if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) 
 // in production imports this file.
 export {
   runImprovementCycle, findOpportunities, finaliseRecommendations,
-  classifyExperiment, renderImprovementSections, readCycleState, detectImplementation,
+  classifyExperiment, renderImprovementSections, readCycleState, detectImplementation, summariseRecentPosts,
 };
