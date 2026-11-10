@@ -12,7 +12,9 @@
 // unrelated searches such as "luxury property management new york" appearing at
 // position 80-90. A site-wide average moves whenever Google shows the site for
 // something new, so it cannot tell the owner whether the business is ranking
-// better or worse. This basket can.
+// better or worse on its own. This basket can. The owner chose (2026-11-10) to
+// keep BOTH in the email: the site-wide average, labelled "all searches", and
+// this basket as the headline.
 //
 // The basket: a query that names the Bronx AND asks for property management
 // (manager, management company, apartment or building management). Job

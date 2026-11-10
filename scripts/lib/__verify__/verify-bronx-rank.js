@@ -93,8 +93,9 @@ check('the fetch splits by date, page and query', /dimensions:\s*\['date',\s*'pa
 check('a failed fetch fails soft', /Bronx basket unavailable/.test(audit));
 check('the email leads with the Bronx searches', /Bronx property-management searches: position/.test(audit));
 check('the email shows profile and website apart', /bronxHalf\('Google profile listing'/.test(audit) && /bronxHalf\('Website/.test(audit));
-check('the 7-vs-7 table no longer prints the site-wide average', !/>Avg position</.test(audit));
-check('the email says why the site-wide average is gone', /Site-wide average position is not shown on purpose/.test(audit));
+check('the site-wide average is kept, labelled as all searches', /Avg position, ALL searches \(site-wide\)/.test(audit));
+check('no unlabelled "Avg position" row is left', !/>Avg position</.test(audit));
+check('the email explains how the two rankings differ', /Read the two side by side/.test(audit));
 
 console.log(`verify-bronx-rank: ${checks - failures}/${checks} checks passed`);
 if (failures) process.exit(1);

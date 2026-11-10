@@ -2447,6 +2447,12 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
         if (Math.abs(d) < 1) return '<span style="color:#8B9BAE;">flat</span>';
         return `<span style="color:${d > 0 ? '#1E9E6A' : '#B91C1C'};font-weight:700;">${d > 0 ? '▲' : '▼'} ${Math.abs(d).toFixed(0)}%</span>`;
       };
+      const posMove = (now, before) => {
+        if (now == null || before == null) return '<span style="color:#8B9BAE;">—</span>';
+        const d = before - now;
+        if (Math.abs(d) < 0.1) return '<span style="color:#8B9BAE;">flat</span>';
+        return `<span style="color:${d > 0 ? '#1E9E6A' : '#B91C1C'};font-weight:700;">${d > 0 ? '▲' : '▼'} ${Math.abs(d).toFixed(1)}</span>`;
+      };
       const changed = (trend.annotations || []).slice(-6).map(a =>
         `<li style="margin:0 0 2px;">${a.date} · <span style="color:#8B9BAE;">${a.kind}</span> — ${a.subject.replace(/[<>&]/g, '')}</li>`
       ).join('');
@@ -2467,8 +2473,12 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
           <td style="padding:6px 12px;text-align:right;font-size:12px;color:#556070;">${trend.previous.clicks}</td>
           <td style="padding:6px 12px;text-align:right;font-size:12px;font-weight:700;color:#0F2847;">${trend.current.clicks}</td>
           <td style="padding:6px 12px;text-align:right;font-size:12px;">${pct(trend.current.clicks, trend.previous.clicks)}</td></tr>
+        <tr><td style="padding:6px 12px;font-size:12px;color:#556070;">Avg position, ALL searches (site-wide)</td>
+          <td style="padding:6px 12px;text-align:right;font-size:12px;color:#556070;">${fmtPos(trend.previous.position)}</td>
+          <td style="padding:6px 12px;text-align:right;font-size:12px;font-weight:700;color:#0F2847;">${fmtPos(trend.current.position)}</td>
+          <td style="padding:6px 12px;text-align:right;font-size:12px;">${posMove(trend.current.position, trend.previous.position)}</td></tr>
       </table>
-      <p style="font-size:11px;color:#8B9BAE;margin:0 0 12px;">Site-wide average position is not shown on purpose: it moves whenever Google tests the site on an unrelated search, even when the Bronx rankings do not change. The Bronx rankings are at the top of this section.</p>
+      <p style="font-size:11px;color:#8B9BAE;margin:0 0 12px;">The site-wide average covers every search the site appeared for, including unrelated ones, so it can move while the Bronx rankings at the top of this section stay put. Read the two side by side.</p>
       ${changed ? `<p style="font-size:12px;color:#8B9BAE;margin:0 0 4px;">What changed in that fortnight</p>
       <ul style="margin:0 0 20px;padding-left:18px;font-size:12px;color:#556070;">${changed}</ul>` : '<div style="margin-bottom:20px;"></div>'}`;
     }
@@ -2494,7 +2504,7 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
       );
       hostBlock = `<p style="font-size:12px;color:#8B9BAE;margin:0 0 8px;">Which host Google is showing (all 308-redirect to www)</p>
       <table style="border-collapse:collapse;width:100%;margin-bottom:6px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">${rows}</table>
-      <p style="font-size:11px;color:#8B9BAE;margin:0 0 20px;">${legacyShare}% of impressions still land on a pre-cutover URL. Until that reaches 0, any site-wide average blends hosts that rank very differently, which is why the Bronx rankings above are split by host.</p>`;
+      <p style="font-size:11px;color:#8B9BAE;margin:0 0 20px;">${legacyShare}% of impressions still land on a pre-cutover URL. Until that reaches 0, the site-wide average blends hosts that rank very differently, which is why the Bronx rankings above are split by host.</p>`;
     }
 
     // ── What the traffic is actually made of ────────────────────────────────
