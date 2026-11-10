@@ -20,6 +20,10 @@ import {
   scoreRecommendation, makeRecommendationId,
   redactPII, findPII,
 } from './lib/improvement-governance.js';
+import {
+  RECENT_CHANGE_DAYS, buildHandledList, screenRecommendation, describeHandledForPrompt,
+  parseArloIds, QUEUE_COMMIT, extractHeadSeo,
+} from './lib/arlo-memory.js';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 3 });
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -1138,20 +1142,46 @@ function detectImplementation(exp, posts) {
   // verdict would have measured a page nobody had changed. The source of truth for the fields
   // is content/blog/posts-index.json, so compare those against the version committed alongside
   // the approval. If the baseline cannot be established we say "not shipped" rather than guess.
-  if (!exp.targetSlug || !exp.approvedOn) return null;
+  if (!exp.approvedOn) return null;
+  // A change with no page of its own (site-change: homepage title, links across
+  // many posts) has no post fields to compare. It counts as shipped when a commit
+  // on main after the approval names its ARLO id — the convention every shipping
+  // commit has followed (e.g. "Ship ARLO-2026-11-08-03 and -04", #346). The
+  // "Queue approved recommendation" commit only records the approval, so it is
+  // skipped. Before this, these experiments stayed "queued" forever.
+  if (!exp.targetSlug) return shippedByCommit(exp);
   const current = posts.find(p => p.slug === exp.targetSlug);
   const baseline = baselinePostFor(exp);
   if (!current || !baseline) return null;
   if (postFingerprint(current) === postFingerprint(baseline)) return null;
   try {
     const out = execSync(
-      `git log --format=%cs -1 --since="${exp.approvedOn}" -- content/blog/posts-index.json`,
+      `git log --format=%cs -1 --since="${exp.approvedOn} 00:00:00" -- content/blog/posts-index.json`,
       { stdio: ['ignore', 'pipe', 'ignore'] }
     ).toString().trim();
     return out || isoDay(new Date());
   } catch {
     return isoDay(new Date());
   }
+}
+
+/** Date of the first commit after approval that names this experiment's id, ignoring queue commits. */
+function shippedByCommit(exp) {
+  try {
+    const out = execSync(
+      // ⚠️ A bare date in --since means that date AT THE CURRENT TIME OF DAY, so
+      // a ship commit made earlier on the approval day was silently missed.
+      // Start at midnight of the approval day; the queue commit is skipped below.
+      `git log --reverse --format=%cs%x09%s --since="${exp.approvedOn} 00:00:00" -i --grep="${exp.id.slice(0, 15)}"`,
+      { stdio: ['ignore', 'pipe', 'ignore'] }
+    ).toString().trim();
+    for (const line of out.split('\n').filter(Boolean)) {
+      const [date, subject = ''] = line.split('\t');
+      if (QUEUE_COMMIT.test(subject)) continue;
+      if (parseArloIds(subject).includes(exp.id)) return date;
+    }
+  } catch { /* not shipped, or no git — same answer */ }
+  return null;
 }
 
 /** What an improve-existing recommendation is allowed to change: the SEO fields and the body. */
@@ -1180,10 +1210,22 @@ function baselinePostFor(exp) {
 
 /** Per-day GSC pull for one page. One call per experiment, so it is bounded by
  *  how many experiments are actually awaiting measurement. */
+// The homepage is still served under www AND the apex (see HOST_BUCKETS), and
+// the apex holds most of its clicks. Measuring www alone would judge a homepage
+// change on the smaller half of its traffic, so the homepage is measured on
+// every host it is served under.
+const HOMEPAGE_ANY_HOST = '^https?://((www|beta)\\.)?doryangel\\.com/?$';
+
 async function fetchPageWindow(token, pageUrl, startDate, endDate) {
+  // pageUrl null = the whole site (a change with no single page, e.g. links
+  // added across many posts). Association only, like every verdict here.
+  const isHome = pageUrl && /^https?:\/\/(www\.)?doryangel\.com\/?$/.test(pageUrl);
+  const filter = !pageUrl ? null
+    : isHome ? { dimension: 'page', operator: 'includingRegex', expression: HOMEPAGE_ANY_HOST }
+    : { dimension: 'page', operator: 'equals', expression: pageUrl };
   const rows = await querySearchConsole(token, {
     startDate, endDate, dataState: 'final', type: 'web', rowLimit: 1,
-    dimensionFilterGroups: [{ filters: [{ dimension: 'page', operator: 'equals', expression: pageUrl }] }],
+    ...(filter ? { dimensionFilterGroups: [{ filters: [filter] }] } : {}),
   });
   const r = rows[0];
   return {
@@ -1264,10 +1306,25 @@ async function reviewExperiments(posts, todayISO) {
 
     // 2. Old enough to judge?
     if (exp.status === 'implemented' && token && exp.measureAfter && exp.measureAfter <= todayISO) {
-      const url = experimentPageUrl(exp);
+      const url = experimentPageUrl(exp);          // null = whole site
       const days = exp.baseline?.days || EXPERIMENT_MEASURE_DAYS;
-      if (url) {
+      {
         try {
+          // No baseline was captured at approval (site-wide changes, and any
+          // opportunity the model did not tie to a measured one). Search Console
+          // keeps ~16 months, so take the same-length window that ENDED the day
+          // before the change shipped — a like-for-like "before" — instead of
+          // leaving the experiment unmeasurable forever.
+          if (!exp.baseline && exp.implementedOn) {
+            const bEnd = isoDay(new Date(Date.parse(`${exp.implementedOn}T00:00:00Z`) - 864e5));
+            const bStart = isoDay(new Date(Date.parse(`${bEnd}T00:00:00Z`) - (days - 1) * 864e5));
+            const before = await fetchPageWindow(token, url, bStart, bEnd);
+            gscCalls++;
+            exp.baseline = {
+              days, ...before, capturedOn: todayISO, scope: url ? 'page' : 'site',
+              source: `Search Console, the ${days} days before the change shipped (captured at measurement)`,
+            };
+          }
           const end = dayOffset(3);
           const start = isoDay(new Date(Date.parse(`${end}T00:00:00Z`) - (days - 1) * 864e5));
           const after = await fetchPageWindow(token, url, start, end);
@@ -1461,6 +1518,95 @@ Reply with at most 200 words of plain notes: what the top-ranking pages cover, a
   }
 }
 
+// ─── MEMORY: what is already handled, and what changed recently ──────────────
+//
+// ⚠️ Read before recommending. Every repeat recommendation measured on
+// 2026-11-09 came from one of these three blind spots: an approval waiting in an
+// open PR, a change shipped by a commit that names the ARLO id, or a page
+// changed so recently it cannot be judged yet. The pure rules live in
+// lib/arlo-memory.js; this part only gathers the facts. Every source fails soft
+// to "nothing known" — a missing fact means a possible repeat, never a crash.
+
+async function fetchOpenApprovalPrs() {
+  if (!GH_TOKEN) return [];
+  try {
+    const res = await fetch(`https://api.github.com/repos/${REPO}/pulls?state=open&per_page=50`, {
+      headers: { 'Authorization': `token ${GH_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' },
+    });
+    if (!res.ok) {
+      console.log(`::warning title=${AGENT_NAME}::Could not list open PRs (${res.status}) — approvals waiting for a merge may be re-recommended.`);
+      return [];
+    }
+    const prs = await res.json();
+    return prs
+      .filter(pr => /^claude\/approved-arlo-/i.test(pr.head?.ref || ''))
+      .map(pr => ({ number: pr.number, title: pr.title, branch: pr.head.ref, createdOn: String(pr.created_at || '').slice(0, 10) }));
+  } catch (e) {
+    console.log(`::warning title=${AGENT_NAME}::Could not list open PRs (${e.message}) — approvals waiting for a merge may be re-recommended.`);
+    return [];
+  }
+}
+
+function recentArloCommits() {
+  try {
+    const out = execSync(
+      `git log --since="${RECENT_CHANGE_DAYS} days ago" --format=%cs%x09%s -i --grep=ARLO-`,
+      { stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 8 * 1024 * 1024 }
+    ).toString().trim();
+    return out.split('\n').filter(Boolean).map(line => {
+      const [date, subject = ''] = line.split('\t');
+      return { date, subject };
+    });
+  } catch {
+    return [];
+  }
+}
+
+/** Posts whose SEO fields or body changed in the window, and when the homepage title/description last changed. */
+function recentChanges(posts) {
+  const result = { changedSlugs: [], homepageSeoChangedOn: null };
+  let rev = '';
+  try {
+    rev = execSync(`git rev-list -1 --before="${RECENT_CHANGE_DAYS} days ago" HEAD`,
+      { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+  } catch { /* shallow clone or no git */ }
+  if (!rev) return result;
+
+  try {
+    const then = JSON.parse(execSync(`git show ${rev}:content/blog/posts-index.json`,
+      { stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 64 * 1024 * 1024 }).toString());
+    const before = new Map(then.map(p => [p.slug, postFingerprint(p)]));
+    result.changedSlugs = posts
+      .filter(p => before.has(p.slug) && before.get(p.slug) !== postFingerprint(p))
+      .map(p => p.slug);
+  } catch { /* index did not exist then */ }
+
+  try {
+    const then = execSync(`git show ${rev}:index.html`,
+      { stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 64 * 1024 * 1024 }).toString();
+    const now = readFileSync('./index.html', 'utf8');
+    if (extractHeadSeo(then) !== extractHeadSeo(now)) {
+      const when = execSync(
+        `git log -1 --format=%cs --since="${RECENT_CHANGE_DAYS} days ago" -G"<title>|name=.description" -- index.html`,
+        { stdio: ['ignore', 'pipe', 'ignore'] }
+      ).toString().trim();
+      result.homepageSeoChangedOn = when || `within the last ${RECENT_CHANGE_DAYS} days`;
+    }
+  } catch { /* no homepage in this checkout */ }
+
+  return result;
+}
+
+async function gatherHistory(posts, experiments) {
+  const [openApprovalPrs] = await Promise.all([fetchOpenApprovalPrs()]);
+  const commits = recentArloCommits();
+  const lastRecs = readJsonFile(RECOMMENDATIONS_FILE, {})?.recommendations || [];
+  const handled = buildHandledList({ experiments, openApprovalPrs, commits, recommendations: lastRecs });
+  const changes = recentChanges(posts);
+  console.log(`[improvement-cycle] memory: ${handled.filter(h => h.inFlight).length} handled-not-measured (${openApprovalPrs.length} open approval PRs, ${commits.length} ARLO commits), ${changes.changedSlugs.length} posts changed in ${RECENT_CHANGE_DAYS}d, homepage title ${changes.homepageSeoChangedOn ? `changed ${changes.homepageSeoChangedOn}` : 'unchanged'}`);
+  return { handled, recentChanges: changes };
+}
+
 // ─── RECOMMEND ────────────────────────────────────────────────────────────────
 
 const RECOMMENDATION_SCHEMA_HINT = `Reply with ONLY a JSON array (no prose, no code fence) of 3 to 5 objects:
@@ -1477,7 +1623,7 @@ const RECOMMENDATION_SCHEMA_HINT = `Reply with ONLY a JSON array (no prose, no c
   "legal_review_required": true | false
 }]`;
 
-async function draftRecommendations({ opportunities, scout, gsc, ga4, clarity, posts, experiments, todayISO }) {
+async function draftRecommendations({ opportunities, scout, gsc, ga4, clarity, posts, experiments, todayISO, history = null }) {
   const measured = experiments.filter(e => e.result?.verdict);
   const pending = experiments.filter(e => e.status === 'queued' || e.status === 'implemented');
 
@@ -1506,6 +1652,7 @@ ${clarity ? `- Clarity: ${clarity.sessions} sessions per 3 days, ${clarity.avgSc
 
 ${historyBlock}
 ${pending.length ? `\nStill awaiting results (do not recommend these again yet): ${pending.map(e => e.id).join(', ')}.` : ''}
+${history ? describeHandledForPrompt(history.handled, history.recentChanges) : ''}
 
 RULES:
 - Prefer "improve-existing" over "new-content" whenever a published post already covers the subject. A slightly different wording is NOT a new topic.
@@ -1542,7 +1689,7 @@ ${RECOMMENDATION_SCHEMA_HINT}`;
 // something already published, so their target has to be real.
 const needsExistingTarget = (action) => action === 'improve-existing' || action === 'site-change';
 
-function finaliseRecommendations(raw, { posts, experiments, todayISO, opportunities }) {
+function finaliseRecommendations(raw, { posts, experiments, todayISO, opportunities, history = null, screenedOut = [] }) {
   const out = [];
   let n = 0;
 
@@ -1608,6 +1755,20 @@ function finaliseRecommendations(raw, { posts, experiments, todayISO, opportunit
     // on a question already asked.
     if (prior.some(e => (e.status === 'queued' || e.status === 'implemented') && e.action === finalAction)) {
       continue;
+    }
+
+    // Already approved, shipped, or changed too recently to judge? The prompt
+    // says so too, but told is not checked — same principle as the duplicate
+    // and legal gates above and below.
+    if (history) {
+      const reason = screenRecommendation(
+        { title, what, action: finalAction, targetSlug },
+        { handled: history.handled, recentChanges: history.recentChanges }
+      );
+      if (reason) {
+        screenedOut.push({ title, action: finalAction, targetSlug, reason });
+        continue;
+      }
     }
 
     const legalByRule = requiresLegalReview(title, what, why);
@@ -1682,6 +1843,9 @@ async function runImprovementCycle({ posts, gsc, ga4, clarity, todayISO }) {
   // CHECK — how did the last approved changes do?
   const { experiments, gscCalls } = await reviewExperiments(posts, todayISO);
 
+  // MEMORY — what is already handled, and what changed too recently to judge.
+  const history = await gatherHistory(posts, experiments);
+
   // PLAN, part 1 — what does our own data say?
   const opportunities = findOpportunities({ gsc, posts });
   console.log(`[improvement-cycle] ${opportunities.length} opportunities from Search Console data`);
@@ -1691,11 +1855,13 @@ async function runImprovementCycle({ posts, gsc, ga4, clarity, todayISO }) {
 
   // PLAN, part 3 — rank and write them up
   let recommendations = [];
+  const screenedOut = [];
   let error = null;
   try {
-    const raw = await draftRecommendations({ opportunities, scout, gsc, ga4, clarity, posts, experiments, todayISO });
-    recommendations = finaliseRecommendations(raw, { posts, experiments, todayISO, opportunities });
+    const raw = await draftRecommendations({ opportunities, scout, gsc, ga4, clarity, posts, experiments, todayISO, history });
+    recommendations = finaliseRecommendations(raw, { posts, experiments, todayISO, opportunities, history, screenedOut });
     console.log(`[improvement-cycle] ${recommendations.length} recommendations: ${recommendations.map(r => r.id).join(', ')}`);
+    for (const x of screenedOut) console.log(`[improvement-cycle] dropped "${x.title}" — ${x.reason}`);
   } catch (e) {
     error = e.message;
     console.log(`::warning title=${AGENT_NAME}::Recommendation drafting failed (${e.message}) — the measurement and experiment sections still ran.`);
@@ -1711,6 +1877,7 @@ async function runImprovementCycle({ posts, gsc, ga4, clarity, todayISO }) {
     scoutSearchesUsed: scout.used,
     scoutSearchBudget: SCOUT_SEARCH_BUDGET,
     recommendations,
+    screenedOut,
   });
 
   // Only stamp the cadence once the cycle has actually done its work. A run that
@@ -1722,6 +1889,7 @@ async function runImprovementCycle({ posts, gsc, ga4, clarity, todayISO }) {
     reportDate: todayISO,
     previousCycle: state.lastCycleDate ?? null,
     recommendations,
+    screenedOut,
     experiments,
     opportunities,
     scout,
@@ -1952,9 +2120,12 @@ Return ONLY JSON: {"duplicate": true|false, "of": "<exact existing title, or emp
 // boundary this whole system exists to hold.
 function renderImprovementSections(improvement) {
   if (!improvement?.ran) {
+    const changes = improvement?.dailyReview?.changes || [];
+    const escD = s => String(s ?? '').replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
     return `
     <div style="background:#F8FAFB;border:1px solid #E2E8F0;border-radius:8px;padding:10px 14px;margin:0 0 24px;">
       <p style="margin:0;color:#8B9BAE;font-size:12px;">🔄 14-day improvement cycle — not due today${improvement?.reason ? ` (${improvement.reason})` : ''}. It runs every ${CYCLE_DAYS} days; the daily audit above runs every morning.</p>
+      ${changes.length ? `<p style="margin:6px 0 0;color:#556070;font-size:12px;">🧪 Approved changes checked today: ${changes.map(c => `${escD(c.id)} → ${escD(c.status)}${c.verdict ? ` (${escD(c.verdict)})` : ''}`).join(' · ')}</p>` : ''}
     </div>`;
   }
 
@@ -2025,6 +2196,7 @@ function renderImprovementSections(improvement) {
           : '✓ No legal review flagged'}
       </p>
     </div>`).join('') : '<p style="font-size:12px;color:#8B9BAE;margin:0 0 12px;">No recommendations this cycle.</p>'}
+    ${(improvement.screenedOut || []).length ? `<p style="font-size:11px;color:#8B9BAE;margin:0 0 12px;">Dropped as already handled or too recent to judge: ${improvement.screenedOut.map(x => `${esc(x.title)} (${esc(x.reason)})`).join(' · ')}</p>` : ''}
 
     <div style="background:#EBF3FD;border:1px solid #8FBCEB;border-radius:8px;padding:12px 14px;margin:4px 0 20px;">
       <p style="margin:0 0 6px;color:#1B4F8A;font-size:12px;font-weight:700;">These are recommendations, not changes. Nothing has been queued.</p>
@@ -2725,6 +2897,32 @@ async function main() {
     console.log(`::warning title=${AGENT_NAME}::Improvement cycle failed (${err.message}) — the daily audit continues.`);
     improvement = { ran: false, reason: `failed: ${err.message}`, error: err.message };
   }
+  // ── Daily experiment check ──────────────────────────────────────────────────
+  //
+  // Noticing that an approved change shipped, and judging it once its window
+  // has passed, used to happen only inside the 14-day cycle — so a change that
+  // shipped the day after a cycle stayed "queued" for two weeks (ARLO-2026-11-08-03
+  // and -04, shipped 2026-11-09). It costs nothing unless an experiment is
+  // actually due, so it runs every day the cycle does not.
+  if (!improvement.ran) {
+    try {
+      const before = new Map(readExperiments().map(e => [e.id, e.status]));
+      const review = await withBlogIndexFrozen(
+        'the daily experiment check',
+        () => reviewExperiments(JSON.parse(readFileSync(POSTS_INDEX_FILE, 'utf8')), today()),
+        (msg) => console.log(`::error title=${AGENT_NAME}::${msg}`)
+      );
+      const changes = review.experiments
+        .filter(e => before.get(e.id) !== e.status)
+        .map(e => ({ id: e.id, status: e.status, verdict: e.result?.verdict || null }));
+      improvement.dailyReview = { changes, gscCalls: review.gscCalls };
+      console.log(`Experiments: ${changes.length ? changes.map(c => `${c.id} → ${c.status}`).join(', ') : 'no status change today'}`);
+    } catch (err) {
+      if (/GOVERNANCE VIOLATION/.test(err.message)) throw err;
+      console.log(`::warning title=${AGENT_NAME}::Daily experiment check failed (${err.message}).`);
+    }
+  }
+
   console.log(improvement.ran
     ? `Improvement cycle: RAN — ${improvement.recommendations?.length ?? 0} recommendations, ${improvement.scout?.used ?? 0}/${SCOUT_SEARCH_BUDGET} external searches`
     : `Improvement cycle: skipped (${improvement.reason})`);
@@ -2813,4 +3011,5 @@ if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) 
 export {
   runImprovementCycle, findOpportunities, finaliseRecommendations,
   classifyExperiment, renderImprovementSections, readCycleState, detectImplementation,
+  gatherHistory, recentChanges,
 };
