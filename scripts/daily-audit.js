@@ -25,6 +25,7 @@ import {
   parseArloIds, QUEUE_COMMIT, extractHeadSeo,
 } from './lib/arlo-memory.js';
 import { KIND, KIND_LABEL, tallySheet, errorEntries, summariseByKind } from './lib/lead-counts.js';
+import { summariseBronxRank, positionMove } from './lib/bronx-rank.js';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 3 });
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -620,6 +621,25 @@ async function fetchHostQueries(token, window) {
   return { split: shaped, pairs: rows.length };
 }
 
+// ─── Bronx basket ────────────────────────────────────────────────────────────
+//
+// Position for the Bronx property-management searches only, split into the
+// Google profile listing and the website. See scripts/lib/bronx-rank.js for why
+// the site-wide average was dropped. ONE request, with a SINGLE `contains`
+// filter: the API only accepts groupType 'and', so this is the safe shape (see
+// the warning in fetchWatchSeries). The narrower Bronx test runs in code.
+async function fetchBronxRank(token, window, windows) {
+  const rows = await querySearchConsole(token, {
+    ...window, dataState: 'final', type: 'web', rowLimit: 25000,
+    dimensions: ['date', 'page', 'query'],
+    dimensionFilterGroups: [{
+      groupType: 'and',
+      filters: [{ dimension: 'query', operator: 'contains', expression: 'bronx' }],
+    }],
+  });
+  return { windows, ...summariseBronxRank(rows, windows) };
+}
+
 // Sums a slice of the daily series. Used for 7-day vs previous-7-day, which is
 // the smallest comparison that is genuinely non-overlapping — unlike the 28-day
 // snapshot deltas, a move here happened in the week it is reported in.
@@ -813,6 +833,19 @@ async function getSearchConsoleStats() {
       annotations: annotations.filter(a => a.date >= pStart && a.date <= wEnd),
     };
 
+    // The Bronx basket rides on the same windows: the full 28 days plus the two
+    // non-overlapping weeks. Fails soft: without it the email falls back to the
+    // single "bronx property management" term, as before.
+    try {
+      snapshot.bronx = await fetchBronxRank(token, window, {
+        month: { from: window.startDate, to: wEnd },
+        week: { from: wStart, to: wEnd },
+        prevWeek: { from: pStart, to: pEnd },
+      });
+    } catch (e) {
+      console.log(`::warning title=${AGENT_NAME}::Bronx basket unavailable: ${e.message}`);
+    }
+
     const history = readRankHistory();
     const previous = history.length ? history[history.length - 1] : null;
     // One snapshot per day — a re-run replaces rather than duplicating.
@@ -822,6 +855,11 @@ async function getSearchConsoleStats() {
 
     const money = watch.find(w => w.query === 'bronx property management');
     console.log(`GSC: ${totals.clicks} clicks / ${totals.impressions} impressions, "bronx property management" position ${money?.position?.toFixed(1) ?? 'not in top 500'}`);
+    if (snapshot.bronx) {
+      const b = snapshot.bronx;
+      const f = p => p?.position?.toFixed(1) ?? '—';
+      console.log(`GSC Bronx basket (${b.queries.length} queries): profile 7d ${f(b.week.profile)} (prev ${f(b.prevWeek.profile)}) · site 7d ${f(b.week.site)} (prev ${f(b.prevWeek.site)})`);
+    }
     console.log(`GSC hosts: ${hosts.map(h => `${h.key} ${h.impressions} impr @ ${h.position?.toFixed(1) ?? '—'}`).join(' · ')}`);
     console.log(`GSC series: ${trend.days} days on file${backfilled ? ' (backfilled this run)' : ''}, ${Object.keys(watchSeries).length} watch terms, ${annotations.length} change-log entries`);
     console.log(`GSC query mix (${queryRows.length} rows): ${queryMix.map(b => `${b.key} ${b.impressions} impr / ${b.clicks} clk`).join(' · ')}`);
@@ -2409,12 +2447,6 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
         if (Math.abs(d) < 1) return '<span style="color:#8B9BAE;">flat</span>';
         return `<span style="color:${d > 0 ? '#1E9E6A' : '#B91C1C'};font-weight:700;">${d > 0 ? '▲' : '▼'} ${Math.abs(d).toFixed(0)}%</span>`;
       };
-      const posMove = (now, before) => {
-        if (now == null || before == null) return '<span style="color:#8B9BAE;">—</span>';
-        const d = before - now;
-        if (Math.abs(d) < 0.1) return '<span style="color:#8B9BAE;">flat</span>';
-        return `<span style="color:${d > 0 ? '#1E9E6A' : '#B91C1C'};font-weight:700;">${d > 0 ? '▲' : '▼'} ${Math.abs(d).toFixed(1)}</span>`;
-      };
       const changed = (trend.annotations || []).slice(-6).map(a =>
         `<li style="margin:0 0 2px;">${a.date} · <span style="color:#8B9BAE;">${a.kind}</span> — ${a.subject.replace(/[<>&]/g, '')}</li>`
       ).join('');
@@ -2435,11 +2467,8 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
           <td style="padding:6px 12px;text-align:right;font-size:12px;color:#556070;">${trend.previous.clicks}</td>
           <td style="padding:6px 12px;text-align:right;font-size:12px;font-weight:700;color:#0F2847;">${trend.current.clicks}</td>
           <td style="padding:6px 12px;text-align:right;font-size:12px;">${pct(trend.current.clicks, trend.previous.clicks)}</td></tr>
-        <tr><td style="padding:6px 12px;font-size:12px;color:#556070;">Avg position</td>
-          <td style="padding:6px 12px;text-align:right;font-size:12px;color:#556070;">${fmtPos(trend.previous.position)}</td>
-          <td style="padding:6px 12px;text-align:right;font-size:12px;font-weight:700;color:#0F2847;">${fmtPos(trend.current.position)}</td>
-          <td style="padding:6px 12px;text-align:right;font-size:12px;">${posMove(trend.current.position, trend.previous.position)}</td></tr>
       </table>
+      <p style="font-size:11px;color:#8B9BAE;margin:0 0 12px;">Site-wide average position is not shown on purpose: it moves whenever Google tests the site on an unrelated search, even when the Bronx rankings do not change. The Bronx rankings are at the top of this section.</p>
       ${changed ? `<p style="font-size:12px;color:#8B9BAE;margin:0 0 4px;">What changed in that fortnight</p>
       <ul style="margin:0 0 20px;padding-left:18px;font-size:12px;color:#556070;">${changed}</ul>` : '<div style="margin-bottom:20px;"></div>'}`;
     }
@@ -2465,7 +2494,7 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
       );
       hostBlock = `<p style="font-size:12px;color:#8B9BAE;margin:0 0 8px;">Which host Google is showing (all 308-redirect to www)</p>
       <table style="border-collapse:collapse;width:100%;margin-bottom:6px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">${rows}</table>
-      <p style="font-size:11px;color:#8B9BAE;margin:0 0 20px;">${legacyShare}% of impressions still land on a pre-cutover URL. Until that reaches 0, the site-wide average position above is a blend of hosts and should not be read as one number.</p>`;
+      <p style="font-size:11px;color:#8B9BAE;margin:0 0 20px;">${legacyShare}% of impressions still land on a pre-cutover URL. Until that reaches 0, any site-wide average blends hosts that rank very differently, which is why the Bronx rankings above are split by host.</p>`;
     }
 
     // ── What the traffic is actually made of ────────────────────────────────
@@ -2511,14 +2540,47 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
       <p style="font-size:11px;color:#8B9BAE;margin:0 0 20px;">These queries are served under more than one host at once. Where a legacy host ranks better than www on the SAME query, the old URL is holding the position — that is a consolidation problem, not a content problem.</p>`;
     }
 
-    gscSection = `
-    <!-- Search Console rankings -->
-    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">🔍 Google rankings (last 28 days)</h3>
-    <div style="background:${onPage1 ? '#ECFDF5' : '#EBF3FD'};border:1px solid ${onPage1 ? '#6EE7B7' : '#BFDBFE'};border-radius:8px;padding:14px 16px;margin-bottom:12px;">
+    // ── Bronx searches: the headline ────────────────────────────────────────
+    // Position for the Bronx property-management searches, split into the
+    // Google profile listing and the website, last 7 days vs the 7 before.
+    // ⚠️ Keep the two halves apart; never put one blended number back here.
+    // See scripts/lib/bronx-rank.js for the 2026-11-10 misreading this fixes.
+    const bronx = snapshot.bronx;
+    const weekMove = (now, before) => {
+      const d = positionMove(now, before);
+      if (d == null) return '<span style="color:#8B9BAE;">—</span>';
+      if (Math.abs(d) < 0.1) return '<span style="color:#8B9BAE;">no change</span>';
+      return `<span style="color:${d > 0 ? '#1E9E6A' : '#B91C1C'};font-weight:700;">${d > 0 ? '▲' : '▼'} ${Math.abs(d).toFixed(1)}</span>`;
+    };
+    const bronxHalf = (label, note, key) => {
+      const w = bronx.week[key], p = bronx.prevWeek[key], m = bronx.month[key];
+      return `<td style="padding:10px 12px;vertical-align:top;width:50%;">
+        <p style="margin:0;font-size:12px;color:#556070;">${label}</p>
+        <p style="margin:2px 0 0;font-size:26px;font-weight:700;color:#0F2847;">${fmtPos(w.position)} <span style="font-size:13px;">${weekMove(w.position, p.position)}</span></p>
+        <p style="margin:2px 0 0;font-size:11px;color:#8B9BAE;">${w.impressions} impr · ${w.clicks} clicks this week · 28 days: pos ${fmtPos(m.position)}, ${m.impressions} impr</p>
+        <p style="margin:2px 0 0;font-size:11px;color:#8B9BAE;">${note}</p>
+      </td>`;
+    };
+    const headline = bronx
+      ? `<div style="background:#EBF3FD;border:1px solid #BFDBFE;border-radius:8px;padding:6px 4px;margin-bottom:12px;">
+      <p style="margin:6px 12px 0;font-size:12px;color:#0F2847;font-weight:700;">Bronx property-management searches: position, last 7 days (move vs the 7 before)</p>
+      <table style="border-collapse:collapse;width:100%;"><tr>
+        ${bronxHalf('Google profile listing', 'Links to doryangel.com; mostly the local map pack.', 'profile')}
+        ${bronxHalf('Website (www.doryangel.com)', 'The organic website result.', 'site')}
+      </tr></table>
+      <p style="margin:0 12px 8px;font-size:11px;color:#8B9BAE;">${bronx.queries.length} Bronx searches counted, position weighted by impressions. Lower is better; page 1 ends at 10.</p>
+    </div>`
+      : `<div style="background:${onPage1 ? '#ECFDF5' : '#EBF3FD'};border:1px solid ${onPage1 ? '#6EE7B7' : '#BFDBFE'};border-radius:8px;padding:14px 16px;margin-bottom:12px;">
       <p style="margin:0;font-size:12px;color:#556070;">"bronx property management"</p>
       <p style="margin:2px 0 0;font-size:28px;font-weight:700;color:#0F2847;">${fmtPos(moneyPos)} ${delta(moneyPos, prevPos('bronx property management'))}</p>
       <p style="margin:4px 0 0;font-size:12px;color:#556070;">${onPage1 ? 'On page 1.' : 'Page 1 starts at position 10.'} ${commercialLine}</p>
-    </div>
+    </div>`;
+
+    gscSection = `
+    <!-- Search Console rankings -->
+    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">🔍 Google rankings</h3>
+    ${headline}
+    <p style="font-size:12px;color:#8B9BAE;margin:0 0 8px;">Watch list, last 28 days</p>
     <table style="border-collapse:collapse;width:100%;margin-bottom:14px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
       <tr style="background:#F4F7FA;">
         <th style="padding:8px 12px;text-align:left;color:#8B9BAE;font-size:11px;text-transform:uppercase;">Query</th>
