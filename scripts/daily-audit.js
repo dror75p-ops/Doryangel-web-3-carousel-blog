@@ -26,6 +26,8 @@ import {
 } from './lib/arlo-memory.js';
 import { KIND, KIND_LABEL, tallySheet, errorEntries, summariseByKind } from './lib/lead-counts.js';
 import { summariseBronxRank, positionMove } from './lib/bronx-rank.js';
+import { labelOpportunityHosts, LEVERS, LEVER_LABEL } from './lib/opportunity-host.js';
+import { splitClarityPages, runScheduleLine } from './lib/report-hygiene.js';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 3 });
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -1024,9 +1026,11 @@ async function getClarityStats() {
       const info = first(byName[name]);
       return { count: +(info.subTotal || 0), pctSessions: info.sessionsWithMetricPercentage || 0 };
     };
-    const topPages = (byName.PopularPages || [])
-      .map(p => ({ url: p.url, visits: +(p.visitsCount || 0) }))
-      .sort((a, b) => b.visits - a.visits).slice(0, 5);
+    // Vercel preview addresses are test builds, not visitors (2026-11-09: 7 of
+    // 34 visits). They are dropped from the top pages and counted separately.
+    const { live: livePages, excludedVisits: previewVisits } = splitClarityPages(
+      (byName.PopularPages || []).map(p => ({ url: p.url, visits: +(p.visitsCount || 0) })));
+    const topPages = livePages.sort((a, b) => b.visits - a.visits).slice(0, 5);
     const devices = (byName.Device || [])
       .map(d => ({ name: d.name, sessions: +(d.sessionsCount || 0) }));
     const sources = (byName.ReferrerUrl || [])
@@ -1047,6 +1051,7 @@ async function getClarityStats() {
       quickbacks:      friction('QuickbackClick'),
       scriptErrors:    friction('ScriptErrorCount'),
       topPages,
+      previewVisits,
       devices,
       sources,
     };
@@ -1649,7 +1654,7 @@ ${experiments.slice(-12).map(e =>
 Your job is to pick the 3-5 highest-value improvements to recommend to the owner. You are NOT implementing anything — a human reads these and approves them one at a time.
 
 MEASURED OPPORTUNITIES (from our own Search Console data — this is the strongest evidence you have):
-${opportunities.slice(0, 12).map((o, i) => `${i + 1}. [${o.kind}] ${o.evidence}`).join('\n') || 'None surfaced this cycle.'}
+${opportunities.slice(0, 12).map((o, i) => `${i + 1}. [${o.kind}${o.lever ? ` · ${o.lever}` : ''}] ${o.evidence}`).join('\n') || 'None surfaced this cycle.'}
 
 ${scout.notes ? `EXTERNAL RESEARCH (${scout.used} searches):\n${scout.notes}` : 'EXTERNAL RESEARCH: none available this cycle.'}
 
@@ -1669,6 +1674,7 @@ RULES:
 - Only these categories may be proposed for new content: ${APPROVED_CATEGORIES.join(', ')}.
 - Every "why" must cite a number you were actually given above. Do not invent metrics.
 - Owner direction (2026-10-11): do NOT recommend anything on legal or regulatory topics (HPD, DOB, evictions, housing court, tenant rights, rent regulation, Local Laws, compliance deadlines, fines, taxes). Prefer practical building problems that need a response at any hour: no heat or hot water, leaks and floods, boiler or electrical failures, pests, locked-out or emergency repairs, vendor response. Still set legal_review_required=true if a recommendation touches those topics anyway.
+- An opportunity marked "google-profile" is about the Google Business Profile listing (the map), not the website. Do NOT answer it with a title, meta description or content change; if you recommend anything for it, say plainly that the lever is the Google profile (photos, posts, reviews, categories) and use action "site-change" only if a website change genuinely helps.
 - Never include any person's name, email address or phone number.
 - Bronx must be the primary geography of any new post title.
 
@@ -1857,7 +1863,9 @@ async function runImprovementCycle({ posts, gsc, ga4, clarity, todayISO }) {
   const history = await gatherHistory(posts, experiments);
 
   // PLAN, part 1 — what does our own data say?
-  const opportunities = findOpportunities({ gsc, posts });
+  // Each query opportunity is labelled with the listing it is really about
+  // (Google profile vs website) — see scripts/lib/opportunity-host.js.
+  const opportunities = labelOpportunityHosts(findOpportunities({ gsc, posts }), gsc?.snapshot?.hostQueries);
   console.log(`[improvement-cycle] ${opportunities.length} opportunities from Search Console data`);
 
   // PLAN, part 2 — the capped external look
@@ -2146,9 +2154,14 @@ function renderImprovementSections(improvement) {
   const measuredExp = experiments.filter(e => e.result?.verdict);
   const pendingExp  = experiments.filter(e => e.status === 'queued' || e.status === 'implemented');
 
+  const leverStyle = {
+    [LEVERS.PROFILE]: 'background:#FFF7ED;color:#9A3412;border:1px solid #FDBA74;',
+    [LEVERS.WEBSITE]: 'background:#EBF3FD;color:#1B4F8A;border:1px solid #8FBCEB;',
+    [LEVERS.UNKNOWN]: 'background:#F4F7FA;color:#8B9BAE;border:1px solid #E2E8F0;',
+  };
   const oppRows = opportunities.slice(0, 6).map(o => `
       <tr style="background:#ffffff;border-top:1px solid #E2E8F0;">
-        <td style="padding:8px 12px;color:#8B9BAE;font-size:11px;text-transform:uppercase;white-space:nowrap;vertical-align:top;">${esc(o.kind)}</td>
+        <td style="padding:8px 12px;color:#8B9BAE;font-size:11px;text-transform:uppercase;white-space:nowrap;vertical-align:top;">${esc(o.kind)}${o.lever ? `<br><span style="display:inline-block;margin-top:4px;padding:1px 6px;border-radius:4px;font-size:10px;text-transform:none;${leverStyle[o.lever] || leverStyle[LEVERS.UNKNOWN]}">${esc(LEVER_LABEL[o.lever] || o.lever)}</span>` : ''}</td>
         <td style="padding:8px 12px;color:#556070;font-size:12px;">${esc(o.evidence)}</td>
       </tr>`).join('');
 
@@ -2210,9 +2223,10 @@ function renderImprovementSections(improvement) {
 
     <div style="background:#EBF3FD;border:1px solid #8FBCEB;border-radius:8px;padding:12px 14px;margin:4px 0 20px;">
       <p style="margin:0 0 6px;color:#1B4F8A;font-size:12px;font-weight:700;">These are recommendations, not changes. Nothing has been queued.</p>
-      <p style="margin:0;color:#1B4F8A;font-size:12px;">To approve one, run it yourself (or ask Claude to):</p>
-      <p style="margin:6px 0 0;font-family:monospace;font-size:11px;color:#0F2847;background:#ffffff;padding:8px 10px;border-radius:4px;word-break:break-all;">node scripts/queue-approved-post.js --id ${esc(recommendations[0]?.id || 'ARLO-YYYY-MM-DD-NN')} --approved-by "Dori"${recommendations.some(r => r.legal_review_required) ? ' --legal-reviewed' : ''}</p>
-      <p style="margin:6px 0 0;color:#1B4F8A;font-size:11px;">It re-validates the recommendation, opens a pull request, and stops there. Nothing publishes until you merge it.</p>
+      <p style="margin:0;color:#1B4F8A;font-size:12px;"><strong>How to approve:</strong> use the separate "ACTION REQUIRED" email Arlo sends today. Its Review &amp; Approve button opens a filled-in GitHub form; the approval counts only after you press the green <strong>Create</strong> button there. A few minutes later you get a short "approval received" email. No email means nothing was approved.</p>
+      <p style="margin:8px 0 0;color:#556070;font-size:11px;">Backup for a legal-review item or if the button fails, from a computer (or ask Claude):</p>
+      <p style="margin:4px 0 0;font-family:monospace;font-size:11px;color:#0F2847;background:#ffffff;padding:8px 10px;border-radius:4px;word-break:break-all;">node scripts/queue-approved-post.js --id ${esc(recommendations[0]?.id || 'ARLO-YYYY-MM-DD-NN')} --approved-by "Dori"${recommendations.some(r => r.legal_review_required) ? ' --legal-reviewed' : ''}</p>
+      <p style="margin:6px 0 0;color:#1B4F8A;font-size:11px;">Either way, the checks run again and a pull request opens and stops there. Nothing publishes until you merge it.</p>
     </div>`;
 
   // ── Cost / activity ──
@@ -2675,7 +2689,7 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
     <table style="border-collapse:collapse;width:100%;margin-bottom:20px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
       ${pageRows}
     </table>
-    <p style="font-size:11px;color:#8B9BAE;margin:-12px 0 24px;font-style:italic;">Consent-gated — captures only cookie-accepters, so it undercounts. Directional behavior, not volume.</p>`;
+    <p style="font-size:11px;color:#8B9BAE;margin:-12px 0 24px;font-style:italic;">Consent-gated — captures only cookie-accepters, so it undercounts. Directional behavior, not volume.${clarity.previewVisits ? ` Top pages leave out ${clarity.previewVisits} visit${clarity.previewVisits === 1 ? '' : 's'} to Vercel test (preview) addresses; the session total above still includes them.` : ''}</p>`;
   } else {
     claritySection = `
     <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:12px 16px;margin-bottom:24px;">
@@ -2796,7 +2810,7 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
   const { data, error } = await resend.emails.send({
     from: `${AGENT_NAME} by DoryAngel <onboarding@resend.dev>`,
     to: NOTIFY_EMAIL,
-    subject: `🔧 ${AGENT_NAME} — ${taskLabel}`,
+    subject: resultType === 'deduped' ? `🔧 ${AGENT_NAME} — daily report` : `🔧 ${AGENT_NAME} — ${taskLabel}`,
     html: `
 <div style="font-family:Arial,sans-serif;max-width:620px;margin:0 auto;color:#1A2740;">
 
@@ -2816,12 +2830,14 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
     <h2 style="font-size:15px;color:#0F2847;margin:0 0 12px;border-bottom:2px solid #0F2847;padding-bottom:8px;">🩺 Website health</h2>
 
     <!-- Today's task -->
+    ${resultType === 'deduped' ? `
+    <p style="color:#8B9BAE;font-size:12px;margin:0 0 24px;">No new task today. ${taskWhy}</p>` : `
     <h2 style="font-size:15px;color:#0F2847;margin:0 0 5px;">Today: ${taskLabel}</h2>
     <p style="color:#556070;font-size:13px;margin:0 0 14px;">${taskWhy}</p>
     <div style="background:${resultColor};border:1px solid ${resultBorder};border-radius:8px;padding:12px 16px;margin-bottom:28px;">
       <p style="margin:0 0 4px;color:${resultTextColor};font-weight:700;font-size:13px;">${resultIcon}</p>
       <a href="${resultLink}" style="color:#1E5AA8;font-size:12px;word-break:break-all;">${resultLink}</a>
-    </div>
+    </div>`}
 
     <!-- Activity stats: Day / Week / Month -->
     <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">📊 Activity</h3>
@@ -2870,7 +2886,7 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
 
     <!-- Footer -->
     <p style="margin:28px 0 0;font-size:11px;color:#8B9BAE;text-align:center;">
-      ${AGENT_NAME} runs every day at 9 AM EST<br>
+      ${AGENT_NAME}: ${runScheduleLine()}<br>
       <a href="https://github.com/${REPO}/pulls" style="color:#8B9BAE;">Open PRs</a> ·
       <a href="https://github.com/${REPO}/issues" style="color:#8B9BAE;">Open issues</a>
     </p>
@@ -3035,7 +3051,10 @@ async function main() {
       console.log(`Dedupe gate: idea duplicates existing issue "${dupOf}" — not filing a new one.`);
       resultLink = `https://github.com/${REPO}/issues`;
       taskLabel = idea.title;
-      taskWhy = `Deduped — overlaps the existing open issue "${dupOf}", so Arlo did not file a duplicate.`;
+      // ⚠️ Not a headline. Most days the idea is a re-worded open issue, and the
+      // old email led with it, so the owner's first line was a non-event. A
+      // deduped day gets one grey line and a neutral subject (resultType below).
+      taskWhy = `Today's idea overlapped the open issue "${dupOf}", so nothing was filed.`;
     } else {
       // Issue creation is best-effort — a failure here (e.g. bad token) must not
       // crash the run and block the daily digest email below.
@@ -3052,7 +3071,7 @@ async function main() {
 
     writeFileSync('/tmp/audit-changed.txt', 'false');
     writeFileSync('/tmp/audit-task.txt', idea.title);
-    resultType = 'issue';
+    resultType = dupOf ? 'deduped' : 'issue';
   }
 
   // Report what actually happened. This line used to print unconditionally,
@@ -3079,5 +3098,5 @@ if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) 
 export {
   runImprovementCycle, findOpportunities, finaliseRecommendations,
   classifyExperiment, renderImprovementSections, readCycleState, detectImplementation,
-  gatherHistory, recentChanges, getMakeStats, sendDigest,
+  gatherHistory, recentChanges, getMakeStats, getClarityStats, sendDigest,
 };
