@@ -24,6 +24,8 @@ import {
   RECENT_CHANGE_DAYS, buildHandledList, screenRecommendation, describeHandledForPrompt,
   parseArloIds, QUEUE_COMMIT, extractHeadSeo,
 } from './lib/arlo-memory.js';
+import { KIND, KIND_LABEL, tallySheet, errorEntries, summariseByKind } from './lib/lead-counts.js';
+import { summariseBronxRank, positionMove } from './lib/bronx-rank.js';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 3 });
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -619,6 +621,25 @@ async function fetchHostQueries(token, window) {
   return { split: shaped, pairs: rows.length };
 }
 
+// ─── Bronx basket ────────────────────────────────────────────────────────────
+//
+// Position for the Bronx property-management searches only, split into the
+// Google profile listing and the website. See scripts/lib/bronx-rank.js for why
+// the site-wide average was dropped. ONE request, with a SINGLE `contains`
+// filter: the API only accepts groupType 'and', so this is the safe shape (see
+// the warning in fetchWatchSeries). The narrower Bronx test runs in code.
+async function fetchBronxRank(token, window, windows) {
+  const rows = await querySearchConsole(token, {
+    ...window, dataState: 'final', type: 'web', rowLimit: 25000,
+    dimensions: ['date', 'page', 'query'],
+    dimensionFilterGroups: [{
+      groupType: 'and',
+      filters: [{ dimension: 'query', operator: 'contains', expression: 'bronx' }],
+    }],
+  });
+  return { windows, ...summariseBronxRank(rows, windows) };
+}
+
 // Sums a slice of the daily series. Used for 7-day vs previous-7-day, which is
 // the smallest comparison that is genuinely non-overlapping — unlike the 28-day
 // snapshot deltas, a move here happened in the week it is reported in.
@@ -812,6 +833,19 @@ async function getSearchConsoleStats() {
       annotations: annotations.filter(a => a.date >= pStart && a.date <= wEnd),
     };
 
+    // The Bronx basket rides on the same windows: the full 28 days plus the two
+    // non-overlapping weeks. Fails soft: without it the email falls back to the
+    // single "bronx property management" term, as before.
+    try {
+      snapshot.bronx = await fetchBronxRank(token, window, {
+        month: { from: window.startDate, to: wEnd },
+        week: { from: wStart, to: wEnd },
+        prevWeek: { from: pStart, to: pEnd },
+      });
+    } catch (e) {
+      console.log(`::warning title=${AGENT_NAME}::Bronx basket unavailable: ${e.message}`);
+    }
+
     const history = readRankHistory();
     const previous = history.length ? history[history.length - 1] : null;
     // One snapshot per day — a re-run replaces rather than duplicating.
@@ -821,6 +855,11 @@ async function getSearchConsoleStats() {
 
     const money = watch.find(w => w.query === 'bronx property management');
     console.log(`GSC: ${totals.clicks} clicks / ${totals.impressions} impressions, "bronx property management" position ${money?.position?.toFixed(1) ?? 'not in top 500'}`);
+    if (snapshot.bronx) {
+      const b = snapshot.bronx;
+      const f = p => p?.position?.toFixed(1) ?? '—';
+      console.log(`GSC Bronx basket (${b.queries.length} queries): profile 7d ${f(b.week.profile)} (prev ${f(b.prevWeek.profile)}) · site 7d ${f(b.week.site)} (prev ${f(b.prevWeek.site)})`);
+    }
     console.log(`GSC hosts: ${hosts.map(h => `${h.key} ${h.impressions} impr @ ${h.position?.toFixed(1) ?? '—'}`).join(' · ')}`);
     console.log(`GSC series: ${trend.days} days on file${backfilled ? ' (backfilled this run)' : ''}, ${Object.keys(watchSeries).length} watch terms, ${annotations.length} change-log entries`);
     console.log(`GSC query mix (${queryRows.length} rows): ${queryMix.map(b => `${b.key} ${b.impressions} impr / ${b.clicks} clk`).join(' · ')}`);
@@ -849,27 +888,40 @@ async function getSearchConsoleStats() {
   }
 }
 
-// ─── Lead stats from all 3 Google Sheets ─────────────────────────────────────
+// ─── Lead stats from the Google Sheets ───────────────────────────────────────
+//
+// ⚠️ OWNER LEADS ARE COUNTED APART FROM EVERYTHING ELSE (stage B, 2026-11-10).
+// The phone sheet has five tabs; only "new owners" is an owner lead. Web chats
+// count as owner leads only when caller_role says owner. Apartment inquiries,
+// vendors, brokers and newsletter sign-ups are reported, but never added to the
+// owner number. The rules live in scripts/lib/lead-counts.js (tested offline).
 
 const LEAD_SHEETS = [
   {
     id:    '18El2tatb8w8gxbaEhEsu2-562waRDwZMow7jHGcMaxs',
-    label: 'Owner leads (voice)',
+    label: 'Phone calls (Retell voice)',
+    ownerLabel: 'Owners — phone ("new owners" tab)',
+    otherLabel: 'Phone — vendors, brokers, renters, other',
     tsCol: 16,   // "Date and time" column
     nameCol: 4,  // full_name
     tabs: ['new owners', 'vendors', 'brokers', 'looking for rent', 'anything else'],
+    ownerTabs: ['new owners'],
   },
   {
     id:    '1YEFPfjyifDXsiujQHFpf871-xDdXJ93Fb6hNGXlbF60',
     label: 'Apartment inquiries (voice)',
+    kind:  KIND.OTHER,
     tsCol: 11,   // "date and time" column
     nameCol: 0,  // full_name
   },
   {
     id:    '1druOTrJhRVhrbAPrGBWD8HtMNkxy-h-PiJcYEhGsuHk',
-    label: 'Hailey chat leads',
+    label: 'Hailey web chat',
+    ownerLabel: 'Owners — web chat (Hailey)',
+    otherLabel: 'Web chat — everyone else',
     tsCol: 0,     // "Timestamp" column
     nameCol: 2,   // full_name (col C)
+    roleCol: 1,   // caller_role (col B): "new owner" / "broker" / "vendor" / "other"
     chat: true,   // Hailey web-chat agent — track success rate
     phoneCol: 3,  // callback_phone (col D)
     emailCol: 4,  // email_address (col E)
@@ -877,12 +929,14 @@ const LEAD_SHEETS = [
   {
     id:    '1-9IDAD1VmlnCvTdU3JqDWahjEFQaUFtRG-WayHZ9N8o',
     label: 'Newsletter subscribers',
+    kind:  KIND.SUBSCRIBER,
     tsCol: 3,    // "date subscribed" column
     nameCol: 0,  // name
   },
   {
     id:    '1KbVggQNhKbX9370zq-thBzHmN1j1R4g9YI8gKm8_R-o',
     label: 'PM tool subscribers',
+    kind:  KIND.SUBSCRIBER,
     tsCol: 3,    // "signup_date" column
     nameCol: 0,  // email (most reliable identifier)
   },
@@ -900,84 +954,40 @@ async function getMakeStats() {
     );
 
     const now = Date.now();
-    const msDay  = 86400000;
-    const cutDay   = now - msDay;
-    const cutWeek  = now - 7 * msDay;
-    const cutMonth = now - 30 * msDay;
 
-    const results = await Promise.all(LEAD_SHEETS.map(async (sheet) => {
+    const perSheet = await Promise.all(LEAD_SHEETS.map(async (sheet) => {
       try {
         const tabNames = sheet.tabs || ['Sheet1'];
-        const tabResults = await Promise.all(tabNames.map(async (tab) => {
+        const tabRows = {};
+        await Promise.all(tabNames.map(async (tab) => {
           const res = await fetch(
             `https://sheets.googleapis.com/v4/spreadsheets/${sheet.id}/values/${encodeURIComponent(tab)}`,
             { headers: { 'Authorization': `Bearer ${token}` } }
           );
           if (!res.ok) throw new Error(`${res.status} on tab "${tab}"`);
           const data = await res.json();
-          return (data.values || []).slice(1); // skip header row per tab
+          tabRows[tab] = (data.values || []).slice(1); // skip header row per tab
         }));
-        const rows = tabResults.flat();
-
-        const valid = rows.filter(r => {
-          const ts = r[sheet.tsCol] && new Date(r[sheet.tsCol]).getTime();
-          return ts && !isNaN(ts);
-        });
-
-        const inPeriod = (r, cut) => new Date(r[sheet.tsCol]).getTime() >= cut;
-        const isLead   = r => !!(r[sheet.nameCol]);
-
-        const out = {
-          label: sheet.label,
-          day:   valid.filter(r => inPeriod(r, cutDay)   && isLead(r)).length,
-          week:  valid.filter(r => inPeriod(r, cutWeek)  && isLead(r)).length,
-          month: valid.filter(r => inPeriod(r, cutMonth) && isLead(r)).length,
-          total: valid.filter(r => isLead(r)).length,
-        };
-
-        // Hailey chat agent: success rate = qualified leads / total chat sessions.
-        // `chat_successful` is unreliable (Make.com leaves it blank), so we treat a
-        // session as "successful" when it captured a name AND a phone or email.
-        if (sheet.chat) {
-          const qualified = r =>
-            !!r[sheet.nameCol] && !!(r[sheet.phoneCol] || r[sheet.emailCol]);
-          const sessions = valid.length;              // every logged chat = one session
-          const wins     = valid.filter(qualified).length;
-          out.chat = {
-            sessions,
-            qualified: wins,
-            successRate: sessions ? Math.round((wins / sessions) * 100) : 0,
-          };
-        }
-
-        return out;
+        return tallySheet(sheet, tabRows, now);
       } catch (e) {
-        return { label: sheet.label, day: 0, week: 0, month: 0, total: 0, error: e.message };
+        return errorEntries(sheet, e.message);
       }
     }));
+    const results = perSheet.flat();
 
-    // Aggregate totals
-    const totals = results.reduce(
-      (acc, s) => ({
-        day:   acc.day   + s.day,
-        week:  acc.week  + s.week,
-        month: acc.month + s.month,
-        total: acc.total + s.total,
-      }),
-      { day: 0, week: 0, month: 0, total: 0 }
-    );
+    // One total PER KIND. There is deliberately no grand total.
+    const byKind = summariseByKind(results);
 
-    // ⚠️ A failed sheet read contributes 0, so when EVERY sheet fails the totals
-    // row still renders a tidy "0 leads, 0 all time" table — which reads as a
-    // collapsed business rather than a broken credential. Say so instead.
+    // ⚠️ A failed sheet read contributes 0, so when EVERY sheet fails the table
+    // would read as a collapsed business rather than a broken credential.
     const failed = results.filter(s => s.error);
     if (failed.length === results.length) {
       const failure = googleFailure(failed[0].error);
-      console.log(`::${FATAL_CREDENTIAL_KINDS.has(failure.kind) ? 'error' : 'warning'} title=${AGENT_NAME}::All ${results.length} lead sheets failed to read (${failure.message}) — today's lead counts are UNKNOWN, not zero.`);
-      return { totals, sources: results, error: failure };
+      console.log(`::${FATAL_CREDENTIAL_KINDS.has(failure.kind) ? 'error' : 'warning'} title=${AGENT_NAME}::All ${LEAD_SHEETS.length} lead sheets failed to read (${failure.message}) — today's lead counts are UNKNOWN, not zero.`);
+      return { byKind, sources: results, error: failure };
     }
 
-    return { totals, sources: results };
+    return { byKind, sources: results };
   } catch (err) {
     console.log(`::warning title=${AGENT_NAME}::Lead stats failed: ${err.message}`);
     return { error: googleFailure(err.message) };
@@ -2235,7 +2245,7 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
     const down = [
       ga4?.error && 'Website traffic (GA4)',
       gsc?.error && 'Google rankings (Search Console)',
-      make?.error && 'Lead counts (all 5 Google Sheets)',
+      make?.error && 'Lead counts (all 5 lead sheets)',
     ].filter(Boolean);
     // Partial outages are real and common: after a project is restored, Google's
     // services drop the stale "deleted" state at different rates, so GA4 and
@@ -2463,11 +2473,12 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
           <td style="padding:6px 12px;text-align:right;font-size:12px;color:#556070;">${trend.previous.clicks}</td>
           <td style="padding:6px 12px;text-align:right;font-size:12px;font-weight:700;color:#0F2847;">${trend.current.clicks}</td>
           <td style="padding:6px 12px;text-align:right;font-size:12px;">${pct(trend.current.clicks, trend.previous.clicks)}</td></tr>
-        <tr><td style="padding:6px 12px;font-size:12px;color:#556070;">Avg position</td>
+        <tr><td style="padding:6px 12px;font-size:12px;color:#556070;">Avg position, ALL searches (site-wide)</td>
           <td style="padding:6px 12px;text-align:right;font-size:12px;color:#556070;">${fmtPos(trend.previous.position)}</td>
           <td style="padding:6px 12px;text-align:right;font-size:12px;font-weight:700;color:#0F2847;">${fmtPos(trend.current.position)}</td>
           <td style="padding:6px 12px;text-align:right;font-size:12px;">${posMove(trend.current.position, trend.previous.position)}</td></tr>
       </table>
+      <p style="font-size:11px;color:#8B9BAE;margin:0 0 12px;">The site-wide average covers every search the site appeared for, including unrelated ones, so it can move while the Bronx rankings at the top of this section stay put. Read the two side by side.</p>
       ${changed ? `<p style="font-size:12px;color:#8B9BAE;margin:0 0 4px;">What changed in that fortnight</p>
       <ul style="margin:0 0 20px;padding-left:18px;font-size:12px;color:#556070;">${changed}</ul>` : '<div style="margin-bottom:20px;"></div>'}`;
     }
@@ -2493,7 +2504,7 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
       );
       hostBlock = `<p style="font-size:12px;color:#8B9BAE;margin:0 0 8px;">Which host Google is showing (all 308-redirect to www)</p>
       <table style="border-collapse:collapse;width:100%;margin-bottom:6px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">${rows}</table>
-      <p style="font-size:11px;color:#8B9BAE;margin:0 0 20px;">${legacyShare}% of impressions still land on a pre-cutover URL. Until that reaches 0, the site-wide average position above is a blend of hosts and should not be read as one number.</p>`;
+      <p style="font-size:11px;color:#8B9BAE;margin:0 0 20px;">${legacyShare}% of impressions still land on a pre-cutover URL. Until that reaches 0, the site-wide average blends hosts that rank very differently, which is why the Bronx rankings above are split by host.</p>`;
     }
 
     // ── What the traffic is actually made of ────────────────────────────────
@@ -2539,14 +2550,47 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
       <p style="font-size:11px;color:#8B9BAE;margin:0 0 20px;">These queries are served under more than one host at once. Where a legacy host ranks better than www on the SAME query, the old URL is holding the position — that is a consolidation problem, not a content problem.</p>`;
     }
 
-    gscSection = `
-    <!-- Search Console rankings -->
-    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">🔍 Google rankings (last 28 days)</h3>
-    <div style="background:${onPage1 ? '#ECFDF5' : '#EBF3FD'};border:1px solid ${onPage1 ? '#6EE7B7' : '#BFDBFE'};border-radius:8px;padding:14px 16px;margin-bottom:12px;">
+    // ── Bronx searches: the headline ────────────────────────────────────────
+    // Position for the Bronx property-management searches, split into the
+    // Google profile listing and the website, last 7 days vs the 7 before.
+    // ⚠️ Keep the two halves apart; never put one blended number back here.
+    // See scripts/lib/bronx-rank.js for the 2026-11-10 misreading this fixes.
+    const bronx = snapshot.bronx;
+    const weekMove = (now, before) => {
+      const d = positionMove(now, before);
+      if (d == null) return '<span style="color:#8B9BAE;">—</span>';
+      if (Math.abs(d) < 0.1) return '<span style="color:#8B9BAE;">no change</span>';
+      return `<span style="color:${d > 0 ? '#1E9E6A' : '#B91C1C'};font-weight:700;">${d > 0 ? '▲' : '▼'} ${Math.abs(d).toFixed(1)}</span>`;
+    };
+    const bronxHalf = (label, note, key) => {
+      const w = bronx.week[key], p = bronx.prevWeek[key], m = bronx.month[key];
+      return `<td style="padding:10px 12px;vertical-align:top;width:50%;">
+        <p style="margin:0;font-size:12px;color:#556070;">${label}</p>
+        <p style="margin:2px 0 0;font-size:26px;font-weight:700;color:#0F2847;">${fmtPos(w.position)} <span style="font-size:13px;">${weekMove(w.position, p.position)}</span></p>
+        <p style="margin:2px 0 0;font-size:11px;color:#8B9BAE;">${w.impressions} impr · ${w.clicks} clicks this week · 28 days: pos ${fmtPos(m.position)}, ${m.impressions} impr</p>
+        <p style="margin:2px 0 0;font-size:11px;color:#8B9BAE;">${note}</p>
+      </td>`;
+    };
+    const headline = bronx
+      ? `<div style="background:#EBF3FD;border:1px solid #BFDBFE;border-radius:8px;padding:6px 4px;margin-bottom:12px;">
+      <p style="margin:6px 12px 0;font-size:12px;color:#0F2847;font-weight:700;">Bronx property-management searches: position, last 7 days (move vs the 7 before)</p>
+      <table style="border-collapse:collapse;width:100%;"><tr>
+        ${bronxHalf('Google profile listing', 'Links to doryangel.com; mostly the local map pack.', 'profile')}
+        ${bronxHalf('Website (www.doryangel.com)', 'The organic website result.', 'site')}
+      </tr></table>
+      <p style="margin:0 12px 8px;font-size:11px;color:#8B9BAE;">${bronx.queries.length} Bronx searches counted, position weighted by impressions. Lower is better; page 1 ends at 10.</p>
+    </div>`
+      : `<div style="background:${onPage1 ? '#ECFDF5' : '#EBF3FD'};border:1px solid ${onPage1 ? '#6EE7B7' : '#BFDBFE'};border-radius:8px;padding:14px 16px;margin-bottom:12px;">
       <p style="margin:0;font-size:12px;color:#556070;">"bronx property management"</p>
       <p style="margin:2px 0 0;font-size:28px;font-weight:700;color:#0F2847;">${fmtPos(moneyPos)} ${delta(moneyPos, prevPos('bronx property management'))}</p>
       <p style="margin:4px 0 0;font-size:12px;color:#556070;">${onPage1 ? 'On page 1.' : 'Page 1 starts at position 10.'} ${commercialLine}</p>
-    </div>
+    </div>`;
+
+    gscSection = `
+    <!-- Search Console rankings -->
+    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">🔍 Google rankings</h3>
+    ${headline}
+    <p style="font-size:12px;color:#8B9BAE;margin:0 0 8px;">Watch list, last 28 days</p>
     <table style="border-collapse:collapse;width:100%;margin-bottom:14px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
       <tr style="background:#F4F7FA;">
         <th style="padding:8px 12px;text-align:left;color:#8B9BAE;font-size:11px;text-transform:uppercase;">Query</th>
@@ -2640,46 +2684,70 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
     </div>`;
   }
 
-  // ── Make.com Hailey leads section ─────────────────────────────────────────────
+  // ── Leads section ────────────────────────────────────────────────────────────
+  // ⚠️ Owner leads lead, on their own. Other inquiries and subscribers follow in
+  // separate totals and are never added to the owner number (lead-counts.js).
   let makeSection = '';
   if (make?.sources && !make.error) {
-    const sourceRows = make.sources.map((s, i) => {
-      const bg = i % 2 === 0 ? '#ffffff' : '#F8FAFB';
-      const errMsg   = s.error === '403' ? 'share sheet with service account' : s.error;
-      const errBadge = s.error ? ` <span style="color:#B91C1C;font-size:10px;">(${errMsg})</span>` : '';
-      return `<tr style="background:${bg};">
+    const cell = 'padding:8px 12px;text-align:center;color:#0F2847;font-size:12px;font-weight:600;';
+    const owner = make.byKind[KIND.OWNER];
+    const partialNote = owner.partial
+      ? '<p style="margin:6px 0 0;color:#B91C1C;font-size:11px;">⚠️ One owner source failed to read today, so this number may be low.</p>'
+      : '';
+
+    const kindBlock = (kind) => {
+      const rows = make.sources.filter(s => s.kind === kind).map((s, i) => {
+        const bg = i % 2 === 0 ? '#ffffff' : '#F8FAFB';
+        const errMsg   = /^403\b/.test(s.error || '') ? 'share sheet with service account' : s.error;
+        const errBadge = s.error ? ` <span style="color:#B91C1C;font-size:10px;">(${errMsg})</span>` : '';
+        return `<tr style="background:${bg};">
         <td style="padding:8px 12px;color:#556070;font-size:12px;">${s.label}${errBadge}</td>
-        <td style="padding:8px 12px;text-align:center;color:#0F2847;font-size:12px;font-weight:600;">${s.day}</td>
-        <td style="padding:8px 12px;text-align:center;color:#0F2847;font-size:12px;font-weight:600;">${s.week}</td>
-        <td style="padding:8px 12px;text-align:center;color:#0F2847;font-size:12px;font-weight:600;">${s.month}</td>
+        <td style="${cell}">${s.day}</td><td style="${cell}">${s.week}</td><td style="${cell}">${s.month}</td>
         <td style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;">${s.total} total</td>
       </tr>`;
-    }).join('');
+      }).join('');
+      const t = make.byKind[kind];
+      return `${rows}
+      <tr style="background:#F4F7FA;">
+        <td style="padding:8px 12px;color:#0F2847;font-size:12px;font-weight:700;">${KIND_LABEL[kind]}${t.partial ? ' (partial)' : ''}</td>
+        <td style="${cell}font-weight:700;">${t.day}</td><td style="${cell}font-weight:700;">${t.week}</td><td style="${cell}font-weight:700;">${t.month}</td>
+        <td style="padding:8px 12px;text-align:center;color:#0F2847;font-size:11px;font-weight:700;">${t.total} total</td>
+      </tr>`;
+    };
 
     makeSection = `
-    <!-- All lead sources -->
-    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">📞 Leads — all channels</h3>
-    <table style="border-collapse:collapse;width:100%;margin-bottom:8px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
-      <tr style="background:#F4F7FA;">
-        <th style="padding:8px 12px;text-align:left;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:30%;">Source</th>
-        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:14%;">Today</th>
-        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:14%;">7 days</th>
-        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:14%;">30 days</th>
-        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:16%;">All time</th>
-      </tr>
-      ${sourceRows}
+    <!-- Owner leads: the number to steer by -->
+    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">🏠 Owner leads</h3>
+    <table style="border-collapse:collapse;width:100%;margin-bottom:6px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
       <tr style="background:#EBF3FD;">
-        <td style="padding:10px 12px;color:#0F2847;font-size:13px;font-weight:700;">Total</td>
-        <td style="padding:10px 12px;text-align:center;font-weight:700;color:#0F2847;font-size:15px;">${make.totals.day}</td>
-        <td style="padding:10px 12px;text-align:center;font-weight:700;color:#0F2847;font-size:15px;">${make.totals.week}</td>
-        <td style="padding:10px 12px;text-align:center;font-weight:700;color:#0F2847;font-size:15px;">${make.totals.month}</td>
-        <td style="padding:10px 12px;text-align:center;font-weight:700;color:#0D7B4E;font-size:18px;">${make.totals.total}</td>
+        ${[['Today', owner.day], ['7 days', owner.week], ['30 days', owner.month], ['All time', owner.total]].map(([l, v], i, arr) => `
+        <td style="padding:12px;text-align:center;width:25%;${i < arr.length - 1 ? 'border-right:1px solid #E2E8F0;' : ''}">
+          <div style="font-size:22px;font-weight:700;color:#0F2847;">${v}</div>
+          <div style="font-size:11px;color:#8B9BAE;text-transform:uppercase;">${l}</div>
+        </td>`).join('')}
       </tr>
     </table>
-    <p style="font-size:11px;color:#8B9BAE;margin:0 0 24px;">Sources: Google Sheets via Retell voice + Hailey chat agents</p>`;
+    ${partialNote}
+    <p style="font-size:11px;color:#8B9BAE;margin:0 0 16px;">Counts only the phone sheet's "new owners" tab and web chats where the caller said they own a property. Test entries are skipped. Joy's lead sheet stays the official record.</p>
+
+    <!-- Everything else, by type -->
+    <h3 style="font-size:13px;color:#0F2847;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">📞 All contacts, by type</h3>
+    <table style="border-collapse:collapse;width:100%;margin-bottom:8px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
+      <tr style="background:#F4F7FA;">
+        <th style="padding:8px 12px;text-align:left;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:40%;">Source</th>
+        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:12%;">Today</th>
+        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:12%;">7 days</th>
+        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:12%;">30 days</th>
+        <th style="padding:8px 12px;text-align:center;color:#8B9BAE;font-size:11px;text-transform:uppercase;width:14%;">All time</th>
+      </tr>
+      ${kindBlock(KIND.OWNER)}
+      ${kindBlock(KIND.OTHER)}
+      ${kindBlock(KIND.SUBSCRIBER)}
+    </table>
+    <p style="font-size:11px;color:#8B9BAE;margin:0 0 24px;">The three types are never added together. Sources: Google Sheets fed by the Retell phone agent, the Hailey web chat and the sign-up forms.</p>`;
 
     // Hailey success-rate panel
-    const hailey = make.sources.find(s => s.chat);
+    const hailey = make.sources.find(s => s.chat && !s.error);
     if (hailey && hailey.chat) {
       const h = hailey.chat;
       const rateColor = h.successRate >= 40 ? '#0D7B4E' : h.successRate >= 20 ? '#B7791F' : '#B91C1C';
@@ -2841,7 +2909,7 @@ async function main() {
     getGA4Stats(), getMakeStats(), getClarityStats(), getSearchConsoleStats(),
   ]);
   console.log(`GA4: ${ga4?.sessions ? `sessions today=${ga4.sessions.day}` : ga4?.error ? `FAILED (${ga4.error.kind})` : 'not configured'}`);
-  console.log(`Leads: ${make?.error ? `UNKNOWN — sheet reads failed (${make.error.kind})` : make ? `total=${make.totals.total}, 30d=${make.totals.month}` : 'not configured'}`);
+  console.log(`Leads: ${make?.error ? `UNKNOWN — sheet reads failed (${make.error.kind})` : make ? `owners 30d=${make.byKind.owner.month}${make.byKind.owner.partial ? ' (partial)' : ''}, other inquiries 30d=${make.byKind.other.month}, subscribers 30d=${make.byKind.subscriber.month}` : 'not configured'}`);
   console.log(`Clarity: ${clarity ? `${clarity.sessions} sessions/3d, scroll ${clarity.avgScrollDepth}%` : 'not configured'}`);
 
   // One loud line when the shared credential is the cause. Three data sources
@@ -3011,5 +3079,5 @@ if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) 
 export {
   runImprovementCycle, findOpportunities, finaliseRecommendations,
   classifyExperiment, renderImprovementSections, readCycleState, detectImplementation,
-  gatherHistory, recentChanges,
+  gatherHistory, recentChanges, getMakeStats, sendDigest,
 };
