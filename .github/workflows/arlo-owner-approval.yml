@@ -43,15 +43,40 @@ jobs:
           git config user.name "DoryAngel Approval Gateway"
           git config user.email "office@doryangel.com"
 
+      # The log is kept so the receipt email below can quote the PR link or the
+      # refusal reason. pipefail keeps a refusal a failed step despite the tee.
       - name: Verify Dory approval and run existing governance gate
+        id: gate
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/approve-from-owner-issue.js
+        run: |
+          set -o pipefail
+          node scripts/approve-from-owner-issue.js 2>&1 | tee /tmp/arlo-approval.log
 
       - name: Close successful approval request
         if: success()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh issue comment "${{ github.event.issue.number }}" --body "✅ Dory's authenticated approval was accepted. Existing governance checks passed and the approval gate completed. Any resulting work remains subject to the normal PR/merge controls."
+          gh issue comment "${{ github.event.issue.number }}" --body "✅ Dory's authenticated approval was accepted. Existing governance checks passed and the approval gate completed. Any resulting pull request still needs a manual review before anything goes live."
           gh issue close "${{ github.event.issue.number }}"
+
+      - name: Explain a refused approval on the issue
+        if: failure() && steps.gate.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" --body "❌ This approval was NOT accepted, so nothing was queued. The reason is in the run log and in the email Arlo just sent."
+
+      # The owner's receipt. Without it a click that stopped at the GitHub form
+      # looked the same as an approval. This step only sends an email; it never
+      # writes to the repository, and a send failure never fails the run.
+      - name: Email the approval receipt
+        if: always() && steps.gate.outcome != 'skipped'
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          OUTCOME: ${{ steps.gate.outcome }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          APPROVAL_LOG: /tmp/arlo-approval.log
+        run: node scripts/arlo-approval-receipt.js
