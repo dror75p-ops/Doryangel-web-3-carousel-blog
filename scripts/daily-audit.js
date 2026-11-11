@@ -28,6 +28,7 @@ import { KIND, KIND_LABEL, tallySheet, errorEntries, summariseByKind } from './l
 import { summariseBronxRank, positionMove } from './lib/bronx-rank.js';
 import { labelOpportunityHosts, LEVERS, LEVER_LABEL } from './lib/opportunity-host.js';
 import { splitClarityPages, runScheduleLine } from './lib/report-hygiene.js';
+import { stripRelatedReading } from './lib/back-links.js';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 3 });
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -1202,7 +1203,10 @@ function shippedByCommit(exp) {
 /** What an improve-existing recommendation is allowed to change: the SEO fields and the body. */
 function postFingerprint(p) {
   return createHash('sha1')
-    .update([p.seoTitle || '', p.seoDescription || '', p.content || ''].join('\u0001'))
+    // The body is hashed WITHOUT its "Related reading" line: Nave adds back-links
+    // there on every publish (scripts/lib/back-links.js), and that must not read
+    // as an approved change shipping or as a page edited in the last 28 days.
+    .update([p.seoTitle || '', p.seoDescription || '', stripRelatedReading(p.content)].join('\u0001'))
     .digest('hex');
 }
 
