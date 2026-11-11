@@ -5,6 +5,7 @@ import { Resend } from 'resend';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { createSign } from 'crypto';
 import { generateSlug, uniqueSlug, toISODate, wordsToMinutes, searchUnsplashPhotos, pickImageQuery } from './lib/post-utils.js';
+import { addBackLinks } from './lib/back-links.js';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 4 });
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -969,6 +970,18 @@ async function main() {
     await sendApprovalEmail(post, { dryRun: true });
     console.log(`Dry-run approval email sent to ${APPROVAL_EMAIL} (preview only — not published)`);
     return;
+  }
+
+  // Link the new post FROM 1-2 related older posts (their "Related reading"
+  // line), so it is not born an orphan. See scripts/lib/back-links.js. Never
+  // blocks a publish: on any error the post goes out without back-links.
+  try {
+    const sources = addBackLinks(posts, postForIndex);
+    console.log(sources.length
+      ? `Back-links: linked from ${sources.map(s => s.slug).join(', ')}`
+      : '::warning::Back-links: no older post was relevant enough; the new post starts with no inbound link.');
+  } catch (e) {
+    console.log(`::warning::Back-links skipped: ${e.message}`);
   }
 
   posts.unshift(postForIndex);
