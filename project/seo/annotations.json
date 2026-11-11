@@ -1,6 +1,6 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-11-10",
+  "updatedAt": "2026-11-11",
   "events": [
     {
       "date": "2026-04-25",
@@ -3041,6 +3041,21 @@
       "date": "2026-11-10",
       "kind": "site",
       "subject": "Arlo stage A: stop repeating handled work, skip fresh pages, check approvals daily (#348)"
+    },
+    {
+      "date": "2026-11-11",
+      "kind": "site",
+      "subject": "Arlo stage D: Nave links every new post from 1-2 older posts (#353)"
+    },
+    {
+      "date": "2026-11-11",
+      "kind": "site",
+      "subject": "Arlo stage C: opportunities by address, approval receipt, less email noise (#352)"
+    },
+    {
+      "date": "2026-11-11",
+      "kind": "site",
+      "subject": "Arlo stage B: count real owner leads, and rank the Bronx searches (#350)"
     }
   ]
 }
