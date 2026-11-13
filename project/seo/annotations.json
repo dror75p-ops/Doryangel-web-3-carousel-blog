@@ -1,6 +1,6 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-11-12",
+  "updatedAt": "2026-11-13",
   "events": [
     {
       "date": "2026-04-25",
@@ -3061,6 +3061,11 @@
       "date": "2026-11-11",
       "kind": "site",
       "subject": "Arlo stage B: count real owner leads, and rank the Bronx searches (#350)"
+    },
+    {
+      "date": "2026-11-13",
+      "kind": "site",
+      "subject": "Broker blog posts: state the $50 per unit monthly referral fee (#354)"
     }
   ]
 }
