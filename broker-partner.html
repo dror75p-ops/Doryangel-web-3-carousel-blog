@@ -76,6 +76,7 @@ button { cursor: pointer; font-family: inherit; }
 .center { text-align: center; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.grid-3--four { grid-template-columns: repeat(2, 1fr); }
 
 /* ─── NAV — mirrors main site two-row layout ─── */
 .bp-nav {
@@ -435,6 +436,7 @@ input[type=range]::-moz-range-thumb {
   line-height: 1.75; max-width: 900px;
 }
 .legal-note strong { color: rgba(255,255,255,0.45); }
+.legal-note:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
 
 /* ─── CTA FORM ─── */
 .cta-section { background: var(--grey-light); }
@@ -783,7 +785,7 @@ input[type=range]::-moz-range-thumb {
           </div>
           <div class="compare-head-label" style="color:#fff;">DoryAngel</div>
         </div>
-        <div class="compare-item"><div class="dot-us"></div><span style="color:rgba(255,255,255,0.65);">Handle all maintenance requests 24/7</span></div>
+        <div class="compare-item"><div class="dot-us"></div><span style="color:rgba(255,255,255,0.65);">Handle maintenance requests and dispatch vendors</span></div>
         <div class="compare-item"><div class="dot-us"></div><span style="color:rgba(255,255,255,0.65);">Dispatch licensed vendors by ZIP code</span></div>
         <div class="compare-item"><div class="dot-us"></div><span style="color:rgba(255,255,255,0.65);">Monitor local compliance requirements</span></div>
         <div class="compare-item"><div class="dot-us"></div><span style="color:rgba(255,255,255,0.65);">Track rent paid directly into owners' accounts</span></div>
@@ -914,7 +916,7 @@ input[type=range]::-moz-range-thumb {
             <span class="faq-q-text">Do I need a property management license to participate?</span>
             <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
           </button>
-          <div class="faq-a"><p>No. Your existing real estate broker license (or salesperson license under a broker) is all you need. DoryAngel operates as a back-office consulting agency. You continue in your existing licensed role — we simply add a revenue stream to it.</p></div>
+          <div class="faq-a"><p>No. Your existing real estate broker license is all you need. DoryAngel operates as a back-office consulting agency. You continue in your existing licensed role — we simply add a revenue stream to it.</p></div>
         </div>
         <div class="faq-item">
           <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
@@ -942,7 +944,7 @@ input[type=range]::-moz-range-thumb {
             <span class="faq-q-text">Which markets can I operate in?</span>
             <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
           </button>
-          <div class="faq-a"><p>The program is open to licensed real estate brokers across the United States and is expanding to the United Kingdom. Wherever you operate, DoryAngel provides the back-office infrastructure — the model is designed to work in any market.</p></div>
+          <div class="faq-a"><p>The program is open to licensed real estate brokers across the United States. Wherever you operate, DoryAngel provides the back-office infrastructure — the model is designed to work in any market.</p></div>
         </div>
       </div>
 
@@ -1055,14 +1057,14 @@ input[type=range]::-moz-range-thumb {
             <span class="faq-q-text">What if an owner wants to leave the program?</span>
             <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
           </button>
-          <div class="faq-a"><p>Owners can exit with 30 days notice per the management agreement. If that happens, your monthly management fee simply stops for that unit. There is no penalty to you.</p></div>
+          <div class="faq-a"><p>Owners can end their management agreement under its terms. If that happens, your monthly management fee simply stops for that unit. There is no penalty to you.</p></div>
         </div>
         <div class="faq-item">
           <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
             <span class="faq-q-text">How is tenant data and privacy handled?</span>
             <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
           </button>
-          <div class="faq-a"><p>All tenant data is processed through Buildium's secure platform and protected under DoryAngel's $250,000 Cyber Liability policy. You never handle sensitive financial data directly — that responsibility sits entirely with us.</p></div>
+          <div class="faq-a"><p>All tenant data is processed through Buildium's secure platform. You never handle sensitive financial data directly — that responsibility sits entirely with us.</p></div>
         </div>
       </div>
 
@@ -1074,7 +1076,7 @@ input[type=range]::-moz-range-thumb {
             <span class="faq-q-text">Who handles maintenance emergencies?</span>
             <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg></span>
           </button>
-          <div class="faq-a"><p>DoryAngel's VPM Call Center operates around the clock. Tenants have a direct line. Vendors are dispatched from a pre-qualified network organized by ZIP code, typically within hours. You are not in the chain for emergencies unless an owner contacts you first, in which case you simply route the call.</p></div>
+          <div class="faq-a"><p>Tenants report maintenance issues to DoryAngel's VPM Call Center, and tenants have a direct line. Vendors are dispatched from a pre-qualified network organized by ZIP code, typically within hours. You are not in the chain for emergencies unless an owner contacts you first, in which case you simply route the call.</p></div>
         </div>
         <div class="faq-item">
           <button class="faq-q" onclick="toggleFAQ(this)" aria-expanded="false">
@@ -1118,7 +1120,7 @@ input[type=range]::-moz-range-thumb {
       <h2 class="section-title" style="margin-bottom:12px;">The Infrastructure You'd Never Build Yourself</h2>
       <p class="section-sub" style="max-width:480px;margin:0 auto;">All of this comes with your partnership. None of it costs you anything extra.</p>
     </div>
-    <div class="grid-3">
+    <div class="grid-3 grid-3--four">
       <div class="tool-card">
         <span class="tool-tag">Integrated</span>
         <div class="tool-icon-wrap">
@@ -1151,22 +1153,6 @@ input[type=range]::-moz-range-thumb {
         <div class="tool-name">Document Cloud</div>
         <p class="tool-desc">Lease approvals, compliance filings, and owner reports are all accessible in real-time through secure cloud API.</p>
       </div>
-      <div class="tool-card">
-        <span class="tool-tag">Included</span>
-        <div class="tool-icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        </div>
-        <div class="tool-name">E&amp;O Insurance</div>
-        <p class="tool-desc">Professional Liability (Errors &amp; Omissions) coverage keeps both you and your clients protected from day one.</p>
-      </div>
-      <div class="tool-card">
-        <span class="tool-tag">Included</span>
-        <div class="tool-icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        </div>
-        <div class="tool-name">$250K Cyber Liability</div>
-        <p class="tool-desc">Full cyber liability coverage protecting broker partners and client data from any breach event — at no cost to you.</p>
-      </div>
     </div>
   </div>
 </section>
@@ -1174,26 +1160,6 @@ input[type=range]::-moz-range-thumb {
 <!-- ═══ TRUST DARK ══════════════════════════════════════════ -->
 <div class="trust-dark">
   <div class="wrap">
-    <div class="grid-2">
-      <div class="trust-card">
-        <div class="trust-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="20" height="20"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-        </div>
-        <div>
-          <div class="trust-title">Professional Liability (E&amp;O)</div>
-          <p class="trust-body">Both parties are covered under DoryAngel's E&amp;O policy from day one. No additional insurance costs, no paperwork, no gap in protection.</p>
-        </div>
-      </div>
-      <div class="trust-card">
-        <div class="trust-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="20" height="20"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        </div>
-        <div>
-          <div class="trust-title">$250,000 Cyber Liability Coverage</div>
-          <p class="trust-body">All client data processed through our platform is protected under a $250,000 Cyber Liability policy. Your clients' financial records and personal data stay fully secure.</p>
-        </div>
-      </div>
-    </div>
     <div class="legal-note">
       <strong>Legal Notice:</strong> DoryAngel LLC operates exclusively as a consulting agency and back-office service provider — not a licensed real estate brokerage. All licensed real estate activities, including property listings, lease signings, and client representation, are performed solely by the licensed broker partner in accordance with the laws of their operating state. This arrangement does not constitute a brokerage relationship or joint venture.
     </div>
@@ -1211,7 +1177,7 @@ input[type=range]::-moz-range-thumb {
         <div class="cta-check-list">
           <div class="cta-check">
             <div class="cta-check-icon"><svg viewBox="0 0 14 14" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="2 7 6 11 12 3"/></svg></div>
-            <span>Licensed real estate broker (any US state or UK)</span>
+            <span>Licensed real estate broker (any US state)</span>
           </div>
           <div class="cta-check">
             <div class="cta-check-icon"><svg viewBox="0 0 14 14" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="2 7 6 11 12 3"/></svg></div>
@@ -1283,7 +1249,7 @@ input[type=range]::-moz-range-thumb {
           <div class="footer-brand-name">DORYANGEL</div>
         </div>
         <div class="footer-brand-tag">Broker Partner Program</div>
-        <p class="footer-desc">Additional income for brokers across the United States. Zero overhead. UK expansion coming soon.</p>
+        <p class="footer-desc">Additional income for brokers across the United States. Zero overhead.</p>
         <a href="index.html" class="back-to-main" style="margin-top:18px;">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="13 5 6 10 13 15"/></svg>
           Back to DoryAngel.com
@@ -1321,7 +1287,7 @@ input[type=range]::-moz-range-thumb {
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="22" height="22" aria-hidden="true">
     <path stroke-linecap="round" stroke-linejoin="round" d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.24 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012.18 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.55-.55a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/>
   </svg>
-  <span class="sticky-call-label">Call us 24/7</span>
+  <span class="sticky-call-label">Call us</span>
 </a>
 
 <script>
