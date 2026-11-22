@@ -224,6 +224,48 @@ h1.post-title {
 }
 .cta-block .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,0,0,0.25); }
 
+/* Free-consultation box (2026-11-22). Most Facebook visitors land on a post,
+   never the homepage, and the old bottom block only linked away to /#contact.
+   The form now sits in the post itself and posts to the same Web3Forms inbox
+   as every other site form. lead-source.js (injected by analytics.js) stamps
+   lead_channel / lead_landing_page / lead_form_page on it, so a lead from a
+   ?src=facebook post arrives tagged "facebook" + the post path. */
+.consult-top {
+  margin: 0 0 32px; padding: 18px 22px;
+  background: var(--blue-dim); border-left: 4px solid var(--blue); border-radius: 12px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px;
+}
+.consult-top p { margin: 0; flex: 1 1 260px; font-size: 15px; line-height: 1.5; color: var(--navy); }
+.consult-top p strong { display: block; font-size: 16px; }
+.consult-top .consult-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.consult-top a.btn { background: var(--blue); color: white; padding: 11px 18px; border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+.consult-top a.btn:hover { background: var(--navy); }
+.consult-top a.tel { color: var(--navy); font-size: 14px; font-weight: 600; white-space: nowrap; }
+.cta-block { text-align: left; scroll-margin-top: 80px; }
+.cta-block .city, .cta-block > p { text-align: center; }
+.post-lead-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 560px; margin: 0 auto; }
+.post-lead-form .full { grid-column: 1 / -1; }
+.post-lead-form .field { display: flex; flex-direction: column; gap: 6px; }
+.post-lead-form label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.9); }
+.post-lead-form label span { font-weight: 400; color: rgba(255,255,255,0.65); }
+.post-lead-form input[type=text], .post-lead-form input[type=email], .post-lead-form input[type=tel], .post-lead-form select {
+  width: 100%; padding: 12px 14px; border-radius: 9px; border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.1); color: white; font-size: 15px; font-family: inherit;
+}
+.post-lead-form select option { color: #0F2847; }
+.post-lead-form input::placeholder { color: rgba(255,255,255,0.55); }
+.post-lead-form input:focus-visible, .post-lead-form select:focus-visible { outline: 2px solid var(--blue-light); background: rgba(255,255,255,0.16); }
+.post-lead-form .consent { grid-column: 1 / -1; display: flex; gap: 10px; align-items: flex-start; font-size: 12px; line-height: 1.5; color: rgba(255,255,255,0.75); }
+.post-lead-form .consent input { margin-top: 3px; flex: 0 0 auto; }
+.post-lead-form .consent label { font-size: 12px; font-weight: 400; color: rgba(255,255,255,0.75); }
+.post-lead-form .consent a { color: white; }
+.post-lead-form button { grid-column: 1 / -1; background: white; color: var(--navy); border: none; padding: 14px; border-radius: 9px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.post-lead-form button:hover { box-shadow: 0 12px 28px rgba(0,0,0,0.25); }
+.post-lead-form button:disabled { opacity: 0.7; cursor: default; }
+.cta-block .price-note { margin: 20px auto 0; max-width: 560px; font-size: 13px; color: rgba(255,255,255,0.7); text-align: center; }
+.cta-block .price-note a { color: white; }
+@media (max-width: 560px) { .post-lead-form { grid-template-columns: 1fr; } }
+
 .internal-links {
   margin-top: 40px; padding: 24px 28px;
   background: var(--blue-dim); border-radius: 12px;
@@ -304,6 +346,14 @@ footer.post-footer a { color: white; text-decoration: none; }
   <h1 class="post-title">Can a Bronx Broker Refer a Client to Property Management Without Losing the Relationship?</h1>
   <p class="post-excerpt">Most Bronx brokers avoid referring clients to property managers out of fear of losing the relationship — but the brokers who skip the referral are the ones who actually lose clients when HPD violations and burnout set in six months after closing.</p>
 
+  <aside class="consult-top" aria-label="Free consultation">
+    <p><strong>Own 1 to 10 rental units in NYC?</strong>Get a free, no-obligation consultation with a DoryAngel property manager.</p>
+    <div class="consult-actions">
+      <a class="btn" href="#free-consultation">Get a Free Consultation</a>
+      <a class="tel" href="tel:+15168474999">or call (516) 847-4999</a>
+    </div>
+  </aside>
+
   <div class="post-body">
     <h2>The Fear That Keeps Bronx Brokers From Making the Referral</h2>
 <p>You&#39;ve built a real relationship with this client. You found them the building, negotiated the deal, held their hand through an anxious 45-day close. And now they&#39;re asking about property management.</p>
@@ -373,13 +423,50 @@ footer.post-footer a { color: white; text-decoration: none; }
 
   </div>
 
-  <div class="cta-block">
-    <div class="city">Managing rental property in NYC?</div>
-    <p>DoryAngel offers flat-fee management instead of a percentage of your rent: for 10+ units under one agreement, $99 per occupied unit per month for the first 6 months, then $125; for smaller properties, $150. Extras are disclosed before you authorize them. Bronx, Manhattan, Queens, Brooklyn.</p>
-    <a class="btn" href="https://www.doryangel.com/#contact">
-      Get a Free Consultation →
-    </a>
-  </div>
+  <section class="cta-block" id="free-consultation" aria-labelledby="consult-title">
+    <div class="city" id="consult-title">Free consultation for NYC owners of 1 to 10 units</div>
+    <p>We manage your building up close and respond fast when something goes wrong, so you can relax wherever you are. Your owner portal shows open tasks and rent payments, all for a fixed monthly fee with full expense transparency.</p>
+    <form class="post-lead-form" action="https://api.web3forms.com/submit" method="POST">
+      <input type="hidden" name="access_key" value="6991fa6b-8f6c-4c24-9167-b7ee52026a98">
+      <input type="hidden" name="subject" value="New owner lead (blog): Can a Bronx Broker Refer a Client to Property Management Without Losing the Relationship?">
+      <input type="hidden" name="from_name" value="DoryAngel Website">
+      <input type="hidden" name="source" value="blog/bronx-broker-referral-guide-keeping-client-relationship">
+      <input type="hidden" name="redirect" value="https://www.doryangel.com/thank-you.html">
+      <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="field full">
+        <label for="consultName">Your name</label>
+        <input type="text" id="consultName" name="name" placeholder="Your name" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="consultEmail">Email</label>
+        <input type="email" id="consultEmail" name="email" placeholder="you@example.com" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="consultPhone">Phone <span>(optional)</span></label>
+        <input type="tel" id="consultPhone" name="phone" placeholder="(212) 000-0000" autocomplete="tel">
+      </div>
+      <div class="field">
+        <label for="consultUnits">How many units? <span>(optional)</span></label>
+        <select id="consultUnits" name="units">
+          <option value="">Select</option>
+          <option>1</option>
+          <option>2–4</option>
+          <option>5–10</option>
+          <option>11+</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="consultAddress">Property address <span>(optional)</span></label>
+        <input type="text" id="consultAddress" name="property-address" placeholder="e.g. Grand Concourse, Bronx" autocomplete="street-address">
+      </div>
+      <div class="consent">
+        <input type="checkbox" id="consultTcpa" name="tcpa-consent" value="yes">
+        <label for="consultTcpa">Optional: DoryAngel LLC may call or text me about this request. Not required to submit. Msg &amp; data rates may apply. Reply STOP to opt out. <a href="/sms-consent.html">SMS Consent</a> &middot; <a href="/privacy.html">Privacy</a></label>
+      </div>
+      <button type="submit">Request My Free Consultation &rarr;</button>
+    </form>
+    <p class="price-note">DoryAngel offers flat-fee management instead of a percentage of your rent: for 10+ units under one agreement, $99 per occupied unit per month for the first 6 months, then $125; for smaller properties, $150. Extras are disclosed before you authorize them. Bronx, Manhattan, Queens, Brooklyn. <a href="https://www.doryangel.com/#pricing">See pricing</a></p>
+  </section>
 
   <div class="internal-links">
     <p>Explore DoryAngel:</p>
@@ -445,6 +532,16 @@ footer.post-footer a { color: white; text-decoration: none; }
 
 <!-- Consent-gated GA4 + Clarity (shared loader) -->
 <script src="/analytics.js"></script>
+
+<script>
+document.addEventListener('submit', function (e) {
+  var f = e.target;
+  if (!f || !f.classList || !f.classList.contains('post-lead-form')) return;
+  var b = f.querySelector('button[type=submit]');
+  if (b) { b.disabled = true; b.textContent = 'Sending...'; }
+  if (typeof gtag !== 'undefined') { gtag('event', 'generate_lead', { event_category: 'lead', event_label: 'blog_post_consultation' }); }
+});
+</script>
 
 <!-- UserWay accessibility widget. Deliberately WITHOUT the
      #userwayAccessibilityIcon off-screen park rule used on index.html and the
