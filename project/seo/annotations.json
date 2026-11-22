@@ -1,6 +1,6 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-11-21",
+  "updatedAt": "2026-11-22",
   "events": [
     {
       "date": "2026-04-25",
@@ -3096,6 +3096,16 @@
       "date": "2026-11-19",
       "kind": "site",
       "subject": "Broker page: remove six claims the owner has not confirmed (#356)"
+    },
+    {
+      "date": "2026-11-21",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-11-21"
+    },
+    {
+      "date": "2026-11-22",
+      "kind": "site",
+      "subject": "Blog posts: free-consultation box at the top and a lead form at the bottom"
     }
   ]
 }
