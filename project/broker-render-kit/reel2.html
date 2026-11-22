@@ -1,0 +1,68 @@
+<!doctype html><meta charset="utf-8">
+<style>
+@font-face{font-family:"Barlow Condensed";font-weight:800;src:url(barlow-condensed-latin-800-normal.woff2)}
+@font-face{font-family:"Public Sans";font-weight:400;src:url(public-sans-latin-400-normal.woff2)}
+@font-face{font-family:"Public Sans";font-weight:600;src:url(public-sans-latin-600-normal.woff2)}
+@font-face{font-family:"Public Sans";font-weight:700;src:url(public-sans-latin-700-normal.woff2)}
+:root{--gold:linear-gradient(100deg,#FFE7A3 0%,#E9B949 38%,#FFF1C4 55%,#C8902E 100%);--soft:#B9C6DD}
+html,body{margin:0;background:#000}
+#v{width:1080px;height:1920px;position:relative;overflow:hidden;color:#fff;font-family:"Public Sans",Arial;
+ background:radial-gradient(1000px 900px at 80% 72%,rgba(30,90,168,.55),transparent 70%),radial-gradient(800px 600px at 0% 0%,rgba(30,90,168,.28),transparent 70%),linear-gradient(160deg,#0F2847 0%,#091830 55%,#060F20 100%)}
+canvas{position:absolute;inset:0;width:1080px;height:1920px;z-index:1}
+.hdr{position:absolute;left:84px;right:84px;top:90px;display:flex;justify-content:space-between;align-items:center;padding-bottom:28px;border-bottom:1px solid rgba(255,255,255,.12);z-index:3}
+.hdr img{height:78px;display:block}
+.loc{text-align:right}.loc b{display:block;font:700 28px/1 "Public Sans";letter-spacing:.2em}.loc span{display:block;margin-top:8px;font:600 24px/1 "Public Sans";letter-spacing:.18em;color:#E9B949}
+.t{position:absolute;left:84px;right:84px;top:300px;z-index:2}
+.tag{font:700 30px/1 "Public Sans";letter-spacing:.16em;text-transform:uppercase;color:#E9B949}
+h1{font:800 156px/.88 "Barlow Condensed";text-transform:uppercase;margin:26px 0 0}
+.g{background:var(--gold);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ctr{position:absolute;left:84px;top:860px;z-index:2}
+.ctr .k{font:800 210px/1 "Barlow Condensed"}
+.ctr .s{font:600 40px/1.25 "Public Sans";color:var(--soft);max-width:520px}
+.end{position:absolute;inset:0;z-index:5;opacity:0;padding:330px 84px 0;box-sizing:border-box;
+ background:radial-gradient(900px 800px at 50% 80%,rgba(233,185,73,.18),transparent 70%),linear-gradient(160deg,#0F2847 0%,#060F20 100%)}
+.end .hdr{top:90px}
+.end h2{font:800 150px/.9 "Barlow Condensed";text-transform:uppercase;margin:24px 0 0}
+.btn{display:inline-block;margin-top:80px;background:var(--gold);color:#0F2847;font:800 74px/1 "Barlow Condensed";text-transform:uppercase;padding:36px 54px;border-radius:99px;box-shadow:0 18px 40px rgba(233,185,73,.35)}
+.url{font:700 46px/1.3 "Public Sans";margin-top:50px}
+.ph{font:700 46px/1.3 "Public Sans";color:#E9B949;margin-top:10px}
+.lead{font:400 38px/1.4 "Public Sans";color:var(--soft);margin-top:40px}
+.fine{position:absolute;left:84px;right:84px;bottom:120px;font:400 28px/1.45 "Public Sans";color:#7F8DA6}
+</style>
+<div id="v"><canvas id="c"></canvas>
+<div class="hdr"><img src="logo-white.png"><div class="loc"><b>BRONX, NY</b><span>SINCE 2010</span></div></div>
+<div class="t"><div class="tag">For licensed brokers · Any US state</div><h1 id="h">Your area.</h1></div>
+<div class="ctr"><div class="k g" id="k">$0</div><div class="s" id="s">a month, from DoryAngel</div></div>
+<div class="end" id="end"><div class="hdr"><img src="logo-white.png"><div class="loc"><b>BRONX, NY</b><span>SINCE 2010</span></div></div>
+<div class="tag">Broker Partner Program · Beta</div>
+<h2>Bring DoryAngel<br>to your city.<br><span class="g">Earn every month.</span></h2>
+<div class="btn">Request beta access →</div><div class="url">doryangel.com/broker-partner.html</div><div class="ph">(516) 847-4999</div>
+<div class="lead">Open to licensed brokers in every US state.</div>
+<div class="fine">DoryAngel LLC is a property management consulting and back-office firm, not a licensed brokerage. Licensed activity is done by the broker partner.</div></div>
+</div>
+<script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js"}}</script>
+<script type="module">
+import * as THREE from './node_modules/three/build/three.module.js';
+import {makeRenderer,makeScene,unitBlock,coin,COL,place} from './stack2.js';
+await document.fonts.ready;
+const W=1080,H=1920,N=10; window.DURATION=12;
+const r=makeRenderer(document.getElementById('c'),W,H); const {scene,cam}=makeScene(r,W,H,10);
+cam.position.set(20,15,20); cam.lookAt(0,5,0); place(cam,W,H,750,1580,64);
+const blocks=[]; for(let i=0;i<N;i++){const b=unitBlock(i%2?COL.blue:COL.pearl); scene.add(b); blocks.push(b);}
+const roof=new THREE.Mesh(new THREE.BoxGeometry(2.6,.18,2.6),new THREE.MeshPhysicalMaterial({color:COL.roof,roughness:.4,clearcoat:.6})); roof.castShadow=true; scene.add(roof);
+const cn=coin(); cn.rotation.y=Math.PI/4; scene.add(cn);
+const ease=x=>1-Math.pow(1-Math.min(1,Math.max(0,x)),3);
+const h=document.getElementById('h'),k=document.getElementById('k'),s=document.getElementById('s'),end=document.getElementById('end');
+window.frame=t=>{
+  let placed=0;
+  blocks.forEach((b,i)=>{const t0=1.6+i*0.6; const p=ease((t-t0)/0.45); b.visible=t>=t0; b.position.y=.5+i*1.06+(1-p)*9; if(p>=1)placed++;});
+  roof.visible=t>7.9; roof.position.y=N*1.06+.08+(1-ease((t-7.9)/.4))*6;
+  cn.visible=t>8.2; cn.position.y=N*1.06+1.6+Math.sin(t*3)*.15; cn.rotation.z=Math.sin(t*2)*.2;
+  k.textContent='$'+(placed*50).toLocaleString('en-US');
+  s.textContent=placed? `a month, from ${placed} unit${placed>1?'s':''} you referred`:'a month, from DoryAngel';
+  h.innerHTML = t<1.6 ? 'Your area.' : (t<4.6 ? 'Your area.<br><span class="g">Our management.</span>' : 'Your owners.<br><span class="g">Your monthly income.</span>');
+  end.style.opacity=Math.min(1,Math.max(0,(t-9.3)/.5));
+  r.render(scene,cam);
+};
+window.frame(0); window.done=true;
+</script>

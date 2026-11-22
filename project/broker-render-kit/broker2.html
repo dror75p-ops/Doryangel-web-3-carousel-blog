@@ -1,0 +1,130 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+@font-face{font-family:"Barlow Condensed";font-weight:700;src:url(barlow-condensed-latin-700-normal.woff2)}
+@font-face{font-family:"Barlow Condensed";font-weight:800;src:url(barlow-condensed-latin-800-normal.woff2)}
+@font-face{font-family:"Public Sans";font-weight:400;src:url(public-sans-latin-400-normal.woff2)}
+@font-face{font-family:"Public Sans";font-weight:600;src:url(public-sans-latin-600-normal.woff2)}
+@font-face{font-family:"Public Sans";font-weight:700;src:url(public-sans-latin-700-normal.woff2)}
+:root{--D:"Barlow Condensed",Arial,sans-serif;--B:"Public Sans",Arial,sans-serif;--gold:linear-gradient(100deg,#FFE7A3 0%,#E9B949 38%,#FFF1C4 55%,#C8902E 100%);--soft:#B9C6DD;--line:rgba(255,255,255,.12)}
+html,body{margin:0;background:#000}
+.slide{width:1080px;height:1350px;position:relative;overflow:hidden;color:#fff;font-family:var(--B);display:none;
+ background:radial-gradient(900px 700px at 85% 75%,rgba(30,90,168,.55),transparent 70%),radial-gradient(700px 500px at 0% 0%,rgba(30,90,168,.28),transparent 70%),linear-gradient(160deg,#0F2847 0%,#091830 55%,#060F20 100%)}
+.slide:after{content:"";position:absolute;inset:0;pointer-events:none;z-index:4;box-shadow:inset 0 0 0 2px rgba(233,185,73,.35);border-radius:0}
+.slide.on{display:block}
+canvas.stage{position:absolute;inset:0;width:1080px;height:1350px;z-index:1}
+.in{position:absolute;inset:0;padding:60px 84px 70px;display:flex;flex-direction:column;z-index:2}
+.hdr{display:flex;justify-content:space-between;align-items:center;padding-bottom:26px;border-bottom:1px solid var(--line)}
+.hdr img{height:66px;display:block}
+.loc{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.loc b{font:700 24px/1 var(--B);letter-spacing:.2em;text-transform:uppercase;color:#fff}
+.loc span{font:600 20px/1 var(--B);letter-spacing:.18em;text-transform:uppercase;color:#E9B949}
+.tag{display:inline-flex;align-items:center;gap:14px;font:700 25px/1 var(--B);letter-spacing:.16em;text-transform:uppercase;color:#E9B949;margin-top:56px}
+.tag:before{content:"";width:44px;height:3px;background:var(--gold)}
+h1{font:800 128px/.9 var(--D);text-transform:uppercase;margin:22px 0 0;letter-spacing:-.005em}
+h2{font:800 102px/.92 var(--D);text-transform:uppercase;margin:22px 0 0}
+.g{background:var(--gold);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 18px rgba(233,185,73,.25))}
+.lead{font:400 37px/1.38 var(--B);margin:26px 0 0;max-width:860px;color:var(--soft)}
+.lead b{font-weight:700;color:#fff}
+.foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:30px}
+.pg{font:700 24px/1 var(--B);letter-spacing:.14em;color:#7F8DA6}
+.swipe{font:700 28px/1 var(--B);color:#fff;display:flex;gap:14px;align-items:center;padding:18px 28px;border:1px solid rgba(233,185,73,.55);border-radius:99px}
+.glass{background:linear-gradient(145deg,rgba(255,255,255,.10),rgba(255,255,255,.03));border:1px solid var(--line);box-shadow:0 20px 50px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.12)}
+.card{border-radius:28px;padding:32px 36px;display:flex;gap:30px;align-items:flex-start}
+.n{flex:none;width:88px;height:88px;border-radius:50%;background:var(--gold);color:#0F2847;font:800 58px/88px var(--D);text-align:center;box-shadow:0 8px 24px rgba(233,185,73,.35)}
+.card h3{font:800 52px/1 var(--D);text-transform:uppercase;margin:6px 0 10px}
+.card p{font:400 30px/1.4 var(--B);margin:0;color:var(--soft)}
+.stack3{display:flex;flex-direction:column;gap:24px;margin-top:40px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:40px}
+.col{border-radius:28px;padding:36px 34px}
+.col.us{background:linear-gradient(150deg,#1E5AA8,#123E7A);border:1px solid rgba(255,255,255,.18);box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.col h3{font:800 56px/1 var(--D);text-transform:uppercase;margin:0 0 20px}
+.col ul{margin:0;padding:0;list-style:none}
+.col li{font:400 30px/1.3 var(--B);padding:16px 0 16px 48px;position:relative;border-top:1px solid var(--line);color:#E4EAF4}
+.col li:before{content:"";position:absolute;left:0;top:22px;width:24px;height:24px;border-radius:50%;background:var(--gold)}
+.col.us li:before{background:#fff}
+.lbl{position:absolute;z-index:3;text-align:center;transform:translateX(-50%)}
+.lbl .u{font:700 26px/1 var(--B);color:var(--soft);letter-spacing:.1em;text-transform:uppercase}
+.lbl .v{font:800 86px/1 var(--D);color:#fff;margin-top:8px}
+.lbl .p{font:600 24px/1 var(--B);color:#7F8DA6;margin-top:6px}
+.note{font:400 23px/1.45 var(--B);color:#7F8DA6}
+.btn{display:inline-flex;align-items:center;gap:18px;background:var(--gold);color:#0F2847;font:800 58px/1 var(--D);text-transform:uppercase;padding:30px 46px;border-radius:99px;box-shadow:0 18px 40px rgba(233,185,73,.35),inset 0 2px 0 rgba(255,255,255,.6)}
+.url{font:700 38px/1.2 var(--B);margin-top:34px}
+.ph{font:700 38px/1.2 var(--B);margin-top:12px;color:#E9B949}
+</style>
+<!-- 1 hook -->
+<section class="slide" data-s="1"><canvas class="stage" id="c1"></canvas><div class="in">
+ <div class="hdr"><img src="logo-white.png"><div class="loc"><b>Bronx, NY</b><span>Since 2010</span></div></div>
+ <div class="tag">For licensed brokers · Any US state</div>
+ <h1>Your area.<br>Our management.<br><span class="g">Your monthly income.</span></h1>
+ <p class="lead" style="max-width:560px">Be DoryAngel's partner where you work. Refer local rental owners and earn <b>$50 per unit, every month.</b></p>
+ <div class="foot"><div class="pg">BROKER PARTNER PROGRAM</div><div class="swipe">Swipe to see how →</div></div></div></section>
+<!-- 2 how -->
+<section class="slide" data-s="2"><div class="in">
+ <div class="hdr"><img src="logo-white.png"><div class="loc"><b>Bronx, NY</b><span>Since 2010</span></div></div>
+ <div class="tag">How it works</div>
+ <h2>Your city.<br><span class="g">Our back office.</span></h2>
+ <div class="stack3">
+  <div class="card glass"><div class="n">1</div><div><h3>Your license, your area</h3><p>You are the licensed local partner. DoryAngel is your back office.</p></div></div>
+  <div class="card glass"><div class="n">2</div><div><h3>Refer local owners</h3><p>Owners of 1 to 10 units who want their rentals managed. Then one property visit a quarter.</p></div></div>
+  <div class="card glass"><div class="n">3</div><div><h3>We run 99%. You earn.</h3><p>We handle 99% of the work. You earn $50 per unit, every month the unit stays with us.</p></div></div>
+ </div>
+ <div class="foot"><div class="pg">BROKER PARTNER PROGRAM</div><div class="pg">2 / 5</div></div></div></section>
+<!-- 3 math -->
+<section class="slide" data-s="3"><canvas class="stage" id="c3"></canvas><div class="in">
+ <div class="hdr"><img src="logo-white.png"><div class="loc"><b>Bronx, NY</b><span>Since 2010</span></div></div>
+ <div class="tag">The math</div>
+ <h2>Your area,<br><span class="g">stacked up.</span></h2>
+ <p class="lead">$50 × units, every month. No overhead added.</p>
+ <div class="foot"><div class="note">Example figures at $50 per unit per month.</div><div class="pg">3 / 5</div></div></div>
+ <div class="lbl" id="l1"><div class="u">5 units</div><div class="v">$250</div><div class="p">a month</div></div>
+ <div class="lbl" id="l2"><div class="u">10 units</div><div class="v">$500</div><div class="p">a month</div></div>
+ <div class="lbl" id="l3"><div class="u">20 units</div><div class="v g">$1,000</div><div class="p">a month</div></div>
+</section>
+<!-- 4 split -->
+<section class="slide" data-s="4"><div class="in">
+ <div class="hdr"><img src="logo-white.png"><div class="loc"><b>Bronx, NY</b><span>Since 2010</span></div></div>
+ <div class="tag">Who does what</div>
+ <h2>Your list is short.<br><span class="g">On purpose.</span></h2>
+ <div class="cols">
+  <div class="col glass"><h3>You</h3><ul><li>Your license covers the area</li><li>Refer owners you know</li><li>One property visit a quarter</li></ul></div>
+  <div class="col us"><h3>DoryAngel</h3><ul><li>Our vendors in your area</li><li>Tenant communication</li><li>Owner portal &amp; monthly reports</li><li>Lease renewal tracking</li></ul></div>
+ </div>
+ <p class="lead" style="font-size:31px">We run the back office, 99% of the work. The owner relationship stays <b>yours</b>.</p>
+ <div class="foot"><div class="pg">BROKER PARTNER PROGRAM</div><div class="pg">4 / 5</div></div></div></section>
+<!-- 5 cta -->
+<section class="slide" data-s="5"><canvas class="stage" id="c5"></canvas><div class="in">
+ <div class="hdr"><img src="logo-white.png"><div class="loc"><b>Bronx, NY</b><span>Since 2010</span></div></div>
+ <div class="tag">Broker Partner Program · Beta</div>
+ <h2>Bring DoryAngel<br>to your city.<br><span class="g">Earn every month.</span></h2>
+ <div style="margin-top:46px"><span class="btn">Request beta access →</span></div>
+ <div class="url">doryangel.com/broker-partner.html</div>
+ <div class="ph">(516) 847-4999</div>
+ <p class="lead" style="font-size:30px;max-width:540px">Open to licensed brokers in every US state.</p>
+ <div class="foot"><div class="note" style="max-width:600px">DoryAngel LLC is a property management consulting and back-office firm, not a licensed brokerage. Licensed activity is done by the broker partner.</div></div></div></section>
+<script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js"}}</script>
+<script type="module">
+import * as THREE from './node_modules/three/build/three.module.js';
+import {makeRenderer,makeScene,tower,coin,place} from './stack2.js';
+const s=+new URLSearchParams(location.search).get('s')||1;
+document.querySelector(`[data-s="${s}"]`).classList.add('on');
+await document.fonts.ready;
+const W=1080,H=1350;
+function render(id,setup){const cv=document.getElementById(id);const r=makeRenderer(cv,W,H);const o=setup(r);r.render(o.scene,o.cam);return o;}
+if(s===1){render('c1',r=>{const {scene,cam}=makeScene(r,W,H,10);
+  const t=tower(6);scene.add(t);const t2=tower(4);t2.position.set(-3.4,0,3.4);scene.add(t2);const t3=tower(2);t3.position.set(3.4,0,3.4);scene.add(t3);
+  [[-2.6,7.6,1.6,.25],[2.8,5.6,0.6,-.2],[0.2,9.2,-1.2,.1]].forEach(([x,y,z,rr])=>{const c=coin();c.position.set(x,y,z);c.rotation.y=Math.PI/4;c.rotation.z=rr;scene.add(c);});
+  cam.position.set(20,15,20);cam.lookAt(0,3,0);place(cam,W,H,830,975,36);return {scene,cam};});}
+if(s===3){const o=render('c3',r=>{const {scene,cam}=makeScene(r,W,H,10);
+  const out=[];[[-7,2,'l1'],[0,4,'l2'],[7,8,'l3']].forEach(([x,n,id])=>{const tw=tower(n);tw.position.set(x,0,0);scene.add(tw);out.push([tw,id]);});
+  const c=coin();c.position.set(7,10.6,0);c.rotation.y=Math.PI/4;scene.add(c);
+  cam.position.set(6,10,26);cam.lookAt(0,3,0);place(cam,W,H,540,1010,42);return {scene,cam,out};});
+  o.out.forEach(([tw,id])=>{const top=new THREE.Vector3();tw.userData.roof.getWorldPosition(top);top.y+=.6;top.project(o.cam);
+    const el=document.getElementById(id);const x=(top.x+1)/2*W,y=(1-top.y)/2*H;el.style.left=x+'px';el.style.top=(y-170)+'px';});
+  document.getElementById('l3').style.left=(parseFloat(document.getElementById('l3').style.left)-185)+'px';
+}
+if(s===5){render('c5',r=>{const {scene,cam}=makeScene(r,W,H,10);
+  const t=tower(5);scene.add(t);const c=coin();c.position.set(0,7.6,0);c.rotation.y=Math.PI/4;scene.add(c);
+  cam.position.set(20,14,20);cam.lookAt(0,3,0);place(cam,W,H,870,930,50);return {scene,cam};});}
+window.done=true;
+</script>
