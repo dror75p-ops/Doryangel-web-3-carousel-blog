@@ -1,0 +1,94 @@
+name: Re-broadcast an existing post
+
+# Sends a post that is ALREADY live on the site through the same outbound route a
+# normal auto-publish uses: the subscriber digest (Make broadcast scenario) and
+# Vera's Facebook Page post (Make Facebook Auto-Post scenario). Both steps run the
+# existing scripts unchanged; this workflow only writes the two handoff files that
+# Nave writes on a normal run.
+#
+# Why it exists (2026-11-23): a post merged by hand after the owner reviewed it
+# (ARLO-2026-11-22-01) skips Nave's run, so it never reached Facebook or the
+# subscribers. The secrets these steps need live only in Actions.
+#
+# Manual dispatch only, and only from main. Running it twice for the same slug
+# emails the subscribers twice and posts to Facebook twice, so run it once.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'Slug of a post that is already live (from content/blog/posts-index.json)'
+        required: true
+        type: string
+      caption:
+        description: 'Facebook caption, reviewed by the owner (the post link is added by Vera)'
+        required: true
+        type: string
+      send_digest:
+        description: 'Email the digest subscribers'
+        required: false
+        default: true
+        type: boolean
+      post_facebook:
+        description: 'Post to the Facebook Page'
+        required: false
+        default: true
+        type: boolean
+
+concurrency:
+  group: rebroadcast-post
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  rebroadcast:
+    if: ${{ github.ref_name == 'main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Write the handoff files for an existing post
+        env:
+          SLUG: ${{ inputs.slug }}
+          CAPTION: ${{ inputs.caption }}
+        run: |
+          node --input-type=module -e '
+            import { readFileSync, writeFileSync } from "fs";
+            const slug = (process.env.SLUG || "").trim();
+            const caption = (process.env.CAPTION || "").trim();
+            const posts = JSON.parse(readFileSync("content/blog/posts-index.json", "utf8"));
+            const entry = posts.find(p => p.slug === slug);
+            if (!entry) { console.log(`::error::No post with slug "${slug}" in posts-index.json`); process.exit(1); }
+            if (!caption) { console.log("::error::The caption is empty"); process.exit(1); }
+            writeFileSync("/tmp/broadcast-queue.json", JSON.stringify({ post: { ...entry, facebookPost: caption }, postForIndex: entry }));
+            writeFileSync("/tmp/social-queue.json", JSON.stringify({ slug, facebookPost: caption }));
+            console.log(`Queued "${entry.title}"`);
+          '
+
+      - name: Nave — email subscribers (existing broadcast step)
+        if: ${{ inputs.send_digest }}
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          GOOGLE_SA_KEY: ${{ secrets.GOOGLE_SA_KEY }}
+          DIGEST_WEBHOOK_SECRET: ${{ secrets.DIGEST_WEBHOOK_SECRET }}
+          BROADCAST_ONLY: 'true'
+        run: node scripts/generate-post.js
+
+      - name: Vera — post to Facebook Page (existing step)
+        if: ${{ inputs.post_facebook }}
+        env:
+          DIGEST_WEBHOOK_SECRET: ${{ secrets.DIGEST_WEBHOOK_SECRET }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: node scripts/social-post.js
