@@ -57,5 +57,22 @@
     "implementedOn": "2026-11-10",
     "measureAfter": "2026-12-11",
     "result": null
+  },
+  {
+    "id": "ARLO-2026-11-22-01",
+    "title": "Bronx No-Heat and No-Hot-Water Emergencies: What a 2 AM Boiler Failure Actually Costs You—and How Fast Response Stops $3,000+ in Tenant Complaints",
+    "action": "new-content",
+    "targetSlug": "bronx-no-heat-hot-water-emergency-response-landlord-guide",
+    "recommendedOn": "2026-11-22",
+    "approvedOn": "2026-11-23",
+    "approvedBy": "Dori (in chat, 2026-11-23: אשר את תקלת הדוד)",
+    "legalReviewed": false,
+    "metric": "impressions + clicks on new slug",
+    "expectedResult": "New organic entry point; 50-150 impressions/month within 60 days and internal-link support to the property-management landing page",
+    "baseline": null,
+    "status": "queued",
+    "implementedOn": null,
+    "measureAfter": null,
+    "result": null
   }
 ]
