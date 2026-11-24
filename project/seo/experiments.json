@@ -19,8 +19,20 @@
       "capturedOn": "2026-09-13",
       "source": "Search Console 28-day window"
     },
-    "status": "implemented",
-    "result": null,
+    "status": "measured",
+    "result": {
+      "verdict": "underperforming",
+      "reason": "clicks 0→0, impressions 187→106, position 8.4→7.0 — no improvement so far",
+      "after": {
+        "from": "2026-10-25",
+        "to": "2026-11-21",
+        "clicks": 0,
+        "impressions": 106,
+        "ctr": 0,
+        "position": 6.971698113207547
+      },
+      "measuredOn": "2026-11-24"
+    },
     "implementedOn": "2026-10-23",
     "measureAfter": "2026-11-23"
   },
@@ -70,9 +82,9 @@
     "metric": "impressions + clicks on new slug",
     "expectedResult": "New organic entry point; 50-150 impressions/month within 60 days and internal-link support to the property-management landing page",
     "baseline": null,
-    "status": "queued",
-    "implementedOn": null,
-    "measureAfter": null,
+    "status": "implemented",
+    "implementedOn": "2026-11-23",
+    "measureAfter": "2026-12-24",
     "result": null
   }
 ]

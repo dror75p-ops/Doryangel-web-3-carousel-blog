@@ -1,6 +1,6 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-11-22",
+  "updatedAt": "2026-11-24",
   "events": [
     {
       "date": "2026-04-25",
@@ -3106,6 +3106,21 @@
       "date": "2026-11-22",
       "kind": "site",
       "subject": "Blog posts: free-consultation box at the top and a lead form at the bottom"
+    },
+    {
+      "date": "2026-11-23",
+      "kind": "site",
+      "subject": "Add manual re-broadcast workflow for an already-published post (#360)"
+    },
+    {
+      "date": "2026-11-23",
+      "kind": "site",
+      "subject": "Add the approved 2 AM boiler-failure post (ARLO-2026-11-22-01)"
+    },
+    {
+      "date": "2026-11-23",
+      "kind": "site",
+      "subject": "Queue approved recommendation ARLO-2026-11-22-01"
     }
   ]
 }
