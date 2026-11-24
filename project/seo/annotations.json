@@ -3121,6 +3121,11 @@
       "date": "2026-11-23",
       "kind": "site",
       "subject": "Queue approved recommendation ARLO-2026-11-22-01"
+    },
+    {
+      "date": "2026-11-24",
+      "kind": "post",
+      "subject": "Auto-publish: new blog post 2026-11-24"
     }
   ]
 }
