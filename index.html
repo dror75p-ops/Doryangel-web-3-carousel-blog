@@ -6231,13 +6231,13 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>
-/* Click tracking (DAWEB-24): calls, meeting bookings, P&L checkout and download. GA4 only, no personal data. */
+/* Click tracking (DAWEB-24): meeting bookings, P&L checkout and download. GA4 only, no personal data. */
 document.addEventListener('click', function (e) {
   var a = e.target && e.target.closest ? e.target.closest('a, button') : null;
   if (!a || typeof gtag === 'undefined') return;
   var href = a.getAttribute('href') || '', name = null, label = '';
-  if (href.indexOf('tel:') === 0) { name = 'phone_click'; label = (a.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 60); }
-  else if (href.indexOf('cal.com/') !== -1) { name = 'booking_click'; label = 'cal_com'; }
+  /* phone_click (and whatsapp_click) are sent by /lead-source.js on every page. */
+  if (href.indexOf('cal.com/') !== -1) { name = 'booking_click'; label = 'cal_com'; }
   else if (a.id === 'pmPaypalLink') { name = 'pl_checkout_click'; label = 'paypal'; }
   else if (a.id === 'pmConfirmBtn') { name = 'pl_payment_confirm_click'; label = 'i_have_paid'; }
   else if (href.indexOf('property-dashboard.xlsx') !== -1) { name = 'pl_download'; label = 'xlsx'; }

@@ -78,7 +78,10 @@ check('teaser states eligibility, the 48-hour $99 offer, $150 after six months, 
 check('1-9 unit card shows the $150 regular price', /\$150<span>\/occupied unit\/mo<\/span>/.test(idx));
 check('10+ units: $99 for the first 6 months, then $125 (owner, 2026-11-08); no ongoing-$99 claim', /\$99 for the first 6 months, then \$125 per occupied unit per month/.test(idx) && /or \$125 for buildings with 10 or more units/.test(idx) && !/standard long-term rate is \$99|ongoing \$99/.test(idx + read('faq/index.html')));
 check('no unverified compliance-check or unit-count claims; one unit count (500+)', !/Email and PDF report/.test(idx) && !/1,200\+ NYC landlords/.test(idx) && !/1000\+ units/.test(idx) && !/ct-stat-num">158/.test(idx) && /500\+ units/.test(idx));
-check('DAWEB-24 click tracking is wired', /'phone_click'/.test(idx) && /'booking_click'/.test(idx) && /'pl_download'/.test(idx) && /'pl_payment_confirm_click'/.test(idx));
+// phone_click / whatsapp_click moved to /lead-source.js (every page) on 2026-11-25.
+const leadSrc = read('lead-source.js');
+check('phone and WhatsApp taps tracked site-wide', /'phone_click'/.test(leadSrc) && /'whatsapp_click'/.test(leadSrc) && /src="\/lead-source\.js"/.test(idx) && !/name = 'phone_click'/.test(idx));
+check('DAWEB-24 click tracking is wired', /'booking_click'/.test(idx) && /'pl_download'/.test(idx) && /'pl_payment_confirm_click'/.test(idx));
 check('teaser GA4 events are wired', /online_enrollment_interest_open/.test(idx) && /online_enrollment_interest_submit/.test(idx));
 
 check('hero keeps the office card and trust strip', /class="hero-office"/.test(idx) && /class="hero-trust"/.test(idx));
