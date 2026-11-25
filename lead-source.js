@@ -6,7 +6,7 @@
  *
  * Channel, in order of trust:
  *   1. ?src= (or ?utm_source=) on the landing URL — e.g. Vera's Facebook links
- *      carry ?src=facebook. Use the same tag on any new channel (gbp, referral…).
+ *      carry utm_source=facebook. Use the same tag on any new channel (gbp, referral…).
  *   2. The referring site (google, bing, facebook, chatgpt…).
  *   3. "direct" when there is neither.
  * A tagged or referred visit replaces an earlier "direct"; otherwise the first
@@ -17,6 +17,8 @@
  *   lead_channel       facebook / google / direct / …
  *   lead_landing_page  the first page they saw on the site
  *   lead_form_page     the page the form was sent from
+ *
+ * It also sends the shared GA4 lead events (see the bottom of this file).
  *
  * Loaded directly by index.html and broker-partner.html, and injected by
  * analytics.js on every other page (blog posts included), so blog visits are
@@ -111,4 +113,36 @@
   else stampAll();
   // Capture phase runs before each form's own submit handler builds its FormData.
   document.addEventListener('submit', function (e) { stamp(e.target); }, true);
+
+  /*
+   * GA4 lead events that every page shares (one place, so no page is missed):
+   *   phone_click     any tel: link (office line, Hailey's line…)
+   *   whatsapp_click  any wa.me / api.whatsapp.com / whatsapp: link
+   *   generate_lead   a plain HTML lead form that posts away and carries
+   *                   data-lead-label (pages whose forms track their own
+   *                   success, like the homepage, do not set it).
+   * Every tap counts, per the owner (2026-11-25). GA4 adds source/campaign itself.
+   */
+  function track(name, params) {
+    if (typeof window.gtag !== 'function') return;
+    try { window.gtag('event', name, params); } catch (e) {}
+  }
+
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a) return;
+    var href = (a.getAttribute('href') || '').trim().toLowerCase();
+    var label = (a.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 60);
+    if (href.indexOf('tel:') === 0) {
+      track('phone_click', { event_category: 'lead', event_label: label || href.slice(4), link_url: href });
+    } else if (/^(https?:\/\/)?(wa\.me|api\.whatsapp\.com|(www\.)?whatsapp\.com\/send)|^whatsapp:/.test(href)) {
+      track('whatsapp_click', { event_category: 'lead', event_label: label || 'whatsapp', link_url: href });
+    }
+  }, true);
+
+  document.addEventListener('submit', function (e) {
+    var f = e.target;
+    var label = f && f.getAttribute && f.getAttribute('data-lead-label');
+    if (label) track('generate_lead', { event_category: 'lead', event_label: label, transport_type: 'beacon' });
+  }, true);
 })();

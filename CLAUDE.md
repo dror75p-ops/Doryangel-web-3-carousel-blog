@@ -8,7 +8,15 @@
 - Owner GitHub account: dror75p-ops
 - Owner email: office@doryangel.com (notification emails go to dror75p@gmail.com via Resend)
 
-### Last changes (as of 2026-11-11)
+### Last changes (as of 2026-11-25)
+
+- **GA4 lead actions by channel and site** (branch `claude/project-thread-sc1zmz`, owner approved the plan 2026-11-25 and asked to count every phone/WhatsApp tap). Tested by `verify-lead-channels.js` (30 checks).
+  - **Events:** `generate_lead` (forms), `phone_click` (any `tel:` link), `whatsapp_click` (any wa.me / api.whatsapp.com link; the site has none yet, so it stays 0 until one is added). **Phone and WhatsApp taps are sent by `/lead-source.js` on every page**, not by `index.html` any more, so do not re-add the `tel:` branch to the DAWEB-24 tracker (it would count each tap twice). Plain HTML lead forms that post away fire `generate_lead` from `lead-source.js` when they carry `data-lead-label` (flat-fee calculator, compliance guide). The broker form fires `generate_lead` with `lead_type: broker` on success. The homepage and blog forms keep their own events.
+  - **Arlo:** one GA4 call (`scripts/lib/lead-channels.js`): event × hostName × source × campaign. On Sundays (UTC) the email shows a table by channel and site, last 7 days vs the 7 before; other days ONE line, only if yesterday had a lead action. Site = `website` (doryangel.com) or `ai-tools` (chatgpt.site / tools.*). Forms and taps are never added into one total.
+  - **Vera's Facebook link now carries `utm_source=facebook&utm_medium=social&utm_campaign=blog-autopost&utm_content=<slug>`** instead of `?src=facebook` (lead-source.js reads either).
+  - **Owner action:** mark `generate_lead`, `phone_click`, `whatsapp_click` as key events in GA4 Admin.
+
+### Earlier changes (as of 2026-11-11)
 
 - **Arlo stage D: every new post gets 1-2 inbound links from older posts, so orphans stop coming back** (branch `claude/project-thread-ne4w74`, owner asked 2026-11-11 "התחל שלב ד'"). Tested by `verify-back-links.js` (80 checks, in `npm run verify`). Why: Nave linked OUT of a new post but nothing linked back, so each new post was born an orphan (45 by 09-27; Arlo recommended "link the orphans" again on 11-08).
   - **How:** `scripts/lib/back-links.js` (pure). Right before the index write, Nave calls `addBackLinks(posts, newPost)`: it picks up to 2 older posts by the same relevance score as "Continue reading" (min score 2), skipping duplicate slugs, posts that already link to it, and posts whose line already has 3 links. Ties go to the post with fewer links on its line. Fails soft (`::warning::`), never blocks a publish; a dry run adds nothing.
@@ -23,7 +31,7 @@
   - **Noise:** a deduped "idea of the day" is now one grey line with a neutral subject ("Arlo — daily report") instead of the headline; Clarity's top pages drop Vercel preview addresses and the email says how many visits were left out (the session total still includes them; the API gives no per-host sessions); the footer states the real schedule (14:00 UTC, often started hours late) and the build time in New York and Israel instead of "9 AM EST". `SCHEDULED_UTC` in `report-hygiene.js` must match the workflow cron; the verifier checks it.
   - **Also fixed:** `verify-owner-approval-gateway.js`'s pre-existing "workflow never merges" failure. Its regex matched the words "PR/merge controls" in the close comment, which now reads differently. **Needs owner action: nothing.** `RESEND_API_KEY` is already a repo secret.
 
-### Earlier changes (as of 2026-11-10)
+### Older changes (as of 2026-11-10)
 
 - **Arlo's ranking headline now tracks the Bronx searches, split Google profile vs website** (branch `claude/project-thread-ne4w74`, same PR as stage B, owner asked 2026-11-10 "תקן את המדד של ארלו"). The email's site-wide "Avg position" slid ~10 → ~12 in a week and read as a ranking drop. It was not: the Bronx searches held still (Google profile listing at 1 every day 10-27 → 11-10, www ~15-26). Unrelated searches like "luxury property management new york" at position 80-90 moved the average.
   - **The rule, in the new pure `scripts/lib/bronx-rank.js` (tested by `verify-bronx-rank.js`, 47 checks):** a target search names the Bronx AND asks for property management (job searches excluded). Position is impression-weighted and split: **profile** = the apex homepage `http(s)://doryangel.com/` (the Google Business Profile's website link, so mostly the local pack; an inference, stated as one in the email), **site** = any `www` page, **other** = beta and old apex paths.

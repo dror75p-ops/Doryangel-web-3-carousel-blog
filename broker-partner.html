@@ -1446,6 +1446,9 @@ function handleBrokerSubmit(e) {
   .then(function(r) { return r.json(); })
   .then(function(data) {
     if (data.success) {
+      if (typeof window.gtag === 'function') {
+        try { window.gtag('event', 'generate_lead', { event_category: 'lead', event_label: 'broker_partner', lead_type: 'broker' }); } catch (err) {}
+      }
       document.getElementById('form-wrap').style.display = 'none';
       document.getElementById('form-success').style.display = 'block';
     } else {

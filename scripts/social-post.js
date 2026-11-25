@@ -77,6 +77,12 @@ async function waitForPage(url) {
   return false;
 }
 
+// One fixed UTM scheme for social links (2026-11-25): source = the network,
+// medium = social, campaign = what posted it, content = the post's slug.
+function fbUtm(slug) {
+  return `?utm_source=facebook&utm_medium=social&utm_campaign=blog-autopost&utm_content=${encodeURIComponent(slug)}`;
+}
+
 async function postViaMake(secret, slug, caption) {
   const blogUrl = `${BASE_URL}/blog/${slug}/`;
   await waitForPage(blogUrl);
@@ -84,9 +90,9 @@ async function postViaMake(secret, slug, caption) {
   const res = await fetch(SOCIAL_WEBHOOK, {
     method:  'POST',
     headers: { 'Content-Type': 'application/json' },
-    // ?src=facebook lets lead-source.js credit Facebook on the lead email.
-    // The readiness check above stays on the clean URL.
-    body:    JSON.stringify({ secret, slug, message: caption, link: `${blogUrl}?src=facebook` }),
+    // UTM tags: lead-source.js credits Facebook on the lead email, and GA4 can
+    // split leads by campaign. The readiness check above stays on the clean URL.
+    body:    JSON.stringify({ secret, slug, message: caption, link: `${blogUrl}${fbUtm(slug)}` }),
   });
 
   const { data, raw } = await readJson(res);
@@ -118,7 +124,7 @@ async function emailFallback(slug, caption, reason) {
     log('RESEND_API_KEY not set — no fallback email sent');
     return;
   }
-  const blogUrl = `${BASE_URL}/blog/${slug}/?src=facebook`;  // tagged: this is the link to paste into Facebook
+  const blogUrl = `${BASE_URL}/blog/${slug}/${fbUtm(slug)}`;  // tagged: this is the link to paste into Facebook
   try {
     const { Resend } = await import('resend');
     await new Resend(process.env.RESEND_API_KEY).emails.send({

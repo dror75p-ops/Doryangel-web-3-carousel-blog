@@ -29,6 +29,7 @@ import { summariseBronxRank, positionMove } from './lib/bronx-rank.js';
 import { labelOpportunityHosts, LEVERS, LEVER_LABEL } from './lib/opportunity-host.js';
 import { splitClarityPages, runScheduleLine } from './lib/report-hygiene.js';
 import { stripRelatedReading } from './lib/back-links.js';
+import { leadChannelsRequest, summariseLeadChannels, leadChannelsLine, leadChannelsTable, isWeeklyDay } from './lib/lead-channels.js';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 3 });
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -255,6 +256,7 @@ async function getGA4Stats() {
     }));
 
     const brokerCampaign = await getBrokerCampaignStats(propertyId, token);
+    const leadChannels = await getLeadChannelStats(propertyId, token);
 
     return {
       sessions:  { day: byRange['day']?.sessions  ?? 0, week: byRange['week']?.sessions  ?? 0, month: byRange['month']?.sessions  ?? 0 },
@@ -262,6 +264,7 @@ async function getGA4Stats() {
       pageviews: { day: byRange['day']?.pageviews  ?? 0, week: byRange['week']?.pageviews  ?? 0, month: byRange['month']?.pageviews  ?? 0 },
       topPages,
       brokerCampaign,
+      leadChannels,
     };
   } catch (err) {
     // A warning annotation, not a bare console.warn: this used to scroll past in
@@ -308,6 +311,28 @@ async function getBrokerCampaignStats(propertyId, token) {
     return summariseBrokerCampaign(report.rows || []);
   } catch (err) {
     console.log(`::warning title=${AGENT_NAME}::Broker campaign (GA4) fetch failed: ${err.message}`);
+    return { error: err.message };
+  }
+}
+
+// ─── Lead actions by channel and site (GA4 lead events) ───────────────────────
+// One extra call. Rules and rendering live in lib/lead-channels.js. Fails soft
+// to { error } so the email says "unknown", never a false zero.
+async function getLeadChannelStats(propertyId, token) {
+  try {
+    const res = await fetch(
+      `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`,
+      {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(leadChannelsRequest()),
+      }
+    );
+    const report = await res.json();
+    if (report.error) throw new Error(`GA4 lead-events report error: ${JSON.stringify(report.error)}`);
+    return summariseLeadChannels(report.rows || []);
+  } catch (err) {
+    console.log(`::warning title=${AGENT_NAME}::Lead actions by channel (GA4) fetch failed: ${err.message}`);
     return { error: err.message };
   }
 }
@@ -2444,6 +2469,7 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
       ${statRow('Page views', ga4.pageviews, '#5B7A9F', '#ffffff')}
     </table>
     ${brokerCampaignLine(ga4.brokerCampaign)}
+    ${isWeeklyDay() ? leadChannelsTable(ga4.leadChannels) : leadChannelsLine(ga4.leadChannels)}
     <p style="font-size:12px;color:#8B9BAE;margin:0 0 8px;">Top pages — last 30 days</p>
     <table style="border-collapse:collapse;width:100%;margin-bottom:24px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
       ${topPageRows}
@@ -3004,6 +3030,10 @@ async function main() {
     getGA4Stats(), getMakeStats(), getClarityStats(), getSearchConsoleStats(),
   ]);
   console.log(`GA4: ${ga4?.sessions ? `sessions today=${ga4.sessions.day}` : ga4?.error ? `FAILED (${ga4.error.kind})` : 'not configured'}`);
+  if (ga4?.leadChannels && !ga4.leadChannels.error) {
+    const ev = ga4.leadChannels.last7.byEvent;
+    console.log(`Lead actions (GA4, last 7 days): ${Object.entries(ev).map(([k, v]) => `${k}=${v}`).join(' ')}`);
+  }
   if (ga4?.brokerCampaign && !ga4.brokerCampaign.error) {
     console.log(`Broker campaign (GA4): yesterday ${ga4.brokerCampaign.yesterday.sessions} sessions, since ${BROKER_CAMPAIGN_START} ${ga4.brokerCampaign.since.sessions} sessions, ${ga4.brokerCampaign.since.brokerPageViews} broker-page views`);
   }
