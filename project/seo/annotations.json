@@ -1,6 +1,6 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-11-24",
+  "updatedAt": "2026-11-25",
   "events": [
     {
       "date": "2026-04-25",
@@ -3126,6 +3126,16 @@
       "date": "2026-11-24",
       "kind": "post",
       "subject": "Auto-publish: new blog post 2026-11-24"
+    },
+    {
+      "date": "2026-11-25",
+      "kind": "site",
+      "subject": "GA4 lead actions by channel and site, plus Arlos weekly table (#363)"
+    },
+    {
+      "date": "2026-11-25",
+      "kind": "site",
+      "subject": "Arlo: broker email campaign line from GA4 (bronx-broker-pilot) (#362)"
     }
   ]
 }
