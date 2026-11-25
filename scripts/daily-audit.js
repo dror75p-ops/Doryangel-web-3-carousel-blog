@@ -254,11 +254,14 @@ async function getGA4Stats() {
       sessions: parseInt(r.metricValues[0].value) || 0,
     }));
 
+    const brokerCampaign = await getBrokerCampaignStats(propertyId, token);
+
     return {
       sessions:  { day: byRange['day']?.sessions  ?? 0, week: byRange['week']?.sessions  ?? 0, month: byRange['month']?.sessions  ?? 0 },
       users:     { day: byRange['day']?.users      ?? 0, week: byRange['week']?.users      ?? 0, month: byRange['month']?.users      ?? 0 },
       pageviews: { day: byRange['day']?.pageviews  ?? 0, week: byRange['week']?.pageviews  ?? 0, month: byRange['month']?.pageviews  ?? 0 },
       topPages,
+      brokerCampaign,
     };
   } catch (err) {
     // A warning annotation, not a bare console.warn: this used to scroll past in
@@ -266,6 +269,67 @@ async function getGA4Stats() {
     console.log(`::warning title=${AGENT_NAME}::GA4 fetch failed: ${err.message}`);
     return { error: googleFailure(err.message) };
   }
+}
+
+// ─── Broker email campaign (utm_campaign=bronx-broker-pilot) ─────────────────
+//
+// Broker Email 1 went out 2026-11-24 with every link tagged
+// utm_campaign=bronx-broker-pilot. Vercel cannot split visits by campaign; GA4
+// can. One extra call, two ranges: yesterday (a complete day) and everything
+// since the first send. Fails soft to { error } so a bad call never blanks the
+// rest of the GA4 section.
+const BROKER_CAMPAIGN = 'bronx-broker-pilot';
+const BROKER_CAMPAIGN_START = '2026-11-24';
+const BROKER_PAGE_MATCH = 'broker-partner';
+
+async function getBrokerCampaignStats(propertyId, token) {
+  try {
+    const res = await fetch(
+      `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`,
+      {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dateRanges: [
+            { startDate: 'yesterday',            endDate: 'yesterday', name: 'yesterday' },
+            { startDate: BROKER_CAMPAIGN_START,  endDate: 'today',     name: 'since' },
+          ],
+          dimensions: [{ name: 'pagePath' }],
+          metrics: [{ name: 'sessions' }, { name: 'activeUsers' }, { name: 'screenPageViews' }],
+          dimensionFilter: {
+            filter: { fieldName: 'sessionCampaignName', stringFilter: { matchType: 'EXACT', value: BROKER_CAMPAIGN } },
+          },
+          limit: 100,
+        }),
+      }
+    );
+    const report = await res.json();
+    if (report.error) throw new Error(`GA4 campaign report error: ${JSON.stringify(report.error)}`);
+    return summariseBrokerCampaign(report.rows || []);
+  } catch (err) {
+    console.log(`::warning title=${AGENT_NAME}::Broker campaign (GA4) fetch failed: ${err.message}`);
+    return { error: err.message };
+  }
+}
+
+// Rows are pagePath × dateRange. Page views add up cleanly per page. Sessions
+// and users are summed across pages, so a visitor who opens two pages counts
+// twice: they are an upper bound, said so in the email.
+function summariseBrokerCampaign(rows) {
+  const out = {
+    yesterday: { sessions: 0, users: 0, brokerPageViews: 0 },
+    since:     { sessions: 0, users: 0, brokerPageViews: 0 },
+  };
+  for (const r of rows) {
+    const path  = r.dimensionValues?.[0]?.value || '';
+    const range = r.dimensionValues?.[1]?.value;
+    const bucket = out[range];
+    if (!bucket) continue;
+    bucket.sessions += parseInt(r.metricValues?.[0]?.value) || 0;
+    bucket.users    += parseInt(r.metricValues?.[1]?.value) || 0;
+    if (path.includes(BROKER_PAGE_MATCH)) bucket.brokerPageViews += parseInt(r.metricValues?.[2]?.value) || 0;
+  }
+  return out;
 }
 
 // ─── Google Search Console — where we actually rank ──────────────────────────
@@ -2246,6 +2310,16 @@ function renderImprovementSections(improvement) {
   return performanceBlock + experimentBlock + recBlock + costBlock;
 }
 
+// One line under the GA4 table: visits from the broker email campaign.
+function brokerCampaignLine(bc) {
+  if (!bc) return '';
+  const label = '📧 Broker emails (bronx-broker-pilot)';
+  const box = (inner) => `<p style="font-size:12px;color:#0F2847;background:#EBF3FD;border:1px solid #C9DDF5;border-radius:6px;padding:8px 12px;margin:0 0 16px;">${inner}</p>`;
+  if (bc.error) return box(`<strong>${label}:</strong> unavailable today (GA4 call failed). Unknown, not zero.`);
+  const y = bc.yesterday, t = bc.since;
+  return box(`<strong>${label}:</strong> yesterday ${y.sessions} sessions · ${y.users} users · ${y.brokerPageViews} broker-page views &nbsp;|&nbsp; since ${BROKER_CAMPAIGN_START}: ${t.sessions} sessions · ${t.users} users · ${t.brokerPageViews} broker-page views<br><span style="color:#8B9BAE;">Only visits that kept the UTM tag. Sessions and users can count one visitor twice if they opened two pages.</span>`);
+}
+
 async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, ga4, make, clarity, gsc, improvement }) {
   const { stats, categoryCounts, postCount } = state;
   const improvementSections = renderImprovementSections(improvement);
@@ -2369,6 +2443,7 @@ async function sendDigest({ taskLabel, taskWhy, resultType, resultLink, state, g
       ${statRow('Active users', ga4.users, '#0F2847', '#F8FAFB')}
       ${statRow('Page views', ga4.pageviews, '#5B7A9F', '#ffffff')}
     </table>
+    ${brokerCampaignLine(ga4.brokerCampaign)}
     <p style="font-size:12px;color:#8B9BAE;margin:0 0 8px;">Top pages — last 30 days</p>
     <table style="border-collapse:collapse;width:100%;margin-bottom:24px;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
       ${topPageRows}
@@ -2929,6 +3004,9 @@ async function main() {
     getGA4Stats(), getMakeStats(), getClarityStats(), getSearchConsoleStats(),
   ]);
   console.log(`GA4: ${ga4?.sessions ? `sessions today=${ga4.sessions.day}` : ga4?.error ? `FAILED (${ga4.error.kind})` : 'not configured'}`);
+  if (ga4?.brokerCampaign && !ga4.brokerCampaign.error) {
+    console.log(`Broker campaign (GA4): yesterday ${ga4.brokerCampaign.yesterday.sessions} sessions, since ${BROKER_CAMPAIGN_START} ${ga4.brokerCampaign.since.sessions} sessions, ${ga4.brokerCampaign.since.brokerPageViews} broker-page views`);
+  }
   console.log(`Leads: ${make?.error ? `UNKNOWN — sheet reads failed (${make.error.kind})` : make ? `owners 30d=${make.byKind.owner.month}${make.byKind.owner.partial ? ' (partial)' : ''}, other inquiries 30d=${make.byKind.other.month}, subscribers 30d=${make.byKind.subscriber.month}` : 'not configured'}`);
   console.log(`Clarity: ${clarity ? `${clarity.sessions} sessions/3d, scroll ${clarity.avgScrollDepth}%` : 'not configured'}`);
 
@@ -3103,4 +3181,5 @@ export {
   runImprovementCycle, findOpportunities, finaliseRecommendations,
   classifyExperiment, renderImprovementSections, readCycleState, detectImplementation,
   gatherHistory, recentChanges, getMakeStats, getClarityStats, sendDigest,
+  getGA4Stats, summariseBrokerCampaign,
 };
