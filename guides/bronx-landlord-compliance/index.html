@@ -329,6 +329,8 @@ nav.bar-hidden { top: 0; }
 .tool-chip:hover { background: var(--blue-dim); border-color: var(--blue-light); transform: translateY(-3px); }
 .tool-chip h3 { font-size: 16px; color: var(--navy); margin-bottom: 4px; }
 .tool-chip p { font-size: 13px; color: var(--text-muted); }
+.tool-chip-featured { grid-column: 1 / -1; }
+.tool-chip-cta { display: block; margin-top: 8px; color: var(--navy); font-size: 13px; font-weight: 700; }
 @media (max-width: 760px) { .tools-callout { grid-template-columns: 1fr; } }
 
 /* FAQ */
@@ -609,6 +611,11 @@ footer { background: var(--navy); padding: 60px 32px 36px; }
   <h2>Free tools to stay compliant</h2>
   <p class="lp-sub">Put the guidance to work — no signup required to use them.</p>
   <div class="tools-callout">
+    <a class="tool-chip tool-chip-featured" href="https://doryangel-compliance-check.dror75p.chatgpt.site/">
+      <h3>NYC Property Compliance Check</h3>
+      <p>Check open NYC property violations by address before buying or closing.</p>
+      <span class="tool-chip-cta">Check a property &rarr;</span>
+    </a>
     <a class="tool-chip" href="../../tax-checklist/">
       <h3>Bronx Tax Deduction Checklist &rarr;</h3>
       <p>28 deductions Bronx landlords commonly miss, in a printable checklist.</p>
