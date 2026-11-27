@@ -1,6 +1,6 @@
 {
   "note": "Derived from git history each run. Line these up against daily-series.json to attribute a ranking move.",
-  "updatedAt": "2026-11-26",
+  "updatedAt": "2026-11-27",
   "events": [
     {
       "date": "2026-04-25",
@@ -3141,6 +3141,16 @@
       "date": "2026-11-25",
       "kind": "site",
       "subject": "Arlo: broker email campaign line from GA4 (bronx-broker-pilot) (#362)"
+    },
+    {
+      "date": "2026-11-27",
+      "kind": "site",
+      "subject": "Welcome property inquiries from outside the Bronx"
+    },
+    {
+      "date": "2026-11-27",
+      "kind": "site",
+      "subject": "Link compliance checker from landlord guide"
     }
   ]
 }
